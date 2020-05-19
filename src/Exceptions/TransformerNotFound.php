@@ -5,10 +5,10 @@ namespace Spatie\TypescriptTransformer\Exceptions;
 use Exception;
 use ReflectionClass;
 
-class MapperNotFound extends Exception
+class TransformerNotFound extends Exception
 {
     public static function create(ReflectionClass $class): self
     {
-        return new self("Could not find mapper for: {$class->getName()}");
+        return new self("Could not find transformer for: {$class->getName()}!");
     }
 }

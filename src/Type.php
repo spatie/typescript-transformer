@@ -12,17 +12,17 @@ class Type
 
     public string $name;
 
-    public array $options;
+    public string $transformed;
 
     public function __construct(
         ReflectionClass $class,
         string $file,
         string $name,
-        array $options
+        string $transformed
     ) {
         $this->class = $class;
         $this->file = $file;
         $this->name = $name;
-        $this->options = $options;
+        $this->transformed = $transformed;
     }
 }

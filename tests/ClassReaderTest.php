@@ -26,12 +26,12 @@ class ClassReaderTest extends TestCase
         $fake = new class {
         };
 
-        ['file' => $file, 'type' => $type] = $this->reader->forClass(
+        ['file' => $file, 'name' => $name] = $this->reader->forClass(
             new ReflectionClass($fake)
         );
 
         $this->assertEquals('types/generated.d.ts', $file);
-        $this->assertTrue(Str::startsWith($type, 'ClassReaderTest')); // Anonymous class :)
+        $this->assertTrue(Str::startsWith($name, 'ClassReaderTest')); // Anonymous class :)
     }
 
     /** @test */
@@ -43,12 +43,12 @@ class ClassReaderTest extends TestCase
         $fake = new class {
         };
 
-        ['file' => $file, 'type' => $type] = $this->reader->forClass(
+        ['file' => $file, 'name' => $name] = $this->reader->forClass(
             new ReflectionClass($fake)
         );
 
         $this->assertEquals('types/generated.d.ts', $file);
-        $this->assertEquals('OtherEnum', $type);
+        $this->assertEquals('OtherEnum', $name);
     }
 
     /** @test */
@@ -60,12 +60,12 @@ class ClassReaderTest extends TestCase
         $fake = new class {
         };
 
-        ['file' => $file, 'type' => $type] = $this->reader->forClass(
+        ['file' => $file, 'name' => $name] = $this->reader->forClass(
             new ReflectionClass($fake)
         );
 
         $this->assertEquals('types/yetAnotherType.d.ts', $file);
-        $this->assertTrue(Str::startsWith($type, 'ClassReaderTest')); // Anonymous class :)
+        $this->assertTrue(Str::startsWith($name, 'ClassReaderTest')); // Anonymous class :)
     }
 
     /** @test */
@@ -77,12 +77,12 @@ class ClassReaderTest extends TestCase
         $fake = new class {
         };
 
-        ['file' => $file, 'type' => $type] = $this->reader->forClass(
+        ['file' => $file, 'name' => $name] = $this->reader->forClass(
             new ReflectionClass($fake)
         );
 
         $this->assertEquals('types/yetAnotherType.d.ts', $file);
-        $this->assertEquals('AnotherEnum', $type);
+        $this->assertEquals('AnotherEnum', $name);
     }
 
     /** @test */
@@ -111,5 +111,19 @@ class ClassReaderTest extends TestCase
         $this->assertEquals('types/yetAnotherType.d.ts', $this->reader->forClass(
             new ReflectionClass($fake)
         )['file']);
+    }
+
+    /** @test */
+    public function it_will_resolve_the_transformer()
+    {
+        /**
+         * @typescript-transformer \Spatie\TypescriptTransformer\Transformers\EnumTransformer
+         */
+        $fake = new class {
+        };
+
+        $this->assertEquals('\Spatie\TypescriptTransformer\Transformers\EnumTransformer', $this->reader->forClass(
+            new ReflectionClass($fake)
+        )['transformer']);
     }
 }

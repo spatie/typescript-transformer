@@ -3,14 +3,14 @@
 namespace Spatie\TypescriptTransformer\Actions;
 
 use Spatie\TypescriptTransformer\ClassReader;
-use Spatie\TypescriptTransformer\Exceptions\MapperNotFound;
-use Spatie\TypescriptTransformer\Mappers\Mapper;
+use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
+use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\Type;
 use Spatie\TypescriptTransformer\TypesCollection;
 use hanneskod\classtools\Iterator\ClassIterator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
 class ResolveTypesCollectionAction
@@ -19,19 +19,23 @@ class ResolveTypesCollectionAction
 
     private ClassReader $classReader;
 
-    private Collection $mappers;
+    /** @var \Spatie\TypescriptTransformer\Transformers\Transformer[] */
+    private array $transformers;
 
-    public function __construct(Finder $finder)
+    private TypeScriptTransformerConfig $config;
+
+    public function __construct(Finder $finder, TypeScriptTransformerConfig $config)
     {
         $this->finder = $finder;
 
-        $this->classReader = new ClassReader(
-            config('typescript-transformer.default_file')
-        );
+        $this->config = $config;
 
-        $this->mappers = collect(
-            config('typescript-transformer.mappers')
-        )->map(fn (string $mapper) => new $mapper);
+        $this->classReader = new ClassReader($config->getDefaultFile());
+
+        $this->transformers = array_map(
+            fn(string $transformer) => new $transformer,
+            $this->config->getTransformers()
+        );
     }
 
     public function execute(): TypesCollection
@@ -43,13 +47,15 @@ class ResolveTypesCollectionAction
                 continue;
             }
 
-            $classData = $this->classReader->forClass($class);
+            ['file' => $file, 'name' => $name] = $this->classReader->forClass($class);
+
+            $transformer = $this->findTransformer($class);
 
             $typesCollection->add(new Type(
                 $class,
-                $classData['file'],
-                $classData['type'],
-                $this->resolveMapper($class)->map($class)
+                $file,
+                $name,
+                $transformer->transform($class, $name)
             ));
         }
 
@@ -59,7 +65,7 @@ class ResolveTypesCollectionAction
     private function resolveIterator(): ClassIterator
     {
         $iterator = new ClassIterator($this->finder->in(
-            config('typescript-transformer.searching_path')
+            $this->config->getSearchingPath()
         ));
 
         $iterator->enableAutoloading();
@@ -67,15 +73,14 @@ class ResolveTypesCollectionAction
         return $iterator;
     }
 
-    private function resolveMapper(ReflectionClass $class): Mapper
+    private function findTransformer(ReflectionClass $class): Transformer
     {
-        $mapper = $this->mappers
-            ->first(fn (Mapper $mapper) => $mapper->isValid($class));
-
-        if ($mapper === null) {
-            throw MapperNotFound::create($class);
+        foreach ($this->transformers as $transformer) {
+            if ($transformer->canTransform($class)) {
+                return $transformer;
+            }
         }
 
-        return $mapper;
+        throw TransformerNotFound::create($class);
     }
 }

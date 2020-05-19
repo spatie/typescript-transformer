@@ -26,5 +26,12 @@ class TypescriptTransformerServiceProvider extends ServiceProvider
             __DIR__.'/../config/typescript-transformer.php',
             'typescript-transformer'
         );
+
+        $this->app->instance(TypeScriptTransformerConfig::class, new TypeScriptTransformerConfig(
+            config('typescript-transformer.searching_path'),
+            config('typescript-transformer.transformers'),
+            config('typescript-transformer.default_file'),
+            config('typescript-transformer.output_path'),
+        ));
     }
 }

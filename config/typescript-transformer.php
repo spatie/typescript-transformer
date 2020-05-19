@@ -16,7 +16,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Mappers
+    | Transformers
     |--------------------------------------------------------------------------
     |
     | In these classes you transform your data structures(e.g. enums) to
@@ -24,23 +24,10 @@ return [
     |
     */
 
-    'mappers' => [
-        Spatie\TypescriptTransformer\Mappers\EnumMapper::class,
-        Spatie\TypescriptTransformer\Mappers\StateMapper::class,
+    'transformers' => [
+        Spatie\TypescriptTransformer\Transformers\EnumTransformer::class,
+        Spatie\TypescriptTransformer\Transformers\StateTransformer::class,
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default writer
-    |--------------------------------------------------------------------------
-    |
-    | Writers define how your PHP structure will be converted to typescript,
-    | you can explicitly define a writer in your PHP classes but by default
-    | the following writer will be used:
-    |
-    */
-
-    'default_writer' => Spatie\TypescriptTransformer\Writers\OptionsWriter::class,
 
     /*
     |--------------------------------------------------------------------------
