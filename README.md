@@ -44,7 +44,7 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 You can install the package via composer:
 
 ```bash
-composer require spatie/package-skeleton-laravel
+composer require spatie/typescript-transformer
 ```
 
 ## How does this work?
@@ -59,10 +59,10 @@ First we need to configure the package:
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 
 $config = new TypeScriptTransformerConfig(
-    __DIR__.'/../src', // path where your php classes are,
+    '../src', // path where your php classes are,
     [MyclabsEnumTransformer::class], // an array of transformers,
     'types.d.ts', // the default typescript_output file,
-    __DIR__.'/../js'// $the_output_path_where_typescript_files_will_be_stored
+    '../js'// $the_output_path_where_typescript_files_will_be_stored
 );
 ```
 
