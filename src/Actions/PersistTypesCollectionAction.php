@@ -5,8 +5,6 @@ namespace Spatie\TypescriptTransformer\Actions;
 use Spatie\TypescriptTransformer\Type;
 use Spatie\TypescriptTransformer\TypesCollection;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class PersistTypesCollectionAction
 {
@@ -24,7 +22,7 @@ class PersistTypesCollectionAction
         foreach ($collection->get() as $file => $types) {
             $path = "{$basePath}{$file}";
 
-            if (! File::exists(pathinfo($path, PATHINFO_DIRNAME))) {
+            if (! file_exists(pathinfo($path, PATHINFO_DIRNAME))) {
                 mkdir(pathinfo($path, PATHINFO_DIRNAME), 0755, true);
             }
 
@@ -39,6 +37,6 @@ class PersistTypesCollectionAction
     {
         $path = trim($this->config->getOutputPath());
 
-        return Str::endsWith($path, '/') ? $path : "{$path}/";
+        return substr($path, -1) === $path ? $path : "{$path}/";
     }
 }

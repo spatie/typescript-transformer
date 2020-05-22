@@ -43,13 +43,17 @@ class ResolveTypesCollectionAction
         $typesCollection = new TypesCollection();
 
         foreach ($this->resolveIterator() as $class) {
-            if (! Str::contains($class->getDocComment(), '@typescript')) {
+            if (strpos($class->getDocComment(), '@typescript') === false) {
                 continue;
             }
 
-            ['file' => $file, 'name' => $name] = $this->classReader->forClass($class);
+            [
+                'file' => $file,
+                'name' => $name,
+                'transformer' => $transformer,
+            ] = $this->classReader->forClass($class);
 
-            $transformer = $this->findTransformer($class);
+            $transformer = $this->resolveTransformer($class, $transformer);
 
             $typesCollection->add(new Type(
                 $class,
@@ -73,8 +77,12 @@ class ResolveTypesCollectionAction
         return $iterator;
     }
 
-    private function findTransformer(ReflectionClass $class): Transformer
+    private function resolveTransformer(ReflectionClass $class, ?string $transformer): Transformer
     {
+        if ($transformer !== null) {
+            return new $transformer;
+        }
+
         foreach ($this->transformers as $transformer) {
             if ($transformer->canTransform($class)) {
                 return $transformer;

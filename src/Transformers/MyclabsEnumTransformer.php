@@ -2,10 +2,10 @@
 
 namespace Spatie\TypescriptTransformer\Transformers;
 
+use MyCLabs\Enum\Enum;
 use ReflectionClass;
-use Spatie\Enum\Enum;
 
-class EnumTransformer implements Transformer
+class MyclabsEnumTransformer implements Transformer
 {
     public function canTransform(ReflectionClass $class): bool
     {
@@ -19,12 +19,12 @@ class EnumTransformer implements Transformer
 
     private function resolveOptions(ReflectionClass $class): string
     {
-        /** @var \Spatie\Enum\Enum $enum */
+        /** @var \MyCLabs\Enum\Enum $enum */
         $enum = $class->getName();
 
         $options = array_map(
             fn(Enum $enum) => "'{$enum->getValue()}'",
-            $enum::getAll()
+            $enum::values()
         );
 
         return implode(' | ', $options);

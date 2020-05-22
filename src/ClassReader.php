@@ -3,7 +3,6 @@
 namespace Spatie\TypescriptTransformer;
 
 use Exception;
-use Illuminate\Support\Str;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
@@ -19,7 +18,7 @@ class ClassReader
 
     public function forClass(ReflectionClass $class): array
     {
-        array_merge(
+        return array_merge(
             $this->resolveFileAndNameProperty($class),
             $this->resolveTransformer($class),
         );
@@ -42,13 +41,13 @@ class ClassReader
         $file = null;
         $name = null;
 
-        if (Str::endsWith($annotations[1], '.ts')) {
+        if (substr($annotations[1], -3) === '.ts') {
             $file = $annotations[1];
         } else {
             $name = $annotations[1];
         }
 
-        if (Str::endsWith($annotations[2], '.ts') && $name) {
+        if (substr($annotations[2], -3) === '.ts' && $name) {
             $file = $annotations[2];
         }
 
@@ -57,7 +56,7 @@ class ClassReader
         }
 
         if (empty($name)) {
-            $name = class_basename($class->getName());
+            $name = $class->getShortName();
         }
 
         $file = $this->normalizeFilePath($file);
@@ -79,22 +78,24 @@ class ClassReader
             return ['transformer' => null];
         }
 
-        if(! class_exists($class)){
-            throw InvalidTransformerGiven::classDoesNotExist($class, $annotations[1]);
+        $transformerClass = $annotations[1];
+
+        if (! class_exists($transformerClass)) {
+            throw InvalidTransformerGiven::classDoesNotExist($class, $transformerClass);
         }
 
-        if(! $class instanceof Transformer){
-            throw InvalidTransformerGiven::classIsNotATransformer($class, $annotations[1]);
+        if (! is_subclass_of($transformerClass, Transformer::class)) {
+            throw InvalidTransformerGiven::classIsNotATransformer($class, $transformerClass);
         }
 
-        return ['transformer' => $annotations[1]];
+        return ['transformer' => $transformerClass];
     }
 
     private function normalizeFilePath(string $file): string
     {
         $file = trim($file);
 
-        if (Str::startsWith($file, '/')) {
+        if (substr($file, 0, 1) === '/') {
             return substr($file, 1);
         }
 

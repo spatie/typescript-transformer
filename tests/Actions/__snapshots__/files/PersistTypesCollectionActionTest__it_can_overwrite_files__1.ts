@@ -1,0 +1,1 @@
+export type Enum = 'view' | 'edit';

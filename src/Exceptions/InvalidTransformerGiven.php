@@ -7,13 +7,13 @@ use ReflectionClass;
 
 class InvalidTransformerGiven extends Exception
 {
-    public static function classDoesNotExist(ReflectionClass $reflectionClass, string $class): self
+    public static function classDoesNotExist(ReflectionClass $reflectionClass, string $transformerClass): self
     {
-        return new self("The transformer ({$class}) defined in ({$reflectionClass->getName()}) does not exist!");
+        return new self("The transformer ({$transformerClass}) defined in ({$reflectionClass->getName()}) does not exist!");
     }
 
-    public static function classIsNotATransformer(ReflectionClass $reflectionClass, string $class)
+    public static function classIsNotATransformer(ReflectionClass $reflectionClass, string $transformerClass)
     {
-        return new self("The transformer ({$class}) defined in ({$reflectionClass->getName()}) does not implement the Transformer interface!");
+        return new self("The transformer ({$transformerClass}) defined in ({$reflectionClass->getName()}) does not implement the Transformer interface!");
     }
 }

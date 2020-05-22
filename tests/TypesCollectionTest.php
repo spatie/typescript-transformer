@@ -2,6 +2,7 @@
 
 namespace Spatie\TypescriptTransformer\Tests;
 
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Exceptions\TypeAlreadyExists;
 use Spatie\TypescriptTransformer\Type;
@@ -77,11 +78,10 @@ class TypesCollectionTest extends TestCase
     private function createType(string $file, string $name): Type
     {
         return new Type(
-            new ReflectionClass(new class {
-            }),
+            new ReflectionClass(new class {}),
             $file,
             $name,
-            []
+            'transformed'
         );
     }
 }

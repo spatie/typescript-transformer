@@ -2,15 +2,17 @@
 
 namespace Spatie\TypescriptTransformer\Tests;
 
-use Illuminate\Support\Str;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassReader;
+use Spatie\TypescriptTransformer\Exceptions\InvalidTransformerGiven;
+use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 
 class ClassReaderTest extends TestCase
 {
     private ClassReader $reader;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -31,7 +33,7 @@ class ClassReaderTest extends TestCase
         );
 
         $this->assertEquals('types/generated.d.ts', $file);
-        $this->assertTrue(Str::startsWith($name, 'ClassReaderTest')); // Anonymous class :)
+        $this->assertEquals('class@anonymous', substr($name, 0, 15));
     }
 
     /** @test */
@@ -65,7 +67,7 @@ class ClassReaderTest extends TestCase
         );
 
         $this->assertEquals('types/yetAnotherType.d.ts', $file);
-        $this->assertTrue(Str::startsWith($name, 'ClassReaderTest')); // Anonymous class :)
+        $this->assertEquals('class@anonymous', substr($name, 0, 15));
     }
 
     /** @test */
@@ -96,7 +98,7 @@ class ClassReaderTest extends TestCase
             new ReflectionClass($fake)
         )['file']);
 
-        /** @typescript   /types/yetAnotherType.d.ts    */
+        /** @typescript   /types/yetAnotherType.d.ts */
         $fake = new class {
         };
 
@@ -104,7 +106,7 @@ class ClassReaderTest extends TestCase
             new ReflectionClass($fake)
         )['file']);
 
-        /** @typescript AnotherEnum   /types/yetAnotherType.d.ts   */
+        /** @typescript AnotherEnum   /types/yetAnotherType.d.ts */
         $fake = new class {
         };
 
@@ -117,13 +119,43 @@ class ClassReaderTest extends TestCase
     public function it_will_resolve_the_transformer()
     {
         /**
-         * @typescript-transformer \Spatie\TypescriptTransformer\Transformers\EnumTransformer
+         * @typescript-transformer \Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer
          */
         $fake = new class {
         };
 
-        $this->assertEquals('\Spatie\TypescriptTransformer\Transformers\EnumTransformer', $this->reader->forClass(
+        $this->assertEquals('\\' . MyclabsEnumTransformer::class, $this->reader->forClass(
             new ReflectionClass($fake)
         )['transformer']);
+    }
+
+    /** @test */
+    public function it_will_will_throw_an_exception_with_non_existing_transformers()
+    {
+        $this->expectException(InvalidTransformerGiven::class);
+        $this->expectDeprecationMessageMatches("/does not exist!/");
+
+        /**
+         * @typescript-transformer \Spatie\TypescriptTransformer\Transformers\IDoNotExist
+         */
+        $fake = new class {
+        };
+
+        $this->reader->forClass(new ReflectionClass($fake));
+    }
+
+    /** @test */
+    public function it_will_will_throw_an_exception_with_class_that_does_not_implement_transformer()
+    {
+        $this->expectException(InvalidTransformerGiven::class);
+        $this->expectDeprecationMessageMatches("/does not implement the Transformer interface!/");
+
+        /**
+         * @typescript-transformer \Spatie\TypescriptTransformer\Type
+         */
+        $fake = new class {
+        };
+
+        $this->reader->forClass(new ReflectionClass($fake));
     }
 }
