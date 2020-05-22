@@ -4,7 +4,7 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spatie/typescript-transformer/run-tests?label=tests)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3Arun-tests+branch%3Amaster)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
 
-Want type safety within PHP and Typescript without duplicating a lot of code? Then you will like this package! Let's say you have a enum:
+Always wanted type safety within PHP and Typescript without duplicating a lot of code? Then you will like this package! Let's say you have a enum:
 
 ```php
 class Languages extends Enum
@@ -49,11 +49,13 @@ composer require spatie/typescript-transformer
 
 ## How does this work?
 
-First you configure the path where your PHP structures are stored, the package searches through this path and collects all the PHP classes with a `@typescript` annotation. For each class in this collection a tranformer is searched, this transformer will convert a PHP class to Typescript. It is possible to define your own transformers, more on that later. When each class is transformed to typescript, the package will write out the typescript files in a location configured by you.
+First you have to configure the package. In this configuration you define the path where your PHP is stored, the path where Typescript files will be written, the default file where Typescript structures will be written and the transformers required to convert PHP to Typescript. You can write your own transformers but more on that later...
+
+When running the package it will look in your PHP path for classes with a `@typescript` annotation, these classes will be given to a list of transformers. Each transformer in the list is checked if it can transform the PHP class to Typescript, when it can, the transformer will do it's job. In the end when all PHP classess are processed the typescript is written to the default file.
 
 ## Getting started
 
-First we need to configure the package:
+Let's take a look at the configuration:
 
 ```php
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
@@ -66,13 +68,15 @@ $config = new TypeScriptTransformerConfig(
 );
 ```
 
-Now we've got the package configured, let's transform those classes into typescript:
+Now we've got the package configured, let's start the transfomation process:
 
 ```php
 TypescriptTransformer::create($config)->transform();
 ```
 
 That's it! All the classes with a `@typescript` annotation are now converted to typescript.
+
+Classes not converted? You probably should write some transformers, read on!
 
 ## Annotation options
 
@@ -90,7 +94,7 @@ You can also give the type another name:
 class Languages extends Enum{}
 ```
 
-Or write the type to another file(make sure this file always has a `.ts` extension):
+Or write the type to another file (make sure the file always has a `.ts` extension):
 
 ```php
 /** @typescript admin/types.d.ts **/
@@ -127,7 +131,7 @@ class EnumTransformer implements Transformer
 }
 ```
 
-After creating a transformer, do not forget to add them to the transformers in your configuration!
+After creating a transformer, do not forget to add them to the list of transformers in your configuration!
 
 You can override the transformer of a class by adding following annotation:
 
