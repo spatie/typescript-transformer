@@ -23,7 +23,7 @@ class MyclabsEnumTransformer implements Transformer
         $enum = $class->getName();
 
         $options = array_map(
-            fn(Enum $enum) => "'{$enum->getValue()}'",
+            fn (Enum $enum) => "'{$enum->getValue()}'",
             $enum::values()
         );
 

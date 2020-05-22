@@ -2,14 +2,13 @@
 
 namespace Spatie\TypescriptTransformer\Actions;
 
+use hanneskod\classtools\Iterator\ClassIterator;
+use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\Type;
 use Spatie\TypescriptTransformer\TypesCollection;
-use hanneskod\classtools\Iterator\ClassIterator;
-use Illuminate\Support\Str;
-use ReflectionClass;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
@@ -33,7 +32,7 @@ class ResolveTypesCollectionAction
         $this->classReader = new ClassReader($config->getDefaultFile());
 
         $this->transformers = array_map(
-            fn(string $transformer) => new $transformer,
+            fn (string $transformer) => new $transformer,
             $this->config->getTransformers()
         );
     }

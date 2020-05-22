@@ -3,7 +3,6 @@
 namespace Spatie\TypescriptTransformer\Transformers;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Type;
 
 interface Transformer
 {

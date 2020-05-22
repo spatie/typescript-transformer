@@ -18,7 +18,6 @@ class TypeScriptTransformerConfig
         string $default_file,
         string $output_path
     ) {
-
         $this->searchingPath = $searchingPath;
         $this->transformers = $transformers;
         $this->default_file = $default_file;

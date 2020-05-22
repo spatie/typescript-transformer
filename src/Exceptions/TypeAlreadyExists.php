@@ -2,8 +2,8 @@
 
 namespace Spatie\TypescriptTransformer\Exceptions;
 
-use Spatie\TypescriptTransformer\Type;
 use Exception;
+use Spatie\TypescriptTransformer\Type;
 
 class TypeAlreadyExists extends Exception
 {

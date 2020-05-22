@@ -7,13 +7,10 @@ use ReflectionClass;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypescriptTransformer\Actions\PersistTypesCollectionAction;
-use Spatie\TypescriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypescriptTransformer\Type;
 use Spatie\TypescriptTransformer\TypesCollection;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 
 class PersistTypesCollectionActionTest extends TestCase
 {

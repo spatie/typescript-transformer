@@ -4,7 +4,6 @@ namespace Spatie\TypescriptTransformer\Tests\Actions;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypescriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnum;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnumWithCustomTransformer;
