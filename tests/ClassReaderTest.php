@@ -33,7 +33,6 @@ class ClassReaderTest extends TestCase
         );
 
         $this->assertEquals('types/generated.d.ts', $file);
-        $this->assertEquals('class@anonymous', substr($name, 0, 15));
     }
 
     /** @test */
@@ -67,7 +66,6 @@ class ClassReaderTest extends TestCase
         );
 
         $this->assertEquals('types/yetAnotherType.d.ts', $file);
-        $this->assertEquals('class@anonymous', substr($name, 0, 15));
     }
 
     /** @test */
