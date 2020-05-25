@@ -14,13 +14,13 @@ class Languages extends Enum
 }
 ```
 
-Wouldn't it be cool if you could have an automatically generated Typescript structure like this:
+Wouldn't it be cool if you could have an automatically generated Typescript definition like this:
 
 ```typescript
 export type Languages = 'typescript' | 'php';
 ```
 
-This package will automatically generate such structures for you, the only thing you have to do is adding this annotation:
+This package will automatically generate such definitions for you, the only thing you have to do is adding this annotation:
 
 ```php
 /** @typescript **/
@@ -49,9 +49,9 @@ composer require spatie/typescript-transformer
 
 ## How does this work?
 
-First you have to configure the package. In this configuration you define the path where your PHP is stored, the path where Typescript files will be written, the default file where Typescript structures will be written and the transformers required to convert PHP to Typescript. You can write your own transformers but more on that later...
+First you have to configure the package. In this configuration you define the path where your PHP classes are stored, the path where Typescript files will be written, the default file where Typescript definitions will be written and the transformers required to convert PHP to Typescript. You can write your own transformers but more on that later...
 
-When running the package it will look in your PHP path for classes with a `@typescript` annotation, these classes will be given to a list of transformers. Each transformer in the list is checked if it can transform the PHP class to Typescript, when it can, the transformer will do it's job. In the end when all PHP classess are processed the typescript is written to the default file.
+When running the package it will look in your PHP path for classes with a `@typescript` annotation, these classes will be given to a list of transformers who will try to convert the PHP class to typescript. In the end when all PHP classess are processed the typescript is written to the default file.
 
 ## Getting started
 
@@ -59,12 +59,13 @@ Let's take a look at the configuration:
 
 ```php
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
-$config = new TypeScriptTransformerConfig(
-    '../src', // path where your php classes are,
-    [MyclabsEnumTransformer::class], // an array of transformers,
-    'types.d.ts', // the default typescript_output file,
-    '../js'// $the_output_path_where_typescript_files_will_be_stored
+$config = TypeScriptTransformerConfig::create()
+    ->searchingPath(__DIR__ . '/../src') // path where your php classes are
+    ->transformers([MyclabsEnumTransformer::class]) // list of transformers
+    ->defaultFile('types.d.ts') // the default typescript output file
+    ->outputPath(__DIR__ . '/../js'); // path where to store typescript files
 );
 ```
 
@@ -101,7 +102,7 @@ Or write the type to another file (make sure the file always has a `.ts` extensi
 class Languages extends Enum{}
 ```
 
-And off course you can combine these directives giving the type a custom name and file:
+And off course you can combine these options giving the type a custom name and file:
 
 ```php
 /** @typescript Talen admin/types.d.ts **/
@@ -110,7 +111,7 @@ class Languages extends Enum{}
 
 ## Writing transformers
 
-Transformers are the heart of the package, we've added a default one in the package for the `myclabs/enum` enum, but you're probably going to write some transformers yourself.
+Transformers are the heart of the package, we've added a default one in the package for the `myclabs/enum` enum, but you're probably going to need to write some transformers yourself.
 
 A transformer is a class which implements the `Transformer` interface:
 
@@ -121,7 +122,7 @@ class EnumTransformer implements Transformer
 {
     public function canTransform(ReflectionClass $class): bool
     {
-        // can this transformer handle the givven class?
+        // can this transformer handle the given class?
     }
 
     public function transform(ReflectionClass $class, string $name): string
@@ -131,9 +132,9 @@ class EnumTransformer implements Transformer
 }
 ```
 
-After creating a transformer, do not forget to add them to the list of transformers in your configuration!
+When you create a new transformer, do not forget to add it to the list of transformers in your configuration!
 
-You can override the transformer of a class by adding following annotation:
+It is also possible to override the transformer of a class by adding following annotation:
 
 ```php
 /** 

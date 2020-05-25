@@ -2,26 +2,49 @@
 
 namespace Spatie\TypescriptTransformer;
 
+use Spatie\TypescriptTransformer\Exceptions\InvalidConfig;
+
 class TypeScriptTransformerConfig
 {
-    private string $searchingPath;
+    private ?string $searchingPath = null;
 
-    private array $transformers;
+    private array $transformers = [];
 
-    private string $default_file;
+    private string $defaultFile = 'types.d.ts';
 
-    private string $output_path;
+    private ?string $outputPath = null;
 
-    public function __construct(
-        string $searchingPath,
-        array $transformers,
-        string $default_file,
-        string $output_path
-    ) {
+    public static function create(): self
+    {
+        return new self();
+    }
+
+    public function searchingPath(string $searchingPath): self
+    {
         $this->searchingPath = $searchingPath;
+
+        return $this;
+    }
+
+    public function transformers(array $transformers): self
+    {
         $this->transformers = $transformers;
-        $this->default_file = $default_file;
-        $this->output_path = $output_path;
+
+        return $this;
+    }
+
+    public function defaultFile(string $defaultFile): self
+    {
+        $this->defaultFile = $defaultFile;
+
+        return $this;
+    }
+
+    public function outputPath(string $outputPath): self
+    {
+        $this->outputPath = $outputPath;
+
+        return $this;
     }
 
     public function getSearchingPath(): string
@@ -36,11 +59,30 @@ class TypeScriptTransformerConfig
 
     public function getDefaultFile(): string
     {
-        return $this->default_file;
+        return $this->defaultFile;
     }
 
     public function getOutputPath(): string
     {
-        return $this->output_path;
+        return $this->outputPath;
+    }
+
+    public function ensureConfigIsValid()
+    {
+        if(empty($this->searchingPath)){
+            throw InvalidConfig::missingSearchingPath();
+        }
+
+        if(empty($this->defaultFile)){
+            throw InvalidConfig::missingDefaultFile();
+        }
+
+        if(count($this->transformers) === 0){
+            throw InvalidConfig::missingTransformers();
+        }
+
+        if(empty($this->outputPath)){
+            throw InvalidConfig::missingOutputPath();
+        }
     }
 }

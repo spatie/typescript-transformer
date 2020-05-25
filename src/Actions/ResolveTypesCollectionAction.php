@@ -39,6 +39,8 @@ class ResolveTypesCollectionAction
 
     public function execute(): TypesCollection
     {
+        $this->config->ensureConfigIsValid();
+
         $typesCollection = new TypesCollection();
 
         foreach ($this->resolveIterator() as $class) {

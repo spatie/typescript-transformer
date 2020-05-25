@@ -24,12 +24,11 @@ class ResolveTypesCollectionActionTest extends TestCase
 
         $this->action = new ResolveTypesCollectionAction(
             new Finder(),
-            new TypeScriptTransformerConfig(
-                __DIR__. '/../FakeClasses',
-                [MyclabsEnumTransformer::class],
-                'types.d.ts',
-                'fake'
-            )
+            TypeScriptTransformerConfig::create()
+                ->searchingPath(__DIR__ . '/../FakeClasses')
+                ->transformers([MyclabsEnumTransformer::class])
+                ->defaultFile('types.d.ts')
+                ->outputPath('fake')
         );
     }
 

@@ -17,6 +17,8 @@ class PersistTypesCollectionAction
 
     public function execute(TypesCollection $collection): void
     {
+        $this->config->ensureConfigIsValid();
+
         $basePath = $this->resolveBasePath();
 
         foreach ($collection->get() as $file => $types) {
