@@ -69,19 +69,19 @@ class TypeScriptTransformerConfig
 
     public function ensureConfigIsValid()
     {
-        if(empty($this->searchingPath)){
+        if (empty($this->searchingPath)) {
             throw InvalidConfig::missingSearchingPath();
         }
 
-        if(empty($this->defaultFile)){
+        if (empty($this->defaultFile)) {
             throw InvalidConfig::missingDefaultFile();
         }
 
-        if(count($this->transformers) === 0){
+        if (count($this->transformers) === 0) {
             throw InvalidConfig::missingTransformers();
         }
 
-        if(empty($this->outputPath)){
+        if (empty($this->outputPath)) {
             throw InvalidConfig::missingOutputPath();
         }
     }
