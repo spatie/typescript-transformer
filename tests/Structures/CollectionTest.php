@@ -7,8 +7,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Structures\Collection;
 use Spatie\TypescriptTransformer\Structures\Type;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\FakeType;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnum;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnum;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakeType;
 
 class CollectionTest extends TestCase
 {
@@ -114,6 +114,7 @@ class CollectionTest extends TestCase
             ->getNamespaces()['TypescriptTransformer']
             ->getNamespaces()['Tests']
             ->getNamespaces()['FakeClasses']
+            ->getNamespaces()['Enum']
             ->getTypes()['TypeScriptEnum'];
 
         $this->assertEquals($reflection, $found->reflection);

@@ -1,13 +1,13 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Actions;
+namespace Spatie\TypescriptTransformer\Tests\Steps;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Steps\ResolveTypesStep;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnum;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnumWithCustomTransformer;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnumWithName;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnum;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnumWithCustomTransformer;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnumWithName;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
@@ -23,7 +23,7 @@ class ResolveTypesStepTest extends TestCase
         $this->action = new ResolveTypesStep(
             new Finder(),
             TypeScriptTransformerConfig::create()
-                ->searchingPath(__DIR__ . '/../FakeClasses')
+                ->searchingPath(__DIR__ . '/../FakeClasses/Enum')
                 ->transformers([MyclabsEnumTransformer::class])
                 ->outputFile('types.d.ts')
         );

@@ -6,7 +6,7 @@ use Spatie\TypescriptTransformer\Structures\Collection;
 use Spatie\TypescriptTransformer\Structures\Type;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
-class PersistTypesCollectionAction
+class PersistTypesCollectionStep
 {
     private TypeScriptTransformerConfig $config;
 

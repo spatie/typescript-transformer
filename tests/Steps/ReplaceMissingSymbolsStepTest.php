@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Actions;
+namespace Spatie\TypescriptTransformer\Tests\Steps;
 
 use PHPUnit\Framework\TestCase;
 use Spatie\TypescriptTransformer\Steps\ReplaceMissingSymbolsStep;
 use Spatie\TypescriptTransformer\Structures\Collection;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\FakeType;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakeType;
 
 class ReplaceMissingSymbolsStepTest extends TestCase
 {
@@ -39,6 +39,6 @@ class ReplaceMissingSymbolsStepTest extends TestCase
         $types = $collection->getStructure()->getTypes();
 
         $this->assertCount(1, $types);
-        $this->assertEquals('{enum: Enum, non-existing: any}', $types['Dto']->transformed);
+        $this->assertEquals('{enum: enums.Enum, non-existing: any}', $types['Dto']->transformed);
     }
 }
