@@ -1,9 +1,10 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\FakeClasses;
+namespace Spatie\TypescriptTransformer\Tests\Fakes;
 
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakeReflection;
 
 class FakeType extends Type
 {

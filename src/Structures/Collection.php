@@ -22,11 +22,10 @@ class Collection
 
     public function add(Type $type): self
     {
-        $segments = ! empty($type->reflection->getNamespaceName())
-            ? explode('\\', $type->reflection->getNamespaceName())
-            : [];
-
-        $this->structure->add($segments, $type);
+        $this->structure->add(
+            $type->getNamespaceSegments(),
+            $type
+        );
 
         $this->types[$type->reflection->getName()] = $type;
 
@@ -35,7 +34,9 @@ class Collection
 
     public function find(string $class): ?Type
     {
-        return $this->structure->find(explode('\\', $class));
+//        return $this->structure->find(explode('\\', $class));
+
+        return $this->types[$class] ?? null;
     }
 
     public function map(Closure $closure)

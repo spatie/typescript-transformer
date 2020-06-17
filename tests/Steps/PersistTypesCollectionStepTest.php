@@ -1,21 +1,21 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Actions;
+namespace Spatie\TypescriptTransformer\Tests\Steps;
 
 use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionAction;
+use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionStep;
 use Spatie\TypescriptTransformer\Structures\Collection;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\FakeType;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakeType;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
-class PersistTypesCollectionActionTest extends TestCase
+class PersistTypesCollectionStepTest extends TestCase
 {
     use MatchesSnapshots;
 
-    private PersistTypesCollectionAction $action;
+    private PersistTypesCollectionStep $action;
 
     private TemporaryDirectory $temporaryDirectory;
 
@@ -25,7 +25,7 @@ class PersistTypesCollectionActionTest extends TestCase
 
         $this->temporaryDirectory = (new TemporaryDirectory())->create();
 
-        $this->action = new PersistTypesCollectionAction(
+        $this->action = new PersistTypesCollectionStep(
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/../FakeClasses')
                 ->transformers([MyclabsEnumTransformer::class])

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\FakeClasses;
+namespace Spatie\TypescriptTransformer\Tests\FakeClasses\Enum;
 
 use MyCLabs\Enum\Enum;
 

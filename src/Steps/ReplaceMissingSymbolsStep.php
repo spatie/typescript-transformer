@@ -2,6 +2,7 @@
 
 namespace Spatie\TypescriptTransformer\Steps;
 
+use ReflectionClass;
 use Spatie\TypescriptTransformer\Structures\Collection;
 use Spatie\TypescriptTransformer\Structures\Type;
 
@@ -25,7 +26,7 @@ class ReplaceMissingSymbolsStep
             $foundSymbol = $collection->find($symbol);
 
             $missingSymbols[$symbol] = $foundSymbol !== null
-                ? $foundSymbol->name
+                ? $foundSymbol->getTypescriptName()
                 : 'any';
         }
 

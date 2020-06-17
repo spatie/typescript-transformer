@@ -5,9 +5,23 @@ namespace Spatie\TypescriptTransformer\Transformers;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Structures\TransformedType;
 
-interface Transformer
+abstract class Transformer
 {
-    public function canTransform(ReflectionClass $class): bool;
+    protected array $missingSymbols = [];
 
-    public function transform(ReflectionClass $class, string $name): TransformedType;
+    public abstract function canTransform(ReflectionClass $class): bool;
+
+    public function execute(ReflectionClass $class, string $name)
+    {
+        $this->missingSymbols = [];
+
+        return [
+            'transformed' => $this->transform($class, $name),
+            'missingSymbols' => $this->missingSymbols,
+        ];
+    }
+
+    protected abstract function transform(ReflectionClass $class, string $name): string;
+
+
 }

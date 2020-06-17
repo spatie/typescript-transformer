@@ -1,0 +1,3 @@
+export type Test = {
+    collection : Array<{%Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum%}>;
+}
