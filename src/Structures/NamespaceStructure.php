@@ -30,13 +30,13 @@ class NamespaceStructure
 
     public function find(array $segments): ?Type
     {
-        if(count($segments) === 1){
+        if (count($segments) === 1) {
             return $this->types[array_shift($segments)] ?? null;
         }
 
-        $namespace =  $this->namespaces[array_shift($segments)] ?? null;
+        $namespace = $this->namespaces[array_shift($segments)] ?? null;
 
-        if($namespace === null){
+        if ($namespace === null) {
             return null;
         }
 

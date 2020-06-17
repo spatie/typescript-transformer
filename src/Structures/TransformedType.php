@@ -2,8 +2,6 @@
 
 namespace Spatie\TypescriptTransformer\Structures;
 
-use ReflectionClass;
-
 class TransformedType
 {
     public string $transformed;
@@ -13,8 +11,7 @@ class TransformedType
     public static function create(
         string $transformed,
         array $missingSymbols = []
-    )
-    {
+    ) {
         return new self($transformed, $missingSymbols);
     }
 

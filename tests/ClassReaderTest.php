@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\InvalidTransformerGiven;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnum;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 
 class ClassReaderTest extends TestCase

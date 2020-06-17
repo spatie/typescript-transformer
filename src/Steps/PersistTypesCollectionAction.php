@@ -28,7 +28,7 @@ class PersistTypesCollectionAction
         foreach ($collection->getTypes() as $type) {
             $namespace = str_replace('\\', '.', $type->reflection->getNamespaceName());
 
-            if(empty($namespace)){
+            if (empty($namespace)) {
                 $rootTypes[] = $type;
 
                 continue;
@@ -45,7 +45,7 @@ class PersistTypesCollectionAction
             $output .= "namespace {$namespace} {".PHP_EOL;
 
             $output .= join(PHP_EOL, array_map(
-                fn(Type $type) => $type->transformed,
+                fn (Type $type) => $type->transformed,
                 $types
             ));
 
@@ -55,7 +55,7 @@ class PersistTypesCollectionAction
         }
 
         $output .= join(PHP_EOL, array_map(
-            fn(Type $type) => $type->transformed,
+            fn (Type $type) => $type->transformed,
             $rootTypes
         ));
 

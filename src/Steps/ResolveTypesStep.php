@@ -7,9 +7,8 @@ use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypescriptTransformer\Structures\Collection;
-use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\Structures\Type;
-use Spatie\TypescriptTransformer\TypesCollection;
+use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
@@ -33,7 +32,7 @@ class ResolveTypesStep
         $this->classReader = new ClassReader();
 
         $this->transformers = array_map(
-            fn(string $transformer) => new $transformer,
+            fn (string $transformer) => new $transformer,
             $this->config->getTransformers()
         );
     }
@@ -95,6 +94,4 @@ class ResolveTypesStep
 
         throw TransformerNotFound::create($class);
     }
-
-
 }

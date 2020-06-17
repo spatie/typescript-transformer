@@ -5,14 +5,10 @@ namespace Spatie\TypescriptTransformer\Tests\Structures;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Exceptions\TypeAlreadyExists;
 use Spatie\TypescriptTransformer\Structures\Collection;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
 use Spatie\TypescriptTransformer\Structures\Type;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\FakeReflection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\FakeType;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnum;
-use Spatie\TypescriptTransformer\TypesCollection;
 
 class CollectionTest extends TestCase
 {

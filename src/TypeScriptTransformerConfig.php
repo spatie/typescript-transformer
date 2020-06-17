@@ -59,7 +59,7 @@ class TypeScriptTransformerConfig
             throw InvalidConfig::missingSearchingPath();
         }
 
-        if(empty($this->outputFile)){
+        if (empty($this->outputFile)) {
             throw InvalidConfig::missingOutputFile();
         }
 

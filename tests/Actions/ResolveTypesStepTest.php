@@ -2,13 +2,9 @@
 
 namespace Spatie\TypescriptTransformer\Tests\Actions;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Steps\ResolveTypesStep;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
-use Spatie\TypescriptTransformer\Structures\Type;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\FakeTypescriptTransformer;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnum;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnumWithCustomTransformer;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnumWithName;

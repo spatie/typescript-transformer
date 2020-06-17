@@ -3,16 +3,9 @@
 namespace Spatie\TypescriptTransformer\Tests\Actions;
 
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Spatie\TypescriptTransformer\Steps\ReplaceMissingSymbolsStep;
 use Spatie\TypescriptTransformer\Structures\Collection;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
-use Spatie\TypescriptTransformer\Structures\Type;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\FakeType;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\FakeTypescriptTransformer;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\TypescriptEnum;
-use Spatie\TypescriptTransformer\TypesCollection;
-
 
 class ReplaceMissingSymbolsStepTest extends TestCase
 {
