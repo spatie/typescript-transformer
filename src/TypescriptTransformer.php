@@ -2,8 +2,8 @@
 
 namespace Spatie\TypescriptTransformer;
 
-use Spatie\TypescriptTransformer\Actions\PersistTypesCollectionAction;
-use Spatie\TypescriptTransformer\Actions\ResolveTypesCollectionAction;
+use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionAction;
+use Spatie\TypescriptTransformer\Steps\ResolveTypesStep;
 use Symfony\Component\Finder\Finder;
 
 class TypescriptTransformer
@@ -22,7 +22,7 @@ class TypescriptTransformer
 
     public function transform()
     {
-        $typesResolver = new ResolveTypesCollectionAction(
+        $typesResolver = new ResolveTypesStep(
             new Finder(),
             $this->config
         );

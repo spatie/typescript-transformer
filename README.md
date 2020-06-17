@@ -64,7 +64,7 @@ use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 $config = TypeScriptTransformerConfig::create()
     ->searchingPath(__DIR__ . '/../src') // path where your php classes are
     ->transformers([MyclabsEnumTransformer::class]) // list of transformers
-    ->defaultFile('types.d.ts') // the default typescript output file
+    ->outputFile('types.d.ts') // the default typescript output file
     ->outputPath(__DIR__ . '/../js'); // path where to store typescript files
 );
 ```

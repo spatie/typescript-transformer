@@ -11,18 +11,13 @@ class InvalidConfig extends Exception
         return new self('The searching path in the config is missing');
     }
 
-    public static function missingDefaultFile(): self
+    public static function missingOutputFile(): self
     {
-        return new self('The default file in the config is missing');
+        return new self('The output file in the config is missing');
     }
 
     public static function missingTransformers()
     {
         return new self('No transformers were defined in the config');
-    }
-
-    public static function missingOutputPath(): self
-    {
-        return new self('The output path in the config is missing');
     }
 }

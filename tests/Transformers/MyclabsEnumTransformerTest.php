@@ -41,9 +41,13 @@ class MyclabsEnumTransformerTest extends TestCase
             private const EDIT = 'edit';
         };
 
+        $transformed = $this->transformer->transform(new ReflectionClass($enum), 'Enum');
+
         $this->assertEquals(
             "export type Enum = 'view' | 'edit';",
-            $this->transformer->transform(new ReflectionClass($enum), 'Enum')
+            $transformed->transformed
         );
+
+        $this->assertEmpty($transformed->missingSymbols);
     }
 }

@@ -1,28 +1,28 @@
 <?php
 
-namespace Spatie\TypescriptTransformer;
+namespace Spatie\TypescriptTransformer\Structures;
 
 use ReflectionClass;
 
 class Type
 {
-    public ReflectionClass $class;
-
-    public string $file;
+    public ReflectionClass $reflection;
 
     public string $name;
 
     public string $transformed;
 
+    public array $missingSymbols;
+
     public function __construct(
         ReflectionClass $class,
-        string $file,
         string $name,
-        string $transformed
+        string $transformed,
+        array $missingSymbols
     ) {
-        $this->class = $class;
-        $this->file = $file;
+        $this->reflection = $class;
         $this->name = $name;
         $this->transformed = $transformed;
+        $this->missingSymbols = $missingSymbols;
     }
 }

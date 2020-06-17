@@ -1,18 +1,19 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Actions;
+namespace Spatie\TypescriptTransformer\Steps;
 
 use hanneskod\classtools\Iterator\ClassIterator;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
+use Spatie\TypescriptTransformer\Structures\Collection;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
-use Spatie\TypescriptTransformer\Type;
+use Spatie\TypescriptTransformer\Structures\Type;
 use Spatie\TypescriptTransformer\TypesCollection;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
-class ResolveTypesCollectionAction
+class ResolveTypesStep
 {
     private Finder $finder;
 
@@ -29,19 +30,19 @@ class ResolveTypesCollectionAction
 
         $this->config = $config;
 
-        $this->classReader = new ClassReader($config->getDefaultFile());
+        $this->classReader = new ClassReader();
 
         $this->transformers = array_map(
-            fn (string $transformer) => new $transformer,
+            fn(string $transformer) => new $transformer,
             $this->config->getTransformers()
         );
     }
 
-    public function execute(): TypesCollection
+    public function execute(): Collection
     {
         $this->config->ensureConfigIsValid();
 
-        $typesCollection = new TypesCollection();
+        $typesCollection = Collection::create();
 
         foreach ($this->resolveIterator() as $class) {
             if (strpos($class->getDocComment(), '@typescript') === false) {
@@ -49,18 +50,20 @@ class ResolveTypesCollectionAction
             }
 
             [
-                'file' => $file,
                 'name' => $name,
                 'transformer' => $transformer,
             ] = $this->classReader->forClass($class);
 
-            $transformer = $this->resolveTransformer($class, $transformer);
+            $transformed = $this->resolveTransformer($class, $transformer)->transform(
+                $class,
+                $name
+            );
 
             $typesCollection->add(new Type(
                 $class,
-                $file,
                 $name,
-                $transformer->transform($class, $name)
+                $transformed->transformed,
+                $transformed->missingSymbols
             ));
         }
 
@@ -92,4 +95,6 @@ class ResolveTypesCollectionAction
 
         throw TransformerNotFound::create($class);
     }
+
+
 }

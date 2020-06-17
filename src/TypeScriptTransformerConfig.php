@@ -10,9 +10,7 @@ class TypeScriptTransformerConfig
 
     private array $transformers = [];
 
-    private string $defaultFile = 'types.d.ts';
-
-    private ?string $outputPath = null;
+    private string $outputFile = 'types.d.ts';
 
     public static function create(): self
     {
@@ -33,16 +31,9 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function defaultFile(string $defaultFile): self
+    public function outputFile(string $defaultFile): self
     {
-        $this->defaultFile = $defaultFile;
-
-        return $this;
-    }
-
-    public function outputPath(string $outputPath): self
-    {
-        $this->outputPath = $outputPath;
+        $this->outputFile = $defaultFile;
 
         return $this;
     }
@@ -57,14 +48,9 @@ class TypeScriptTransformerConfig
         return $this->transformers;
     }
 
-    public function getDefaultFile(): string
+    public function getOutputFile(): string
     {
-        return $this->defaultFile;
-    }
-
-    public function getOutputPath(): string
-    {
-        return $this->outputPath;
+        return $this->outputFile;
     }
 
     public function ensureConfigIsValid()
@@ -73,16 +59,12 @@ class TypeScriptTransformerConfig
             throw InvalidConfig::missingSearchingPath();
         }
 
-        if (empty($this->defaultFile)) {
-            throw InvalidConfig::missingDefaultFile();
+        if(empty($this->outputFile)){
+            throw InvalidConfig::missingOutputFile();
         }
 
         if (count($this->transformers) === 0) {
             throw InvalidConfig::missingTransformers();
-        }
-
-        if (empty($this->outputPath)) {
-            throw InvalidConfig::missingOutputPath();
         }
     }
 }

@@ -3,13 +3,12 @@
 namespace Spatie\TypescriptTransformer\Tests\Actions;
 
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Spatie\TypescriptTransformer\Actions\PersistTypesCollectionAction;
+use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionAction;
+use Spatie\TypescriptTransformer\Structures\Collection;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\FakeType;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
-use Spatie\TypescriptTransformer\Type;
-use Spatie\TypescriptTransformer\TypesCollection;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 class PersistTypesCollectionActionTest extends TestCase
@@ -30,98 +29,48 @@ class PersistTypesCollectionActionTest extends TestCase
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/../FakeClasses')
                 ->transformers([MyclabsEnumTransformer::class])
-                ->defaultFile('types.d.ts')
-                ->outputPath($this->temporaryDirectory->path())
+                ->outputFile($this->temporaryDirectory->path('types.d.ts'))
         );
     }
 
     /** @test */
     public function it_will_persist_the_types()
     {
-        $typeCollection = new TypesCollection();
+        $collection = Collection::create()
+            ->add(FakeType::create('Enum')->withoutNamespace())
+            ->add(FakeType::create('Enum')->withNamespace('test'))
+            ->add(FakeType::create('Enum')->withNamespace('test\test'));
 
-        $typeCollection->add(new Type(
-            new ReflectionClass(new class {
-            }),
-            'types.d.ts',
-            'Enum',
-            "export type Enum = 'view' | 'edit';"
-        ));
-
-        $this->action->execute($typeCollection);
+        $this->action->execute($collection);
 
         $this->assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
     }
 
     /** @test */
-    public function it_will_persist_multiple_types_in_one_file()
+    public function it_can_persist_multiple_types_in_one_namespace()
     {
-        $typeCollection = new TypesCollection();
+        $collection = Collection::create()
+            ->add(FakeType::create('Enum')->withTransformed('transformed Enum')->withoutNamespace())
+            ->add(FakeType::create('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace())
+            ->add(FakeType::create('Enum')->withTransformed('transformed test\Enum')->withNamespace('test'))
+            ->add(FakeType::create('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test'));
 
-        $typeCollection->add(new Type(
-            new ReflectionClass(new class {
-            }),
-            'types.d.ts',
-            'EnumOne',
-            "export type EnumOne = 'view' | 'edit';"
-        ));
-
-        $typeCollection->add(new Type(
-            new ReflectionClass(new class {
-            }),
-            'types.d.ts',
-            'EnumTwo',
-            "export type EnumTwo = 'view' | 'edit';"
-        ));
-
-        $this->action->execute($typeCollection);
+        $this->action->execute($collection);
 
         $this->assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
     }
 
     /** @test */
-    public function it_can_persist_types_in_multiple_directories()
+    public function it_can_re_save_the_file()
     {
-        $typeCollection = new TypesCollection();
+        $collection = Collection::create()
+            ->add(FakeType::create('Enum')->withoutNamespace());
 
-        $typeCollection->add(new Type(
-            new ReflectionClass(new class {
-            }),
-            'types.d.ts',
-            'Enum',
-            "export type Enum = 'view' | 'edit';"
-        ));
+        $this->action->execute($collection);
 
-        $typeCollection->add(new Type(
-            new ReflectionClass(new class {
-            }),
-            'other/types.d.ts',
-            'Enum',
-            "export type Enum = 'view' | 'edit';"
-        ));
+        $collection->add(FakeType::create('Enum')->withNamespace('test'));
 
-        $this->action->execute($typeCollection);
-
-        $this->assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
-        $this->assertMatchesFileSnapshot($this->temporaryDirectory->path("other/types.d.ts"));
-    }
-
-    /** @test */
-    public function it_can_overwrite_files()
-    {
-        file_put_contents($this->temporaryDirectory->path('types.d.ts'), 'hello');
-
-        $typeCollection = new TypesCollection();
-
-        $typeCollection->add(new Type(
-            new ReflectionClass(new class {
-            }),
-            'types.d.ts',
-            'Enum',
-            "export type Enum = 'view' | 'edit';"
-        ));
-
-        $this->action->execute($typeCollection);
+        $this->action->execute($collection);
 
         $this->assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
     }
