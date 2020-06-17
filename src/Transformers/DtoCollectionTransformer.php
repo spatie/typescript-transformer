@@ -3,9 +3,7 @@
 namespace Spatie\TypescriptTransformer\Transformers;
 
 use ReflectionClass;
-use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
 
 class DtoCollectionTransformer extends Transformer
 {
@@ -35,7 +33,7 @@ class DtoCollectionTransformer extends Transformer
 
         $name = $returnType->getName();
 
-        if(! $returnType->isBuiltin()){
+        if (! $returnType->isBuiltin()) {
             $this->missingSymbols[] = $name;
 
             return "{%{$name}%}";

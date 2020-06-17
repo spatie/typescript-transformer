@@ -3,13 +3,12 @@
 namespace Spatie\TypescriptTransformer\Transformers;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
 
 abstract class Transformer
 {
     protected array $missingSymbols = [];
 
-    public abstract function canTransform(ReflectionClass $class): bool;
+    abstract public function canTransform(ReflectionClass $class): bool;
 
     public function execute(ReflectionClass $class, string $name)
     {
@@ -21,7 +20,5 @@ abstract class Transformer
         ];
     }
 
-    protected abstract function transform(ReflectionClass $class, string $name): string;
-
-
+    abstract protected function transform(ReflectionClass $class, string $name): string;
 }

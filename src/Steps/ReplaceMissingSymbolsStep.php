@@ -2,7 +2,6 @@
 
 namespace Spatie\TypescriptTransformer\Steps;
 
-use ReflectionClass;
 use Spatie\TypescriptTransformer\Structures\Collection;
 use Spatie\TypescriptTransformer\Structures\Type;
 

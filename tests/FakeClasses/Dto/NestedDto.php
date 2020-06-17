@@ -3,8 +3,6 @@
 namespace Spatie\TypescriptTransformer\Tests\FakeClasses\Dto;
 
 use Spatie\DataTransferObject\DataTransferObject;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Dto\SimpleDto;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Dto\SimpleDtoCollection;
 
 class NestedDto extends DataTransferObject
 {

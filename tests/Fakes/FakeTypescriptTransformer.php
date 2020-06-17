@@ -4,7 +4,6 @@ namespace Spatie\TypescriptTransformer\Tests\Fakes;
 
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 
 class FakeTypescriptTransformer extends Transformer

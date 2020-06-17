@@ -7,7 +7,6 @@ use ReflectionProperty;
 use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
 use Spatie\DataTransferObject\FieldValidator;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
 
 class DtoTransformer extends Transformer
 {
@@ -21,7 +20,7 @@ class DtoTransformer extends Transformer
         $properties = $this->resolveProperties($class);
 
         $properties = array_map(
-            fn(ReflectionProperty $property) => $this->resolveTypeDefinition($property),
+            fn (ReflectionProperty $property) => $this->resolveTypeDefinition($property),
             $properties
         );
 
@@ -40,7 +39,7 @@ class DtoTransformer extends Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn(ReflectionProperty $property) => ! $property->isStatic()
+            fn (ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);
@@ -120,12 +119,12 @@ class DtoTransformer extends Transformer
     ): array {
         $collectionTypes = array_filter(
             $typeDefinition->allowedTypes,
-            fn(string $type) => $this->isCollectionType($type)
+            fn (string $type) => $this->isCollectionType($type)
         );
 
         $types = $typeDefinition->allowedTypes;
 
-        foreach ($collectionTypes as $type){
+        foreach ($collectionTypes as $type) {
             $types = array_merge(
                 $this->getTypesInCollection($type),
                 $types
@@ -144,7 +143,7 @@ class DtoTransformer extends Transformer
     {
         $reflection = (new ReflectionClass($type))->getMethod('current');
 
-        if(!$reflection->hasReturnType()){
+        if (! $reflection->hasReturnType()) {
             return [];
         }
 
