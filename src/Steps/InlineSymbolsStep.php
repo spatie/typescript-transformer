@@ -5,7 +5,7 @@ namespace Spatie\TypescriptTransformer\Steps;
 use Spatie\TypescriptTransformer\Structures\Collection;
 use Spatie\TypescriptTransformer\Structures\Type;
 
-class ReplaceMissingSymbolsStep
+class InlineSymbolsStep
 {
     public function execute(Collection $collection): Collection
     {
@@ -24,14 +24,8 @@ class ReplaceMissingSymbolsStep
         foreach ($type->missingSymbols as $symbol) {
             $foundSymbol = $collection->find($symbol);
 
-            if ($foundSymbol === null) {
-                $missingSymbols[$symbol] = 'any';
-
-                continue;
-            }
-
-            if (! $foundSymbol->isInline) {
-                $missingSymbols[$symbol] = $foundSymbol->getTypescriptName();
+            if ($foundSymbol !== null && $foundSymbol->isInline) {
+                $missingSymbols[$symbol] = $foundSymbol->transformed;
             }
         }
 

@@ -56,6 +56,7 @@ class ResolveTypesStep
             [
                 'transformed' => $transformed,
                 'missingSymbols' => $missingSymbols,
+                'isInline' => $isInline
             ] = $this->resolveTransformer($class, $transformer)->execute(
                 $class,
                 $name
@@ -65,7 +66,8 @@ class ResolveTypesStep
                 $class,
                 $name,
                 $transformed,
-                $missingSymbols
+                $missingSymbols,
+                $isInline
             ));
         }
 

@@ -22,7 +22,7 @@ class DtoTransformerTest extends TestCase
     /** @test */
     public function it_can_transform_types()
     {
-        $this->markTestIncomplete();
+//        $this->markTestIncomplete();
 
         [
             'transformed' => $transformed,

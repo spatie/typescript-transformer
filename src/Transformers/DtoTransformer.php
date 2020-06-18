@@ -45,7 +45,6 @@ class DtoTransformer extends Transformer
         return array_values($properties);
     }
 
-
     private function resolveTypeDefinition(
         ReflectionProperty $property
     ): string {
@@ -58,13 +57,11 @@ class DtoTransformer extends Transformer
                     return false;
                 }
 
-                if ($this->isCollectionType($type)) {
-                    return false;
+                if(empty($typeDefinition->allowedArrayTypes)){
+                    return true;
                 }
 
-                return empty($typeDefinition->allowedArrayTypes)
-                    ? true
-                    : $type !== 'array';
+                return $type !== 'array'; // Remove array type if there are array types
             }
         );
 
@@ -107,46 +104,6 @@ class DtoTransformer extends Transformer
             return $mapping[$type];
         }
 
-        if (! in_array($type, $this->missingSymbols)) {
-            $this->missingSymbols[] = $type;
-        }
-
-        return "{%{$type}%}";
-    }
-
-    private function resolveArrayTypes(
-        FieldValidator $typeDefinition
-    ): array {
-        $collectionTypes = array_filter(
-            $typeDefinition->allowedTypes,
-            fn (string $type) => $this->isCollectionType($type)
-        );
-
-        $types = $typeDefinition->allowedTypes;
-
-        foreach ($collectionTypes as $type) {
-            $types = array_merge(
-                $this->getTypesInCollection($type),
-                $types
-            );
-        }
-
-        return $types;
-    }
-
-    protected function isCollectionType(string $type): bool
-    {
-        return is_subclass_of($type, DataTransferObjectCollection::class);
-    }
-
-    protected function getTypesInCollection(string $type): array
-    {
-        $reflection = (new ReflectionClass($type))->getMethod('current');
-
-        if (! $reflection->hasReturnType()) {
-            return [];
-        }
-
-        return [$reflection->getReturnType()->getName()];
+        return $this->addMissingSymbol($type);
     }
 }

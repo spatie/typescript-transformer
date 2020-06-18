@@ -9,8 +9,7 @@ use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnothe
 /** @typescript */
 class Dto extends DataTransferObject
 {
-    /** @var array|\Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto[] */
-    public array $other_dto_array;
+    public OtherDtoCollection $other_dto_collection;
 
     public string $string;
 
@@ -26,7 +25,8 @@ class Dto extends DataTransferObject
 
     public OtherDto $other_dto;
 
-    public YetAnotherDto $another_namespace_dto;
+    /** @var array|\Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto[] */
+    public array $other_dto_array;
 
-    public OtherDtoCollection $other_dto_collection;
+    public YetAnotherDto $another_namespace_dto;
 }

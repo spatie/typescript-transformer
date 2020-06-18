@@ -26,6 +26,10 @@ class PersistTypesCollectionStep
         $rootTypes = [];
 
         foreach ($collection->getTypes() as $type) {
+            if($type->isInline){
+                continue;
+            }
+
             $namespace = str_replace('\\', '.', $type->reflection->getNamespaceName());
 
             if (empty($namespace)) {

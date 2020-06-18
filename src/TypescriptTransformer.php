@@ -2,6 +2,7 @@
 
 namespace Spatie\TypescriptTransformer;
 
+use Spatie\TypescriptTransformer\Steps\InlineSymbolsStep;
 use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionStep;
 use Spatie\TypescriptTransformer\Steps\ReplaceMissingSymbolsStep;
 use Spatie\TypescriptTransformer\Steps\ResolveTypesStep;
@@ -28,11 +29,15 @@ class TypescriptTransformer
             $this->config
         );
 
+        $inlineSymbolsStep = new InlineSymbolsStep();
+
         $replaceMissingSymbolsStep = new ReplaceMissingSymbolsStep();
 
         $persistTypesCollectionStep = new PersistTypesCollectionStep($this->config);
 
         $collection = $resolveTypesStep->execute();
+
+        $collection = $inlineSymbolsStep->execute($collection);
 
         $collection = $replaceMissingSymbolsStep->execute($collection);
 

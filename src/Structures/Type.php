@@ -14,16 +14,20 @@ class Type
 
     public array $missingSymbols;
 
+    public bool $isInline;
+
     public function __construct(
         ReflectionClass $class,
         string $name,
         string $transformed,
-        array $missingSymbols
+        array $missingSymbols,
+        bool $isInline
     ) {
         $this->reflection = $class;
         $this->name = $name;
         $this->transformed = $transformed;
         $this->missingSymbols = $missingSymbols;
+        $this->isInline = $isInline;
     }
 
     public function getNamespaceSegments(): array

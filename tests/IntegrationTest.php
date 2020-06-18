@@ -15,7 +15,7 @@ class IntegrationTest extends TestCase
     /** @test */
     public function it_works()
     {
-        $this->markTestIncomplete();
+//        $this->markTestIncomplete();
 
         $temporaryDirectory = (new TemporaryDirectory())->create();
 
