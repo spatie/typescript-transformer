@@ -7,6 +7,8 @@ use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 
 class TypeDto extends DataTransferObject
 {
+    public RegularEnum $other_type;
+
     public string $string;
 
     public ?string $nullable_string;
@@ -37,8 +39,6 @@ class TypeDto extends DataTransferObject
     public $array_with_null;
 
     public array $array;
-
-    public RegularEnum $other_type;
 
     public $none;
 }

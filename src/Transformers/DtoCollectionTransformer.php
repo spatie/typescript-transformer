@@ -12,7 +12,7 @@ class DtoCollectionTransformer extends InlineTransformer
         return is_subclass_of($class->getName(), DataTransferObjectCollection::class);
     }
 
-    public function transform(ReflectionClass $class, string $name): string
+    protected function transform(ReflectionClass $class, string $name): string
     {
         return "Array<{$this->resolveType($class)}>";
     }

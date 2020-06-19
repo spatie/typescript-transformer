@@ -16,6 +16,8 @@ class Type
 
     public bool $isInline;
 
+    public bool $isCompletelyReplaced = false;
+
     public function __construct(
         ReflectionClass $class,
         string $name,
@@ -28,6 +30,10 @@ class Type
         $this->transformed = $transformed;
         $this->missingSymbols = $missingSymbols;
         $this->isInline = $isInline;
+
+        if (empty($this->missingSymbols)) {
+            $this->isCompletelyReplaced = true;
+        }
     }
 
     public function getNamespaceSegments(): array
@@ -49,5 +55,23 @@ class Type
         );
 
         return implode('.', $segments);
+    }
+
+    public function replaceSymbol(string $class, string $replacement)
+    {
+        if (in_array($class, $this->missingSymbols)) {
+            unset($this->missingSymbols[array_search($class, $this->missingSymbols)]);
+        }
+
+        $this->transformed = str_replace(
+            "{%{$class}%}",
+            $replacement,
+            $this->transformed
+        );
+    }
+
+    public function isCompletelyReplaced()
+    {
+        return $this->isCompletelyReplaced;
     }
 }

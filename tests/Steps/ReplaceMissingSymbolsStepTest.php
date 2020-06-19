@@ -36,9 +36,8 @@ class ReplaceMissingSymbolsStepTest extends TestCase
 
         $collection = $this->action->execute($collection);
 
-        $types = $collection->getStructure()->getTypes();
+        $types = $collection->getTypes();
 
-        $this->assertCount(1, $types);
         $this->assertEquals('{enum: enums.Enum, non-existing: any}', $types['Dto']->transformed);
     }
 }

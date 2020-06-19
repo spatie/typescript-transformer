@@ -6,6 +6,7 @@ use Spatie\TypescriptTransformer\Steps\InlineSymbolsStep;
 use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionStep;
 use Spatie\TypescriptTransformer\Steps\ReplaceMissingSymbolsStep;
 use Spatie\TypescriptTransformer\Steps\ResolveTypesStep;
+use Spatie\TypescriptTransformer\Structures\Collection;
 use Symfony\Component\Finder\Finder;
 
 class TypescriptTransformer
@@ -22,14 +23,12 @@ class TypescriptTransformer
         $this->config = $config;
     }
 
-    public function transform()
+    public function transform(): Collection
     {
         $resolveTypesStep = new ResolveTypesStep(
             new Finder(),
             $this->config
         );
-
-        $inlineSymbolsStep = new InlineSymbolsStep();
 
         $replaceMissingSymbolsStep = new ReplaceMissingSymbolsStep();
 
@@ -37,10 +36,10 @@ class TypescriptTransformer
 
         $collection = $resolveTypesStep->execute();
 
-        $collection = $inlineSymbolsStep->execute($collection);
-
         $collection = $replaceMissingSymbolsStep->execute($collection);
 
         $persistTypesCollectionStep->execute($collection);
+
+        return $collection;
     }
 }

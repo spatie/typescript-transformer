@@ -17,41 +17,34 @@ class CollectionTest extends TestCase
     {
         $structure = Collection::create()->add(
             $fake = FakeType::create('Enum')->withoutNamespace()
-        )->getStructure();
+        )->getTypes();
 
-        $this->assertCount(0, $structure->getNamespaces());
-        $this->assertCount(1, $structure->getTypes());
+        $this->assertCount(1, $structure);
         $this->assertEquals([
             'Enum' => $fake,
-        ], $structure->getTypes());
+        ], $structure);
     }
 
     /** @test */
     public function it_can_add_types_in_a_multi_layered_namespaces()
     {
         $structure = Collection::create()->add(
-            $fake = FakeType::create('Enum')->withNamespace('a\b\c')
-        )->getStructure();
+            $fakeC = FakeType::create('Enum')->withNamespace('a\b\c')
+        )->add(
+            $fakeB = FakeType::create('Enum')->withNamespace('a\b')
+        )->add(
+            $fakeA = FakeType::create('Enum')->withNamespace('a'),
+        )->add(
+            $fake = FakeType::create('Enum')->withoutNamespace()
+        )->getTypes();
 
-        $this->assertCount(1, $structure->getNamespaces());
-        $this->assertCount(0, $structure->getTypes());
-        $this->assertArrayHasKey('a', $structure->getNamespaces());
-
-        $structureA = $structure->getNamespaces()['a'];
-        $this->assertCount(1, $structureA->getNamespaces());
-        $this->assertCount(0, $structureA->getTypes());
-        $this->assertArrayHasKey('b', $structureA->getNamespaces());
-
-        $structureB = $structureA->getNamespaces()['b'];
-        $this->assertCount(1, $structureB->getNamespaces());
-        $this->assertCount(0, $structureB->getTypes());
-        $this->assertArrayHasKey('c', $structureB->getNamespaces());
-
-        $structureC = $structureB->getNamespaces()['c'];
-        $this->assertCount(0, $structureC->getNamespaces());
-        $this->assertCount(1, $structureC->getTypes());
-        $this->assertArrayHasKey('Enum', $structureC->getTypes());
-        $this->assertEquals($fake, $structureC->getTypes()['Enum']);
+        $this->assertCount(4, $structure);
+        $this->assertEquals([
+            'Enum' => $fake,
+            'a\Enum' => $fakeA,
+            'a\b\Enum' => $fakeB,
+            'a\b\c\Enum' => $fakeC,
+        ], $structure);
     }
 
     /** @test */
@@ -61,14 +54,13 @@ class CollectionTest extends TestCase
             $fakeA = FakeType::create('EnumA')->withNamespace('test')
         )->add(
             $fakeB = FakeType::create('EnumB')->withNamespace('test')
-        )->getStructure();
+        )->getTypes();
 
-        $structureTest = $structure->getNamespaces()['test'];
-
+        $this->assertCount(2, $structure);
         $this->assertEquals([
-            'EnumA' => $fakeA,
-            'EnumB' => $fakeB,
-        ], $structureTest->getTypes());
+            'test\EnumA' => $fakeA,
+            'test\EnumB' => $fakeB,
+        ], $structure);
     }
 
     /** @test */
@@ -84,40 +76,18 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function it_can_add_the_same_type_to_different_namespaces()
-    {
-        $structure = Collection::create()->add(
-            $fakeA = FakeType::create('Enum')->withNamespace('test')
-        )->add(
-            $fakeB = FakeType::create('Enum')->withoutNamespace()
-        )->getStructure();
-
-        $this->assertEquals([
-            'Enum' => $fakeB,
-        ], $structure->getTypes());
-
-        $this->assertEquals([
-            'Enum' => $fakeA,
-        ], $structure->getNamespaces()['test']->getTypes());
-    }
-
-    /** @test */
     public function it_can_add_a_real_type()
     {
         $reflection = new  ReflectionClass(TypescriptEnum::class);
 
         $structure = Collection::create()->add(
-            FakeType::create('TypeScriptEnum')->withReflection($reflection)
-        )->getStructure();
+            $fake = FakeType::create('TypeScriptEnum')->withReflection($reflection)
+        )->getTypes();
 
-        $found = $structure->getNamespaces()['Spatie']
-            ->getNamespaces()['TypescriptTransformer']
-            ->getNamespaces()['Tests']
-            ->getNamespaces()['FakeClasses']
-            ->getNamespaces()['Enum']
-            ->getTypes()['TypeScriptEnum'];
-
-        $this->assertEquals($reflection, $found->reflection);
+        $this->assertCount(1, $structure);
+        $this->assertEquals([
+            TypescriptEnum::class => $fake,
+        ], $structure);
     }
 
     /** @test */

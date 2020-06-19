@@ -15,7 +15,8 @@ class FakeType extends Type
             FakeReflection::create()->withName($name),
             $name,
             'fake-transformed',
-            []
+            [],
+            false
         );
     }
 
@@ -50,6 +51,17 @@ class FakeType extends Type
     public function withMissingSymbols(array $missingSymbols): self
     {
         $this->missingSymbols = $missingSymbols;
+
+        if (! empty($this->missingSymbols)) {
+            $this->isCompletelyReplaced = false;
+        }
+
+        return $this;
+    }
+
+    public function isInline(bool $isInline = true): self
+    {
+        $this->isInline = $isInline;
 
         return $this;
     }

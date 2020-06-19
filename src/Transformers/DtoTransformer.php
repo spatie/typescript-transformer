@@ -15,7 +15,7 @@ class DtoTransformer extends Transformer
         return is_subclass_of($class->getName(), DataTransferObject::class);
     }
 
-    public function transform(ReflectionClass $class, string $name): string
+    protected function transform(ReflectionClass $class, string $name): string
     {
         $properties = $this->resolveProperties($class);
 
@@ -97,7 +97,7 @@ class DtoTransformer extends Transformer
             'double' => 'number',
             'null' => 'null',
             'object' => 'object',
-            'array' => 'Array<>',
+            'array' => 'Array<any>',
         ];
 
         if (array_key_exists($type, $mapping)) {

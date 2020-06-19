@@ -4,12 +4,23 @@ namespace Spatie\TypescriptTransformer\Tests\Transformers;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use SebastianBergmann\GlobalState\TestFixture\SnapshotTrait;
+use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Dto\NestedDto;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Dto\TypeDto;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Dto;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDtoCollection;
 use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
 
 class DtoTransformerTest extends TestCase
 {
+    use MatchesSnapshots;
+
     private DtoTransformer $transformer;
 
     protected function setUp() : void
@@ -20,31 +31,24 @@ class DtoTransformerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_transform_types()
+    public function it_will_replace_types()
     {
-//        $this->markTestIncomplete();
-
         [
             'transformed' => $transformed,
             'missingSymbols' => $missingSymbols,
         ] = $this->transformer->execute(
-            new ReflectionClass(TypeDto::class),
+            new ReflectionClass(Dto::class),
             'Typed'
         );
 
-        dd($transformed);
-    }
-
-    /** @test */
-    public function it_can_transform_nested_types()
-    {
-        $this->markTestIncomplete();
-
-        $transformed = $this->transformer->execute(
-            new ReflectionClass(NestedDto::class),
-            'Nested'
-        );
-
-        dd($transformed);
+        $this->assertMatchesTextSnapshot($transformed);
+        $this->assertEquals([
+            Enum::class,
+            RegularEnum::class,
+            OtherDto::class,
+            OtherDtoCollection::class,
+            DtoWithChildren::class,
+            YetAnotherDto::class
+        ], $missingSymbols);
     }
 }

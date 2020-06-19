@@ -12,7 +12,7 @@ class MyclabsEnumTransformer extends Transformer
         return $class->isSubclassOf(Enum::class);
     }
 
-    public function transform(ReflectionClass $class, string $name): string
+    protected function transform(ReflectionClass $class, string $name): string
     {
         return "export type {$name} = {$this->resolveOptions($class)};";
     }

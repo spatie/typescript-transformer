@@ -3,6 +3,7 @@
 namespace Spatie\TypescriptTransformer\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypescriptTransformer\Transformers\DtoCollectionTransformer;
 use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
@@ -12,11 +13,11 @@ use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 class IntegrationTest extends TestCase
 {
+    use MatchesSnapshots;
+
     /** @test */
     public function it_works()
     {
-//        $this->markTestIncomplete();
-
         $temporaryDirectory = (new TemporaryDirectory())->create();
 
         $transformer = new TypescriptTransformer(
@@ -32,6 +33,6 @@ class IntegrationTest extends TestCase
 
         $transformer->transform();
 
-        dd(file_get_contents($temporaryDirectory->path('types.d.ts')));
+        $this->assertMatchesFileSnapshot($temporaryDirectory->path('types.d.ts'));
     }
 }
