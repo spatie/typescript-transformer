@@ -3,12 +3,12 @@
 namespace Spatie\TypescriptTransformer\Steps;
 
 use Spatie\TypescriptTransformer\Actions\ReplaceSymbolsInTypeAction;
-use Spatie\TypescriptTransformer\Structures\Collection;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
 
 class ReplaceMissingSymbolsStep
 {
-    public function execute(Collection $collection): Collection
+    public function execute(TypesCollection $collection): TypesCollection
     {
         $replaceSymbolsInTypeAction = new ReplaceSymbolsInTypeAction($collection);
 

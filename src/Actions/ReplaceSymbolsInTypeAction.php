@@ -3,14 +3,14 @@
 namespace Spatie\TypescriptTransformer\Actions;
 
 use Exception;
-use Spatie\TypescriptTransformer\Structures\Collection;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
 
 class ReplaceSymbolsInTypeAction
 {
-    private Collection $collection;
+    private TypesCollection $collection;
 
-    public function __construct(Collection $collection)
+    public function __construct(TypesCollection $collection)
     {
         $this->collection = $collection;
     }

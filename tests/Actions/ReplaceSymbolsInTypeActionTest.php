@@ -5,12 +5,12 @@ namespace Spatie\TypescriptTransformer\Tests\Actions;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypescriptTransformer\Actions\ReplaceSymbolsInTypeAction;
-use Spatie\TypescriptTransformer\Structures\Collection;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Tests\Fakes\FakeType;
 
 class ReplaceSymbolsInTypeActionTest extends TestCase
 {
-    private Collection $collection;
+    private TypesCollection $collection;
 
     private ReplaceSymbolsInTypeAction $action;
 
@@ -18,7 +18,7 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
     {
         parent::setUp();
 
-        $this->collection = Collection::create();
+        $this->collection = TypesCollection::create();
 
         $this->action = new ReplaceSymbolsInTypeAction($this->collection);
     }

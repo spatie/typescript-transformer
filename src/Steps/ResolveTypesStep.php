@@ -6,7 +6,7 @@ use hanneskod\classtools\Iterator\ClassIterator;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypescriptTransformer\Structures\Collection;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
@@ -37,11 +37,11 @@ class ResolveTypesStep
         );
     }
 
-    public function execute(): Collection
+    public function execute(): TypesCollection
     {
         $this->config->ensureConfigIsValid();
 
-        $typesCollection = Collection::create();
+        $typesCollection = TypesCollection::create();
 
         foreach ($this->resolveIterator() as $class) {
             if (strpos($class->getDocComment(), '@typescript') === false) {

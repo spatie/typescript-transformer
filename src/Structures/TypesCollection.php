@@ -5,7 +5,7 @@ namespace Spatie\TypescriptTransformer\Structures;
 use Closure;
 use Exception;
 
-class Collection
+class TypesCollection
 {
     private array $types = [];
 

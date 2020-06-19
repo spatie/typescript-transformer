@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionStep;
-use Spatie\TypescriptTransformer\Structures\Collection;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Tests\Fakes\FakeType;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
@@ -36,7 +36,7 @@ class PersistTypesCollectionStepTest extends TestCase
     /** @test */
     public function it_will_persist_the_types()
     {
-        $collection = Collection::create()
+        $collection = TypesCollection::create()
             ->add(FakeType::create('Enum')->withoutNamespace())
             ->add(FakeType::create('Enum')->withNamespace('test'))
             ->add(FakeType::create('Enum')->withNamespace('test\test'));
@@ -49,7 +49,7 @@ class PersistTypesCollectionStepTest extends TestCase
     /** @test */
     public function it_can_persist_multiple_types_in_one_namespace()
     {
-        $collection = Collection::create()
+        $collection = TypesCollection::create()
             ->add(FakeType::create('Enum')->withTransformed('transformed Enum')->withoutNamespace())
             ->add(FakeType::create('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace())
             ->add(FakeType::create('Enum')->withTransformed('transformed test\Enum')->withNamespace('test'))
@@ -63,7 +63,7 @@ class PersistTypesCollectionStepTest extends TestCase
     /** @test */
     public function it_can_re_save_the_file()
     {
-        $collection = Collection::create()
+        $collection = TypesCollection::create()
             ->add(FakeType::create('Enum')->withoutNamespace());
 
         $this->action->execute($collection);

@@ -2,7 +2,7 @@
 
 namespace Spatie\TypescriptTransformer\Steps;
 
-use Spatie\TypescriptTransformer\Structures\Collection;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
@@ -15,7 +15,7 @@ class PersistTypesCollectionStep
         $this->config = $config;
     }
 
-    public function execute(Collection $collection): void
+    public function execute(TypesCollection $collection): void
     {
         $this->config->ensureConfigIsValid();
 
