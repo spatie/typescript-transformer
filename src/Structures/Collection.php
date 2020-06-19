@@ -69,7 +69,7 @@ class Collection
             $namespace = join('.', $segments);
 
             if (array_key_exists($namespace, $this->structure)) {
-                if($this->structure[$namespace]['kind'] !== 'namespace'){
+                if ($this->structure[$namespace]['kind'] !== 'namespace') {
                     throw new Exception("Symbol already exists: {$namespace}");
                 }
             }
@@ -81,7 +81,7 @@ class Collection
 
         $namespacedType = join('.', array_merge($namespace, [$type->name]));
 
-        if(array_key_exists($namespacedType, $this->structure)){
+        if (array_key_exists($namespacedType, $this->structure)) {
             throw new Exception("Symbol already exists: {$namespacedType}");
         }
 

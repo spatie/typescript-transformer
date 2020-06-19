@@ -24,7 +24,7 @@ abstract class Transformer
         return [
             'transformed' => $this->transform($class, $name),
             'missingSymbols' => $this->missingSymbols,
-            'isInline' => $this->isInline()
+            'isInline' => $this->isInline(),
         ];
     }
 

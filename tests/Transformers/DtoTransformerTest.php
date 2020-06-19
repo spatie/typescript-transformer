@@ -4,10 +4,7 @@ namespace Spatie\TypescriptTransformer\Tests\Transformers;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use SebastianBergmann\GlobalState\TestFixture\SnapshotTrait;
 use Spatie\Snapshots\MatchesSnapshots;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Dto\NestedDto;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Dto\TypeDto;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
@@ -48,7 +45,7 @@ class DtoTransformerTest extends TestCase
             OtherDto::class,
             OtherDtoCollection::class,
             DtoWithChildren::class,
-            YetAnotherDto::class
+            YetAnotherDto::class,
         ], $missingSymbols);
     }
 }

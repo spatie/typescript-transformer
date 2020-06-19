@@ -2,7 +2,6 @@
 
 namespace Spatie\TypescriptTransformer;
 
-use Spatie\TypescriptTransformer\Steps\InlineSymbolsStep;
 use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionStep;
 use Spatie\TypescriptTransformer\Steps\ReplaceMissingSymbolsStep;
 use Spatie\TypescriptTransformer\Steps\ResolveTypesStep;

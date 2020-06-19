@@ -17,7 +17,7 @@ class ReplaceSymbolsInTypeAction
 
     public function execute(Type $type, array $chain = []): string
     {
-        if(in_array($type->getTypescriptName(), $chain)){
+        if (in_array($type->getTypescriptName(), $chain)) {
             $chain = array_merge($chain, [$type->getTypescriptName()]);
 
             throw new Exception("Circular dependency chain found: ". implode(' -> ', $chain));
@@ -46,7 +46,7 @@ class ReplaceSymbolsInTypeAction
             return $type;
         }
 
-        if(! $found->isInline){
+        if (! $found->isInline) {
             $type->replaceSymbol($missingSymbol, $found->getTypescriptName());
 
             return $type;

@@ -5,7 +5,6 @@ namespace Spatie\TypescriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\DataTransferObject\DataTransferObject;
-use Spatie\DataTransferObject\DataTransferObjectCollection;
 use Spatie\DataTransferObject\FieldValidator;
 
 class DtoTransformer extends Transformer
@@ -57,7 +56,7 @@ class DtoTransformer extends Transformer
                     return false;
                 }
 
-                if(empty($typeDefinition->allowedArrayTypes)){
+                if (empty($typeDefinition->allowedArrayTypes)) {
                     return true;
                 }
 
