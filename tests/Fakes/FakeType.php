@@ -2,12 +2,24 @@
 
 namespace Spatie\TypescriptTransformer\Tests\Fakes;
 
+use Exception;
 use ReflectionClass;
+use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
 
 class FakeType extends Type
 {
-    public static function create(?string $name = null)
+    public static function create(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false): Type
+    {
+        throw new Exception("Fake type");
+    }
+
+    public static function createInline(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null): Type
+    {
+        throw new Exception("Fake type");
+    }
+
+    public static function fake(?string $name = null): self
     {
         $name ??= 'FakeType';
 
@@ -15,7 +27,7 @@ class FakeType extends Type
             FakeReflection::create()->withName($name),
             $name,
             'fake-transformed',
-            [],
+            new MissingSymbolsCollection(),
             false
         );
     }
@@ -50,10 +62,8 @@ class FakeType extends Type
 
     public function withMissingSymbols(array $missingSymbols): self
     {
-        $this->missingSymbols = $missingSymbols;
-
-        if (! empty($this->missingSymbols)) {
-            $this->isCompletelyReplaced = false;
+        foreach ($missingSymbols as $missingSymbol){
+            $this->missingSymbols->add($missingSymbol);
         }
 
         return $this;

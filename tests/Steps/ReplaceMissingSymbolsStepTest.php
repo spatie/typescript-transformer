@@ -23,7 +23,7 @@ class ReplaceMissingSymbolsStepTest extends TestCase
     {
         $collection = TypesCollection::create()
             ->add(
-                FakeType::create('Dto')
+                FakeType::fake('Dto')
                     ->withTransformed('{enum: {%enums\Enum%}, non-existing: {%non-existing%}}')
                     ->withMissingSymbols([
                         'enum' => 'enums\Enum',
@@ -31,7 +31,7 @@ class ReplaceMissingSymbolsStepTest extends TestCase
                     ])
             )
             ->add(
-                FakeType::create('Enum')->withNamespace('enums')
+                FakeType::fake('Enum')->withNamespace('enums')
             );
 
         $collection = $this->action->execute($collection);

@@ -3,39 +3,12 @@
 namespace Spatie\TypescriptTransformer\Transformers;
 
 use ReflectionClass;
+use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypescriptTransformer\Structures\Type;
 
-abstract class Transformer
+interface Transformer
 {
-    protected array $missingSymbols = [];
+    public function canTransform(ReflectionClass $class): bool;
 
-    abstract public function canTransform(ReflectionClass $class): bool;
-
-    abstract protected function transform(ReflectionClass $class, string $name): string;
-
-    public function isInline(): bool
-    {
-        return false;
-    }
-
-    public function execute(ReflectionClass $class, string $name)
-    {
-        $this->missingSymbols = [];
-
-        return [
-            'transformed' => $this->transform($class, $name),
-            'missingSymbols' => $this->missingSymbols,
-            'isInline' => $this->isInline(),
-        ];
-    }
-
-    public function addMissingSymbol(string $symbol): string
-    {
-        $symbol = ltrim($symbol, '\\');
-
-        if (! in_array($symbol, $this->missingSymbols)) {
-            $this->missingSymbols[] = $symbol;
-        }
-
-        return "{%{$symbol}%}";
-    }
+    public function transform(ReflectionClass $class, string $name): Type;
 }

@@ -12,17 +12,34 @@ class Type
 
     public string $transformed;
 
-    public array $missingSymbols;
+    public MissingSymbolsCollection $missingSymbols;
 
     public bool $isInline;
 
-    public bool $isCompletelyReplaced = false;
+    public static function create(
+        ReflectionClass $class,
+        string $name,
+        string $transformed,
+        ?MissingSymbolsCollection $missingSymbols = null,
+        bool $inline = false
+    ): self {
+        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), $inline);
+    }
+
+    public static function createInline(
+        ReflectionClass $class,
+        string $name,
+        string $transformed,
+        ?MissingSymbolsCollection $missingSymbols = null
+    ): self {
+        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), true);
+    }
 
     public function __construct(
         ReflectionClass $class,
         string $name,
         string $transformed,
-        array $missingSymbols,
+        MissingSymbolsCollection $missingSymbols,
         bool $isInline
     ) {
         $this->reflection = $class;
@@ -59,19 +76,12 @@ class Type
 
     public function replaceSymbol(string $class, string $replacement)
     {
-        if (in_array($class, $this->missingSymbols)) {
-            unset($this->missingSymbols[array_search($class, $this->missingSymbols)]);
-        }
+        $this->missingSymbols->remove($class);
 
         $this->transformed = str_replace(
             "{%{$class}%}",
             $replacement,
             $this->transformed
         );
-    }
-
-    public function isCompletelyReplaced()
-    {
-        return $this->isCompletelyReplaced; // Check of er nog missing symbols
     }
 }

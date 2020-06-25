@@ -23,7 +23,7 @@ class ReplaceSymbolsInTypeAction
             throw new Exception("Circular dependency chain found: ". implode(' -> ', $chain));
         }
 
-        foreach ($type->missingSymbols as $missingSymbol) {
+        foreach ($type->missingSymbols->all() as $missingSymbol) {
             $this->collection->replace(
                 $this->replaceSymbol($missingSymbol, $type, $chain)
             );

@@ -44,10 +44,7 @@ class DtoCollectionTransformerTest extends TestCase
     /** @test */
     public function it_can_transform_a_dto_collection()
     {
-        [
-            'transformed' => $transformed,
-            'missingSymbols' => $missingSymbols,
-        ] = $this->transformer->execute(
+        $type = $this->transformer->transform(
             new ReflectionClass(new class extends DataTransferObjectCollection {
                 public function current(): string
                 {
@@ -57,17 +54,14 @@ class DtoCollectionTransformerTest extends TestCase
             'Test'
         );
 
-        $this->assertMatchesTextSnapshot($transformed);
-        $this->assertCount(0, $missingSymbols);
+        $this->assertMatchesTextSnapshot($type->transformed);
+        $this->assertTrue($type->missingSymbols->isEmpty());
     }
 
     /** @test */
     public function it_can_transform_a_dto_collection_with_nullable_type()
     {
-        [
-            'transformed' => $transformed,
-            'missingSymbols' => $missingSymbols,
-        ] = $this->transformer->execute(
+        $type = $this->transformer->transform(
             new ReflectionClass(new class extends DataTransferObjectCollection {
                 public function current(): ?string
                 {
@@ -77,17 +71,14 @@ class DtoCollectionTransformerTest extends TestCase
             'Test'
         );
 
-        $this->assertMatchesTextSnapshot($transformed);
-        $this->assertCount(0, $missingSymbols);
+        $this->assertMatchesTextSnapshot($type->transformed);
+        $this->assertTrue($type->missingSymbols->isEmpty());
     }
 
     /** @test */
     public function it_can_transform_a_dto_collection_with_missing_type()
     {
-        [
-            'transformed' => $transformed,
-            'missingSymbols' => $missingSymbols,
-        ] = $this->transformer->execute(
+        $type = $this->transformer->transform(
             new ReflectionClass(new class extends DataTransferObjectCollection {
                 public function current(): RegularEnum
                 {
@@ -97,8 +88,8 @@ class DtoCollectionTransformerTest extends TestCase
             'Test'
         );
 
-        $this->assertMatchesTextSnapshot($transformed);
-        $this->assertCount(1, $missingSymbols);
-        $this->assertContains(RegularEnum::class, $missingSymbols);
+        $this->assertMatchesTextSnapshot($type->transformed);
+        $this->assertCount(1, $type->missingSymbols->all());
+        $this->assertContains(RegularEnum::class, $type->missingSymbols->all());
     }
 }

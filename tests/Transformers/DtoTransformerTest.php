@@ -30,15 +30,12 @@ class DtoTransformerTest extends TestCase
     /** @test */
     public function it_will_replace_types()
     {
-        [
-            'transformed' => $transformed,
-            'missingSymbols' => $missingSymbols,
-        ] = $this->transformer->execute(
+        $type = $this->transformer->transform(
             new ReflectionClass(Dto::class),
             'Typed'
         );
 
-        $this->assertMatchesTextSnapshot($transformed);
+        $this->assertMatchesTextSnapshot($type->transformed);
         $this->assertEquals([
             Enum::class,
             RegularEnum::class,
@@ -46,6 +43,6 @@ class DtoTransformerTest extends TestCase
             OtherDtoCollection::class,
             DtoWithChildren::class,
             YetAnotherDto::class,
-        ], $missingSymbols);
+        ], $type->missingSymbols->all());
     }
 }

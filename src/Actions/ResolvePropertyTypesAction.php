@@ -2,15 +2,16 @@
 
 namespace Spatie\TypescriptTransformer\Actions;
 
+use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 
 class ResolvePropertyTypesAction
 {
-    private Transformer $transformer;
+    private MissingSymbolsCollection $missingSymbolsCollection;
 
-    public function __construct(Transformer $transformer)
+    public function __construct(MissingSymbolsCollection $missingSymbolsCollection)
     {
-        $this->transformer = $transformer;
+        $this->missingSymbolsCollection = $missingSymbolsCollection;
     }
 
     public function execute(
@@ -76,6 +77,6 @@ class ResolvePropertyTypesAction
             return $mapping[$type];
         }
 
-        return $this->transformer->addMissingSymbol($type);
+        return $this->missingSymbolsCollection->add($type);
     }
 }

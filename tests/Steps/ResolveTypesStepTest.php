@@ -45,7 +45,7 @@ class ResolveTypesStepTest extends TestCase
         $this->assertEquals(new ReflectionClass(new TypescriptEnum('js')), $type->reflection);
         $this->assertEquals('TypescriptEnum', $type->name);
         $this->assertEquals("export type TypescriptEnum = 'js';", $type->transformed);
-        $this->assertEmpty($type->missingSymbols);
+        $this->assertTrue($type->missingSymbols->isEmpty());
     }
 
     /** @test */
@@ -56,7 +56,7 @@ class ResolveTypesStepTest extends TestCase
         $this->assertEquals(new ReflectionClass(new TypescriptEnumWithName('js')), $type->reflection);
         $this->assertEquals('EnumWithName', $type->name);
         $this->assertEquals("export type EnumWithName = 'js';", $type->transformed);
-        $this->assertEmpty($type->missingSymbols);
+        $this->assertTrue($type->missingSymbols->isEmpty());
     }
 
     /** @test */
@@ -67,6 +67,6 @@ class ResolveTypesStepTest extends TestCase
         $this->assertEquals(new ReflectionClass(new TypescriptEnumWithCustomTransformer('js')), $type->reflection);
         $this->assertEquals('TypescriptEnumWithCustomTransformer', $type->name);
         $this->assertEquals("fake", $type->transformed);
-        $this->assertEmpty($type->missingSymbols);
+        $this->assertTrue($type->missingSymbols->isEmpty());
     }
 }

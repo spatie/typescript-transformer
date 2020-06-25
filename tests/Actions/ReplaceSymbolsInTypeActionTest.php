@@ -26,16 +26,16 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
     /** @test */
     public function it_can_replace_symbols()
     {
-        $typeC = FakeType::create('C')
+        $typeC = FakeType::fake('C')
             ->isInline()
             ->withTransformed('This is type C');
 
-        $typeB = FakeType::create('B')
+        $typeB = FakeType::fake('B')
             ->isInline()
             ->withMissingSymbols(['C' => 'C'])
             ->withTransformed('Depends on type C: {%C%}');
 
-        $typeA = FakeType::create('A')
+        $typeA = FakeType::fake('A')
             ->isInline()
             ->withMissingSymbols(['B' => 'B'])
             ->withTransformed("Depends on type B: {%B%}");
@@ -54,12 +54,12 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $typeA = FakeType::create('A')
+        $typeA = FakeType::fake('A')
             ->isInline()
             ->withMissingSymbols(['B' => 'B'])
             ->withTransformed("Depends on type B: {%B%}");
 
-        $typeB = FakeType::create('B')
+        $typeB = FakeType::fake('B')
             ->isInline()
             ->withMissingSymbols(['A' => 'A'])
             ->withTransformed('Depends on type A: {%A%}');
@@ -72,11 +72,11 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
     /** @test */
     public function it_can_replace_non_inline_types_circular()
     {
-        $typeB = FakeType::create('B')
+        $typeB = FakeType::fake('B')
             ->withMissingSymbols(['A' => 'A'])
             ->withTransformed('Links to A: {%A%}');
 
-        $typeA = FakeType::create('A')
+        $typeA = FakeType::fake('A')
             ->withMissingSymbols(['B' => 'B'])
             ->withTransformed('Links to B: {%B%}');
 
@@ -92,16 +92,16 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
     /** @test */
     public function it_can_inline_multiple_dependencies()
     {
-        $typeC = FakeType::create('C')
+        $typeC = FakeType::fake('C')
             ->isInline()
             ->withTransformed('This is type C');
 
-        $typeB = FakeType::create('B')
+        $typeB = FakeType::fake('B')
             ->isInline()
             ->withMissingSymbols(['C' => 'C'])
             ->withTransformed('Depends on type C: {%C%}');
 
-        $typeA = FakeType::create('A')
+        $typeA = FakeType::fake('A')
             ->isInline()
             ->withMissingSymbols(['B' => 'B', 'C' => 'C'])
             ->withTransformed('Depends on type B: {%B%} | depends on type C: {%C%}');

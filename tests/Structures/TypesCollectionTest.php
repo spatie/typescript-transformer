@@ -16,7 +16,7 @@ class TypesCollectionTest extends TestCase
     public function it_can_add_a_null_namespace()
     {
         $structure = TypesCollection::create()->add(
-            $fake = FakeType::create('Enum')->withoutNamespace()
+            $fake = FakeType::fake('Enum')->withoutNamespace()
         )->getTypes();
 
         $this->assertCount(1, $structure);
@@ -29,13 +29,13 @@ class TypesCollectionTest extends TestCase
     public function it_can_add_types_in_a_multi_layered_namespaces()
     {
         $structure = TypesCollection::create()->add(
-            $fakeC = FakeType::create('Enum')->withNamespace('a\b\c')
+            $fakeC = FakeType::fake('Enum')->withNamespace('a\b\c')
         )->add(
-            $fakeB = FakeType::create('Enum')->withNamespace('a\b')
+            $fakeB = FakeType::fake('Enum')->withNamespace('a\b')
         )->add(
-            $fakeA = FakeType::create('Enum')->withNamespace('a'),
+            $fakeA = FakeType::fake('Enum')->withNamespace('a'),
         )->add(
-            $fake = FakeType::create('Enum')->withoutNamespace()
+            $fake = FakeType::fake('Enum')->withoutNamespace()
         )->getTypes();
 
         $this->assertCount(4, $structure);
@@ -51,9 +51,9 @@ class TypesCollectionTest extends TestCase
     public function it_can_add_multiple_types_to_one_namespace()
     {
         $structure = TypesCollection::create()->add(
-            $fakeA = FakeType::create('EnumA')->withNamespace('test')
+            $fakeA = FakeType::fake('EnumA')->withNamespace('test')
         )->add(
-            $fakeB = FakeType::create('EnumB')->withNamespace('test')
+            $fakeB = FakeType::fake('EnumB')->withNamespace('test')
         )->getTypes();
 
         $this->assertCount(2, $structure);
@@ -69,9 +69,9 @@ class TypesCollectionTest extends TestCase
         $this->expectException(Exception::class);
 
         TypesCollection::create()->add(
-            FakeType::create('Enum')->withNamespace('test')
+            FakeType::fake('Enum')->withNamespace('test')
         )->add(
-            FakeType::create('Enum')->withNamespace('test')
+            FakeType::fake('Enum')->withNamespace('test')
         );
     }
 
@@ -81,7 +81,7 @@ class TypesCollectionTest extends TestCase
         $reflection = new  ReflectionClass(TypescriptEnum::class);
 
         $structure = TypesCollection::create()->add(
-            $fake = FakeType::create('TypeScriptEnum')->withReflection($reflection)
+            $fake = FakeType::fake('TypeScriptEnum')->withReflection($reflection)
         )->getTypes();
 
         $this->assertCount(1, $structure);
@@ -96,9 +96,9 @@ class TypesCollectionTest extends TestCase
         $this->expectException(Exception::class);
 
         TypesCollection::create()->add(
-            $fakeA = FakeType::create('Enum')->withNamespace('Enum')
+            $fakeA = FakeType::fake('Enum')->withNamespace('Enum')
         )->add(
-            $fakeB = FakeType::create('Enum')->withoutNamespace()
+            $fakeB = FakeType::fake('Enum')->withoutNamespace()
         );
     }
 
@@ -108,9 +108,9 @@ class TypesCollectionTest extends TestCase
         $this->expectException(Exception::class);
 
         TypesCollection::create()->add(
-            $fakeB = FakeType::create('Enum')->withoutNamespace()
+            $fakeB = FakeType::fake('Enum')->withoutNamespace()
         )->add(
-            $fakeA = FakeType::create('Enum')->withNamespace('Enum')
+            $fakeA = FakeType::fake('Enum')->withNamespace('Enum')
         );
     }
 
@@ -118,7 +118,7 @@ class TypesCollectionTest extends TestCase
     public function it_can_get_a_type()
     {
         $collection = TypesCollection::create()->add(
-            $fake = FakeType::create('Enum')->withNamespace('a\b\c')
+            $fake = FakeType::fake('Enum')->withNamespace('a\b\c')
         );
 
         $this->assertEquals($fake, $collection->find('a\b\c\Enum'));
@@ -128,7 +128,7 @@ class TypesCollectionTest extends TestCase
     public function it_can_get_a_type_in_the_root_namespace()
     {
         $collection = TypesCollection::create()->add(
-            $fake = FakeType::create('Enum')->withoutNamespace()
+            $fake = FakeType::fake('Enum')->withoutNamespace()
         );
 
         $this->assertEquals($fake, $collection->find('Enum'));
@@ -148,15 +148,15 @@ class TypesCollectionTest extends TestCase
     public function it_can_walk_over_types()
     {
         $collection = TypesCollection::create()->add(
-            FakeType::create('Enum')->withNamespace('a')
+            FakeType::fake('Enum')->withNamespace('a')
         )->add(
-            FakeType::create('OtherEnum')->withNamespace('a')
+            FakeType::fake('OtherEnum')->withNamespace('a')
         )->add(
-            FakeType::create('Enum')->withNamespace('a\b')
+            FakeType::fake('Enum')->withNamespace('a\b')
         )->add(
-            FakeType::create('Enum')->withoutNamespace()
+            FakeType::fake('Enum')->withoutNamespace()
         )->add(
-            FakeType::create('OtherEnum')->withoutNamespace()
+            FakeType::fake('OtherEnum')->withoutNamespace()
         );
 
         $counter = 0;
@@ -174,7 +174,7 @@ class TypesCollectionTest extends TestCase
     public function it_can_apply_transformations()
     {
         $collection = TypesCollection::create()->add(
-            $fake = FakeType::create('Enum')->withNamespace('a')
+            $fake = FakeType::fake('Enum')->withNamespace('a')
         );
 
         $collection->map(function (Type $type) {

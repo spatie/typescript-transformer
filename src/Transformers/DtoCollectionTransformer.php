@@ -4,21 +4,29 @@ namespace Spatie\TypescriptTransformer\Transformers;
 
 use ReflectionClass;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
+use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypescriptTransformer\Structures\Type;
 
-class DtoCollectionTransformer extends InlineTransformer
+class DtoCollectionTransformer implements Transformer
 {
     public function canTransform(ReflectionClass $class): bool
     {
         return is_subclass_of($class->getName(), DataTransferObjectCollection::class);
     }
 
-    protected function transform(ReflectionClass $class, string $name): string
+    public function transform(ReflectionClass $class, string $name): Type
     {
-        return "Array<{$this->resolveType($class)}>";
+        $missingSymbolsCollection = new MissingSymbolsCollection();
+
+        $transformed = "Array<{$this->resolveType($class, $missingSymbolsCollection)}>";
+
+        return Type::createInline($class, $name, $transformed, $missingSymbolsCollection);
     }
 
-    private function resolveType(ReflectionClass $class): string
-    {
+    private function resolveType(
+        ReflectionClass $class,
+        MissingSymbolsCollection $missingSymbolsCollection
+    ): string {
         $returnType = $class->getMethod('current')->getReturnType();
 
         if (empty($returnType)) {
@@ -28,7 +36,7 @@ class DtoCollectionTransformer extends InlineTransformer
         $name = $returnType->getName();
 
         if (! $returnType->isBuiltin()) {
-            return $this->addMissingSymbol($name);
+            return $missingSymbolsCollection->add($name);
         }
 
         return $returnType->allowsNull()

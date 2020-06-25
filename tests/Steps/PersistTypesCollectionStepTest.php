@@ -37,9 +37,9 @@ class PersistTypesCollectionStepTest extends TestCase
     public function it_will_persist_the_types()
     {
         $collection = TypesCollection::create()
-            ->add(FakeType::create('Enum')->withoutNamespace())
-            ->add(FakeType::create('Enum')->withNamespace('test'))
-            ->add(FakeType::create('Enum')->withNamespace('test\test'));
+            ->add(FakeType::fake('Enum')->withoutNamespace())
+            ->add(FakeType::fake('Enum')->withNamespace('test'))
+            ->add(FakeType::fake('Enum')->withNamespace('test\test'));
 
         $this->action->execute($collection);
 
@@ -50,10 +50,10 @@ class PersistTypesCollectionStepTest extends TestCase
     public function it_can_persist_multiple_types_in_one_namespace()
     {
         $collection = TypesCollection::create()
-            ->add(FakeType::create('Enum')->withTransformed('transformed Enum')->withoutNamespace())
-            ->add(FakeType::create('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace())
-            ->add(FakeType::create('Enum')->withTransformed('transformed test\Enum')->withNamespace('test'))
-            ->add(FakeType::create('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test'));
+            ->add(FakeType::fake('Enum')->withTransformed('transformed Enum')->withoutNamespace())
+            ->add(FakeType::fake('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace())
+            ->add(FakeType::fake('Enum')->withTransformed('transformed test\Enum')->withNamespace('test'))
+            ->add(FakeType::fake('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test'));
 
         $this->action->execute($collection);
 
@@ -64,11 +64,11 @@ class PersistTypesCollectionStepTest extends TestCase
     public function it_can_re_save_the_file()
     {
         $collection = TypesCollection::create()
-            ->add(FakeType::create('Enum')->withoutNamespace());
+            ->add(FakeType::fake('Enum')->withoutNamespace());
 
         $this->action->execute($collection);
 
-        $collection->add(FakeType::create('Enum')->withNamespace('test'));
+        $collection->add(FakeType::fake('Enum')->withNamespace('test'));
 
         $this->action->execute($collection);
 

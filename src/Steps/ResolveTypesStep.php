@@ -53,22 +53,12 @@ class ResolveTypesStep
                 'transformer' => $transformer,
             ] = $this->classReader->forClass($class);
 
-            [
-                'transformed' => $transformed,
-                'missingSymbols' => $missingSymbols,
-                'isInline' => $isInline,
-            ] = $this->resolveTransformer($class, $transformer)->execute(
+            $type = $this->resolveTransformer($class, $transformer)->transform(
                 $class,
                 $name
             );
 
-            $collection->add(new Type(
-                $class,
-                $name,
-                $transformed,
-                $missingSymbols,
-                $isInline
-            ));
+            $collection->add($type);
         }
 
         return $collection;
