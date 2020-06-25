@@ -4,7 +4,6 @@ namespace Spatie\TypescriptTransformer\Transformers;
 
 use ReflectionClass;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
-use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 
 class DtoCollectionTransformer extends InlineTransformer
 {

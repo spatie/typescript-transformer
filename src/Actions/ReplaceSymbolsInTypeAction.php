@@ -3,8 +3,8 @@
 namespace Spatie\TypescriptTransformer\Actions;
 
 use Exception;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 
 class ReplaceSymbolsInTypeAction
 {

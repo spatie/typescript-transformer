@@ -2,10 +2,6 @@
 
 namespace Spatie\TypescriptTransformer\Actions;
 
-use Spatie\DataTransferObject\FieldValidator;
-use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 
 class ResolvePropertyTypesAction

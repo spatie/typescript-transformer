@@ -7,7 +7,6 @@ use ReflectionProperty;
 use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\DataTransferObject\FieldValidator;
 use Spatie\TypescriptTransformer\Actions\ResolvePropertyTypesAction;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
 
 class DtoTransformer extends Transformer
 {
@@ -21,7 +20,7 @@ class DtoTransformer extends Transformer
         $properties = $this->resolveProperties($class);
 
         $properties = array_map(
-            fn(ReflectionProperty $property) => $this->resolveTypeDefinition($property),
+            fn (ReflectionProperty $property) => $this->resolveTypeDefinition($property),
             $properties
         );
 
@@ -40,7 +39,7 @@ class DtoTransformer extends Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn(ReflectionProperty $property) => ! $property->isStatic()
+            fn (ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);

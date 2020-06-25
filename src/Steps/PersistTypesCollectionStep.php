@@ -2,8 +2,8 @@
 
 namespace Spatie\TypescriptTransformer\Steps;
 
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 class PersistTypesCollectionStep

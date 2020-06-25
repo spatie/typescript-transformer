@@ -3,8 +3,8 @@
 namespace Spatie\TypescriptTransformer\Steps;
 
 use Spatie\TypescriptTransformer\Actions\ReplaceSymbolsInTypeAction;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 
 class ReplaceMissingSymbolsStep
 {

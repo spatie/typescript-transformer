@@ -3,8 +3,6 @@
 namespace Spatie\TypescriptTransformer\Transformers;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
 
 abstract class Transformer
 {
