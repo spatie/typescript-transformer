@@ -26,7 +26,7 @@ class TypescriptTransformer
     {
         $resolveTypesStep = new ResolveTypesStep(
             new Finder(),
-            $this->config
+            $this->config,
         );
 
         $replaceMissingSymbolsStep = new ReplaceMissingSymbolsStep();

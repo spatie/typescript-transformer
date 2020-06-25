@@ -72,6 +72,6 @@ class Type
 
     public function isCompletelyReplaced()
     {
-        return $this->isCompletelyReplaced;
+        return $this->isCompletelyReplaced; // Check of er nog missing symbols
     }
 }

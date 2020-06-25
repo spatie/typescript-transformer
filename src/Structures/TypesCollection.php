@@ -4,6 +4,7 @@ namespace Spatie\TypescriptTransformer\Structures;
 
 use Closure;
 use Exception;
+use Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists;
 
 class TypesCollection
 {
@@ -70,11 +71,17 @@ class TypesCollection
 
             if (array_key_exists($namespace, $this->structure)) {
                 if ($this->structure[$namespace]['kind'] !== 'namespace') {
-                    throw new Exception("Symbol already exists: {$namespace}");
+                    throw SymbolAlreadyExists::whenAddingNamespace(
+                        $namespace,
+                        $this->structure[$namespace]
+                    );
                 }
             }
 
-            $this->structure[$namespace] = ['kind' => 'namespace'];
+            $this->structure[$namespace] = [
+                'kind' => 'namespace',
+                'value' => str_replace('.', '\\', $namespace),
+            ];
 
             return $segments;
         }, []);
@@ -82,9 +89,15 @@ class TypesCollection
         $namespacedType = join('.', array_merge($namespace, [$type->name]));
 
         if (array_key_exists($namespacedType, $this->structure)) {
-            throw new Exception("Symbol already exists: {$namespacedType}");
+            throw SymbolAlreadyExists::whenAddingType(
+                $type->reflection->getName(),
+                $this->structure[$namespacedType]
+            );
         }
 
-        $this->structure[$namespacedType] = ['kind' => 'type', 'type' => $type->reflection->getName()];
+        $this->structure[$namespacedType] = [
+            'kind' => 'type',
+            'value' => $type->reflection->getName(),
+        ];
     }
 }

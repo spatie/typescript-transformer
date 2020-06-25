@@ -3,6 +3,8 @@
 namespace Spatie\TypescriptTransformer\Transformers;
 
 use ReflectionClass;
+use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 
 abstract class Transformer
 {
@@ -28,7 +30,7 @@ abstract class Transformer
         ];
     }
 
-    protected function addMissingSymbol(string $symbol): string
+    public function addMissingSymbol(string $symbol): string
     {
         $symbol = ltrim($symbol, '\\');
 

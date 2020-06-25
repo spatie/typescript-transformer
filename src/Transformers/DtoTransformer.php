@@ -6,6 +6,8 @@ use ReflectionClass;
 use ReflectionProperty;
 use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\DataTransferObject\FieldValidator;
+use Spatie\TypescriptTransformer\Actions\ResolvePropertyTypesAction;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 
 class DtoTransformer extends Transformer
 {
@@ -19,7 +21,7 @@ class DtoTransformer extends Transformer
         $properties = $this->resolveProperties($class);
 
         $properties = array_map(
-            fn (ReflectionProperty $property) => $this->resolveTypeDefinition($property),
+            fn(ReflectionProperty $property) => $this->resolveTypeDefinition($property),
             $properties
         );
 
@@ -38,7 +40,7 @@ class DtoTransformer extends Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn (ReflectionProperty $property) => ! $property->isStatic()
+            fn(ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);
@@ -47,62 +49,18 @@ class DtoTransformer extends Transformer
     private function resolveTypeDefinition(
         ReflectionProperty $property
     ): string {
-        $typeDefinition = FieldValidator::fromReflection($property);
+        $fieldValidator = FieldValidator::fromReflection($property);
 
-        $types = array_filter(
-            $typeDefinition->allowedTypes,
-            function (string $type) use ($typeDefinition) {
-                if (str_ends_with($type, '[]')) {
-                    return false;
-                }
-
-                if (empty($typeDefinition->allowedArrayTypes)) {
-                    return true;
-                }
-
-                return $type !== 'array'; // Remove array type if there are array types
-            }
+        $resolvePropertyTypesAction = new ResolvePropertyTypesAction(
+            $this
         );
 
-        $types = array_map(function (string $type) {
-            return $this->mapType($type);
-        }, $types);
-
-        $arrayTypes = array_map(function (string $type) {
-            return $this->mapType($type);
-        }, $typeDefinition->allowedArrayTypes);
-
-        if (count($arrayTypes) > 0) {
-            $types[] = 'Array<' . implode(' | ', $arrayTypes) . '>';
-        }
-
-        if (count($types) === 0) {
-            $types[] = 'any';
-        }
-
-        if ($typeDefinition->isNullable) {
-            $types[] = 'null';
-        }
+        $types = $resolvePropertyTypesAction->execute(
+            $fieldValidator->allowedTypes,
+            $fieldValidator->allowedArrayTypes,
+            $fieldValidator->isNullable
+        );
 
         return "{$property->getName()} : " . implode(' | ', $types) . ';';
-    }
-
-    private function mapType(string $type): string
-    {
-        $mapping = [
-            'string' => 'string',
-            'integer' => 'number',
-            'boolean' => 'boolean',
-            'double' => 'number',
-            'null' => 'null',
-            'object' => 'object',
-            'array' => 'Array<any>',
-        ];
-
-        if (array_key_exists($type, $mapping)) {
-            return $mapping[$type];
-        }
-
-        return $this->addMissingSymbol($type);
     }
 }

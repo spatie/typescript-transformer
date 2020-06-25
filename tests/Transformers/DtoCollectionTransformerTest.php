@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
 use Spatie\Snapshots\MatchesSnapshots;
+use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypescriptTransformer\Transformers\DtoCollectionTransformer;
 
@@ -15,11 +16,15 @@ class DtoCollectionTransformerTest extends TestCase
 
     private DtoCollectionTransformer $transformer;
 
+    private TypesCollection $typesCollection;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->transformer = new DtoCollectionTransformer();
+        $this->typesCollection = new TypesCollection();
+
+        $this->transformer = new DtoCollectionTransformer($this->typesCollection);
     }
 
     /** @test */

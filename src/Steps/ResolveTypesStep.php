@@ -6,6 +6,7 @@ use hanneskod\classtools\Iterator\ClassIterator;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
+use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
@@ -32,7 +33,7 @@ class ResolveTypesStep
         $this->classReader = new ClassReader();
 
         $this->transformers = array_map(
-            fn (string $transformer) => new $transformer,
+            fn(string $transformer) => new $transformer,
             $this->config->getTransformers()
         );
     }
@@ -41,7 +42,7 @@ class ResolveTypesStep
     {
         $this->config->ensureConfigIsValid();
 
-        $typesCollection = TypesCollection::create();
+        $collection = new TypesCollection();
 
         foreach ($this->resolveIterator() as $class) {
             if (strpos($class->getDocComment(), '@typescript') === false) {
@@ -56,13 +57,13 @@ class ResolveTypesStep
             [
                 'transformed' => $transformed,
                 'missingSymbols' => $missingSymbols,
-                'isInline' => $isInline
+                'isInline' => $isInline,
             ] = $this->resolveTransformer($class, $transformer)->execute(
                 $class,
                 $name
             );
 
-            $typesCollection->add(new Type(
+            $collection->add(new Type(
                 $class,
                 $name,
                 $transformed,
@@ -71,7 +72,7 @@ class ResolveTypesStep
             ));
         }
 
-        return $typesCollection;
+        return $collection;
     }
 
     private function resolveIterator(): ClassIterator
@@ -85,8 +86,10 @@ class ResolveTypesStep
         return $iterator;
     }
 
-    private function resolveTransformer(ReflectionClass $class, ?string $transformer): Transformer
-    {
+    private function resolveTransformer(
+        ReflectionClass $class,
+        ?string $transformer
+    ): Transformer {
         if ($transformer !== null) {
             return new $transformer;
         }
