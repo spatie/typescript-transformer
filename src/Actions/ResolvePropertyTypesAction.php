@@ -3,7 +3,6 @@
 namespace Spatie\TypescriptTransformer\Actions;
 
 use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypescriptTransformer\Transformers\Transformer;
 
 class ResolvePropertyTypesAction
 {

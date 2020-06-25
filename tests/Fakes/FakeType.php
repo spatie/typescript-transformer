@@ -62,7 +62,7 @@ class FakeType extends Type
 
     public function withMissingSymbols(array $missingSymbols): self
     {
-        foreach ($missingSymbols as $missingSymbol){
+        foreach ($missingSymbols as $missingSymbol) {
             $this->missingSymbols->add($missingSymbol);
         }
 
