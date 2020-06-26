@@ -76,5 +76,4 @@ class ResolvePropertyTypesActionTest extends TestCase
             [[], [], true, ['any']],
         ];
     }
-
 }
