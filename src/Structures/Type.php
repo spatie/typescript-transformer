@@ -47,10 +47,6 @@ class Type
         $this->transformed = $transformed;
         $this->missingSymbols = $missingSymbols;
         $this->isInline = $isInline;
-
-        if (empty($this->missingSymbols)) {
-            $this->isCompletelyReplaced = true;
-        }
     }
 
     public function getNamespaceSegments(): array

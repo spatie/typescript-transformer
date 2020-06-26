@@ -54,7 +54,7 @@ class DtoTransformer implements Transformer
         return array_values($properties);
     }
 
-    private function resolveTypeDefinition(
+    protected function resolveTypeDefinition(
         ReflectionProperty $property,
         MissingSymbolsCollection $missingSymbolsCollection
     ): string {

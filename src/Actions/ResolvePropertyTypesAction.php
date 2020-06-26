@@ -18,7 +18,31 @@ class ResolvePropertyTypesAction
         array $allowedArrayTypes,
         bool $isNullable
     ): array {
-        $types = array_filter(
+        $types = $this->resolveTypes($allowedTypes, $allowedArrayTypes);
+
+        $types = $this->mapTypes($types);
+        $arrayTypes = $this->mapArrayTypes($allowedArrayTypes);
+
+        if (count($arrayTypes) > 0) {
+            $types[] = 'Array<' . implode(' | ', $arrayTypes) . '>';
+        }
+
+        if (count($types) === 0) {
+            return ['any'];
+        }
+
+        if ($isNullable) {
+            $types[] = 'null';
+        }
+
+        return array_unique($types);
+    }
+
+    protected function resolveTypes(
+        array $allowedTypes,
+        array $allowedArrayTypes
+    ): array {
+        return array_filter(
             $allowedTypes,
             function (string $type) use ($allowedArrayTypes) {
                 if (str_ends_with($type, '[]')) {
@@ -36,31 +60,23 @@ class ResolvePropertyTypesAction
                 return true;
             }
         );
-
-        $types = array_map(function (string $type) {
-            return $this->mapType($type);
-        }, $types);
-
-        $arrayTypes = array_map(function (string $type) {
-            return $this->mapType($type);
-        }, $allowedArrayTypes);
-
-        if (count($arrayTypes) > 0) {
-            $types[] = 'Array<' . implode(' | ', $arrayTypes) . '>';
-        }
-
-        if (count($types) === 0) {
-            $types[] = 'any';
-        }
-
-        if ($isNullable) {
-            $types[] = 'null';
-        }
-
-        return $types;
     }
 
-    private function mapType(string $type): string
+    protected function mapTypes(array $types): array
+    {
+        return array_map(function (string $type) {
+            return $this->mapType($type);
+        }, $types);
+    }
+
+    protected function mapArrayTypes(array $allowedArrayTypes): array
+    {
+        return array_map(function (string $type) {
+            return $this->mapType($type);
+        }, $allowedArrayTypes);
+    }
+
+    protected function mapType(string $type): string
     {
         $mapping = [
             'string' => 'string',

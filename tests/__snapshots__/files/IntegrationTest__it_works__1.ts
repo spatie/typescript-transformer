@@ -8,7 +8,7 @@ export type Dto = {
     float : number;
     object : object;
     array : Array<any>;
-    none : any | null;
+    none : any;
     documented_string : string;
     mixed : number | string;
     documented_array : Array<number>;
