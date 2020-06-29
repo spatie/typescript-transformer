@@ -30,7 +30,7 @@ class DtoCollectionTransformer implements Transformer
         $returnType = $class->getMethod('current')->getReturnType();
 
         if (empty($returnType)) {
-            return 'any';
+            return 'never';
         }
 
         $name = $returnType->getName();

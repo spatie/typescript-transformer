@@ -36,7 +36,7 @@ class TypesCollection
         $namespace = $type->reflection->getName();
 
         if (! array_key_exists($namespace, $this->types)) {
-            throw new Exception("Tried replacing unkown type {$namespace}");
+            throw new Exception("Tried replacing unknown type {$namespace}");
         }
 
         $this->types[$namespace] = $type;

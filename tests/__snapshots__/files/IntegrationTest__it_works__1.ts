@@ -7,8 +7,8 @@ export type Dto = {
     boolean : boolean;
     float : number;
     object : object;
-    array : Array<any>;
-    none : any;
+    array : Array<never>;
+    none : never;
     documented_string : string;
     mixed : number | string;
     documented_array : Array<number>;

@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Spatie\TypescriptTransformer\Actions\ResolvePropertyTypesAction;
 use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto;
+use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDtoCollection;
 
 class ResolvePropertyTypesActionTest extends TestCase
 {
@@ -47,11 +49,18 @@ class ResolvePropertyTypesActionTest extends TestCase
             [['double'], [], false, ['number']],
             [['null'], [], false, ['null']],
             [['object'], [], false, ['object']],
-            [['array'], [], false, ['Array<any>']],
+            [['array'], [], false, ['Array<never>']],
 
             // Objects
             [[Enum::class], [], false, ['{%'.Enum::class.'%}']],
             [[], [Enum::class], false, ['Array<{%'.Enum::class.'%}>']],
+
+            // DTO
+            [[OtherDto::class], [], false, ['{%'.OtherDto::class.'%}']],
+            [[OtherDto::class], [], true, ['{%'.OtherDto::class.'%}', 'null']],
+
+            [[OtherDtoCollection::class], [], false, ['{%'.OtherDtoCollection::class.'%}']],
+            [[OtherDtoCollection::class], ['string'], false, ['{%'.OtherDtoCollection::class.'%}', 'Array<string>']], // This can be better
 
             // Arrays
             [[], ['string'], false, ['Array<string>']],
@@ -72,8 +81,8 @@ class ResolvePropertyTypesActionTest extends TestCase
             [[], ['string', 'null'], false, ['Array<string | null>']],
 
             // Empty
-            [[], [], false, ['any']],
-            [[], [], true, ['any']],
+            [[], [], false, ['never']],
+            [[], [], true, ['never']],
         ];
     }
 }

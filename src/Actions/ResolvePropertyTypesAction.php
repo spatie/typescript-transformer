@@ -28,7 +28,7 @@ class ResolvePropertyTypesAction
         }
 
         if (count($types) === 0) {
-            return ['any'];
+            return ['never'];
         }
 
         if ($isNullable) {
@@ -85,7 +85,7 @@ class ResolvePropertyTypesAction
             'double' => 'number',
             'null' => 'null',
             'object' => 'object',
-            'array' => 'Array<any>',
+            'array' => 'Array<never>',
         ];
 
         if (array_key_exists($type, $mapping)) {
