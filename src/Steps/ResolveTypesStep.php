@@ -3,7 +3,9 @@
 namespace Spatie\TypescriptTransformer\Steps;
 
 use hanneskod\classtools\Iterator\ClassIterator;
+use IteratorAggregate;
 use ReflectionClass;
+use Spatie\TypescriptTransformer\ClassIteratorFileFilter;
 use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
@@ -31,7 +33,7 @@ class ResolveTypesStep
         $this->classReader = new ClassReader();
 
         $this->transformers = array_map(
-            fn (string $transformer) => new $transformer,
+            fn(string $transformer) => new $transformer,
             $this->config->getTransformers()
         );
     }
@@ -63,13 +65,21 @@ class ResolveTypesStep
         return $collection;
     }
 
-    private function resolveIterator(): ClassIterator
+    private function resolveIterator(): IteratorAggregate
     {
-        $iterator = new ClassIterator($this->finder->in(
-            $this->config->getSearchingPath()
-        ));
+        $searchingPath = is_dir($this->config->getSearchingPath())
+            ? $this->config->getSearchingPath()
+            : dirname($this->config->getSearchingPath());
+
+        $iterator = new ClassIterator($this->finder->in($searchingPath));
 
         $iterator->enableAutoloading();
+
+        if (is_file($this->config->getSearchingPath())) {
+            return $iterator->filter(
+                new ClassIteratorFileFilter($this->config->getSearchingPath())
+            );
+        }
 
         return $iterator;
     }

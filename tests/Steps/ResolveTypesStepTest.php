@@ -69,4 +69,21 @@ class ResolveTypesStepTest extends TestCase
         $this->assertEquals("fake", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
     }
+
+    /** @test */
+    public function it_can_parse_a_specified_file_only()
+    {
+        $this->action = new ResolveTypesStep(
+            new Finder(),
+            TypeScriptTransformerConfig::create()
+                ->searchingPath(__DIR__ . '/../FakeClasses/Enum/TypescriptEnum.php')
+                ->transformers([MyclabsEnumTransformer::class])
+                ->outputFile('types.d.ts')
+        );
+
+        $types = $this->action->execute()->getTypes();
+
+        $this->assertCount(1, $types);
+        $this->assertArrayHasKey(TypescriptEnum::class, $types);
+    }
 }
