@@ -33,7 +33,7 @@ class ResolveTypesStep
         $this->classReader = new ClassReader();
 
         $this->transformers = array_map(
-            fn(string $transformer) => new $transformer,
+            fn (string $transformer) => new $transformer,
             $this->config->getTransformers()
         );
     }
