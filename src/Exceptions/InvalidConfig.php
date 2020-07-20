@@ -15,9 +15,4 @@ class InvalidConfig extends Exception
     {
         return new self('The output file in the config is missing');
     }
-
-    public static function missingTransformers()
-    {
-        return new self('No transformers were defined in the config');
-    }
 }

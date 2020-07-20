@@ -5,6 +5,7 @@ namespace Spatie\TypescriptTransformer\Tests;
 use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypescriptTransformer\Transformers\DtoCollectionTransformer;
 use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
@@ -27,6 +28,9 @@ class IntegrationTest extends TestCase
                     MyclabsEnumTransformer::class,
                     DtoTransformer::class,
                     DtoCollectionTransformer::class,
+                ])
+                ->collectors([
+                    AnnotationCollector::class,
                 ])
                 ->outputFile($temporaryDirectory->path('types.d.ts'))
         );

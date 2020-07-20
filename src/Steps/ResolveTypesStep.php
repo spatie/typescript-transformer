@@ -7,7 +7,9 @@ use IteratorAggregate;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassIteratorFileFilter;
 use Spatie\TypescriptTransformer\ClassReader;
+use Spatie\TypescriptTransformer\Collectors\Collector;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
+use Spatie\TypescriptTransformer\Structures\Type;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
@@ -17,10 +19,8 @@ class ResolveTypesStep
 {
     private Finder $finder;
 
-    private ClassReader $classReader;
-
-    /** @var \Spatie\TypescriptTransformer\Transformers\Transformer[] */
-    private array $transformers;
+    /** @var \Spatie\TypescriptTransformer\Collectors\Collector[] */
+    private array $collectors;
 
     private TypeScriptTransformerConfig $config;
 
@@ -30,11 +30,9 @@ class ResolveTypesStep
 
         $this->config = $config;
 
-        $this->classReader = new ClassReader();
-
-        $this->transformers = array_map(
-            fn (string $transformer) => new $transformer,
-            $this->config->getTransformers()
+        $this->collectors = array_map(
+            fn(string $collector) => new $collector($config),
+            $this->config->getCollectors()
         );
     }
 
@@ -45,18 +43,17 @@ class ResolveTypesStep
         $collection = new TypesCollection();
 
         foreach ($this->resolveIterator() as $class) {
-            if (strpos($class->getDocComment(), '@typescript') === false) {
+            $collector = $this->resolveCollector($class);
+
+            if ($collector === null) {
                 continue;
             }
 
-            [
-                'name' => $name,
-                'transformer' => $transformer,
-            ] = $this->classReader->forClass($class);
+            $typeOccurrence = $collector->getTypeOccurrence($class);
 
-            $type = $this->resolveTransformer($class, $transformer)->transform(
+            $type = $typeOccurrence->transformer->transform(
                 $class,
-                $name
+                $typeOccurrence->name
             );
 
             $collection->add($type);
@@ -84,20 +81,14 @@ class ResolveTypesStep
         return $iterator;
     }
 
-    private function resolveTransformer(
-        ReflectionClass $class,
-        ?string $transformer
-    ): Transformer {
-        if ($transformer !== null) {
-            return new $transformer;
-        }
-
-        foreach ($this->transformers as $transformer) {
-            if ($transformer->canTransform($class)) {
-                return $transformer;
+    private function resolveCollector(ReflectionClass $class): ?Collector
+    {
+        foreach ($this->collectors as $collector) {
+            if ($collector->shouldTransform($class)) {
+                return $collector;
             }
         }
 
-        throw TransformerNotFound::create($class);
+        return null;
     }
 }

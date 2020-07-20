@@ -44,7 +44,7 @@ class DtoTransformer implements Transformer
         );
     }
 
-    private function resolveProperties(ReflectionClass $class)
+    protected function resolveProperties(ReflectionClass $class)
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),

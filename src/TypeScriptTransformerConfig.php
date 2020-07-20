@@ -10,6 +10,8 @@ class TypeScriptTransformerConfig
 
     private array $transformers = [];
 
+    private array $collectors = [];
+
     private string $outputFile = 'types.d.ts';
 
     public static function create(): self
@@ -27,6 +29,13 @@ class TypeScriptTransformerConfig
     public function transformers(array $transformers): self
     {
         $this->transformers = $transformers;
+
+        return $this;
+    }
+
+    public function collectors(array $collectors)
+    {
+        $this->collectors = $collectors;
 
         return $this;
     }
@@ -53,6 +62,11 @@ class TypeScriptTransformerConfig
         return $this->outputFile;
     }
 
+    public function getCollectors(): array
+    {
+        return $this->collectors;
+    }
+
     public function ensureConfigIsValid()
     {
         if (empty($this->searchingPath)) {
@@ -61,10 +75,6 @@ class TypeScriptTransformerConfig
 
         if (empty($this->outputFile)) {
             throw InvalidConfig::missingOutputFile();
-        }
-
-        if (count($this->transformers) === 0) {
-            throw InvalidConfig::missingTransformers();
         }
     }
 }
