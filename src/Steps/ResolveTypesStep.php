@@ -6,12 +6,8 @@ use hanneskod\classtools\Iterator\ClassIterator;
 use IteratorAggregate;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassIteratorFileFilter;
-use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Collectors\Collector;
-use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypescriptTransformer\Structures\Type;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
@@ -31,7 +27,7 @@ class ResolveTypesStep
         $this->config = $config;
 
         $this->collectors = array_map(
-            fn(string $collector) => new $collector($config),
+            fn (string $collector) => new $collector($config),
             $this->config->getCollectors()
         );
     }

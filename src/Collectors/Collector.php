@@ -5,7 +5,6 @@ namespace Spatie\TypescriptTransformer\Collectors;
 
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Structures\TypeOccurrence;
-use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 interface Collector

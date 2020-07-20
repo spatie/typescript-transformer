@@ -25,7 +25,7 @@ class AnnotationCollector implements Collector
         $this->classReader = new ClassReader();
 
         $this->transformers = array_map(
-            fn(string $transformer) => new $transformer,
+            fn (string $transformer) => new $transformer,
             $this->config->getTransformers()
         );
     }
@@ -64,5 +64,4 @@ class AnnotationCollector implements Collector
 
         throw TransformerNotFound::create($class);
     }
-
 }

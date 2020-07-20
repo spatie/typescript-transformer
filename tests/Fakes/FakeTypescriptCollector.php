@@ -7,7 +7,6 @@ use ReflectionClass;
 use Spatie\TypescriptTransformer\Collectors\Collector;
 use Spatie\TypescriptTransformer\Structures\TypeOccurrence;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
-use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 class FakeTypescriptCollector implements Collector
