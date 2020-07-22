@@ -15,19 +15,11 @@ class AnnotationCollector implements Collector
 
     private ClassReader $classReader;
 
-    /** @var \Spatie\TypescriptTransformer\Transformers\Transformer[] */
-    private array $transformers;
-
     public function __construct(TypeScriptTransformerConfig $config)
     {
         $this->config = $config;
 
         $this->classReader = new ClassReader();
-
-        $this->transformers = array_map(
-            fn (string $transformer) => new $transformer,
-            $this->config->getTransformers()
-        );
     }
 
     public function shouldTransform(ReflectionClass $class): bool
@@ -56,7 +48,7 @@ class AnnotationCollector implements Collector
             return new $transformer;
         }
 
-        foreach ($this->transformers as $transformer) {
+        foreach ($this->config->getTransformers() as $transformer) {
             if ($transformer->canTransform($class)) {
                 return $transformer;
             }

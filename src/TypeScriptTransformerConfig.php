@@ -52,9 +52,15 @@ class TypeScriptTransformerConfig
         return $this->searchingPath;
     }
 
+    /**
+     * @return \Spatie\TypescriptTransformer\Transformers\Transformer[]
+     */
     public function getTransformers(): array
     {
-        return $this->transformers;
+        return array_map(
+            fn (string $transformer) => new $transformer,
+            $this->transformers
+        );
     }
 
     public function getOutputFile(): string
@@ -62,9 +68,15 @@ class TypeScriptTransformerConfig
         return $this->outputFile;
     }
 
+    /**
+     * @return \Spatie\TypescriptTransformer\Collectors\Collector[]
+     */
     public function getCollectors(): array
     {
-        return $this->collectors;
+        return array_map(
+            fn (string $collector) => new $collector($this),
+            $this->collectors
+        );
     }
 
     public function ensureConfigIsValid()

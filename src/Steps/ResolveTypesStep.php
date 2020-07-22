@@ -26,10 +26,7 @@ class ResolveTypesStep
 
         $this->config = $config;
 
-        $this->collectors = array_map(
-            fn (string $collector) => new $collector($config),
-            $this->config->getCollectors()
-        );
+        $this->collectors = $config->getCollectors();
     }
 
     public function execute(): TypesCollection
