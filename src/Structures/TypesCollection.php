@@ -5,7 +5,6 @@ namespace Spatie\TypescriptTransformer\Structures;
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
-use Exception;
 use IteratorAggregate;
 use Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists;
 
@@ -50,7 +49,7 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
             ? $class->reflection->getName()
             : $class;
 
-        if(! array_key_exists($class, $this->types)){
+        if (! array_key_exists($class, $this->types)) {
             $this->ensureTypeCanBeAdded($type);
         }
 
