@@ -18,17 +18,23 @@ abstract class ClassTransformer implements Transformer
     {
         $missingSymbols = new MissingSymbolsCollection();
 
-        $properties = $this->resolveProperties($class);
-
         $properties = array_map(
             fn (ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
-            $properties
+            $this->resolveProperties($class)
         );
+
+        $output = "export type {$name} = {" . PHP_EOL;
+
+        foreach ($properties as $property) {
+            $output .= "    {$property}" . PHP_EOL;
+        }
+
+        $output .= '}' . PHP_EOL;
 
         return Type::create(
             $class,
             $name,
-            $this->toTypescript($name, $properties),
+            $output,
             $missingSymbols
         );
     }
@@ -69,16 +75,4 @@ abstract class ClassTransformer implements Transformer
         return "{$reflection->getName()} : " . implode(' | ', $types) . ';';
     }
 
-    protected function toTypescript(string $name, array $properties): string
-    {
-        $output = "export type {$name} = {" . PHP_EOL;
-
-        foreach ($properties as $property) {
-            $output .= "    {$property}" . PHP_EOL;
-        }
-
-        $output .= '}' . PHP_EOL;
-
-        return $output;
-    }
 }
