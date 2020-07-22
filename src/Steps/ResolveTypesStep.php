@@ -45,11 +45,11 @@ class ResolveTypesStep
                 continue;
             }
 
-            $typeOccurrence = $collector->getTypeOccurrence($class);
+            $classOccurrence = $collector->getClassOccurrence($class);
 
-            $type = $typeOccurrence->transformer->transform(
+            $type = $classOccurrence->transformer->transform(
                 $class,
-                $typeOccurrence->name
+                $classOccurrence->name
             );
 
             $collection->add($type);

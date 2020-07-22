@@ -13,7 +13,7 @@ export type Dto = {
     mixed : number | string;
     documented_array : Array<number>;
     mixed_with_array : number | string | Array<number | string>;
-    array_with_null : Array<number | null> | null;
+    array_with_null : null | Array<number | null>;
     enum : Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.Enum;
     non_typescripted_type : any;
     other_dto : Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto;

@@ -2,78 +2,50 @@
 
 namespace Spatie\TypescriptTransformer\Actions;
 
+use Spatie\TypescriptTransformer\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypescriptTransformer\ValueObjects\ClassProperty;
 
 class ResolvePropertyTypesAction
 {
     private MissingSymbolsCollection $missingSymbolsCollection;
 
-    public function __construct(MissingSymbolsCollection $missingSymbolsCollection)
-    {
+    private array $classPropertyProcessors;
+
+    public function __construct(
+        MissingSymbolsCollection $missingSymbolsCollection,
+        array $classPropertyProcessors
+    ) {
         $this->missingSymbolsCollection = $missingSymbolsCollection;
+        $this->classPropertyProcessors = $classPropertyProcessors;
     }
 
-    public function execute(
-        array $allowedTypes,
-        array $allowedArrayTypes,
-        bool $isNullable
-    ): array {
-        $types = $this->resolveTypes($allowedTypes, $allowedArrayTypes);
+    public function execute(ClassProperty $classProperty): array
+    {
+        $classProperty = $this->processClassProperty($classProperty);
 
-        $types = $this->mapTypes($types);
-        $arrayTypes = $this->mapArrayTypes($allowedArrayTypes);
+        $types = array_map(function (string $type) {
+            return $this->mapType($type);
+        }, $classProperty->types);
 
-        if (count($arrayTypes) > 0) {
+        $arrayTypes = array_map(function (string $type) {
+            return $this->mapType($type);
+        }, $classProperty->arrayTypes);
+
+        if (! empty($arrayTypes)) {
             $types[] = 'Array<' . implode(' | ', $arrayTypes) . '>';
-        }
-
-        if (count($types) === 0) {
-            return ['never'];
-        }
-
-        if ($isNullable) {
-            $types[] = 'null';
         }
 
         return array_unique($types);
     }
 
-    protected function resolveTypes(
-        array $allowedTypes,
-        array $allowedArrayTypes
-    ): array {
-        return array_filter(
-            $allowedTypes,
-            function (string $type) use ($allowedArrayTypes) {
-                if (str_ends_with($type, '[]')) {
-                    return false;
-                }
-
-                if (empty($allowedArrayTypes)) {
-                    return true;
-                }
-
-                if ($type === 'array') {
-                    return false;
-                }
-
-                return true;
-            }
+    protected function processClassProperty(ClassProperty $classProperty): ClassProperty
+    {
+        return array_reduce(
+            $this->classPropertyProcessors,
+            fn(ClassProperty $property, ClassPropertyProcessor $processor) => $processor->process($property),
+            $classProperty
         );
-    }
-
-    protected function mapTypes(array $types): array
-    {
-        return array_map(function (string $type) {
-            return $this->mapType($type);
-        }, $types);
-    }
-
-    protected function mapArrayTypes(array $allowedArrayTypes): array
-    {
-        return array_map(function (string $type) {
-            return $this->mapType($type);
-        }, $allowedArrayTypes);
     }
 
     protected function mapType(string $type): string
@@ -86,6 +58,7 @@ class ResolvePropertyTypesAction
             'null' => 'null',
             'object' => 'object',
             'array' => 'Array<never>',
+            'never' => 'never',
         ];
 
         if (array_key_exists($type, $mapping)) {

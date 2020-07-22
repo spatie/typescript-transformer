@@ -12,13 +12,14 @@ use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDtoCollection;
+use Spatie\TypescriptTransformer\Transformers\ClassTransformer;
 use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
 
 class DtoTransformerTest extends TestCase
 {
     use MatchesSnapshots;
 
-    private DtoTransformer $transformer;
+    private ClassTransformer $transformer;
 
     protected function setUp() : void
     {

@@ -4,7 +4,7 @@
 namespace Spatie\TypescriptTransformer\Collectors;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Structures\TypeOccurrence;
+use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 interface Collector
@@ -13,5 +13,5 @@ interface Collector
 
     public function shouldTransform(ReflectionClass $class): bool;
 
-    public function getTypeOccurrence(ReflectionClass $class): TypeOccurrence;
+    public function getClassOccurrence(ReflectionClass $class): ClassOccurrence;
 }

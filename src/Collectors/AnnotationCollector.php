@@ -5,7 +5,7 @@ namespace Spatie\TypescriptTransformer\Collectors;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypescriptTransformer\Structures\TypeOccurrence;
+use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
@@ -35,14 +35,14 @@ class AnnotationCollector implements Collector
         return strpos($class->getDocComment(), '@typescript');
     }
 
-    public function getTypeOccurrence(ReflectionClass $class): TypeOccurrence
+    public function getClassOccurrence(ReflectionClass $class): ClassOccurrence
     {
         [
             'name' => $name,
             'transformer' => $transformer,
         ] = $this->classReader->forClass($class);
 
-        return TypeOccurrence::create(
+        return ClassOccurrence::create(
             $this->resolveTransformer($class, $transformer),
             $name
         );

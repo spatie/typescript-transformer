@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Structures;
+namespace Spatie\TypescriptTransformer\ValueObjects;
 
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 
-class TypeOccurrence
+class ClassOccurrence
 {
     public Transformer $transformer;
 
