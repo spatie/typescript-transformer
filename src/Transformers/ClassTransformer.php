@@ -74,5 +74,4 @@ abstract class ClassTransformer implements Transformer
 
         return "{$reflection->getName()} : " . implode(' | ', $types) . ';';
     }
-
 }
