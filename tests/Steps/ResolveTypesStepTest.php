@@ -38,13 +38,13 @@ class ResolveTypesStepTest extends TestCase
     {
         $typesCollection = $this->action->execute();
 
-        $this->assertCount(3, $typesCollection->getTypes());
+        $this->assertCount(3, $typesCollection);
     }
 
     /** @test */
     public function it_parses_a_typescript_enum_correctly()
     {
-        $type = $this->action->execute()->getTypes()[TypescriptEnum::class];
+        $type = $this->action->execute()[TypescriptEnum::class];
 
         $this->assertEquals(new ReflectionClass(new TypescriptEnum('js')), $type->reflection);
         $this->assertEquals('TypescriptEnum', $type->name);
@@ -55,7 +55,7 @@ class ResolveTypesStepTest extends TestCase
     /** @test */
     public function it_parses_a_typescript_enum_with_name_correctly()
     {
-        $type = $this->action->execute()->getTypes()[TypescriptEnumWithName::class];
+        $type = $this->action->execute()[TypescriptEnumWithName::class];
 
         $this->assertEquals(new ReflectionClass(new TypescriptEnumWithName('js')), $type->reflection);
         $this->assertEquals('EnumWithName', $type->name);
@@ -66,7 +66,7 @@ class ResolveTypesStepTest extends TestCase
     /** @test */
     public function it_parses_a_typescript_enum_with_custom_transformer_correctly()
     {
-        $type = $this->action->execute()->getTypes()[TypescriptEnumWithCustomTransformer::class];
+        $type = $this->action->execute()[TypescriptEnumWithCustomTransformer::class];
 
         $this->assertEquals(new ReflectionClass(new TypescriptEnumWithCustomTransformer('js')), $type->reflection);
         $this->assertEquals('TypescriptEnumWithCustomTransformer', $type->name);
@@ -86,7 +86,7 @@ class ResolveTypesStepTest extends TestCase
                 ->outputFile('types.d.ts')
         );
 
-        $types = $this->action->execute()->getTypes();
+        $types = $this->action->execute();
 
         $this->assertCount(1, $types);
         $this->assertArrayHasKey(TypescriptEnum::class, $types);
@@ -103,7 +103,7 @@ class ResolveTypesStepTest extends TestCase
                 ->outputFile('types.d.ts')
         );
 
-        $types = $this->action->execute()->getTypes();
+        $types = $this->action->execute();
 
         $this->assertCount(4, $types);
         $this->assertArrayHasKey(RegularEnum::class, $types);

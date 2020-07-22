@@ -21,7 +21,7 @@ class TypesCollectionTest extends TestCase
         $this->assertCount(1, $structure);
         $this->assertEquals([
             'Enum' => $fake,
-        ], $structure->getTypes());
+        ], iterator_to_array($structure));
     }
 
     /** @test */
@@ -40,7 +40,7 @@ class TypesCollectionTest extends TestCase
             'a\Enum' => $fakeA,
             'a\b\Enum' => $fakeB,
             'a\b\c\Enum' => $fakeC,
-        ], $structure->getTypes());
+        ], iterator_to_array($structure));
     }
 
     /** @test */
@@ -55,7 +55,7 @@ class TypesCollectionTest extends TestCase
         $this->assertEquals([
             'test\EnumA' => $fakeA,
             'test\EnumB' => $fakeB,
-        ], $structure->getTypes());
+        ], iterator_to_array($structure));
     }
 
     /** @test */
@@ -70,7 +70,7 @@ class TypesCollectionTest extends TestCase
         $this->assertCount(1, $structure);
         $this->assertEquals([
             TypescriptEnum::class => $fake,
-        ], $structure->getTypes());
+        ], iterator_to_array($structure));
     }
 
     /** @test */

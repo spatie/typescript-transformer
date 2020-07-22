@@ -14,13 +14,6 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
 
     private array $structure = [];
 
-    private ArrayIterator $iterator;
-
-    public function __construct()
-    {
-        $this->iterator = new ArrayIterator($this->types);
-    }
-
     public static function create(): self
     {
         return new self();
@@ -38,7 +31,7 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
 
     public function getIterator()
     {
-        return $this->iterator;
+        return new ArrayIterator($this->types);
     }
 
     public function offsetSet($class, $type): void
@@ -64,14 +57,6 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
     public function count()
     {
         return count($this->types);
-    }
-
-    /**
-     * @return array|\Spatie\TypescriptTransformer\Structures\Type[]
-     */
-    public function getTypes(): array
-    {
-        return $this->types;
     }
 
     private function ensureTypeCanBeAdded(Type $type)

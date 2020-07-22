@@ -25,7 +25,7 @@ class PersistTypesCollectionStep
 
         $rootTypes = [];
 
-        foreach ($collection->getTypes() as $type) {
+        foreach ($collection as $type) {
             if ($type->isInline) {
                 continue;
             }
