@@ -24,6 +24,8 @@ class ResolvePropertyTypesAction
     {
         $classProperty = $this->processClassProperty($classProperty);
 
+        $classProperty = $this->removeRedundantTypes($classProperty);
+
         $types = array_map(function (string $type) {
             return $this->mapType($type);
         }, $classProperty->types);
@@ -46,6 +48,18 @@ class ResolvePropertyTypesAction
             fn (ClassProperty $property, ClassPropertyProcessor $processor) => $processor->process($property),
             $classProperty
         );
+    }
+
+    protected function removeRedundantTypes(ClassProperty $classProperty): ClassProperty
+    {
+        if (in_array('array', $classProperty->types) && ! empty($classProperty->arrayTypes)) {
+            $classProperty->types = array_filter(
+                $classProperty->types,
+                fn(string $type) => $type !== 'array'
+            );
+        }
+
+        return $classProperty;
     }
 
     protected function mapType(string $type): string
