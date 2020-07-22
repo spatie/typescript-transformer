@@ -44,20 +44,14 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
 
     public function offsetSet($class, $type): void
     {
-        if ($class === null) {
-            $this->ensureTypeCanBeAdded($type);
-
-            $this->types[$type->reflection->getName()] = $type;
-
-            return;
-        }
+        $class ??= $type->reflection->getName();
 
         $class = $class instanceof Type
             ? $class->reflection->getName()
             : $class;
 
-        if (! array_key_exists($class, $this->types)) {
-            throw new Exception("Tried replacing unknown type {$class}");
+        if(! array_key_exists($class, $this->types)){
+            $this->ensureTypeCanBeAdded($type);
         }
 
         $this->types[$class] = $type;
@@ -71,24 +65,6 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
     public function count()
     {
         return count($this->types);
-    }
-
-    public function find(string $class): ?Type
-    {
-        return $this->types[$class] ?? null;
-    }
-
-    public function update(Type $type): self
-    {
-        $class = $type->reflection->getName();
-
-        if (! array_key_exists($class, $this->types)) {
-            throw new Exception("Tried replacing unknown type {$class}");
-        }
-
-        $this->types[$class] = $type;
-
-        return $this;
     }
 
     /**

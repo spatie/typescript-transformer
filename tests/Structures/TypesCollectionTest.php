@@ -59,17 +59,6 @@ class TypesCollectionTest extends TestCase
     }
 
     /** @test */
-    public function it_cannot_add_the_same_type_to_the_same_namespace()
-    {
-        $this->expectException(SymbolAlreadyExists::class);
-
-        $collection = TypesCollection::create();
-
-        $collection[] = FakeType::fake('Enum')->withNamespace('test');
-        $collection[] = FakeType::fake('Enum')->withNamespace('test');
-    }
-
-    /** @test */
     public function it_can_add_a_real_type()
     {
         $reflection = new ReflectionClass(TypescriptEnum::class);
