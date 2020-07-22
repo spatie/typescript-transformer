@@ -40,6 +40,11 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
         return $this->types[$class] ?? null;
     }
 
+    public function getIterator()
+    {
+        return $this->iterator;
+    }
+
     public function offsetSet($class, $type): void
     {
         if ($class === null) {
@@ -134,10 +139,5 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
             'kind' => 'type',
             'value' => $type->reflection->getName(),
         ];
-    }
-
-    public function getIterator()
-    {
-        return $this->iterator;
     }
 }
