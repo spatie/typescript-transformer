@@ -4,8 +4,8 @@
 namespace Spatie\TypescriptTransformer\Collectors;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 
 interface Collector
 {

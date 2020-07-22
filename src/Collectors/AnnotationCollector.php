@@ -5,9 +5,9 @@ namespace Spatie\TypescriptTransformer\Collectors;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 
 class AnnotationCollector implements Collector
 {

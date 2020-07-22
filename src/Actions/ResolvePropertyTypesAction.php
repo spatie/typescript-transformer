@@ -43,7 +43,7 @@ class ResolvePropertyTypesAction
     {
         return array_reduce(
             $this->classPropertyProcessors,
-            fn(ClassProperty $property, ClassPropertyProcessor $processor) => $processor->process($property),
+            fn (ClassProperty $property, ClassPropertyProcessor $processor) => $processor->process($property),
             $classProperty
         );
     }

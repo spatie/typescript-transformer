@@ -48,7 +48,6 @@ class ResolvePropertyTypesActionTest extends TestCase
             new class extends ReflectionProperty {
                 public function __construct()
                 {
-
                 }
             },
             $nullable ? array_merge($allowed, ['null']) : $allowed,

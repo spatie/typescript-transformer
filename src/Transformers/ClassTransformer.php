@@ -21,7 +21,7 @@ abstract class ClassTransformer implements Transformer
         $properties = $this->resolveProperties($class);
 
         $properties = array_map(
-            fn(ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
+            fn (ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
             $properties
         );
 
@@ -45,7 +45,7 @@ abstract class ClassTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn(ReflectionProperty $property) => ! $property->isStatic()
+            fn (ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);
