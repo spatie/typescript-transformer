@@ -40,13 +40,15 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
             ->withMissingSymbols(['B' => 'B'])
             ->withTransformed("Depends on type B: {%B%}");
 
-        $this->collection->add($typeA)->add($typeB)->add($typeC);
+        $this->collection[] = $typeA;
+        $this->collection[] = $typeB;
+        $this->collection[] = $typeC;
 
         $transformed = $this->action->execute($typeA);
 
         $this->assertEquals('Depends on type B: Depends on type C: This is type C', $transformed);
-        $this->assertEquals('Depends on type C: This is type C', $this->collection->find('B')->transformed);
-        $this->assertEquals('This is type C', $this->collection->find('C')->transformed);
+        $this->assertEquals('Depends on type C: This is type C', $this->collection['B']->transformed);
+        $this->assertEquals('This is type C', $this->collection['C']->transformed);
     }
 
     /** @test */
@@ -64,7 +66,8 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
             ->withMissingSymbols(['A' => 'A'])
             ->withTransformed('Depends on type A: {%A%}');
 
-        $this->collection->add($typeA)->add($typeB);
+        $this->collection[] = $typeA;
+        $this->collection[] = $typeB;
 
         $this->action->execute($typeA);
     }
@@ -80,7 +83,8 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
             ->withMissingSymbols(['B' => 'B'])
             ->withTransformed('Links to B: {%B%}');
 
-        $this->collection->add($typeA)->add($typeB);
+        $this->collection[] = $typeA;
+        $this->collection[] = $typeB;
 
         $transformedA = $this->action->execute($typeA);
         $transformedB = $this->action->execute($typeB);
@@ -106,7 +110,9 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
             ->withMissingSymbols(['B' => 'B', 'C' => 'C'])
             ->withTransformed('Depends on type B: {%B%} | depends on type C: {%C%}');
 
-        $this->collection->add($typeA)->add($typeB)->add($typeC);
+        $this->collection[] = $typeA;
+        $this->collection[] = $typeB;
+        $this->collection[] = $typeC;
 
         $transformed = $this->action->execute($typeA);
 

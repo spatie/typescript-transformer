@@ -24,9 +24,7 @@ class ReplaceSymbolsInTypeAction
         }
 
         foreach ($type->missingSymbols->all() as $missingSymbol) {
-            $this->collection->replace(
-                $this->replaceSymbol($missingSymbol, $type, $chain)
-            );
+            $this->collection[$type] = $this->replaceSymbol($missingSymbol, $type, $chain);
         }
 
         return $type->transformed;
@@ -34,7 +32,7 @@ class ReplaceSymbolsInTypeAction
 
     private function replaceSymbol(string $missingSymbol, Type $type, array $chain): Type
     {
-        $found = $this->collection->find($missingSymbol);
+        $found = $this->collection[$missingSymbol];
 
         if ($found === null) {
             $type->replaceSymbol($missingSymbol, 'any'); // Use `never`

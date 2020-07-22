@@ -49,7 +49,7 @@ class ResolveTypesStep
                 $classOccurrence->name
             );
 
-            $collection->add($type);
+            $collection[] = $type;
         }
 
         return $collection;

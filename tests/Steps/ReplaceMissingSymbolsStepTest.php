@@ -21,18 +21,15 @@ class ReplaceMissingSymbolsStepTest extends TestCase
     /** @test */
     public function it_can_replace_missing_symbols()
     {
-        $collection = TypesCollection::create()
-            ->add(
-                FakeType::fake('Dto')
-                    ->withTransformed('{enum: {%enums\Enum%}, non-existing: {%non-existing%}}')
-                    ->withMissingSymbols([
-                        'enum' => 'enums\Enum',
-                        'non-existing' => 'non-existing',
-                    ])
-            )
-            ->add(
-                FakeType::fake('Enum')->withNamespace('enums')
-            );
+        $collection = TypesCollection::create();
+
+        $collection[] = FakeType::fake('Enum')->withNamespace('enums');
+        $collection[] = FakeType::fake('Dto')
+            ->withTransformed('{enum: {%enums\Enum%}, non-existing: {%non-existing%}}')
+            ->withMissingSymbols([
+                'enum' => 'enums\Enum',
+                'non-existing' => 'non-existing',
+            ]);
 
         $collection = $this->action->execute($collection);
 

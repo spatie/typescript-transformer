@@ -12,11 +12,11 @@ class ReplaceMissingSymbolsStep
     {
         $replaceSymbolsInTypeAction = new ReplaceSymbolsInTypeAction($collection);
 
-        $collection->map(function (Type $type) use ($replaceSymbolsInTypeAction) {
+        foreach ($collection->getTypes() as $type) {
             $type->transformed = $replaceSymbolsInTypeAction->execute($type);
 
-            return $type;
-        });
+            $collection[$type] = $type;
+        }
 
         return $collection;
     }
