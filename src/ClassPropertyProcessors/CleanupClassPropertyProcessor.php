@@ -10,7 +10,7 @@ class CleanupClassPropertyProcessor implements ClassPropertyProcessor
     {
         $classProperty->types = array_filter(
             $classProperty->types,
-            fn(string $type) => ! str_ends_with($type, '[]')
+            fn (string $type) => ! str_ends_with($type, '[]')
         );
 
         return $classProperty;

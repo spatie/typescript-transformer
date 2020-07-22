@@ -55,7 +55,7 @@ class ResolvePropertyTypesAction
         if (in_array('array', $classProperty->types) && ! empty($classProperty->arrayTypes)) {
             $classProperty->types = array_filter(
                 $classProperty->types,
-                fn(string $type) => $type !== 'array'
+                fn (string $type) => $type !== 'array'
             );
         }
 
