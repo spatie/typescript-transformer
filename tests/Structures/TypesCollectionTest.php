@@ -2,11 +2,9 @@
 
 namespace Spatie\TypescriptTransformer\Tests\Structures;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists;
-use Spatie\TypescriptTransformer\Structures\Type;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnum;
 use Spatie\TypescriptTransformer\Tests\Fakes\FakeType;

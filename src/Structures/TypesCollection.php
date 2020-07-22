@@ -4,13 +4,10 @@ namespace Spatie\TypescriptTransformer\Structures;
 
 use ArrayAccess;
 use ArrayIterator;
-use Closure;
 use Countable;
 use Exception;
-use Iterator;
 use IteratorAggregate;
 use Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists;
-use Traversable;
 
 class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
 {
