@@ -11,7 +11,7 @@ class ClassIteratorFileFilter extends ClassIterator implements Filter
 {
     use FilterTrait;
 
-    private string $path;
+    protected string $path;
 
     public function __construct(string $path)
     {

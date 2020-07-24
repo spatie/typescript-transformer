@@ -8,7 +8,7 @@ use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 class PersistTypesCollectionStep
 {
-    private TypeScriptTransformerConfig $config;
+    protected TypeScriptTransformerConfig $config;
 
     public function __construct(TypeScriptTransformerConfig $config)
     {
@@ -64,7 +64,7 @@ class PersistTypesCollectionStep
         file_put_contents($this->config->getOutputFile(), $output);
     }
 
-    private function ensureOutputFileExists(): void
+    protected function ensureOutputFileExists(): void
     {
         if (! file_exists(pathinfo($this->config->getOutputFile(), PATHINFO_DIRNAME))) {
             mkdir(pathinfo($this->config->getOutputFile(), PATHINFO_DIRNAME), 0755, true);

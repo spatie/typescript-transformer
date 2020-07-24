@@ -8,7 +8,7 @@ use Spatie\TypescriptTransformer\Structures\TypesCollection;
 
 class ReplaceSymbolsInTypeAction
 {
-    private TypesCollection $collection;
+    protected TypesCollection $collection;
 
     public function __construct(TypesCollection $collection)
     {
@@ -31,7 +31,7 @@ class ReplaceSymbolsInTypeAction
         return $type->transformed;
     }
 
-    private function replaceSymbol(string $missingSymbol, Type $type, array $chain): Type
+    protected function replaceSymbol(string $missingSymbol, Type $type, array $chain): Type
     {
         $found = $this->collection[$missingSymbol];
 

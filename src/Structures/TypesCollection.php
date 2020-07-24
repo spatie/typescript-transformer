@@ -10,9 +10,9 @@ use Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists;
 
 class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
 {
-    private array $types = [];
+    protected array $types = [];
 
-    private array $structure = [];
+    protected array $structure = [];
 
     public static function create(): self
     {
@@ -65,7 +65,7 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
         return count($this->types);
     }
 
-    private function ensureTypeCanBeAdded(Type $type)
+    protected function ensureTypeCanBeAdded(Type $type)
     {
         $namespace = array_reduce($type->getNamespaceSegments(), function (array $checkedSegments, string $segment) {
             $segments = array_merge($checkedSegments, [$segment]);

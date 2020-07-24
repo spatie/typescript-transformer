@@ -8,9 +8,9 @@ use Spatie\TypescriptTransformer\ValueObjects\ClassProperty;
 
 class ResolvePropertyTypesAction
 {
-    private MissingSymbolsCollection $missingSymbolsCollection;
+    protected MissingSymbolsCollection $missingSymbolsCollection;
 
-    private array $classPropertyProcessors;
+    protected array $classPropertyProcessors;
 
     public function __construct(
         MissingSymbolsCollection $missingSymbolsCollection,

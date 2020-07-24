@@ -10,7 +10,7 @@ use Symfony\Component\Finder\Finder;
 
 class TypescriptTransformer
 {
-    private TypeScriptTransformerConfig $config;
+    protected TypeScriptTransformerConfig $config;
 
     public static function create(TypeScriptTransformerConfig $config): self
     {

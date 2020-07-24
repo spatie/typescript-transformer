@@ -11,7 +11,7 @@ use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 
 class AnnotationCollector extends Collector
 {
-    private ClassReader $classReader;
+    protected ClassReader $classReader;
 
     public function __construct(TypeScriptTransformerConfig $config)
     {
@@ -38,7 +38,7 @@ class AnnotationCollector extends Collector
         );
     }
 
-    private function resolveTransformer(
+    protected function resolveTransformer(
         ReflectionClass $class,
         ?string $transformer
     ): Transformer {

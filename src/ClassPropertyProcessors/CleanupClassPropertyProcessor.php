@@ -16,7 +16,7 @@ class CleanupClassPropertyProcessor implements ClassPropertyProcessor
         return $classProperty;
     }
 
-    private function isInvalidType(string $type): bool
+    protected function isInvalidType(string $type): bool
     {
         return strlen($type) >= 2 && substr($type, -2, 2) === '[]';
     }

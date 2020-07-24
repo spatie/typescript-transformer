@@ -15,7 +15,7 @@ class ApplyNeverClassPropertyProcessor implements ClassPropertyProcessor
         return $classProperty;
     }
 
-    private function shouldApply(ClassProperty $classProperty): bool
+    protected function shouldApply(ClassProperty $classProperty): bool
     {
         if (count($classProperty->arrayTypes) > 0 && $classProperty->arrayTypes !== ['null']) {
             return false;

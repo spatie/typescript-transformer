@@ -23,7 +23,7 @@ class DtoCollectionTransformer implements Transformer
         return Type::createInline($class, $transformed, $missingSymbolsCollection);
     }
 
-    private function resolveType(
+    protected function resolveType(
         ReflectionClass $class,
         MissingSymbolsCollection $missingSymbolsCollection
     ): string {

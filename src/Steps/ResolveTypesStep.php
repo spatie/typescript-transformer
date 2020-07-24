@@ -13,12 +13,12 @@ use Symfony\Component\Finder\Finder;
 
 class ResolveTypesStep
 {
-    private Finder $finder;
+    protected Finder $finder;
 
     /** @var \Spatie\TypescriptTransformer\Collectors\Collector[] */
-    private array $collectors;
+    protected array $collectors;
 
-    private TypeScriptTransformerConfig $config;
+    protected TypeScriptTransformerConfig $config;
 
     public function __construct(Finder $finder, TypeScriptTransformerConfig $config)
     {
@@ -53,7 +53,7 @@ class ResolveTypesStep
         return $collection;
     }
 
-    private function resolveIterator(): IteratorAggregate
+    protected function resolveIterator(): IteratorAggregate
     {
         $searchingPath = is_dir($this->config->getSearchingPath())
             ? $this->config->getSearchingPath()
@@ -72,7 +72,7 @@ class ResolveTypesStep
         return $iterator;
     }
 
-    private function resolveCollector(ReflectionClass $class): ?Collector
+    protected function resolveCollector(ReflectionClass $class): ?Collector
     {
         foreach ($this->collectors as $collector) {
             if ($collector->shouldCollect($class)) {
