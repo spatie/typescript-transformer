@@ -20,6 +20,7 @@ class ReplaceSymbolsInTypeAction
         if (in_array($type->getTypescriptName(), $chain)) {
             $chain = array_merge($chain, [$type->getTypescriptName()]);
 
+            /** TODO: use dedicated exception */
             throw new Exception("Circular dependency chain found: ". implode(' -> ', $chain));
         }
 
