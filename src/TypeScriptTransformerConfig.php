@@ -3,7 +3,6 @@
 namespace Spatie\TypescriptTransformer;
 
 use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypescriptTransformer\Exceptions\InvalidConfig;
 
 class TypeScriptTransformerConfig
 {
