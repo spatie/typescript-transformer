@@ -51,7 +51,7 @@ composer require spatie/typescript-transformer
 
 ## How does this work?
 
-First you have to configure the package. In this configuration you define the path where your PHP classes are stored, the path where Typescript files will be written, the default file where Typescript definitions will be written and the transformers required to convert PHP to Typescript. You can write your own transformers but more on that later...
+First you have to configure the package. In this configuration you define the path where your PHP classes are stored, the file where the Typescript will be written and the transformers required to convert PHP to Typescript. You can write your own transformers but more on that later...
 
 When running the package it will look in your PHP path for classes with a `@typescript` annotation, these classes will be given to a list of transformers who will try to convert the PHP class to typescript. In the end when all PHP classess are processed the typescript is written to the default file.
 
@@ -66,8 +66,7 @@ use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 $config = TypeScriptTransformerConfig::create()
     ->searchingPath(__DIR__ . '/../src') // path where your php classes are
     ->transformers([MyclabsEnumTransformer::class]) // list of transformers
-    ->outputFile('types.d.ts') // the default typescript output file
-    ->outputPath(__DIR__ . '/../js'); // path where to store typescript files
+    ->outputFile(__DIR__ . '/../js/generated.d.ts'); // file where Typescript will be written
 );
 ```
 
@@ -81,39 +80,21 @@ That's it! All the classes with a `@typescript` annotation are now converted to 
 
 Classes not converted? You probably should write some transformers, read on!
 
-## Annotation options
+## Default transformers
 
-When using the `@typescript` annotation, the name of the PHP class will be used for the Typescript type and the type will be stored in the default file you defined in your config:
+Altough writing your own transformers isn't that difficult we've added a few tranformers so you can get started:
 
-```php
-/** @typescript **/
-class Languages extends Enum{}
-```
+- MyclabsEnumTransformer: this one converts a `myclabs\enum`
+- ClassTransformer: an abstract transformer that can transform a class with it's public properties
+- DtoTransformer: uses the ClassTransformer and transforms DTO's from the `spatie/data-transfer-object` package
+- DtoCollectionTransformer: converts collections from the `spatie/data-transfer-object` package
 
-You can also give the type another name:
 
-```php
-/** @typescript Talen **/
-class Languages extends Enum{}
-```
 
-Or write the type to another file (make sure the file always has a `.ts` extension):
-
-```php
-/** @typescript admin/types.d.ts **/
-class Languages extends Enum{}
-```
-
-And off course you can combine these options giving the type a custom name and file:
-
-```php
-/** @typescript Talen admin/types.d.ts **/
-class Languages extends Enum{}
-```
 
 ## Writing transformers
 
-Transformers are the heart of the package, we've added a default one in the package for the `myclabs/enum` enum, but you're probably going to need to write some transformers yourself.
+Transformers are the heart of the package, we've added a few default ones in the package, but you're probably going to need to write some transformers yourself.
 
 A transformer is a class which implements the `Transformer` interface:
 
@@ -127,7 +108,7 @@ class EnumTransformer implements Transformer
         // can this transformer handle the given class?
     }
 
-    public function transform(ReflectionClass $class, string $name): string
+    public function transform(ReflectionClass $class, string $name): Type
     {
         // get the typescript representation of the class
     }
@@ -145,6 +126,40 @@ It is also possible to override the transformer of a class by adding following a
  */
 class Languages extends State{}
 ```
+
+## Annotation options
+
+When using the `@typescript` annotation, the name of the PHP class will be used for the Typescript type:
+
+```php
+/** @typescript **/
+class Languages extends Enum{}
+```
+
+You can also give the type another name:
+
+```php
+/** @typescript Talen **/
+class Languages extends Enum{}
+```
+
+Want to define a specific transformer for the file? You can use the following annotation:
+
+```php
+/** 
+ * @typescript
+ * @typescript-transformer \Spatie\LaravelTypescriptTransformer\Transformers\EnumTransformer
+ **/
+class Languages extends Enum{}
+```
+
+## Transforming without annotations
+
+In some cases you want to transform classes without annotation, for example in one of ours projects we've created resource classes that were sent to the front using DTO's. We knew these Resources would always have to be converted to Typescript so writing the `@typescript` annotation was a bit cumbersome.
+
+Collectors allow you to transform classes by a specified transformer, we're actually using a collector to collect the `@typescript` annotated classes.
+
+A collector is a class that implements the `Collector` interface
 
 ## Testing
 

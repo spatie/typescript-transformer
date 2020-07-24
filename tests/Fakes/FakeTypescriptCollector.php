@@ -9,15 +9,8 @@ use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 
-class FakeTypescriptCollector implements Collector
+class FakeTypescriptCollector extends Collector
 {
-    private TypeScriptTransformerConfig $config;
-
-    public function __construct(TypeScriptTransformerConfig $config)
-    {
-        $this->config = $config;
-    }
-
     public function shouldTransform(ReflectionClass $class): bool
     {
         return is_subclass_of($class->getName(), Enum::class);

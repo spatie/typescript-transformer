@@ -2,6 +2,7 @@
 
 namespace Spatie\TypescriptTransformer;
 
+use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypescriptTransformer\Exceptions\InvalidConfig;
 
 class TypeScriptTransformerConfig
@@ -10,9 +11,14 @@ class TypeScriptTransformerConfig
 
     private array $transformers = [];
 
-    private array $collectors = [];
+    private array $collectors;
 
     private string $outputFile = 'types.d.ts';
+
+    public function __construct()
+    {
+        $this->collectors = [AnnotationCollector::class];
+    }
 
     public static function create(): self
     {
@@ -35,7 +41,7 @@ class TypeScriptTransformerConfig
 
     public function collectors(array $collectors)
     {
-        $this->collectors = $collectors;
+        $this->collectors = array_merge($collectors, [AnnotationCollector::class]);
 
         return $this;
     }

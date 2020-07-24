@@ -9,15 +9,13 @@ use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 
-class AnnotationCollector implements Collector
+class AnnotationCollector extends Collector
 {
-    private TypeScriptTransformerConfig $config;
-
     private ClassReader $classReader;
 
     public function __construct(TypeScriptTransformerConfig $config)
     {
-        $this->config = $config;
+        parent::__construct($config);
 
         $this->classReader = new ClassReader();
     }
