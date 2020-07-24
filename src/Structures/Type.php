@@ -50,7 +50,7 @@ class Type
 
     public function getNamespaceSegments(): array
     {
-        if($this->isInline === true){
+        if ($this->isInline === true) {
             return [];
         }
 
