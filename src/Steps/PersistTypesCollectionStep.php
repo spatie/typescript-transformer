@@ -17,8 +17,6 @@ class PersistTypesCollectionStep
 
     public function execute(TypesCollection $collection): void
     {
-        $this->config->ensureConfigIsValid();
-
         $this->ensureOutputFileExists();
 
         $namespaces = [];

@@ -35,7 +35,7 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * @param string|\Spatie\TypescriptTransformer\Structures\Type $class
+     * @param null|string|\Spatie\TypescriptTransformer\Structures\Type $class
      * @param \Spatie\TypescriptTransformer\Structures\Type $type
      *
      * @throws \Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists

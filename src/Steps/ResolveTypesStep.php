@@ -31,8 +31,6 @@ class ResolveTypesStep
 
     public function execute(): TypesCollection
     {
-        $this->config->ensureConfigIsValid();
-
         $collection = new TypesCollection();
 
         foreach ($this->resolveIterator() as $class) {

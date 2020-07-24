@@ -23,10 +23,11 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
         "larapack/dd": "^1.1",
+        "myclabs/php-enum": "^1.7",
         "phpunit/phpunit": "^9.0",
         "spatie/phpunit-snapshot-assertions": "^4.2",
-        "myclabs/php-enum": "^1.7",
-        "spatie/temporary-directory": "^1.2"
+        "spatie/temporary-directory": "^1.2",
+        "vimeo/psalm": "^3.12"
     },
     "autoload": {
         "psr-4": {

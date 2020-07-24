@@ -7,7 +7,7 @@ use Spatie\TypescriptTransformer\Exceptions\InvalidConfig;
 
 class TypeScriptTransformerConfig
 {
-    private ?string $searchingPath = null;
+    private string $searchingPath;
 
     private array $transformers = [];
 
@@ -83,16 +83,5 @@ class TypeScriptTransformerConfig
             fn (string $collector) => new $collector($this),
             $this->collectors
         );
-    }
-
-    public function ensureConfigIsValid()
-    {
-        if (empty($this->searchingPath)) {
-            throw InvalidConfig::missingSearchingPath();
-        }
-
-        if (empty($this->outputFile)) {
-            throw InvalidConfig::missingOutputFile();
-        }
     }
 }

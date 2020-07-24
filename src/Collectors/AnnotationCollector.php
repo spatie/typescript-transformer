@@ -22,7 +22,7 @@ class AnnotationCollector extends Collector
 
     public function shouldCollect(ReflectionClass $class): bool
     {
-        return strpos($class->getDocComment(), '@typescript');
+        return (bool) strpos($class->getDocComment(), '@typescript');
     }
 
     public function getClassOccurrence(ReflectionClass $class): ClassOccurrence
