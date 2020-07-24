@@ -10,7 +10,7 @@ class CleanupClassPropertyProcessor implements ClassPropertyProcessor
     {
         $classProperty->types = array_values(array_filter(
             $classProperty->types,
-            fn(string $type) => ! $this->isInvalidType($type)
+            fn (string $type) => ! $this->isInvalidType($type)
         ));
 
         return $classProperty;

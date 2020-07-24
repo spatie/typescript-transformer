@@ -4,7 +4,6 @@ namespace Spatie\TypescriptTransformer\Tests\ClassPropertyProcessors;
 
 use PHPUnit\Framework\TestCase;
 use Spatie\TypescriptTransformer\ClassPropertyProcessors\CleanupClassPropertyProcessor;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeClassReflection;
 use Spatie\TypescriptTransformer\Tests\Fakes\FakePropertyReflection;
 use Spatie\TypescriptTransformer\ValueObjects\ClassProperty;
 

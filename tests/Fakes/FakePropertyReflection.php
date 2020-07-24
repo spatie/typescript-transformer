@@ -13,6 +13,5 @@ class FakePropertyReflection extends ReflectionProperty
 
     public function __construct()
     {
-
     }
 }
