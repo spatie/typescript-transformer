@@ -51,9 +51,9 @@ composer require spatie/typescript-transformer
 
 ## How does this work?
 
-First, you have to configure the package. In this configuration, you define the path where your PHP classes are stored, the file where the Typescript will be written, and the transformers required to convert PHP to Typescript. You can write your own transformers but more on that later.
+First, you have to configure the package. In this configuration, you define the path where your PHP classes are stored, the file where the Typescript will be written, and the transformers required to convert PHP to Typescript.
 
-When running the package, it will look in your PHP path for classes with a `@typescript` annotation, and these classes will be given to a list of transformers who will try to convert the PHP class to Typescript. When all PHP classes are processed, the Typescript is written to the default file.
+When running the package, it will look in the path you provided for classes with a `@typescript` annotation, and these classes will be given to a list of transformers who will try to convert the PHP class to Typescript. When all PHP classes are processed, the Typescript is written to a file.
 
 ## Getting started
 
@@ -77,16 +77,16 @@ TypescriptTransformer::create($config)->transform();
 
 That's it! All the classes with a `@typescript` annotation are now converted to typescript.
 
-Classes not converted? You probably should write some transformers.
+Classes not converted? You probably should write some transformers. More on that later.
 
 ## Default transformers
 
 Although writing your own transformers isn't that difficult we've added a few transformers to get started:
 
-- `MyclabsEnumTransformer`: this one converts a `myclabs\enum`
-- `ClassTransformer`: an abstract transformer that can transform a class with its public properties
-- `DtoTransformer`: uses the ClassTransformer and transforms DTO's from the `spatie/data-transfer-object` package
-- `DtoCollectionTransformer: converts collections from the `spatie/data-transfer-object` package
+- `MyclabsEnumTransformer`: this converts a `myclabs\enum`
+- `ClassTransformer`: an abstract transformer that can convert a class with its public properties
+- `DtoTransformer`: uses the ClassTransformer and converts DTO's from the `spatie/data-transfer-object` package
+- `DtoCollectionTransformer`: converts collections from the `spatie/data-transfer-object` package
 
 When writing and transforming DTO's, I recommend you to take a look at the [data-transfer-object](https://github.com/spatie/data-transfer-object) package documentation which will explain how to type your DTO properties.
 
@@ -114,7 +114,7 @@ class EnumTransformer implements Transformer
 }
 ```
 
-You should return a `Type` in the `transform` method. Let's take a look at how we can create them.
+In the `canTransform` you should decide if this transformer can convert the class. In the `transform` method, you should return a `Type`, the transformed type. Let's take a look at how we can create them.
 
 ### Creating types
 
@@ -137,15 +137,15 @@ Type::create(
 );
 ```
 
-A `MissingSymbolsCollection` will contain links to other types. The package will replace these missing types with correct Typescript types when running. So, for example, you have this class:
+A `MissingSymbolsCollection` will contain links to other types. The package will replace these links with correct Typescript types. So, for example, you have this class:
 
 ```php
 /** @typescript **/
 class User extends DataTransferObject
 {
-	public string $name;
-	
-	public RoleEnum $role;
+    public string $name;
+    
+    public RoleEnum $role;
 }
 
 // And 
@@ -153,14 +153,14 @@ class User extends DataTransferObject
 /** @typescript **/
 class RoleEnum extends Enum
 {
-	const GUEST = 'guest';
-
-	const ADMIN = 'admin';
+    const GUEST = 'guest';
+    
+    const ADMIN = 'admin';
 }
 ```
 
 
-When transforming this class we don't know what the `RoleEnum` will be, but since it is also converted to typescript the package will produce the following output:
+When transforming this class we don't know what the `RoleEnum` will be, but since it is also converted to Typescript the package will produce the following output:
 
 ```typescript
 export type RoleEnum = 'guest' | 'admin';
@@ -177,13 +177,13 @@ In your transformers you should only add the symbols to the `MissingSymbolsColle
 $type = $missingSymbols->add(RoleEnum::class); // Will return {%RoleEnum::class%}
 ```
 
-The `add` method will return a token that can be used in your transformed type, to be replaced later.
+The `add` method will return a token that can be used in your transformed type, to be replaced later. It's the link we described above between the types.
 
 When in the end, no type was found(because it wasn't converted to Typescript, for example), it will be replaced with `any`.
 
 #### Inline types
 
-It is also possible to create an inline type, these types will not create a whole new Typescript type but just replace a type inline in another type. In our previous example, if would transform `Enum` classes with an inline type, the generated Typescript would look like this:
+It is also possible to create an inline type, these types will not create a whole new Typescript type but just replace a type inline in another type. In our previous example, if we would transform `Enum` classes with an inline type, the generated Typescript would look like this:
 
 ```typescript
 export type User = {
@@ -245,7 +245,7 @@ class Languages extends Enum{}
 
 In some cases, you want to transform classes without annotation. For example, in one of our projects, we've created resource classes which were sent to the front using DTO's. We knew these Resources would always have to be converted to Typescript, so writing the `@typescript` annotation was cumbersome.
 
-Collectors allow you to transform classes by a specified transformer, and we're actually using a collector to collect the `@typescript` annotated classes.
+Collectors allow you to transform classes by a specified transformer. And we're actually using a collector to collect the `@typescript` annotated classes.
 
 A collector is a class that extends the `Collector` class, and you will have to implement two methods:
 
@@ -254,20 +254,26 @@ class EnumCollector extends Collector
 {
     public function shouldCollect(ReflectionClass $class): bool
     {
-        return is_subclass_of($class->getName(), Enum::class);
+        // Can this type be collected by this collector?
     }
 
     public function getClassOccurrence(ReflectionClass $class): ClassOccurrence
     {
-        return ClassOccurrence::create(
-            new MyclabsEnumTransformer(),
-            $class->getShortName()
-        );
+        // Get the `ClassOccurrence` with a Transformer and name for the type
     }
 }
 ```
 
 First, you check if the class can be collected by this collector in `shouldCollect` when you can collect the class, `getClassOccurence` should return a correct `ClassOccurence`. A `ClassOccurence` exists of a transformer for the class, and a name the typescript type will have.
+
+You can easily create a `ClassOccurrence` as such:
+
+```php
+ClassOccurrence::create(
+    new EnumTransformer(),
+    'my awsome type'
+);
+```
 
 In the end you have to add the collector to your configuration:
 
@@ -277,11 +283,11 @@ $config = TypeScriptTransformerConfig::create()
 	...
 ```
 
-Collectors are checked in the order they're defined in the config, we add the `AnnotationsCollector` which collects `@typescript` annotated classes automatically at the end.
+Collectors are checked in the order they're defined in the config, the package adds the `AnnotationsCollector` which collects `@typescript` annotated classes automatically at the end.
 
 ## Transforming Dto's
 
-We provide a `ClassTransformer` ourselves. The transformer will convert all the public non-static properties of a class to Typescript. But sometimes you want a bit more flexibility, for example, adding the static properties or converting properties differently.
+The package provides a `ClassTransformer`. The transformer will convert all the public non-static properties of a class to Typescript. But sometimes you want a bit more flexibility, for example, adding static properties or converting properties differently.
 
 In such cases you can create your own `ClassTransformer`:
 
@@ -317,7 +323,7 @@ This Transformer comes from the [laravel-typescript-transformer](https://github.
 In the default package we provide two processors:
 
 - `CleanupClassPropertyProcessor` removes some unneeded types from the property and is recommended to run first
-- `ApplyNeverClassPropertyProcessor` when a property is not well-typed, `never` is used as Typescript type so you know you should write better types
+- `ApplyNeverClassPropertyProcessor` when a property is not well-typed, `never` is used as Typescript type so you know your properties can be better typed
 
 Specifically for Laravel we include the following processors in the Laravel package:
 
@@ -331,21 +337,21 @@ class LaravelCollectionClassPropertyProcessor implements ClassPropertyProcessor
 {
     public function process(ClassProperty $classProperty): ClassProperty
     {
-		// Transform the types of the property
+        // Transform the types of the property
     }
 }
 ```
 
-In the `process` method, you should adapt the `ClassProperty` to your needs and return it. In the `ClassProperty` you have access to two arrays: `$types` and `$arrayTypes`, these arrays contain strings of possible types like `bool`, `int`, `string`, `null` or even types like `Enum::class`.
+In the `process` method, you should adapt the `ClassProperty` to your needs and return it. With a `ClassProperty` you have access to two arrays: `$types` and `$arrayTypes`, these arrays contain strings of possible types like `bool`, `int`, `string`, `null` or even types like `Enum::class`.
 
-The `$types` array has the `$types` that a property can have, which are not stored in an array, the `$arrayTypes` array will have the types that are stored within an array of the property. For example, a property like this:
+The `$types` array has the types that a property can have, which are not stored in an array, the `$arrayTypes` array will have the types that are stored within an array of the property. For example, a property like this:
 
 ```php
 /** @var string|string[] **/
 public $emails;
 ```
 
-Will have `$arrayTypes = ['string']` and `$types = ['string', 'null']` since the property technically can be null.
+Will have `$arrayTypes = ['string']` and `$types = ['string', 'null']` since the property technically can be `null.
 
 Let's create a property processor that removes all the `null` types from a property:
 
@@ -362,18 +368,10 @@ class RemoveNullClassPropertyProcessor implements ClassPropertyProcessor
 
     private function replaceProperties(array $properties): array
     {
-        $properties = array_map(
-            fn (string $property) => $this->isDate($property) ? 'string' : $property,
-            $properties
-        );
-
-        return array_unique($properties);
-    }
-
-    private function isDate(string $property)
-    {
-        return is_subclass_of($property, DateTimeInterface::class)
-            || is_subclass_of($property, CarbonInterface::class);
+        return array_unique(array_filter(
+            $properties,
+            fn (string $property) => $property !== null
+        ));
     }
 }
 ```
