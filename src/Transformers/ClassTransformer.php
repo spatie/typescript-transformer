@@ -39,7 +39,7 @@ abstract class ClassTransformer implements Transformer
         );
     }
 
-    protected function resolveProperties(ReflectionClass $class)
+    protected function resolveProperties(ReflectionClass $class): array
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),

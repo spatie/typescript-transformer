@@ -9,7 +9,7 @@ class ApplyNeverClassPropertyProcessor implements ClassPropertyProcessor
     public function process(ClassProperty $classProperty): ClassProperty
     {
         if ($this->shouldApply($classProperty)) {
-            return ClassProperty::create($classProperty->property, ['never'], []);
+            return ClassProperty::create($classProperty->reflection, ['never'], []);
         }
 
         return $classProperty;

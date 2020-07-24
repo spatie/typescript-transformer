@@ -6,7 +6,7 @@ use ReflectionProperty;
 
 class ClassProperty
 {
-    public ReflectionProperty $property;
+    public ReflectionProperty $reflection;
 
     /** @var string[] */
     public array $types;
@@ -27,7 +27,7 @@ class ClassProperty
         array $types,
         array $arrayTypes
     ) {
-        $this->property = $property;
+        $this->reflection = $property;
         $this->types = $types;
         $this->arrayTypes = $arrayTypes;
     }
