@@ -24,7 +24,7 @@ class FakeType extends Type
         $name ??= 'FakeType';
 
         return new self(
-            FakeReflection::create()->withName($name),
+            FakeClassReflection::create()->withName($name),
             $name,
             'fake-transformed',
             new MissingSymbolsCollection(),

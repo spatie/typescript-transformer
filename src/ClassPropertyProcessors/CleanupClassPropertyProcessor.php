@@ -8,11 +8,16 @@ class CleanupClassPropertyProcessor implements ClassPropertyProcessor
 {
     public function process(ClassProperty $classProperty): ClassProperty
     {
-        $classProperty->types = array_filter(
+        $classProperty->types = array_values(array_filter(
             $classProperty->types,
-            fn (string $type) => ! str_ends_with($type, '[]')
-        );
+            fn(string $type) => ! $this->isInvalidType($type)
+        ));
 
         return $classProperty;
+    }
+
+    private function isInvalidType(string $type): bool
+    {
+        return strlen($type) >= 2 && substr($type, -2, 2) === '[]';
     }
 }
