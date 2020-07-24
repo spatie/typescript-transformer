@@ -67,7 +67,6 @@ $config = TypeScriptTransformerConfig::create()
     ->searchingPath(__DIR__ . '/../src') // path where your php classes are
     ->transformers([MyclabsEnumTransformer::class]) // list of transformers
     ->outputFile(__DIR__ . '/../js/generated.d.ts'); // file where Typescript will be written
-);
 ```
 
 Now we've got the package configured, let's start the transfomation process:
@@ -115,17 +114,90 @@ class EnumTransformer implements Transformer
 }
 ```
 
-When you create a new transformer, do not forget to add it to the list of transformers in your configuration!
+### Creating types
 
-It is also possible to override the transformer of a class by adding following annotation:
+In the `transform` method you should convert a PHP class to a `Type` object:
 
 ```php
-/** 
- * @typescript
- * @typescript-transformer \Spatie\TypescriptTransformer\MyclabsEnumTransformer           
- */
-class Languages extends State{}
+Type::create(
+    ReflectionClass $class, // The reflection class
+    string $name, // The name of the Type
+    string $transformed // The Typescript representation of the class
+);
 ```
+
+What about creating types that depend on other types? It is possible to add a fourth argument to the `create` method:
+
+```php
+Type::create(
+    ReflectionClass $class,
+    string $name,
+    string $transformed,
+    MissingSymbolsCollection $missingSymbols
+);
+```
+
+A `MissingSymbolsCollection` will contain defintions to other types, the package will replace these missing types with correct Typescript types when running. So for example, you have this class:
+
+```php
+/** @typescript **/
+class User extends DataTransferObject
+{
+	public string $name;
+	
+	public RoleEnum $role;
+}
+
+// And 
+
+/** @typescript **/
+class RoleEnum extends Enum
+{
+	const GUEST = 'guest';
+
+	const ADMIN = 'admin';
+}
+```
+
+
+When transforming this class we don't know exactly what the RoleEnum will be, but since it is also converted to typescript the package will produce following output:
+
+```typescript
+export type RoleEnum = 'guest' | 'admin';
+
+export type User = {
+    name : string;
+    role : RoleEnum;
+}
+```
+
+When in the end no type was found(because it wasn't converted to typescript for example), it will be replaced with `any`.
+
+#### Inline types
+
+It is also possible to create an inline type, these types will not create a whole new Typescript type but just replace a type inline in another type. In our previous example, if we replaced Enums with an inline type, the generated Typescript would look like this:
+
+```typescript
+export type User = {
+    name : string;
+    role : 'guest' | 'admin';
+}
+```
+
+Inline types can be created like the regulat types:
+
+```php
+Type::create(
+    ReflectionClass $class,
+    string $name,
+    string $transformed,
+    MissingSymbolsCollection $missingSymbols
+);
+```
+
+
+When you create a new transformer, do not forget to add it to the list of transformers in your configuration!
+
 
 ## Annotation options
 
@@ -179,7 +251,17 @@ class EnumCollector extends Collector
 }
 ```
 
-First you check if the class can be collected by this collector in ``
+First you check if the class can be collected by this collector in `shouldCollect` when you can collect the class, `getClassOccurence` should return a correct `ClassOccurence`. A `ClassOccurence` exists of a transformer for the class and a name the typescript type will have.
+
+In the end you have to add the collector to your configuration:
+
+```php
+$config = TypeScriptTransformerConfig::create()
+    ->collectors([EnumCollector::class])
+	...
+```
+
+Collectors are checked in the order they're defined in the config, we add the `AnnotationsCollector` which collects `@typescript` annotated classes automatically at the end.
 
 ## Testing
 
