@@ -1,4 +1,14 @@
 namespace Spatie.TypescriptTransformer.Tests.FakeClasses.Integration {
+export type DtoWithChildren = {
+    name : string;
+    other_dto : Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto;
+    other_dto_array : Array<Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
+}
+
+export type OtherDto = {
+    name : string;
+}
+
 export type Dto = {
     string : string;
     nullbable : string | null;
@@ -24,16 +34,6 @@ export type Dto = {
 }
 
 export type Enum = 'yes' | 'no';
-export type OtherDto = {
-    name : string;
-}
-
-export type DtoWithChildren = {
-    name : string;
-    other_dto : Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto;
-    other_dto_array : Array<Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
-}
-
 }
 namespace Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.LevelUp {
 export type YetAnotherDto = {
