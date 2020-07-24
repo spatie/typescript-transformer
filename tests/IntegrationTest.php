@@ -37,6 +37,8 @@ class IntegrationTest extends TestCase
 
         $transformer->transform();
 
+        dd(file_get_contents($temporaryDirectory->path('types.d.ts')));
+
         $this->assertMatchesFileSnapshot($temporaryDirectory->path('types.d.ts'));
     }
 }
