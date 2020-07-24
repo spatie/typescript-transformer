@@ -11,8 +11,8 @@ abstract class Collector
 {
     protected TypeScriptTransformerConfig $config;
 
-    public function __construct(TypeScriptTransformerConfig $config){
-
+    public function __construct(TypeScriptTransformerConfig $config)
+    {
         $this->config = $config;
     }
 
