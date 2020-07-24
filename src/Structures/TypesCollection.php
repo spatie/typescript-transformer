@@ -34,6 +34,12 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
         return new ArrayIterator($this->types);
     }
 
+    /**
+     * @param string|\Spatie\TypescriptTransformer\Structures\Type $class
+     * @param \Spatie\TypescriptTransformer\Structures\Type $type
+     *
+     * @throws \Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists
+     */
     public function offsetSet($class, $type): void
     {
         $class ??= $type->reflection->getName();
@@ -42,7 +48,7 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
             ? $class->reflection->getName()
             : $class;
 
-        if (! array_key_exists($class, $this->types)) {
+        if (array_key_exists($class, $this->types) === false && $type->isInline === false) {
             $this->ensureTypeCanBeAdded($type);
         }
 

@@ -8,7 +8,7 @@ class Type
 {
     public ReflectionClass $reflection;
 
-    public string $name;
+    public ?string $name = null;
 
     public string $transformed;
 
@@ -28,16 +28,15 @@ class Type
 
     public static function createInline(
         ReflectionClass $class,
-        string $name,
         string $transformed,
         ?MissingSymbolsCollection $missingSymbols = null
     ): self {
-        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), true);
+        return new self($class, null, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), true);
     }
 
     public function __construct(
         ReflectionClass $class,
-        string $name,
+        ?string $name,
         string $transformed,
         MissingSymbolsCollection $missingSymbols,
         bool $isInline
@@ -51,6 +50,10 @@ class Type
 
     public function getNamespaceSegments(): array
     {
+        if($this->isInline === true){
+            return [];
+        }
+
         $namespace = $this->reflection->getNamespaceName();
 
         if (empty($namespace)) {

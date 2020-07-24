@@ -14,7 +14,7 @@ class FakeType extends Type
         throw new Exception("Fake type");
     }
 
-    public static function createInline(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null): Type
+    public static function createInline(ReflectionClass $class, string $transformed, ?MissingSymbolsCollection $missingSymbols = null): Type
     {
         throw new Exception("Fake type");
     }

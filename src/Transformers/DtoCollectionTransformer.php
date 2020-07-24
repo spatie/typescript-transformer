@@ -20,7 +20,7 @@ class DtoCollectionTransformer implements Transformer
 
         $transformed = "Array<{$this->resolveType($class, $missingSymbolsCollection)}>";
 
-        return Type::createInline($class, $name, $transformed, $missingSymbolsCollection);
+        return Type::createInline($class, $transformed, $missingSymbolsCollection);
     }
 
     private function resolveType(

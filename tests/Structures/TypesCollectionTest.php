@@ -124,4 +124,16 @@ class TypesCollectionTest extends TestCase
         $this->assertNull($collection['a\b\Enum']);
         $this->assertNull($collection['a\b\Enum']);
     }
+
+    /** @test */
+    public function it_can_add_inline_types_without_structure_checking()
+    {
+        $collection = TypesCollection::create();
+
+        $collection[] = $fakeA = FakeType::fake('Enum')->withoutNamespace()->isInline();
+        $collection[] = $fakeB = FakeType::fake('Enum')->withNamespace('Enum');
+
+        $this->assertEquals($fakeA, $collection['Enum']);
+        $this->assertEquals($fakeB, $collection['Enum\Enum']);
+    }
 }

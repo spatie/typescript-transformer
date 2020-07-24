@@ -35,7 +35,7 @@ class ReplaceSymbolsInTypeAction
         $found = $this->collection[$missingSymbol];
 
         if ($found === null) {
-            $type->replaceSymbol($missingSymbol, 'any'); // Use `never`
+            $type->replaceSymbol($missingSymbol, 'any');
 
             return $type;
         }

@@ -184,17 +184,15 @@ export type User = {
 }
 ```
 
-Inline types can be created like the regulat types:
+Inline types can be created like the regular types:
 
 ```php
-Type::create(
+Type::createInline(
     ReflectionClass $class,
-    string $name,
     string $transformed,
     MissingSymbolsCollection $missingSymbols
 );
 ```
-
 
 When you create a new transformer, do not forget to add it to the list of transformers in your configuration!
 
