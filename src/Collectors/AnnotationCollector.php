@@ -20,7 +20,7 @@ class AnnotationCollector extends Collector
         $this->classReader = new ClassReader();
     }
 
-    public function shouldTransform(ReflectionClass $class): bool
+    public function shouldCollect(ReflectionClass $class): bool
     {
         return strpos($class->getDocComment(), '@typescript');
     }

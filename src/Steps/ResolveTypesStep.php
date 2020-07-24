@@ -77,7 +77,7 @@ class ResolveTypesStep
     private function resolveCollector(ReflectionClass $class): ?Collector
     {
         foreach ($this->collectors as $collector) {
-            if ($collector->shouldTransform($class)) {
+            if ($collector->shouldCollect($class)) {
                 return $collector;
             }
         }

@@ -159,7 +159,27 @@ In some cases you want to transform classes without annotation, for example in o
 
 Collectors allow you to transform classes by a specified transformer, we're actually using a collector to collect the `@typescript` annotated classes.
 
-A collector is a class that implements the `Collector` interface
+A collector is a class that extebds the `Collector` class, you will have to implement two methods:
+
+```php
+class EnumCollector extends Collector
+{
+    public function shouldCollect(ReflectionClass $class): bool
+    {
+        return is_subclass_of($class->getName(), Enum::class);
+    }
+
+    public function getClassOccurrence(ReflectionClass $class): ClassOccurrence
+    {
+        return ClassOccurrence::create(
+            new MyclabsEnumTransformer(),
+            $class->getShortName()
+        );
+    }
+}
+```
+
+First you check if the class can be collected by this collector in ``
 
 ## Testing
 

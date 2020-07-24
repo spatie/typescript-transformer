@@ -10,7 +10,7 @@ use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 
 class FakeTypescriptCollector extends Collector
 {
-    public function shouldTransform(ReflectionClass $class): bool
+    public function shouldCollect(ReflectionClass $class): bool
     {
         return is_subclass_of($class->getName(), Enum::class);
     }
