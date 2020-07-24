@@ -24,21 +24,15 @@ class TypescriptTransformer
 
     public function transform(): TypesCollection
     {
-        $resolveTypesStep = new ResolveTypesStep(
+        $typesCollection = (new ResolveTypesStep(
             new Finder(),
             $this->config,
-        );
+        ))->execute();
 
-        $replaceMissingSymbolsStep = new ReplaceMissingSymbolsStep();
+        (new ReplaceMissingSymbolsStep())->execute($typesCollection);
 
-        $persistTypesCollectionStep = new PersistTypesCollectionStep($this->config);
+        (new PersistTypesCollectionStep($this->config))->execute($typesCollection);
 
-        $collection = $resolveTypesStep->execute();
-
-        $collection = $replaceMissingSymbolsStep->execute($collection);
-
-        $persistTypesCollectionStep->execute($collection);
-
-        return $collection;
+        return $typesCollection;
     }
 }
