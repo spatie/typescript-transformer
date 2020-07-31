@@ -5,7 +5,6 @@ namespace Spatie\TypescriptTransformer\Tests\Actions;
 use PhpParser\Lexer;
 use PhpParser\Parser\Php7;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\ReflectionProperty;
 use Roave\BetterReflection\Reflector\ClassReflector;
 use Roave\BetterReflection\SourceLocator\Type\AnonymousClassObjectSourceLocator;
@@ -27,7 +26,7 @@ class ResolveClassPropertyActionTest extends TestCase
     public function it_can_deduce_types()
     {
         $class = new class {
-            /** @var array<int, array<int, string>>  */
+            /** @var array<int, array<int, string>> */
             public array $propertyB;
         };
 

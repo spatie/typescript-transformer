@@ -5,10 +5,8 @@ namespace Spatie\TypescriptTransformer\Actions;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\AbstractList;
 use phpDocumentor\Reflection\Types\Array_;
-use phpDocumentor\Reflection\Types\String_;
 use Roave\BetterReflection\Reflection\ReflectionProperty;
 use Roave\BetterReflection\Reflection\ReflectionType;
-use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 use Spatie\TypescriptTransformer\ValueObjects\ClassProperty;
 
 class ResolveClassPropertyAction
@@ -63,7 +61,5 @@ class ResolveClassPropertyAction
         array &$arrayTypes,
         array &$objectTypes
     ) {
-
     }
-
 }
