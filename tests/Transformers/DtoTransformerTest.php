@@ -12,6 +12,7 @@ use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto;
 use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
+use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 class DtoTransformerTest extends TestCase
 {
@@ -23,7 +24,9 @@ class DtoTransformerTest extends TestCase
     {
         parent::setUp();
 
-        $this->transformer = new DtoTransformer();
+        $this->transformer = new DtoTransformer(
+            TypeScriptTransformerConfig::create()
+        );
     }
 
     /** @test */

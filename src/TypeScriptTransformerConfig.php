@@ -2,7 +2,11 @@
 
 namespace Spatie\TypescriptTransformer;
 
+use Exception;
+use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
+use Spatie\TypescriptTransformer\Exceptions\InvalidClassPropertyReplacer;
+use Spatie\TypescriptTransformer\Support\TypescriptType;
 
 class TypeScriptTransformerConfig
 {
@@ -13,6 +17,8 @@ class TypeScriptTransformerConfig
     private array $collectors;
 
     private string $outputFile = 'types.d.ts';
+
+    private array $classPropertyReplacements = [];
 
     public function __construct()
     {
@@ -52,6 +58,13 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
+    public function classPropertyReplacements(array $classPropertyReplacements): self
+    {
+        $this->classPropertyReplacements = $classPropertyReplacements;
+
+        return $this;
+    }
+
     public function getSearchingPath(): string
     {
         return $this->searchingPath;
@@ -63,7 +76,9 @@ class TypeScriptTransformerConfig
     public function getTransformers(): array
     {
         return array_map(
-            fn (string $transformer) => new $transformer,
+            fn(string $transformer) => method_exists($transformer, '__construct')
+                ? new $transformer($this)
+                : new $transformer,
             $this->transformers
         );
     }
@@ -79,8 +94,27 @@ class TypeScriptTransformerConfig
     public function getCollectors(): array
     {
         return array_map(
-            fn (string $collector) => new $collector($this),
+            fn(string $collector) => new $collector($this),
             $this->collectors
         );
+    }
+
+    public function getClassPropertyReplacements(): array
+    {
+        $typeResolver = new TypeResolver();
+
+        $replacements = [];
+
+        foreach ($this->classPropertyReplacements as $class => $replacement) {
+            if (! class_exists($class)) {
+                throw InvalidClassPropertyReplacer::classDoesNotExist($class);
+            }
+
+            $replacements[$class] = $replacement instanceof TypescriptType
+                ? new TypescriptType($replacement)
+                : $typeResolver->resolve($replacement);
+        }
+
+        return $replacements;
     }
 }

@@ -9,11 +9,20 @@ use Spatie\TypescriptTransformer\Actions\ResolveClassPropertyTypeAction;
 use Spatie\TypescriptTransformer\Actions\TransformClassPropertyTypeAction;
 use Spatie\TypescriptTransformer\ClassPropertyProcessors\ApplyNeverClassPropertyProcessor;
 use Spatie\TypescriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
+use Spatie\TypescriptTransformer\ClassPropertyProcessors\ReplaceDefaultTypesClassPropertyProcessor;
 use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 class DtoTransformer implements Transformer
 {
+    private TypeScriptTransformerConfig $config;
+
+    public function __construct(TypeScriptTransformerConfig $config)
+    {
+        $this->config = $config;
+    }
+
     public function canTransform(ReflectionClass $class): bool
     {
         return true;
@@ -47,6 +56,9 @@ class DtoTransformer implements Transformer
     protected function getClassPropertyProcessors(): array
     {
         return [
+            new ReplaceDefaultTypesClassPropertyProcessor(
+                $this->config->getClassPropertyReplacements()
+            ),
             new DtoCollectionClassPropertyProcessor(),
             new ApplyNeverClassPropertyProcessor(),
         ];
