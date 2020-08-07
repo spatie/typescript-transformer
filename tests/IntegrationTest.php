@@ -3,12 +3,10 @@
 namespace Spatie\TypescriptTransformer\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\BetterReflection;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Test;
-use Spatie\TypescriptTransformer\Transformers\DtoCollectionTransformer;
 use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypescriptTransformer\TypescriptTransformer;

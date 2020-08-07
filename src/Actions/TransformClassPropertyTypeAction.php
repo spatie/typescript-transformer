@@ -55,7 +55,7 @@ class TransformClassPropertyTypeAction
             return $this->resolveObjectType($type);
         }
 
-        if($type instanceof TypescriptType){
+        if ($type instanceof TypescriptType) {
             return (string) $type;
         }
 
@@ -97,7 +97,7 @@ class TransformClassPropertyTypeAction
     private function resolveCompoundType(Compound $compound): string
     {
         $transformed = array_map(
-            fn(Type $type) => $this->execute($type),
+            fn (Type $type) => $this->execute($type),
             iterator_to_array($compound->getIterator())
         );
 
@@ -120,7 +120,7 @@ class TransformClassPropertyTypeAction
 
     private function resolveObjectType(Object_ $object)
     {
-        if($object->getFqsen() === null){
+        if ($object->getFqsen() === null) {
             return 'object';
         }
 

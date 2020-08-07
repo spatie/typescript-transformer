@@ -3,7 +3,6 @@
 namespace Spatie\TypescriptTransformer\ClassPropertyProcessors;
 
 use phpDocumentor\Reflection\Type;
-use Spatie\TypescriptTransformer\ValueObjects\ClassProperty;
 
 interface ClassPropertyProcessor
 {

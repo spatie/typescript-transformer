@@ -2,7 +2,6 @@
 
 namespace Spatie\TypescriptTransformer\Tests\Actions;
 
-use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use PhpParser\Lexer;
 use PhpParser\Parser\Php7;
@@ -11,8 +10,6 @@ use Roave\BetterReflection\Reflection\ReflectionProperty;
 use Roave\BetterReflection\Reflector\ClassReflector;
 use Roave\BetterReflection\SourceLocator\Type\AnonymousClassObjectSourceLocator;
 use Spatie\TypescriptTransformer\Actions\ResolveClassPropertyTypeAction;
-use Spatie\TypescriptTransformer\Actions\TransformClassPropertyTypeAction;
-use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Test;
 
 class ResolveClassPropertyActionTest extends TestCase

@@ -11,7 +11,6 @@ use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
-use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 
 class DtoCollectionClassPropertyProcessor implements ClassPropertyProcessor
 {

@@ -3,15 +3,12 @@
 namespace Spatie\TypescriptTransformer\Tests\ClassPropertyProcessors;
 
 use phpDocumentor\Reflection\TypeResolver;
-use phpDocumentor\Reflection\Types\Object_;
 use PHPUnit\Framework\TestCase;
-use Spatie\DataTransferObject\DataTransferObjectCollection;
 use Spatie\TypescriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\StringDtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollection;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDtoCollection;
 
 class DtoCollectionClassPropertyProcessorTest extends TestCase
 {

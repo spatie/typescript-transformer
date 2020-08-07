@@ -3,11 +3,11 @@
 namespace Spatie\TypescriptTransformer\Collectors;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Support\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
+use Spatie\TypescriptTransformer\Support\ClassReader;
+use Spatie\TypescriptTransformer\Support\CollectedOccurrence;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
-use Spatie\TypescriptTransformer\Support\CollectedOccurrence;
 
 class AnnotationCollector extends Collector
 {

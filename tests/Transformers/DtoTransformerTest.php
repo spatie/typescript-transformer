@@ -11,7 +11,6 @@ use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDtoCollection;
 use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
 
 class DtoTransformerTest extends TestCase

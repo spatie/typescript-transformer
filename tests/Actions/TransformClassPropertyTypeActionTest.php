@@ -4,16 +4,9 @@ namespace Spatie\TypescriptTransformer\Tests\Actions;
 
 use phpDocumentor\Reflection\TypeResolver;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
-use Spatie\TypescriptTransformer\Actions\ResolvePropertyTypesAction;
 use Spatie\TypescriptTransformer\Actions\TransformClassPropertyTypeAction;
-use Spatie\TypescriptTransformer\ClassPropertyProcessors\ApplyNeverClassPropertyProcessor;
-use Spatie\TypescriptTransformer\ClassPropertyProcessors\CleanupClassPropertyProcessor;
 use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDtoCollection;
-use Spatie\TypescriptTransformer\ValueObjects\ClassProperty;
 
 class TransformClassPropertyTypeActionTest extends TestCase
 {

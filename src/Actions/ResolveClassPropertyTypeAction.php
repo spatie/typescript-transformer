@@ -2,21 +2,16 @@
 
 namespace Spatie\TypescriptTransformer\Actions;
 
-use Exception;
 use phpDocumentor\Reflection\Fqsen;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\AbstractList;
 use phpDocumentor\Reflection\Types\Array_;
-use phpDocumentor\Reflection\Types\Boolean;
 use phpDocumentor\Reflection\Types\Compound;
-use phpDocumentor\Reflection\Types\Float_;
-use phpDocumentor\Reflection\Types\Integer;
 use phpDocumentor\Reflection\Types\Mixed_;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
-use phpDocumentor\Reflection\Types\String_;
 use ReflectionProperty;
 use ReflectionType;
 
@@ -87,14 +82,16 @@ class ResolveClassPropertyTypeAction
             return false;
         }
 
-        $hasAlreadyAListType = array_reduce($types,
+        $hasAlreadyAListType = array_reduce(
+            $types,
             function (bool $carry, Type $type) {
                 if ($type instanceof Nullable) {
                     $type = $type->getActualType();
                 }
 
                 return $carry || $type instanceof AbstractList;
-            }, false
+            },
+            false
         );
 
         return $hasAlreadyAListType;
@@ -114,5 +111,4 @@ class ResolveClassPropertyTypeAction
             return new Nullable($type);
         }, $types);
     }
-
 }

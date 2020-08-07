@@ -16,7 +16,7 @@ trait ProcessesClassProperties
     {
         if ($type instanceof Compound) {
             $walkedTypes = array_map(
-                fn(Type $type) => $this->walk($type, $closure),
+                fn (Type $type) => $this->walk($type, $closure),
                 iterator_to_array($type->getIterator())
             );
 

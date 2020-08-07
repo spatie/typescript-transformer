@@ -4,8 +4,8 @@
 namespace Spatie\TypescriptTransformer\Collectors;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypescriptTransformer\Support\CollectedOccurrence;
+use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 abstract class Collector
 {
