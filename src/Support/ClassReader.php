@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer;
+namespace Spatie\TypescriptTransformer\Support;
 
 use Exception;
 use ReflectionClass;

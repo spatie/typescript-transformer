@@ -18,7 +18,7 @@
     "require": {
         "php": "^7.4",
         "hanneskod/classtools": "^1.2",
-        "roave/better-reflection": "^4.3",
+        "phpdocumentor/type-resolver": "^1.3",
         "spatie/data-transfer-object": "^2.0"
     },
     "require-dev": {

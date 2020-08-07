@@ -29,7 +29,6 @@ class IntegrationTest extends TestCase
                 ->transformers([
                     MyclabsEnumTransformer::class,
                     DtoTransformer::class,
-                    DtoCollectionTransformer::class,
                 ])
                 ->collectors([
                     AnnotationCollector::class,
@@ -42,24 +41,5 @@ class IntegrationTest extends TestCase
         $transformed = file_get_contents($temporaryDirectory->path('types.d.ts'));
 
         $this->assertMatchesSnapshot($transformed);
-    }
-
-    /** @test */
-    public function testje()
-    {
-        $classInfo = (new BetterReflection())->classReflector()->reflect(Test::class);
-        $methodInfo = $classInfo->getProperty('property');
-
-
-        dd($methodInfo->getDocBlockTypes());
-
-        // Will fetch the language hint
-        var_dump($methodInfo->getType());
-
-        // Will fetch an array of Type objects for the typehint in the DocBlock
-//        var_dump($parameterInfo->getDocBlockTypes());
-
-// Will fetch an array of strings describing the DocBlock type hints
-//        var_dump($parameterInfo->getDocBlockTypeStrings());
     }
 }
