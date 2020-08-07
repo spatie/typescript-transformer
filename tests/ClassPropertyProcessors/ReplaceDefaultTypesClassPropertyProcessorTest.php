@@ -59,6 +59,4 @@ class ReplaceDefaultTypesClassPropertyProcessorTest extends TestCase
 
         $this->assertEquals(new Array_(new String_()), $type);
     }
-
-
 }

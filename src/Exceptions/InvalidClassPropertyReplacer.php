@@ -3,7 +3,6 @@
 namespace Spatie\TypescriptTransformer\Exceptions;
 
 use Exception;
-use ReflectionClass;
 
 class InvalidClassPropertyReplacer extends Exception
 {

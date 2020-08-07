@@ -19,7 +19,7 @@ class TypeScriptTransformerConfigTest extends TestCase
     public function it_can_create_transformers()
     {
         $config = TypeScriptTransformerConfig::create()->transformers([
-            MyclabsEnumTransformer::class
+            MyclabsEnumTransformer::class,
         ]);
 
         $this->assertEquals([new MyclabsEnumTransformer], $config->getTransformers());
@@ -29,7 +29,7 @@ class TypeScriptTransformerConfigTest extends TestCase
     public function it_can_create_transformers_with_constructor()
     {
         $config = TypeScriptTransformerConfig::create()->transformers([
-            DtoTransformer::class
+            DtoTransformer::class,
         ]);
 
         $this->assertEquals([new DtoTransformer($config)], $config->getTransformers());
