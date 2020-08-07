@@ -33,7 +33,7 @@ class DtoTransformer implements Transformer
         $missingSymbols = new MissingSymbolsCollection();
 
         $properties = array_map(
-            fn(ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
+            fn (ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
             $this->resolveProperties($class)
         );
 
@@ -73,7 +73,7 @@ class DtoTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn(ReflectionProperty $property) => ! $property->isStatic()
+            fn (ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);

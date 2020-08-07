@@ -5,7 +5,6 @@ namespace Spatie\TypescriptTransformer\ClassPropertyProcessors;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\Object_;
 use ReflectionProperty;
-use Spatie\DataTransferObject\DataTransferObjectCollection;
 
 class ReplaceDefaultTypesClassPropertyProcessor implements ClassPropertyProcessor
 {
