@@ -10,13 +10,14 @@ use phpDocumentor\Reflection\Types\Mixed_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
+use ReflectionProperty;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
 
 class DtoCollectionClassPropertyProcessor implements ClassPropertyProcessor
 {
     use ProcessesClassProperties;
 
-    public function process(Type $type): Type
+    public function process(Type $type, ReflectionProperty $reflection): Type
     {
         return $this->walk($type, function (Type $type) {
             if (! $type instanceof Object_) {

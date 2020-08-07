@@ -9,6 +9,7 @@ use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\StringDtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollection;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakePropertyReflection;
 
 class DtoCollectionClassPropertyProcessorTest extends TestCase
 {
@@ -29,7 +30,8 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     public function it_will_process_a_dto_collection()
     {
         $type = $this->processor->process(
-            $this->typeResolver->resolve(DtoCollection::class)
+            $this->typeResolver->resolve(DtoCollection::class),
+            FakePropertyReflection::create()
         );
 
         $this->assertEquals(
@@ -42,7 +44,8 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     public function it_will_process_a_nullable_dto_collection()
     {
         $type = $this->processor->process(
-            $this->typeResolver->resolve(NullableDtoCollection::class)
+            $this->typeResolver->resolve(NullableDtoCollection::class),
+            FakePropertyReflection::create()
         );
 
         $this->assertEquals(
@@ -55,7 +58,8 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     public function it_will_process_a_dto_collection_with_built_in_type()
     {
         $type = $this->processor->process(
-            $this->typeResolver->resolve(StringDtoCollection::class)
+            $this->typeResolver->resolve(StringDtoCollection::class),
+            FakePropertyReflection::create()
         );
 
         $this->assertEquals('string[]', (string) $type);
@@ -65,7 +69,8 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     public function it_will_process_a_dto_collection_without_type()
     {
         $type = $this->processor->process(
-            $this->typeResolver->resolve(UntypedDtoCollection::class)
+            $this->typeResolver->resolve(UntypedDtoCollection::class),
+            FakePropertyReflection::create()
         );
 
         $this->assertEquals('array', (string) $type);
@@ -75,7 +80,8 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     public function it_will_pass_non_dto_collections()
     {
         $type = $this->processor->process(
-            $this->typeResolver->resolve('string')
+            $this->typeResolver->resolve('string'),
+            FakePropertyReflection::create()
         );
 
         $this->assertEquals('string', (string) $type);

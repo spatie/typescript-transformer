@@ -4,6 +4,8 @@ namespace Spatie\TypescriptTransformer\ClassPropertyProcessors;
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\Object_;
+use ReflectionProperty;
+use Spatie\DataTransferObject\DataTransferObjectCollection;
 
 class ReplaceDefaultTypesClassPropertyProcessor implements ClassPropertyProcessor
 {
@@ -17,7 +19,7 @@ class ReplaceDefaultTypesClassPropertyProcessor implements ClassPropertyProcesso
         $this->mapping = $mapping;
     }
 
-    public function process(Type $type): Type
+    public function process(Type $type, ReflectionProperty $reflection): Type
     {
         return $this->walk($type, function (Type $type) {
             if (! $type instanceof Object_) {

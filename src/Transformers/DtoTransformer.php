@@ -33,7 +33,7 @@ class DtoTransformer implements Transformer
         $missingSymbols = new MissingSymbolsCollection();
 
         $properties = array_map(
-            fn (ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
+            fn(ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
             $this->resolveProperties($class)
         );
 
@@ -53,6 +53,10 @@ class DtoTransformer implements Transformer
         );
     }
 
+    /**
+     * @return \Spatie\TypescriptTransformer\ClassPropertyProcessors\ClassPropertyProcessor[]
+     * @throws \Spatie\TypescriptTransformer\Exceptions\InvalidClassPropertyReplacer
+     */
     protected function getClassPropertyProcessors(): array
     {
         return [
@@ -69,7 +73,7 @@ class DtoTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn (ReflectionProperty $property) => ! $property->isStatic()
+            fn(ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);
@@ -86,7 +90,7 @@ class DtoTransformer implements Transformer
         $type = $resolveClassPropertyTypeAction->execute($reflection);
 
         foreach ($this->getClassPropertyProcessors() as $processor) {
-            $type = $processor->process($type);
+            $type = $processor->process($type, $reflection);
         }
 
         $transformClassPropertyTypeAction = new TransformClassPropertyTypeAction(

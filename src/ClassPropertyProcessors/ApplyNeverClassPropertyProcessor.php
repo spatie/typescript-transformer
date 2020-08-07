@@ -6,13 +6,14 @@ use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\AbstractList;
 use phpDocumentor\Reflection\Types\Mixed_;
 use phpDocumentor\Reflection\Types\Null_;
+use ReflectionProperty;
 use Spatie\TypescriptTransformer\Support\TypescriptType;
 
 class ApplyNeverClassPropertyProcessor implements ClassPropertyProcessor
 {
     use ProcessesClassProperties;
 
-    public function process(Type $type): Type
+    public function process(Type $type, ReflectionProperty $reflection): Type
     {
         if ($this->shouldReplaceType($type)) {
             return new TypescriptType('never');
