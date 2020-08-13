@@ -9,13 +9,13 @@ use Spatie\TypescriptTransformer\Exceptions\InvalidClassPropertyReplacer;
 
 class TypeScriptTransformerConfig
 {
-    private string $searchingPath;
+    protected string $searchingPath;
 
-    private array $transformers = [];
+    protected array $transformers = [];
 
-    private array $collectors;
+    protected array $collectors;
 
-    private string $outputFile = 'types.d.ts';
+    protected string $outputFile = 'types.d.ts';
 
     private array $classPropertyReplacements = [];
 

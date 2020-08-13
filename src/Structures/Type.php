@@ -73,7 +73,7 @@ class Type
         return implode('.', $segments);
     }
 
-    public function replaceSymbol(string $class, string $replacement)
+    public function replaceSymbol(string $class, string $replacement): void
     {
         $this->missingSymbols->remove($class);
 

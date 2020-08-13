@@ -4,7 +4,7 @@ namespace Spatie\TypescriptTransformer\Structures;
 
 class MissingSymbolsCollection
 {
-    private array $missingSymbols = [];
+    protected array $missingSymbols = [];
 
     public function all(): array
     {

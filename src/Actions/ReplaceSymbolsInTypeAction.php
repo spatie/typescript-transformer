@@ -8,7 +8,7 @@ use Spatie\TypescriptTransformer\Structures\TypesCollection;
 
 class ReplaceSymbolsInTypeAction
 {
-    private TypesCollection $collection;
+    protected TypesCollection $collection;
 
     public function __construct(TypesCollection $collection)
     {
@@ -20,6 +20,7 @@ class ReplaceSymbolsInTypeAction
         if (in_array($type->getTypescriptName(), $chain)) {
             $chain = array_merge($chain, [$type->getTypescriptName()]);
 
+            /** TODO: use dedicated exception */
             throw new Exception("Circular dependency chain found: ". implode(' -> ', $chain));
         }
 
@@ -30,7 +31,7 @@ class ReplaceSymbolsInTypeAction
         return $type->transformed;
     }
 
-    private function replaceSymbol(string $missingSymbol, Type $type, array $chain): Type
+    protected function replaceSymbol(string $missingSymbol, Type $type, array $chain): Type
     {
         $found = $this->collection[$missingSymbol];
 

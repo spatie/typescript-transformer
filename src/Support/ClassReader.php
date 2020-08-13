@@ -17,7 +17,7 @@ class ClassReader
         ];
     }
 
-    private function resolveName(ReflectionClass $class): string
+    protected function resolveName(ReflectionClass $class): string
     {
         $annotations = [];
 
@@ -40,7 +40,7 @@ class ClassReader
         return $name;
     }
 
-    private function resolveTransformer(ReflectionClass $class): ?string
+    protected function resolveTransformer(ReflectionClass $class): ?string
     {
         $annotations = [];
 

@@ -22,7 +22,7 @@ class MyclabsEnumTransformer implements Transformer
         );
     }
 
-    private function resolveOptions(ReflectionClass $class): string
+    protected function resolveOptions(ReflectionClass $class): string
     {
         /** @var \MyCLabs\Enum\Enum $enum */
         $enum = $class->getName();

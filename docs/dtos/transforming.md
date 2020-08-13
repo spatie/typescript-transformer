@@ -1,0 +1,101 @@
+---
+title: Transforming
+weight: 1
+---
+
+The package provides a `DtoTransformer` which will convert all the public non-static properties of a class to Typescript. Let's take a look at an example:
+
+```php
+/** @typescript */
+class User
+{
+    public int $id;
+
+    public string $name;
+
+    public ?string $address;
+
+    /** @var string[] */
+    public array $emails;
+}
+```
+
+This will be transformed to:
+
+```typescript
+export type User = {
+    int: number;
+    name: string;
+    address: ?string;
+    array: Array<string>;
+}
+```
+
+In the next chapters we take a look how to adapt the `DtoTransformer` so it will be a perfect match for your project.
+
+
+A small side note for the Laravel developers: you should use the `DtoTransformer` from the `spatie/laravel-typescript-transformer` package. This transformer has some extra nicities for Laravel projects.
+
+### Converting simple types
+
+Although it is possible to take full control of the `DtoTransformer` and you can change the behaviour of the type tranforming to your own liking. Sometimes you just want to change some simple types to Typescript. For example a `DateTime` or `Carbon` object will probably always be `string` in your Typescript definition.
+
+It is possible to define such simple transformations in the config:
+
+```php
+TypeScriptTransformerConfig::create()
+    ->classPropertyReplacements([
+        DateTime::class => 'string',
+    ])
+    ...
+
+```
+
+Here we convert all DateTime's to string, you can write any type you can also write into a class property's `@var` annotation. If you want to convert this to a specific Typescript type you can do the following:
+
+```php
+TypeScriptTransformerConfig::create()
+    ->classPropertyReplacements([
+        DateTime::class => TypescriptType::create('string'),
+    ])
+    ...
+
+```
+
+### Writing your own DTO Transformers
+
+Sometimes you want a bit more flexibility, for example, adding static properties or converting properties differently.
+
+In such cases you can create your own `DtoTransformer`:
+
+```php
+class DtoTransformer extends DtoTransformer
+{
+    public function canTransform(ReflectionClass $class): bool
+    {
+        return is_subclass_of($class->getName(), DataTransferObject::class);
+    }
+    
+    protected function resolveProperties(ReflectionClass $class): array
+    {
+        return array_values($class->getProperties(ReflectionProperty::IS_PUBLIC));
+    }
+
+    protected function getClassPropertyProcessors(): array
+    {
+        return [
+            new ReplaceDefaultTypesClassPropertyProcessor(
+                $this->config->getClassPropertyReplacements()
+            ),
+            new DtoCollectionClassPropertyProcessor(),
+            new ApplyNeverClassPropertyProcessor(),
+        ];
+    }
+}
+```
+
+First of all, `canTransform` still returns if a transformer can handle the type, in this example we created a transformer that will only transform DTO's of our `spatie/data-transfer-object` package. We've also overwritten the `resolveProperties`, so we're not excluding static properties anymore.
+
+As you can see, we're defining some `ClassPropertyProcessors`. These processors will be used to change the types for a property and run before any missing symbols are replaced. You can read more about them [here](https://docs.spatie.be/typescript-transformer/v1/dtos/class-property-processors/)
+
+When creating your own `DtoTransformer`, do not forget to register it in your configuration!
