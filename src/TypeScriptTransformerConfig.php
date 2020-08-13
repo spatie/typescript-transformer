@@ -6,7 +6,6 @@ use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypescriptTransformer\Exceptions\InvalidClassPropertyReplacer;
-use Spatie\TypescriptTransformer\Support\TypescriptType;
 
 class TypeScriptTransformerConfig
 {
