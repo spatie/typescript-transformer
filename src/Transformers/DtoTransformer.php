@@ -11,7 +11,7 @@ use Spatie\TypescriptTransformer\ClassPropertyProcessors\ApplyNeverClassProperty
 use Spatie\TypescriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
 use Spatie\TypescriptTransformer\ClassPropertyProcessors\ReplaceDefaultTypesClassPropertyProcessor;
 use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\Structures\TransformedType;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 class DtoTransformer implements Transformer
@@ -28,7 +28,7 @@ class DtoTransformer implements Transformer
         return true;
     }
 
-    public function transform(ReflectionClass $class, string $name): Type
+    public function transform(ReflectionClass $class, string $name): TransformedType
     {
         $missingSymbols = new MissingSymbolsCollection();
 
@@ -47,7 +47,7 @@ class DtoTransformer implements Transformer
 
         $output .= '}' . PHP_EOL;
 
-        return Type::create(
+        return TransformedType::create(
             $class,
             $name,
             $output,

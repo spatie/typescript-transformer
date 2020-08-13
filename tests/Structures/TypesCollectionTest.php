@@ -7,7 +7,7 @@ use ReflectionClass;
 use Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnum;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeType;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakeTransformedType;
 
 class TypesCollectionTest extends TestCase
 {
@@ -16,7 +16,7 @@ class TypesCollectionTest extends TestCase
     {
         $structure = TypesCollection::create();
 
-        $structure[] = $fake = FakeType::fake('Enum')->withoutNamespace();
+        $structure[] = $fake = FakeTransformedType::fake('Enum')->withoutNamespace();
 
         $this->assertCount(1, $structure);
         $this->assertEquals([
@@ -29,10 +29,10 @@ class TypesCollectionTest extends TestCase
     {
         $structure = TypesCollection::create();
 
-        $structure[] = $fakeC = FakeType::fake('Enum')->withNamespace('a\b\c');
-        $structure[] = $fakeB = FakeType::fake('Enum')->withNamespace('a\b');
-        $structure[] = $fakeA = FakeType::fake('Enum')->withNamespace('a');
-        $structure[] = $fake = FakeType::fake('Enum')->withoutNamespace();
+        $structure[] = $fakeC = FakeTransformedType::fake('Enum')->withNamespace('a\b\c');
+        $structure[] = $fakeB = FakeTransformedType::fake('Enum')->withNamespace('a\b');
+        $structure[] = $fakeA = FakeTransformedType::fake('Enum')->withNamespace('a');
+        $structure[] = $fake = FakeTransformedType::fake('Enum')->withoutNamespace();
 
         $this->assertCount(4, $structure);
         $this->assertEquals([
@@ -48,8 +48,8 @@ class TypesCollectionTest extends TestCase
     {
         $structure = TypesCollection::create();
 
-        $structure[] = $fakeA = FakeType::fake('EnumA')->withNamespace('test');
-        $structure[] = $fakeB = FakeType::fake('EnumB')->withNamespace('test');
+        $structure[] = $fakeA = FakeTransformedType::fake('EnumA')->withNamespace('test');
+        $structure[] = $fakeB = FakeTransformedType::fake('EnumB')->withNamespace('test');
 
         $this->assertCount(2, $structure);
         $this->assertEquals([
@@ -65,7 +65,7 @@ class TypesCollectionTest extends TestCase
 
         $structure = TypesCollection::create();
 
-        $structure[] = $fake = FakeType::fake('TypeScriptEnum')->withReflection($reflection);
+        $structure[] = $fake = FakeTransformedType::fake('TypeScriptEnum')->withReflection($reflection);
 
         $this->assertCount(1, $structure);
         $this->assertEquals([
@@ -80,8 +80,8 @@ class TypesCollectionTest extends TestCase
 
         $collection = TypesCollection::create();
 
-        $collection[] = $fakeA = FakeType::fake('Enum')->withNamespace('Enum');
-        $collection[] = $fakeB = FakeType::fake('Enum')->withoutNamespace();
+        $collection[] = $fakeA = FakeTransformedType::fake('Enum')->withNamespace('Enum');
+        $collection[] = $fakeB = FakeTransformedType::fake('Enum')->withoutNamespace();
     }
 
     /** @test */
@@ -91,8 +91,8 @@ class TypesCollectionTest extends TestCase
 
         $collection = TypesCollection::create();
 
-        $collection[] = $fakeB = FakeType::fake('Enum')->withoutNamespace();
-        $collection[] = $fakeA = FakeType::fake('Enum')->withNamespace('Enum');
+        $collection[] = $fakeB = FakeTransformedType::fake('Enum')->withoutNamespace();
+        $collection[] = $fakeA = FakeTransformedType::fake('Enum')->withNamespace('Enum');
     }
 
     /** @test */
@@ -100,7 +100,7 @@ class TypesCollectionTest extends TestCase
     {
         $collection = TypesCollection::create();
 
-        $collection[] = $fake = FakeType::fake('Enum')->withNamespace('a\b\c');
+        $collection[] = $fake = FakeTransformedType::fake('Enum')->withNamespace('a\b\c');
 
         $this->assertEquals($fake, $collection['a\b\c\Enum']);
     }
@@ -110,7 +110,7 @@ class TypesCollectionTest extends TestCase
     {
         $collection = TypesCollection::create();
 
-        $collection[] = $fake = FakeType::fake('Enum')->withoutNamespace();
+        $collection[] = $fake = FakeTransformedType::fake('Enum')->withoutNamespace();
 
         $this->assertEquals($fake, $collection['Enum']);
     }
@@ -130,8 +130,8 @@ class TypesCollectionTest extends TestCase
     {
         $collection = TypesCollection::create();
 
-        $collection[] = $fakeA = FakeType::fake('Enum')->withoutNamespace()->isInline();
-        $collection[] = $fakeB = FakeType::fake('Enum')->withNamespace('Enum');
+        $collection[] = $fakeA = FakeTransformedType::fake('Enum')->withoutNamespace()->isInline();
+        $collection[] = $fakeB = FakeTransformedType::fake('Enum')->withNamespace('Enum');
 
         $this->assertEquals($fakeA, $collection['Enum']);
         $this->assertEquals($fakeB, $collection['Enum\Enum']);

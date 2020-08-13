@@ -4,7 +4,7 @@ namespace Spatie\TypescriptTransformer\Transformers;
 
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\Structures\TransformedType;
 
 class MyclabsEnumTransformer implements Transformer
 {
@@ -13,9 +13,9 @@ class MyclabsEnumTransformer implements Transformer
         return $class->isSubclassOf(Enum::class);
     }
 
-    public function transform(ReflectionClass $class, string $name): Type
+    public function transform(ReflectionClass $class, string $name): TransformedType
     {
-        return Type::create(
+        return TransformedType::create(
             $class,
             $name,
             "export type {$name} = {$this->resolveOptions($class)};"

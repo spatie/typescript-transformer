@@ -1,11 +1,11 @@
 ---
 title: Collectors
-weight: 5
+weight: 4
 ---
 
-In some cases, you want to transform classes without annotation. For example, in one of our projects, we've created resource classes which were sent to the front using DTO's. We knew these Resources would always have to be converted to Typescript, so writing the `@typescript` annotation was a bit cumbersome.
+In some cases, you want to transform classes without annotations. For example, in one of our projects, we've created resource classes which were sent to the front using DTO's. We knew these Resources would always have to be converted to Typescript, so writing the `@typescript` annotation was a bit cumbersome.
 
-Collectors allow you to transform classes by a specified transformer. Actually, you're already using a Collector, the `@typescript` annotated classes are collected by the package `AnnotationsCollector`.
+Collectors allow you to transform classes by a specified transformer. Actually, you're already using a collector at this moment, the `@typescript` annotated classes are collected by the package `AnnotationsCollector` collector.
 
 A collector is a class that extends the `Collector` class, and you will have to implement two methods:
 
@@ -24,7 +24,7 @@ class EnumCollector extends Collector
 }
 ```
 
-First, you check if the class can be collected by this collector in `shouldCollect` when you can collect the class, `getClassOccurence` should return a correct `ClassOccurence`. A `ClassOccurence` exists of a transformer for the class, and a name the typescript type will have.
+First, you have to check if the class can be collected by this collector in the `shouldCollect` method. When you can collect the class, `getClassOccurence` should return a correct `ClassOccurence`. A `ClassOccurence` exists of a transformer for the class, and a name the typescript type will have.
 
 You can easily create a `ClassOccurrence` as such:
 
@@ -43,4 +43,4 @@ $config = TypeScriptTransformerConfig::create()
 	...
 ```
 
-Collectors are checked in the order they're defined in the config, the package adds the `AnnotationsCollector` which collects `@typescript` annotated classes automatically at the end.
+Collectors are, checked in the order they're defined in the configuration. The package will add the `AnnotationsCollector` which collects `@typescript` annotated classes automatically at the end.

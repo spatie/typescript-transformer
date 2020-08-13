@@ -5,16 +5,16 @@ namespace Spatie\TypescriptTransformer\Tests\Fakes;
 use Exception;
 use ReflectionClass;
 use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\Structures\TransformedType;
 
-class FakeType extends Type
+class FakeTransformedType extends TransformedType
 {
-    public static function create(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false): Type
+    public static function create(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false): TransformedType
     {
         throw new Exception("Fake type");
     }
 
-    public static function createInline(ReflectionClass $class, string $transformed, ?MissingSymbolsCollection $missingSymbols = null): Type
+    public static function createInline(ReflectionClass $class, string $transformed, ?MissingSymbolsCollection $missingSymbols = null): TransformedType
     {
         throw new Exception("Fake type");
     }

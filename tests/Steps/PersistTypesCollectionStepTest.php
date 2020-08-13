@@ -7,7 +7,7 @@ use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionStep;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeType;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakeTransformedType;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
@@ -38,9 +38,9 @@ class PersistTypesCollectionStepTest extends TestCase
     {
         $collection = TypesCollection::create();
 
-        $collection[] = FakeType::fake('Enum')->withoutNamespace();
-        $collection[] = FakeType::fake('Enum')->withNamespace('test');
-        $collection[] = FakeType::fake('Enum')->withNamespace('test\test');
+        $collection[] = FakeTransformedType::fake('Enum')->withoutNamespace();
+        $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test');
+        $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test\test');
 
         $this->action->execute($collection);
 
@@ -52,10 +52,10 @@ class PersistTypesCollectionStepTest extends TestCase
     {
         $collection = TypesCollection::create();
 
-        $collection[] = FakeType::fake('Enum')->withTransformed('transformed Enum')->withoutNamespace();
-        $collection[] = FakeType::fake('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace();
-        $collection[] = FakeType::fake('Enum')->withTransformed('transformed test\Enum')->withNamespace('test');
-        $collection[] = FakeType::fake('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test');
+        $collection[] = FakeTransformedType::fake('Enum')->withTransformed('transformed Enum')->withoutNamespace();
+        $collection[] = FakeTransformedType::fake('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace();
+        $collection[] = FakeTransformedType::fake('Enum')->withTransformed('transformed test\Enum')->withNamespace('test');
+        $collection[] = FakeTransformedType::fake('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test');
 
         $this->action->execute($collection);
 
@@ -67,11 +67,11 @@ class PersistTypesCollectionStepTest extends TestCase
     {
         $collection = TypesCollection::create();
 
-        $collection[] = FakeType::fake('Enum')->withoutNamespace();
+        $collection[] = FakeTransformedType::fake('Enum')->withoutNamespace();
 
         $this->action->execute($collection);
 
-        $collection[] = FakeType::fake('Enum')->withNamespace('test');
+        $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test');
 
         $this->action->execute($collection);
 

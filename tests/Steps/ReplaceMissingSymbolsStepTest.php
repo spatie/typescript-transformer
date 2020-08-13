@@ -5,7 +5,7 @@ namespace Spatie\TypescriptTransformer\Tests\Steps;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypescriptTransformer\Steps\ReplaceMissingSymbolsStep;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeType;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakeTransformedType;
 
 class ReplaceMissingSymbolsStepTest extends TestCase
 {
@@ -23,8 +23,8 @@ class ReplaceMissingSymbolsStepTest extends TestCase
     {
         $collection = TypesCollection::create();
 
-        $collection[] = FakeType::fake('Enum')->withNamespace('enums');
-        $collection[] = FakeType::fake('Dto')
+        $collection[] = FakeTransformedType::fake('Enum')->withNamespace('enums');
+        $collection[] = FakeTransformedType::fake('Dto')
             ->withTransformed('{enum: {%enums\Enum%}, non-existing: {%non-existing%}}')
             ->withMissingSymbols([
                 'enum' => 'enums\Enum',

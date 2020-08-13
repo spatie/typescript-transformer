@@ -4,7 +4,7 @@ namespace Spatie\TypescriptTransformer\Structures;
 
 use ReflectionClass;
 
-class Type
+class TransformedType
 {
     public ReflectionClass $reflection;
 

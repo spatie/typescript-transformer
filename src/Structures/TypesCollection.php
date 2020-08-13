@@ -24,7 +24,7 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
         return array_key_exists($class, $this->types);
     }
 
-    public function offsetGet($class): ?Type
+    public function offsetGet($class): ?TransformedType
     {
         return $this->types[$class] ?? null;
     }
@@ -35,8 +35,8 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * @param null|string|\Spatie\TypescriptTransformer\Structures\Type $class
-     * @param \Spatie\TypescriptTransformer\Structures\Type $type
+     * @param null|string|\Spatie\TypescriptTransformer\Structures\TransformedType $class
+     * @param \Spatie\TypescriptTransformer\Structures\TransformedType $type
      *
      * @throws \Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists
      */
@@ -44,7 +44,7 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
     {
         $class ??= $type->reflection->getName();
 
-        $class = $class instanceof Type
+        $class = $class instanceof TransformedType
             ? $class->reflection->getName()
             : $class;
 
@@ -65,7 +65,7 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
         return count($this->types);
     }
 
-    protected function ensureTypeCanBeAdded(Type $type)
+    protected function ensureTypeCanBeAdded(TransformedType $type)
     {
         $namespace = array_reduce($type->getNamespaceSegments(), function (array $checkedSegments, string $segment) {
             $segments = array_merge($checkedSegments, [$segment]);
