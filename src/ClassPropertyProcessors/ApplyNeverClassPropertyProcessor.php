@@ -13,7 +13,7 @@ class ApplyNeverClassPropertyProcessor implements ClassPropertyProcessor
 {
     use ProcessesClassProperties;
 
-    public function process(Type $type, ReflectionProperty $reflection): Type
+    public function process(Type $type, ReflectionProperty $reflection): ?Type
     {
         if ($this->shouldReplaceType($type)) {
             return new TypescriptType('never');

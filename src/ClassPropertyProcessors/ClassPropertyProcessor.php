@@ -7,5 +7,5 @@ use ReflectionProperty;
 
 interface ClassPropertyProcessor
 {
-    public function process(Type $type, ReflectionProperty $reflection): Type;
+    public function process(Type $type, ReflectionProperty $reflection): ?Type;
 }

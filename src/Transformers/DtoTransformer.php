@@ -33,9 +33,11 @@ class DtoTransformer implements Transformer
         $missingSymbols = new MissingSymbolsCollection();
 
         $properties = array_map(
-            fn (ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
+            fn(ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
             $this->resolveProperties($class)
         );
+
+        $properties = array_filter($properties);
 
         $output = "export type {$name} = {" . PHP_EOL;
 
@@ -73,7 +75,7 @@ class DtoTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn (ReflectionProperty $property) => ! $property->isStatic()
+            fn(ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);
@@ -82,7 +84,7 @@ class DtoTransformer implements Transformer
     protected function resolveTypeDefinition(
         ReflectionProperty $reflection,
         MissingSymbolsCollection $missingSymbolsCollection
-    ): string {
+    ): ?string {
         $resolveClassPropertyTypeAction = new ResolveClassPropertyTypeAction(
             new TypeResolver()
         );
@@ -91,6 +93,10 @@ class DtoTransformer implements Transformer
 
         foreach ($this->getClassPropertyProcessors() as $processor) {
             $type = $processor->process($type, $reflection);
+
+            if ($type === null) {
+                return null;
+            }
         }
 
         $transformClassPropertyTypeAction = new TransformClassPropertyTypeAction(

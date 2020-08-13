@@ -18,7 +18,7 @@ class ReplaceDefaultTypesClassPropertyProcessor implements ClassPropertyProcesso
         $this->mapping = $mapping;
     }
 
-    public function process(Type $type, ReflectionProperty $reflection): Type
+    public function process(Type $type, ReflectionProperty $reflection): ?Type
     {
         return $this->walk($type, function (Type $type) {
             if (! $type instanceof Object_) {
@@ -26,7 +26,7 @@ class ReplaceDefaultTypesClassPropertyProcessor implements ClassPropertyProcesso
             }
 
             foreach ($this->mapping as $replacementClass => $replacementType) {
-                if (ltrim($type->getFqsen(), '\\') === $replacementClass) {
+                if (ltrim((string) $type->getFqsen(), '\\') === $replacementClass) {
                     return $replacementType;
                 }
             }

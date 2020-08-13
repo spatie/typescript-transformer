@@ -17,18 +17,20 @@ class DtoCollectionClassPropertyProcessor implements ClassPropertyProcessor
 {
     use ProcessesClassProperties;
 
-    public function process(Type $type, ReflectionProperty $reflection): Type
+    public function process(Type $type, ReflectionProperty $reflection): ?Type
     {
         return $this->walk($type, function (Type $type) {
             if (! $type instanceof Object_) {
                 return $type;
             }
 
-            if (! is_subclass_of(ltrim($type->getFqsen(), '\\'), DataTransferObjectCollection::class)) {
+            $fqs = ltrim((string) $type->getFqsen(), '\\');
+
+            if (! is_subclass_of($fqs, DataTransferObjectCollection::class)) {
                 return $type;
             }
 
-            return new Array_($this->resolveType($type->getFqsen()));
+            return new Array_($this->resolveType($fqs));
         });
     }
 

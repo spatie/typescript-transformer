@@ -33,9 +33,13 @@ class ResolveClassPropertyTypeAction
             $types = $this->nullifyTypes($reflectionType, $types);
         }
 
-        return ! empty($types)
-            ? new Compound(array_values($types))
-            : new Mixed_();
+        if(empty($types)){
+            return new Mixed_();
+        }
+
+        return count($types) === 1
+            ? current($types)
+            : new Compound(array_values($types));
     }
 
     public function resolveFromDocBlock(ReflectionProperty $reflection): array
