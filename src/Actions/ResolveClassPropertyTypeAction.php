@@ -33,7 +33,7 @@ class ResolveClassPropertyTypeAction
             $types = $this->nullifyTypes($reflectionType, $types);
         }
 
-        if(empty($types)){
+        if (empty($types)) {
             return new Mixed_();
         }
 
