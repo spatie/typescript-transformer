@@ -2,6 +2,8 @@
 title: Introduction
 weight: 1
 ---
+**This package is still under heavy development, please do not use it (yet)**
+
 Always wanted type safety within PHP and Typescript without duplicating a lot of code? Then you will like this package! Let's say you have an enum:
 
 ```php
