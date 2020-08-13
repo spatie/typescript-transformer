@@ -72,4 +72,17 @@ class TypeScriptTransformerConfigTest extends TestCase
             $config->getClassPropertyReplacements()
         );
     }
+
+    /** @test */
+    public function it_can_use_a_php_dodumenter_type_in_a_class_property_replacer()
+    {
+        $config = TypeScriptTransformerConfig::create()->classPropertyReplacements([
+            Dto::class => new String_(),
+        ]);
+
+        $this->assertEquals(
+            [Dto::class => new String_()],
+            $config->getClassPropertyReplacements()
+        );
+    }
 }

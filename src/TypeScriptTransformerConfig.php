@@ -2,6 +2,7 @@
 
 namespace Spatie\TypescriptTransformer;
 
+use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypescriptTransformer\Exceptions\InvalidClassPropertyReplacer;
@@ -109,8 +110,8 @@ class TypeScriptTransformerConfig
                 throw InvalidClassPropertyReplacer::classDoesNotExist($class);
             }
 
-            $replacements[$class] = $replacement instanceof TypescriptType
-                ? new TypescriptType($replacement)
+            $replacements[$class] = $replacement instanceof Type
+                ? $replacement
                 : $typeResolver->resolve($replacement);
         }
 
