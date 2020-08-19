@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests;
+namespace Spatie\TypescriptTransformer\Tests\Support;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\InvalidTransformerGiven;
+use Spatie\TypescriptTransformer\Support\ClassReader;
 use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
 
 class ClassReaderTest extends TestCase
@@ -87,7 +87,7 @@ class ClassReaderTest extends TestCase
         $this->expectDeprecationMessageMatches("/does not implement the Transformer interface!/");
 
         /**
-         * @typescript-transformer \Spatie\TypescriptTransformer\Structures\Type
+         * @typescript-transformer \Spatie\TypescriptTransformer\Structures\TransformedType
          */
         $fake = new class {
         };

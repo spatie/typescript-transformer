@@ -2,9 +2,10 @@
 
 namespace Spatie\TypescriptTransformer\ClassPropertyProcessors;
 
-use Spatie\TypescriptTransformer\ValueObjects\ClassProperty;
+use phpDocumentor\Reflection\Type;
+use ReflectionProperty;
 
 interface ClassPropertyProcessor
 {
-    public function process(ClassProperty $classProperty): ClassProperty;
+    public function process(Type $type, ReflectionProperty $reflection): ?Type;
 }

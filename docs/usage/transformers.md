@@ -1,21 +1,21 @@
 ---
 title: Transformers
-weight: 3
+weight: 2
 ---
 
-Transformers are the heart of the package. They take a PHP class and will determine if it can be transformed to Typescript, when possible, the transformer will transform the PHP class to tyupescript.
+Transformers are the heart of the package. They take a PHP class and will determine if it can be transformed to Typescript, if that's possible, the transformer will transform the PHP class to Typescript.
 
 ## Default transformers
 
 Although writing your own transformers isn't that difficult we've added a few transformers to get started:
 
-- `MyclabsEnumTransformer`: this converts a `myclabs\enum`
-- `DtoTransformer`: a powerful transformer that transforms classes and their properties, you can read more about it [here](https://docs.spatie.be/typescript-transformer/v1/dtos/transforming-dtos/)
+- `MyclabsEnumTransformer`: this converts an enum from the `myclabs\enum` package
+- `DtoTransformer`: a powerful transformer that transforms classes and their properties, you can read more about it [here](https://docs.spatie.be/typescript-transformer/v1/dtos/transforming/)
 
 The laravel package has some extra transformers:
 
-- `SpatieEnumTransformer`: this converts a `spatie\enum`
-- `SpatieStateTransformer`: this converts `spatie\laravel-model-states`
+- `SpatieEnumTransformer`: this converts an enum from the `spatie\enum` package
+- `SpatieStateTransformer`: this converts as state from the `spatie\laravel-model-states` package
 
 ## Writing transformers
 
@@ -31,19 +31,19 @@ class EnumTransformer implements Transformer
         // can this transformer handle the given class?
     }
 
-    public function transform(ReflectionClass $class, string $name): Type
+    public function transform(ReflectionClass $class, string $name): TransformedType
     {
         // get the typescript representation of the class
     }
 }
 ```
 
-In the `canTransform` you should decide if this transformer can convert the class. In the `transform` method, you should return a `Type`, the transformed type. Let's take a look at how we can create them.
+In the `canTransform` method you should decide if this transformer can convert the class. In the `transform` method, you should return a `TransformedType`. Let's take a look at how we can create them.
 
-### Creating types
+### Creating transformed types
 
 ```php
-Type::create(
+TransformedType::create(
     ReflectionClass $class, // The reflection class
     string $name, // The name of the Type
     string $transformed // The Typescript representation of the class
@@ -53,7 +53,7 @@ Type::create(
 What about creating types that depend on other types? It is possible to add a fourth argument to the `create` method:
 
 ```php
-Type::create(
+TransformedType::create(
     ReflectionClass $class,
     string $name,
     string $transformed,
@@ -120,7 +120,7 @@ export type User = {
 Inline types can be created like the regular types, but they do not need a name:
 
 ```php
-Type::createInline(
+TransformedType::createInline(
     ReflectionClass $class,
     string $transformed
 );
@@ -129,7 +129,7 @@ Type::createInline(
 When needed you can also add a `MissingSymbolsCollection`:
 
 ```php
-Type::createInline(
+TransformedType::createInline(
     ReflectionClass $class,
     string $transformed,
     MissingSymbolsCollection $missingSymbols

@@ -1,6 +1,6 @@
 ---
 title: Getting started
-weight: 2
+weight: 1
 ---
 
 First we're going to configure the package:
@@ -12,7 +12,7 @@ $config = TypeScriptTransformerConfig::create()
     ->outputFile(__DIR__ . '/js/generated.d.ts'); // file where Typescript will be written
 ```
 
-This is the minimal required configuration that should get you started. There are some more configuration methods, but we'll see these later in the documentation.
+This is the minimal required configuration that should get you started. There are some more configuration options, but we'll see these later in the documentation.
 
 Let's use this configuration to start the transformation process:
 
@@ -20,6 +20,6 @@ Let's use this configuration to start the transformation process:
 TypescriptTransformer::create($config)->transform();
 ```
 
-That's it! All the enum classes with a `@typescript` annotation are now converted to typescript.
+That's it! All the enum classes with a `@typescript` annotation are now transformed to Typescript.
 
-Classes not converted? You probably should write some transformers. More on that later.
+Classes not converted? You probably should write some transformers. Let's continue!

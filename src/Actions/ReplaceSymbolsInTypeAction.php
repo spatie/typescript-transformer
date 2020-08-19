@@ -3,7 +3,7 @@
 namespace Spatie\TypescriptTransformer\Actions;
 
 use Exception;
-use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\Structures\TransformedType;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
 
 class ReplaceSymbolsInTypeAction
@@ -15,7 +15,7 @@ class ReplaceSymbolsInTypeAction
         $this->collection = $collection;
     }
 
-    public function execute(Type $type, array $chain = []): string
+    public function execute(TransformedType $type, array $chain = []): string
     {
         if (in_array($type->getTypescriptName(), $chain)) {
             $chain = array_merge($chain, [$type->getTypescriptName()]);
@@ -31,7 +31,7 @@ class ReplaceSymbolsInTypeAction
         return $type->transformed;
     }
 
-    protected function replaceSymbol(string $missingSymbol, Type $type, array $chain): Type
+    protected function replaceSymbol(string $missingSymbol, TransformedType $type, array $chain): TransformedType
     {
         $found = $this->collection[$missingSymbol];
 

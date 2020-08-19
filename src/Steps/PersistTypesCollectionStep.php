@@ -2,7 +2,7 @@
 
 namespace Spatie\TypescriptTransformer\Steps;
 
-use Spatie\TypescriptTransformer\Structures\Type;
+use Spatie\TypescriptTransformer\Structures\TransformedType;
 use Spatie\TypescriptTransformer\Structures\TypesCollection;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
@@ -47,7 +47,7 @@ class PersistTypesCollectionStep
             $output .= "namespace {$namespace} {".PHP_EOL;
 
             $output .= join(PHP_EOL, array_map(
-                fn (Type $type) => $type->transformed,
+                fn (TransformedType $type) => $type->transformed,
                 $types
             ));
 
@@ -57,7 +57,7 @@ class PersistTypesCollectionStep
         }
 
         $output .= join(PHP_EOL, array_map(
-            fn (Type $type) => $type->transformed,
+            fn (TransformedType $type) => $type->transformed,
             $rootTypes
         ));
 

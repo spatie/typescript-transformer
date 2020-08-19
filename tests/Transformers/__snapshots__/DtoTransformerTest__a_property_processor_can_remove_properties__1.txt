@@ -1,0 +1,5 @@
+export type Typed = {
+    string: string;
+    default: string;
+    documented_string: string;
+}

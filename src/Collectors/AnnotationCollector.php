@@ -3,21 +3,25 @@
 namespace Spatie\TypescriptTransformer\Collectors;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\ClassReader;
 use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
+use Spatie\TypescriptTransformer\Support\ClassReader;
+use Spatie\TypescriptTransformer\Support\CollectedOccurrence;
+use Spatie\TypescriptTransformer\Support\TransformerFactory;
 use Spatie\TypescriptTransformer\Transformers\Transformer;
 use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
-use Spatie\TypescriptTransformer\ValueObjects\ClassOccurrence;
 
 class AnnotationCollector extends Collector
 {
     protected ClassReader $classReader;
+
+    private TransformerFactory $transformerFactory;
 
     public function __construct(TypeScriptTransformerConfig $config)
     {
         parent::__construct($config);
 
         $this->classReader = new ClassReader();
+        $this->transformerFactory = new TransformerFactory($config);
     }
 
     public function shouldCollect(ReflectionClass $class): bool
@@ -25,14 +29,14 @@ class AnnotationCollector extends Collector
         return (bool) strpos($class->getDocComment(), '@typescript');
     }
 
-    public function getClassOccurrence(ReflectionClass $class): ClassOccurrence
+    public function getCollectedOccurrence(ReflectionClass $class): CollectedOccurrence
     {
         [
             'name' => $name,
             'transformer' => $transformer,
         ] = $this->classReader->forClass($class);
 
-        return ClassOccurrence::create(
+        return CollectedOccurrence::create(
             $this->resolveTransformer($class, $transformer),
             $name
         );
@@ -43,7 +47,7 @@ class AnnotationCollector extends Collector
         ?string $transformer
     ): Transformer {
         if ($transformer !== null) {
-            return new $transformer;
+            return $this->transformerFactory->create($transformer);
         }
 
         foreach ($this->config->getTransformers() as $transformer) {

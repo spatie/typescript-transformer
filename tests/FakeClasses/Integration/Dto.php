@@ -2,6 +2,7 @@
 
 namespace Spatie\TypescriptTransformer\Tests\FakeClasses\Integration;
 
+use DateTime;
 use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
@@ -36,10 +37,10 @@ class Dto extends DataTransferObject
     /** @var int[] */
     public $documented_array;
 
-    /** @var int|string|int[]|string[] */
+    /** @var int|string|array<int|string> */
     public $mixed_with_array;
 
-    /** @var int[]|null[] */
+    /** @var array<int|null> */
     public $array_with_null;
 
     public Enum $enum;
@@ -48,7 +49,7 @@ class Dto extends DataTransferObject
 
     public OtherDto $other_dto;
 
-    /** @var array|\Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto[] */
+    /** @var \Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto[] */
     public array $other_dto_array;
 
     public OtherDtoCollection $other_dto_collection;
@@ -56,4 +57,15 @@ class Dto extends DataTransferObject
     public DtoWithChildren $dto_with_children;
 
     public YetAnotherDto $another_namespace_dto;
+
+    /** @var string|int */
+    public ?string $nullable_string;
+
+    public DateTime $reflection_replaced_default_type;
+
+    /** @var DateTime */
+    public $docblock_replaced_default_type;
+
+    /** @var DateTime[] */
+    public array $array_replaced_default_type;
 }
