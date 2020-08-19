@@ -6,6 +6,7 @@ use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypescriptTransformer\Exceptions\InvalidClassPropertyReplacer;
+use Spatie\TypescriptTransformer\Support\TransformerFactory;
 
 class TypeScriptTransformerConfig
 {
@@ -74,10 +75,10 @@ class TypeScriptTransformerConfig
      */
     public function getTransformers(): array
     {
+        $factory = new TransformerFactory($this);
+
         return array_map(
-            fn (string $transformer) => method_exists($transformer, '__construct')
-                ? new $transformer($this)
-                : new $transformer,
+            fn(string $transformer) => $factory->create($transformer),
             $this->transformers
         );
     }
@@ -93,7 +94,7 @@ class TypeScriptTransformerConfig
     public function getCollectors(): array
     {
         return array_map(
-            fn (string $collector) => new $collector($this),
+            fn(string $collector) => new $collector($this),
             $this->collectors
         );
     }

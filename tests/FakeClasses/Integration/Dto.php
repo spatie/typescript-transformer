@@ -2,6 +2,7 @@
 
 namespace Spatie\TypescriptTransformer\Tests\FakeClasses\Integration;
 
+use DateTime;
 use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
@@ -59,4 +60,12 @@ class Dto extends DataTransferObject
 
     /** @var string|int */
     public ?string $nullable_string;
+
+    public DateTime $reflection_replaced_default_type;
+
+    /** @var DateTime */
+    public  $docblock_replaced_default_type;
+
+    /** @var DateTime[] */
+    public array $array_replaced_default_type;
 }

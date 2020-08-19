@@ -9,7 +9,7 @@ use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\StringDtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollection;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakePropertyReflection;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakeReflectionProperty;
 
 class DtoCollectionClassPropertyProcessorTest extends TestCase
 {
@@ -31,7 +31,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(DtoCollection::class),
-            FakePropertyReflection::create()
+            FakeReflectionProperty::create()
         );
 
         $this->assertEquals(
@@ -45,7 +45,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(NullableDtoCollection::class),
-            FakePropertyReflection::create()
+            FakeReflectionProperty::create()
         );
 
         $this->assertEquals(
@@ -59,7 +59,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(StringDtoCollection::class),
-            FakePropertyReflection::create()
+            FakeReflectionProperty::create()
         );
 
         $this->assertEquals('string[]', (string) $type);
@@ -70,7 +70,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(UntypedDtoCollection::class),
-            FakePropertyReflection::create()
+            FakeReflectionProperty::create()
         );
 
         $this->assertEquals('array', (string) $type);
@@ -81,7 +81,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve('string'),
-            FakePropertyReflection::create()
+            FakeReflectionProperty::create()
         );
 
         $this->assertEquals('string', (string) $type);

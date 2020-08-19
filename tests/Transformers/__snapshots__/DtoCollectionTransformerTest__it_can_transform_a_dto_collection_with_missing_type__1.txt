@@ -1,1 +1,0 @@
-Array<{%Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum%}>

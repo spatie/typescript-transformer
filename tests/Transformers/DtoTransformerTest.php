@@ -2,6 +2,7 @@
 
 namespace Spatie\TypescriptTransformer\Tests\Transformers;
 
+use DateTime;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\String_;
 use PHPUnit\Framework\TestCase;
@@ -28,9 +29,12 @@ class DtoTransformerTest extends TestCase
     {
         parent::setUp();
 
-        $this->transformer = new DtoTransformer(
-            TypeScriptTransformerConfig::create()
-        );
+        $config = TypeScriptTransformerConfig::create()
+            ->classPropertyReplacements([
+                DateTime::class => 'string',
+            ]);
+
+        $this->transformer = new DtoTransformer($config);
     }
 
     /** @test */

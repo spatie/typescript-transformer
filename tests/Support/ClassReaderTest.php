@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests;
+namespace Spatie\TypescriptTransformer\Tests\Support;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -87,7 +87,7 @@ class ClassReaderTest extends TestCase
         $this->expectDeprecationMessageMatches("/does not implement the Transformer interface!/");
 
         /**
-         * @typescript-transformer \Spatie\TypescriptTransformer\Structures\Type
+         * @typescript-transformer \Spatie\TypescriptTransformer\Structures\TransformedType
          */
         $fake = new class {
         };

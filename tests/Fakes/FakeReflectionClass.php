@@ -4,7 +4,7 @@ namespace Spatie\TypescriptTransformer\Tests\Fakes;
 
 use ReflectionClass;
 
-class FakeClassReflection extends ReflectionClass
+class FakeReflectionClass extends ReflectionClass
 {
     private ?string $withNamespace = null;
 

@@ -37,6 +37,8 @@ class ResolveClassPropertyTypeAction
             return new Mixed_();
         }
 
+        $types = array_unique($types);
+
         return count($types) === 1
             ? current($types)
             : new Compound(array_values($types));

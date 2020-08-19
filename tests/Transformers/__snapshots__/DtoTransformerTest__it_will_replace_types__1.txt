@@ -21,4 +21,7 @@ export type Typed = {
     dto_with_children: {%Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren%};
     another_namespace_dto: {%Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto%};
     nullable_string: ?string | ?number;
+    reflection_replaced_default_type: string;
+    docblock_replaced_default_type: string;
+    array_replaced_default_type: Array<string>;
 }

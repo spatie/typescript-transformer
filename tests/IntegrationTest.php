@@ -2,6 +2,7 @@
 
 namespace Spatie\TypescriptTransformer\Tests;
 
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
@@ -24,6 +25,9 @@ class IntegrationTest extends TestCase
         $transformer = new TypescriptTransformer(
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/FakeClasses/Integration')
+                ->classPropertyReplacements([
+                    DateTime::class => 'string'
+                ])
                 ->transformers([
                     MyclabsEnumTransformer::class,
                     DtoTransformer::class,

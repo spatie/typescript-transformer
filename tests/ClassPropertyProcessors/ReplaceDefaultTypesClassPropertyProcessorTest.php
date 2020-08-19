@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Spatie\TypescriptTransformer\ClassPropertyProcessors\ReplaceDefaultTypesClassPropertyProcessor;
 use Spatie\TypescriptTransformer\Support\TypescriptType;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Dto;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakePropertyReflection;
+use Spatie\TypescriptTransformer\Tests\Fakes\FakeReflectionProperty;
 
 class ReplaceDefaultTypesClassPropertyProcessorTest extends TestCase
 {
@@ -36,7 +36,7 @@ class ReplaceDefaultTypesClassPropertyProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(Dto::class),
-            FakePropertyReflection::create()
+            FakeReflectionProperty::create()
         );
 
         $this->assertEquals(new TypescriptType('array'), $type);
@@ -47,7 +47,7 @@ class ReplaceDefaultTypesClassPropertyProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve('?' . DateTime::class),
-            FakePropertyReflection::create()
+            FakeReflectionProperty::create()
         );
 
         $this->assertEquals(new Nullable(new String_()), $type);
@@ -58,7 +58,7 @@ class ReplaceDefaultTypesClassPropertyProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(DateTime::class . '[]'),
-            FakePropertyReflection::create()
+            FakeReflectionProperty::create()
         );
 
         $this->assertEquals(new Array_(new String_()), $type);
