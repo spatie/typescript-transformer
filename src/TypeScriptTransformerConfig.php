@@ -78,7 +78,7 @@ class TypeScriptTransformerConfig
         $factory = new TransformerFactory($this);
 
         return array_map(
-            fn(string $transformer) => $factory->create($transformer),
+            fn (string $transformer) => $factory->create($transformer),
             $this->transformers
         );
     }
@@ -94,7 +94,7 @@ class TypeScriptTransformerConfig
     public function getCollectors(): array
     {
         return array_map(
-            fn(string $collector) => new $collector($this),
+            fn (string $collector) => new $collector($this),
             $this->collectors
         );
     }

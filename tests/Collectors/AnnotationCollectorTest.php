@@ -90,7 +90,8 @@ class AnnotationCollectorTest extends TestCase
         $this->expectException(TransformerNotFound::class);
 
         /** @typescript */
-        $class = new class {};
+        $class = new class {
+        };
 
         $reflection = new ReflectionClass(
             $class

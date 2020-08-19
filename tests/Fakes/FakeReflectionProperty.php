@@ -40,7 +40,7 @@ class FakeReflectionProperty extends ReflectionProperty
 
     public function getDocComment()
     {
-        if($this->docComment === null){
+        if ($this->docComment === null) {
             return false;
         }
 

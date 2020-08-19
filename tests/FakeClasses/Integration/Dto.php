@@ -64,7 +64,7 @@ class Dto extends DataTransferObject
     public DateTime $reflection_replaced_default_type;
 
     /** @var DateTime */
-    public  $docblock_replaced_default_type;
+    public $docblock_replaced_default_type;
 
     /** @var DateTime[] */
     public array $array_replaced_default_type;

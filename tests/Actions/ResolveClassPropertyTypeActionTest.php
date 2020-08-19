@@ -3,12 +3,7 @@
 namespace Spatie\TypescriptTransformer\Tests\Actions;
 
 use phpDocumentor\Reflection\TypeResolver;
-use PhpParser\Lexer;
-use PhpParser\Parser\Php7;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\ReflectionProperty;
-use Roave\BetterReflection\Reflector\ClassReflector;
-use Roave\BetterReflection\SourceLocator\Type\AnonymousClassObjectSourceLocator;
 use Spatie\TypescriptTransformer\Actions\ResolveClassPropertyTypeAction;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Test;

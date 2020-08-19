@@ -26,7 +26,7 @@ class IntegrationTest extends TestCase
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/FakeClasses/Integration')
                 ->classPropertyReplacements([
-                    DateTime::class => 'string'
+                    DateTime::class => 'string',
                 ])
                 ->transformers([
                     MyclabsEnumTransformer::class,
