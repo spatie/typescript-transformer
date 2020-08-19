@@ -1,6 +1,6 @@
 export type Typed = {
     string: string;
-    nullbable: ?string;
+    nullbable: string | null;
     default: string;
     int: number;
     boolean: boolean;
@@ -20,7 +20,7 @@ export type Typed = {
     other_dto_collection: Array<{%Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto%}>;
     dto_with_children: {%Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren%};
     another_namespace_dto: {%Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto%};
-    nullable_string: ?string | ?number;
+    nullable_string: string | null | number | null;
     reflection_replaced_default_type: string;
     docblock_replaced_default_type: string;
     array_replaced_default_type: Array<string>;

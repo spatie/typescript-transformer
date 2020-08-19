@@ -68,8 +68,8 @@ class TransformClassPropertyTypeActionTest extends TestCase
             ['Array<string, int|bool>', '{ [key: string]: number | boolean }'],
 
             // Null
-            ['?string', '?string'],
-            ['?string[]', 'Array<?string>'],
+            ['?string', 'string | null'],
+            ['?string[]', 'Array<string | null>'],
 
             // Objects
             [Enum::class, '{%' . Enum::class . '%}'],

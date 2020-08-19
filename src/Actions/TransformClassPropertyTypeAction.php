@@ -115,7 +115,7 @@ class TransformClassPropertyTypeAction
 
     private function resolveNullableType(Nullable $nullable): string
     {
-        return "?{$this->execute($nullable->getActualType())}";
+        return "{$this->execute($nullable->getActualType())} | null";
     }
 
     private function resolveObjectType(Object_ $object)
