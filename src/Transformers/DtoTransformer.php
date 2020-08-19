@@ -16,7 +16,7 @@ use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
 
 class DtoTransformer implements Transformer
 {
-    private TypeScriptTransformerConfig $config;
+    protected TypeScriptTransformerConfig $config;
 
     public function __construct(TypeScriptTransformerConfig $config)
     {
