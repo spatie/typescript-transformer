@@ -15,7 +15,7 @@ Although writing your own transformers isn't that difficult we've added a few tr
 The laravel package has some extra transformers:
 
 - `SpatieEnumTransformer`: this converts an enum from the `spatie\enum` package
-- `SpatieStateTransformer`: this converts as state from the `spatie\laravel-model-states` package
+- `SpatieStateTransformer`: this converts a state from the `spatie\laravel-model-states` package
 
 ## Writing transformers
 
@@ -38,9 +38,11 @@ class EnumTransformer implements Transformer
 }
 ```
 
-In the `canTransform` method you should decide if this transformer can convert the class. In the `transform` method, you should return a `TransformedType`. Let's take a look at how we can create them.
+In the `canTransform` method you should decide if this transformer can convert the class. In the `transform` method, you should a transformed version of the PHP type. You should return it as a `TransformedType`, let's take a look how to create them.
 
 ### Creating transformed types
+
+A `TransformedType` always has three properties: the `ReflectionClass` of the type you're transforming, the name of the type and off course the transformed Typescript code:
 
 ```php
 TransformedType::create(
@@ -104,7 +106,7 @@ $type = $missingSymbols->add(RoleEnum::class); // Will return {%RoleEnum::class%
 
 The `add` method will return a token that can be used in your transformed type, to be replaced later. It's the link we described above between the types.
 
-When in the end, no type was found(because it wasn't converted to Typescript, for example), it will be replaced with the `any` Typescript type.
+When in the end, no type was found(for example: because it wasn't converted to Typescript). Then the type will be replaced with the `any` Typescript type.
 
 #### Inline types
 
@@ -126,7 +128,7 @@ TransformedType::createInline(
 );
 ```
 
-When needed you can also add a `MissingSymbolsCollection`:
+When required you can also add a `MissingSymbolsCollection`:
 
 ```php
 TransformedType::createInline(

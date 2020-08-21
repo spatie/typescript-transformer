@@ -87,7 +87,7 @@ class Dto
 }
 ```
 
-Always use a fully qualified class name, since at the moment the package cannot determine if you have imported some class:
+A small note: always use a fully qualified class name, since at the moment the package cannot determine if you have imported some classes:
 
 ```php
 use App\DataTransferObjects\UserData;

@@ -7,7 +7,7 @@ Class property processors can be added to a `DtoTransformer` they have the abili
 
 ## Default class property processors
 
-In the default package we provide two processors:
+In the default package we provide three processors:
 
 - `ReplaceDefaultTypesClassPropertyProcessor` replaces some types defined in the configuration, this processor will always run first
 - `ApplyNeverClassPropertyProcessor` when a property is not well-typed, `never` is used as Typescript type, so you know your properties can be better typed
@@ -24,7 +24,7 @@ A class property processor is a class that implements `ClassPropertyProcessor`:
 ```php
 class MyClassPropertyProcessor implements ClassPropertyProcessor
 {
-    public function process(Type $type, ReflectionProperty $reflection): Type
+    public function process(Type $type, ReflectionProperty $reflection): ?Type
     {
         // Transform the types of the property
     }
@@ -36,7 +36,7 @@ The `process` method has two parameters:
 - **type**: a [PHPDocumenter](https://www.phpdoc.org) type that describes the property's type
 - **reflection**: the `ReflectionProperty` of the property
 
-In the end you should return a [PHPDocumenter](https://www.phpdoc.org) type.
+In the end you should return a [PHPDocumenter](https://www.phpdoc.org) type or `null` if you want to remove the type from the Dto.
 
 ### Returning types
 
@@ -45,19 +45,19 @@ You can return whatever type you want, in the case where you want to return a Ty
 ```php
 class MyClassPropertyProcessor implements ClassPropertyProcessor
 {
-    public function process(Type $type, ReflectionProperty $reflection): Type
+    public function process(Type $type, ReflectionProperty $reflection): ?Type
     {
-        return TypescriptType::create('string');
+        return TypescriptType::create('SomeGenericType<string>');
     }
 }
 ```
 
-You could also use the PHPDocumenter equivalent type:
+Or you could also return a PHPDocumenter type:
 
 ```php
 class MyClassPropertyProcessor implements ClassPropertyProcessor
 {
-    public function process(Type $type, ReflectionProperty $reflection): Type
+    public function process(Type $type, ReflectionProperty $reflection): ?Type
     {
         return new String_();
     }
@@ -73,14 +73,14 @@ Since a type can exist of arrays, compound types, nullable types and more. You s
 
 This trait will add a `walk` function that takes an initial type and closure.
 
-Let's say you have a compound type like: `string|bool|int`, the `walk` function will run a string, bool and int type through the closure you can return whatever type you want. In the end the updated compound type will also be passed to the closure. When you return `null` the type will be removed. Let's take a look at an example where we only keep an string type and remove the others:
+Let's say you have a compound type like: `string|bool|int`, the `walk` function will run a string, bool and int type through the closure. You can return whatever type you want. In the end the updated compound type will also be passed to the closure. When you return `null` the type will be removed. Let's take a look at an example where we only keep the string types and remove the others:
 
 ```php
 class MyClassPropertyProcessor implements ClassPropertyProcessor
 {
     use ProcessesClassProperties;
 
-    public function process(Type $type, ReflectionProperty $reflection): Type
+    public function process(Type $type, ReflectionProperty $reflection): ?Type
     {
         return $this->walk($type, function (Type $type) {
             if ($type instanceof _String || $type instanceof Compound) {
