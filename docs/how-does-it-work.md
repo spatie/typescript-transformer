@@ -5,17 +5,17 @@ weight: 4
 
 This is a more in depth look on how the package works, it is not a requirement to read it if you want to use the package. But it might give you a clearer picture how the package works. I recommand you to first read through the other documentation and then come back to read this page.
 
-#### Step 0 configurating the package
+## Step 0 configurating the package
 
 In the package configuration, you define the path where your PHP classes are stored, the file where the Typescript will be written, the transformers required to convert PHP to Typescript, collectors that will find PHP classes that can be transformed.
 
-#### Step 1 collecting classes
+## Step 1 collecting classes
 
 We start with iterating over each PHP class in the directory you specified and create a `ReflectionClass` for it, if a collector can collect such class it will try to find a suitable transformer. 
 
 For example, the `AnnotationCollector` will collect each class with a `@typescript` annotation and feed it to all the registered transformers so it can hopefully find one transfromer that can transform the class.
 
-#### Step 2 transforming classes
+## Step 2 transforming classes
 
 We've created a set with classes and their suitable transformers in step 1, now we're going to transform these types to Typescript. In case of an enum this is relatively simple but a Dto is a complicated structure to transform.
 
@@ -25,13 +25,13 @@ A good example of a class property processor is the `ReplaceDefaultTypesClassPro
 
 Another thing happening when transforming is the building up of the missing symbol collection, let's say your Dto has an reference to another Dto. At the moment of transformation the package will not know how that other Dto will be transformed. So we add a missing symbol that can be replaced later.
 
-#### Step 3 replacing missing symbols
+## Step 3 replacing missing symbols
 
 The set of classes we started with in step 2 is now transformed to Typescript, althouth some types are missing references to other types. Thanks to the missing symbols collections each transformer constructed we can replace these references.
 
 If a reference cannot be replaced because it cannot be found, for example a reference to a class that is not transformed to Typescript. Then the package will replace will try to replace this reference with `any` since it doesn't know how to reference it.
 
-#### Step 4 persisting types
+## Step 4 persisting types
 
 Our set of transformed classes is now ready, all the missing symbols are replaced so it's time for the last step. We take the whole set and write it down into a file you configured.
 
