@@ -45,7 +45,7 @@ class User
 }
 ```
 
-Will be transformed to:
+This will be transformed to:
 
 ```typescript
 export type User = {
