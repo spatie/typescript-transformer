@@ -30,3 +30,27 @@ class Languages extends Enum
     const PHP = 'php';
 }
 ```
+
+You can even take it a bit further and generate Typescript from classes:
+
+```php
+/** @typescript */
+class User
+{
+    public int $id;
+
+    public string $name;
+
+    public ?string $address;
+}
+```
+
+Will be transformed to:
+
+```typescript
+export type User = {
+    int: number;
+    name: string;
+    address: string | null;
+}
+```
