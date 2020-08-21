@@ -3,7 +3,7 @@ title: Transformers
 weight: 2
 ---
 
-Transformers are the heart of the package. They take a PHP class and will determine if it can be transformed to Typescript, if that's possible, the transformer will transform the PHP class to Typescript.
+Transformers are the heart of the package. They take a PHP class and determine if it can be transformed into Typescript, if that's possible, the transformer will transform the PHP class to Typescript.
 
 ## Default transformers
 
@@ -38,7 +38,7 @@ class EnumTransformer implements Transformer
 }
 ```
 
-In the `canTransform` method you should decide if this transformer can convert the class. In the `transform` method, you should a transformed version of the PHP type. You should return it as a `TransformedType`, let's take a look how to create them.
+In the `canTransform` method, you should decide if this transformer can convert the class. In the `transform` method, you should return a transformed version of the PHP type as a `TransformedType`. Let's take a look at how to create one.
 
 ### Creating transformed types
 
@@ -106,11 +106,11 @@ $type = $missingSymbols->add(RoleEnum::class); // Will return {%RoleEnum::class%
 
 The `add` method will return a token that can be used in your transformed type, to be replaced later. It's the link we described above between the types.
 
-When in the end, no type was found(for example: because it wasn't converted to Typescript). Then the type will be replaced with the `any` Typescript type.
+When no type was found(for example: because it wasn't converted to Typescript), then the type will be replaced with the `any` Typescript type.
 
 #### Inline types
 
-It is also possible to create an inline type, these types will not create a whole new Typescript type but just replace a type inline in another type. In our previous example, if we would transform `Enum` classes with an inline type, the generated Typescript would look like this:
+It is also possible to create an inline type. These types will not create a whole new Typescript type but replace a type inline in another type. In our previous example, if we would transform `Enum` classes with an inline type, the generated Typescript would look like this:
 
 ```typescript
 export type User = {

@@ -9,7 +9,9 @@ When you've configured Typescript transformer in the `typescript-transformer.php
 php artisan typescript:transform
 ```
 
-That's it, your types are now transformed!
+That's it. Your types are now transformed!
+
+## Command options
 
 There are some extra commands you can use when running the command. It is also possible to only transform one class:
                                                                     

@@ -14,7 +14,7 @@ class Languages extends Enum{
 }
 ```
 
-This will produce the following Typescript:
+The package will produce the following Typescript:
 
 ```typescript
 export type Languages = 'en' | 'nl' | 'fr';
@@ -43,4 +43,4 @@ Want to define a specific transformer for the file? You can use the following an
 class Languages extends Enum{}
 ```
 
-It is also possible to transform types without adding annotations, you can read more about it [here](https://docs.spatie.be/typescript-transformer/v1/usage/collectors/)
+It is also possible to transform types without adding annotations. You can read more about it [here](https://docs.spatie.be/typescript-transformer/v1/usage/collectors/)

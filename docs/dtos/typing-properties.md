@@ -3,11 +3,11 @@ title: Typing properties
 weight: 2
 ---
 
-Let's have a look how you can type the properties of your PHP class.
+Let's have a look at how you can type the properties of your PHP class.
 
 ## By regular PHP types
 
-Since PHP 7.4 it is possible to use typed properties, this package makes these types an A class citizen.
+Since PHP 7.4, it is possible to use typed properties. This package makes these types an A-class citizen.
 
 ```php
 class Dto
@@ -44,7 +44,7 @@ class Dto
 
 ## By docblocks
 
-You can also use docblocks to type properties, a more detailed overview about this can be found [here](https://docs.phpdoc.org/latest/guides/types.html).
+You can also use docblocks to type properties. A more detailed overview of this can be found [here](https://docs.phpdoc.org/latest/guides/types.html).
 
 ```php
 class Dto
@@ -145,13 +145,13 @@ class Dto
 }
 ```
 
-These will all transform to a `Dto` typescript type.
+These will all transform into a `Dto` typescript type.
 
 ### Transforming arrays
 
-The problem with arrays is that in PHP and Typescript(Javascript) they are different concepts. An array in PHP is a multi use storage structure. In Typescript a PHP array can be represented as an Array and as an Object with keys. 
+The problem with arrays is that in PHP and Typescript(Javascript), they are different concepts. An array in PHP is a multi-use storage structure. In Typescript, a PHP array can be represented as an Array and as an Object with keys. 
 
-Depending on how you write your annotations, the package will output an Array or Object. Let's have a look at som examples that will transform to an array:
+Depending on how you write your annotations, the package will output an Array or Object. Let's have a look at some examples that will transform into an array:
 
 ```php
 class Dto
@@ -182,7 +182,7 @@ class Dto
 
 ## Combining regular types and docblocks
 
-It is perfectly possible to combine a docblock annotation with a regular type, let's have a look:
+It is entirely possible to combine a docblock annotation with a regular type, let's have a look:
 
 ```php
 class Dto
@@ -198,15 +198,8 @@ Normally this would output the following type:
 array: Array | Array<string>
 ```
 
-The package knows `string[]` is a more specific version of the `array` type so it will remove the redundant `Array` type. Now the definition becomes:
+The package knows `string[]` is a more specific version of the `array` type to remove the redundant `Array` type. Now the definition becomes:
 
 ```typescript
 array: Array<string>
 ```
-
-
-
-
-
-
-
