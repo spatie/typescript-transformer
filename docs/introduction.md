@@ -14,16 +14,16 @@ class Languages extends Enum
 }
 ```
 
-Wouldn't it be cool if you could have an automatically generated Typescript definition like this:
+Wouldn't it be cool if you could have a automatically generated Typescript definitions like this?
 
-```typescript
+```tsx
 export type Languages = 'typescript' | 'php';
 ```
 
 This package will automatically generate such definitions for you, the only thing you have to do is adding this annotation:
 
 ```php
-/** @typescript **/
+/** @typescript */
 class Languages extends Enum
 {
     const TYPESCRIPT = 'typescript';
@@ -31,7 +31,7 @@ class Languages extends Enum
 }
 ```
 
-You can even take it a bit further and generate Typescript from classes:
+You can even take it a step further and generate TypeScript from public class properties:
 
 ```php
 /** @typescript */
@@ -47,7 +47,7 @@ class User
 
 This will be transformed to:
 
-```typescript
+```tsx
 export type User = {
     int: number;
     name: string;
