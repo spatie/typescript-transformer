@@ -3,7 +3,9 @@ title: Transforming
 weight: 1
 ---
 
-The package provides a `DtoTransformer` which will convert all the public non-static properties of a class to Typescript. Let's take a look at an example:
+The package provides a `DtoTransformer` out of the box. This transformer will convert all public non-static properties of a class to TypeScript types. 
+
+Let's take a look at an example:
 
 ```php
 /** @typescript */
@@ -22,7 +24,7 @@ class User
 
 This will be transformed to:
 
-```typescript
+```tsx
 export type User = {
     int: number;
     name: string;
@@ -31,19 +33,19 @@ export type User = {
 }
 ```
 
-In the next chapters, we look at how to adapt the `DtoTransformer` to be a perfect match for your project.
+In the next chapters, we'll look at how to adapt the `DtoTransformer` to be a perfect match for your project.
 
 A small side note for the Laravel developers: you should use the `DtoTransformer` from the `spatie/laravel-typescript-transformer` package. This transformer has some extra niceties for Laravel projects you don't want to miss!
 
 ### Replacing simple types
 
-In the end, the package can only output types that are `string`, `bool`, `int`, `double`, `array`, and references to other types(for example, another DTO). You will have to replace some types in your Dto's with more primitive versions. This is normal behavior since you can only communicate these primitive types with the frontend through JSON.
+In the end, the package can only output types that are `string`, `bool`, `int`, `double`, `array`, and references to other types (for example, another DTO). You will have to replace some types in your DTOs with more primitive versions. This is normal behavior since you can only communicate these primitive types with the frontend through JSON.
  
 For example you cannot send a `DateTime` object to the frontend, you will probably be sending a string representation of the `DateTime` object.
 
-Although it is possible to take full control of the `DtoTransformer` and you can change the behavior of the property type replacements to primitive types to your own liking. Sometimes you want to replace some simple types to Typescript. For example, a `DateTime` or `Carbon` object will probably always be `string` in your Typescript definition.
+Although it is possible to take full control of the `DtoTransformer` and you can change the behavior of the property type replacements to primitive types to your own liking. Sometimes you want to replace some simple types to TypeScript. For example, a `DateTime` or `Carbon` object will probably always be a `string` in your TypeScript definition.
 
-It is possible to define such simple replacements in the config:
+It is possible to define these simple replacements in the config:
 
 ```php
 TypeScriptTransformerConfig::create()
@@ -53,7 +55,9 @@ TypeScriptTransformerConfig::create()
     ...
 ```
 
-Here we replace all DateTime's with a string. You can write any type you can also write into a class property's `@var` annotation. Should you want to represent a DateTime as an array of string then that's perfectly possible:
+In the above example, we replace all `DateTime`s with a `string` type. Any type you can use as a class property's `@var` annotation can be used as a replacement. 
+
+For example, should you want to represent a `DateTime` as an array of strings, then that's perfectly possible:
  
 ```php
 TypeScriptTransformerConfig::create()
@@ -63,7 +67,7 @@ TypeScriptTransformerConfig::create()
     ...
 ```
  
-If you want to convert to a specific Typescript type you can do the following:
+If you want to convert to a literal/specific TypeScript type you can use the `TypescriptType` class like this:
 
 ```php
 TypeScriptTransformerConfig::create()
@@ -75,7 +79,7 @@ TypeScriptTransformerConfig::create()
 
 ### Writing your own DTO Transformers
 
-Sometimes you want a bit more flexibility, for example, adding static properties to the transformed properties. Or replacing properties with primitive types differently. In such cases you can create your own `DtoTransformer`:
+Sometimes you'll want even more flexibility. For example when adding static properties to the transformed properties or when replacing properties with primitive types. In these cases you can create your own `DtoTransformer`:
 
 ```php
 class DtoTransformer extends DtoTransformer
@@ -103,8 +107,8 @@ class DtoTransformer extends DtoTransformer
 }
 ```
 
-First of all, `canTransform` still returns if a transformer can handle the type. In this example, we created a transformer that will only transform Dto's from our `spatie/data-transfer-object` package. We've also overwritten the `resolveProperties`, so we're not excluding static properties anymore.
+First of all, `canTransform` still returns `true` if a transformer can handle the type conversion. In this specific example, we created a transformer that will only transform DTOs from our `spatie/data-transfer-object` package. We've also overwritten the `resolveProperties` method to not exclude static properties.
 
-As you can see, we're defining some `ClassPropertyProcessors`. These processors will be used to replace the type of a property with a more primitive version. And will run before any missing symbols are replaced. You can read more about them [here](https://docs.spatie.be/typescript-transformer/v1/dtos/class-property-processors/)
+As you can see, we're defining some `ClassPropertyProcessors`. These processors will be used to replace the type of a property with a more primitive version and will run before any missing symbols are replaced. [You can read more about class property processors here](https://docs.spatie.be/typescript-transformer/v1/dtos/class-property-processors/).
 
 When creating your own `DtoTransformer`, do not forget to register it in your configuration!
