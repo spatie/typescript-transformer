@@ -6,7 +6,7 @@ weight: 3
 When using the `@typescript` annotation, the PHP class's name will be used for the Typescript type:
 
 ```php
-/** @typescript **/
+/** @typescript */
 class Languages extends Enum{
     const en = 'en';
     const nl = 'nl';
@@ -16,7 +16,7 @@ class Languages extends Enum{
 
 The package will produce the following Typescript:
 
-```typescript
+```tsx
 export type Languages = 'en' | 'nl' | 'fr';
 ```
 
@@ -29,7 +29,7 @@ class Languages extends Enum{}
 
 Now the transformed Typescript looks like this:
 
-```typescript
+```tsx
 export type Talen = 'en' | 'nl' | 'fr';
 ```
 
@@ -39,7 +39,7 @@ Want to define a specific transformer for the file? You can use the following an
 /** 
  * @typescript
  * @typescript-transformer \Spatie\LaravelTypescriptTransformer\Transformers\SpatieEnumTransformer
- **/
+ */
 class Languages extends Enum{}
 ```
 
