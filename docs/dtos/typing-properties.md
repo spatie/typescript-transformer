@@ -3,11 +3,11 @@ title: Typing properties
 weight: 2
 ---
 
-Let's have a look at how you can type the properties of your PHP class.
+Let's take a look at how we can type individual properties of a PHP class.
 
-## By regular PHP types
+## Using PHP's built-in typed properties
 
-Since PHP 7.4, it is possible to use typed properties. This package makes these types an A-class citizen.
+Since PHP 7.4 it's possible to use typed properties in a class. This package makes these types an A-class citizen.
 
 ```php
 class Dto
@@ -42,9 +42,9 @@ class Dto
 }
 ```
 
-## By docblocks
+## Using docblocks
 
-You can also use docblocks to type properties. A more detailed overview of this can be found [here](https://docs.phpdoc.org/latest/guides/types.html).
+You can also use docblocks to type properties. A more detailed overview of this can be found [here](https://docs.phpdoc.org/latest/guides/types.html). While PHP's built-in typed properties are great, docblocks allow for a bit more flexibility:
 
 ```php
 class Dto
@@ -63,10 +63,13 @@ class Dto
 
     /** @var array */
     public $array;
+    
+    /** @var array|string */
+    public $arrayThatMightBeAString;
 }
 ```
 
-It is also possible to add nullable types:
+It is also possible to use nullable types in docblocks:
 
 ```php
 class Dto
@@ -76,7 +79,7 @@ class Dto
 }
 ```
 
-Type your objects:
+And add types for your (custom) objects:
 
 
 ```php
@@ -87,7 +90,7 @@ class Dto
 }
 ```
 
-A small note: always use a fully qualified class name, since at the moment the package cannot determine if you have imported some classes:
+Note: always use the fully qualified class name (FCCN). At this moment the package cannot determine imported classes used in a docblock:
 
 ```php
 use App\DataTransferObjects\UserData;
@@ -95,15 +98,14 @@ use App\DataTransferObjects\UserData;
 class Dto
 {
     /** @var \App\DataTransferObjects\UserData */
-    public $userData; // Will work
+    public $userData; // FCCN: this will work
     
     /** @var UserData */
-    public $secondUserData; // Will not work
+    public $secondUserData; // Won't work, class import is not detected
 }
 ```
 
-
-It is possible to add compound types:
+It's also possible to add compound types:
 
 ```php
 class Dto
@@ -113,7 +115,7 @@ class Dto
 }
 ```
 
-Or these special types:
+Or these special PHP specific types:
 
 ```php
 class Dto
@@ -129,7 +131,7 @@ class Dto
 }
 ```
 
-You can even reference the same type:
+You can even reference the object's own type:
 
 ```php
 class Dto
@@ -145,13 +147,13 @@ class Dto
 }
 ```
 
-These will all transform into a `Dto` typescript type.
+These will all transform to a `Dto` TypeScript type.
 
 ### Transforming arrays
 
-The problem with arrays is that in PHP and Typescript(Javascript), they are different concepts. An array in PHP is a multi-use storage structure. In Typescript, a PHP array can be represented as an Array and as an Object with keys. 
+Arrays in PHP and TypeScript (JavaScript) are completely different concepts. This poses a couple of problems we'll address. A PHP array is a multi-use storage/memory structure. In TypeScript, a PHP array can be represented both as an `Array` and as an `Object` with specified keys. 
 
-Depending on how you write your annotations, the package will output an Array or Object. Let's have a look at some examples that will transform into an array:
+Depending on how your annotations are written the package will output either an `Array` or `Object`. Let's have a look at some examples that will transform into an `Array` type:
 
 ```php
 class Dto
@@ -172,34 +174,28 @@ Typing objects can be done as such:
 ```php
 class Dto
 {
-    /** @var array<string, \DateTime>  */
+    /** @var array<string, \DateTime> */
     public $object_with_string_keys;
 
-    /** @var array<int, \DateTime>*/
+    /** @var array<int, \DateTime> */
     public $object_with_int_keys;
 }
 ```
 
 ## Combining regular types and docblocks
 
-It is entirely possible to combine a docblock annotation with a regular type, let's have a look:
+It is possible and recommended combine regular type with docblock annotations for more specific typing. Let's have a look:
 
 ```php
 class Dto
 {
-    /** @var string[]  */
+    /** @var string[] */
     public array $array;
 }
 ```
 
-Normally this would output the following type:
+The package knows `string[]` is a more specific version of the `array` type and will internally remove the redundant `Array` type. The outputted type definition looks like this:
 
-```typescript
-array: Array | Array<string>
-```
-
-The package knows `string[]` is a more specific version of the `array` type to remove the redundant `Array` type. Now the definition becomes:
-
-```typescript
+```tsx
 array: Array<string>
 ```
