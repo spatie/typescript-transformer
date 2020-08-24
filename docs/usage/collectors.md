@@ -3,11 +3,12 @@ title: Collectors
 weight: 4
 ---
 
-In some cases, you want to transform classes without annotations. For example, in one of our projects, we've created resource classes that were sent to the frontend using Dto's. We knew these Resources would always have to be converted to Typescript, so writing the `@typescript` annotation was cumbersome.
+In some cases, you'll want to transform classes without the `@typescript` annotation. For example Laravel's API resources are almost always sent to the front and should always have a TypeScript defintion ready to be used.
 
-Collectors allow you to transform classes by a specified transformer. You're already using a collector at this moment. The `@typescript` annotated classes are collected by the package `AnnotationsCollector` collector.
+Collectors allow you to specify what PHP classes should be transformed to TypeScript and what transformer should be used. 
+The package comes out of the box with the pre-configured `AnnotationsCollector` to find and transform classes marked with the `@typescript` annotation.
 
-A collector is a class that extends the `Collector` class, and you will have to implement two methods:
+A collector is any class that extends the `Collector` class  and implements the `shouldCollection` and `getClassOccurrence` methods:
 
 ```php
 class EnumCollector extends Collector
@@ -24,7 +25,7 @@ class EnumCollector extends Collector
 }
 ```
 
-First, you have to check if the class can be collected by this collector in the `shouldCollect` method. When you can collect the class, `getClassOccurence` should return a correct `ClassOccurence`. A `ClassOccurence` exists of a transformer for the class, and a name the typescript type will have.
+First, you have to check if the class can be collected by this collector in the `shouldCollect` method. When you can collect the class, `getClassOccurence` should return a correct `ClassOccurence`. The `ClassOccurence` contains the type's name and what transformer to use for the class.
 
 You can easily create a `ClassOccurrence` as such:
 
@@ -35,7 +36,7 @@ ClassOccurrence::create(
 );
 ```
 
-In the end you have to add the collector to your configuration:
+Don't forget to add the collector to your configuration:
 
 ```php
 $config = TypeScriptTransformerConfig::create()
@@ -43,4 +44,4 @@ $config = TypeScriptTransformerConfig::create()
    ...
 ```
 
-Collectors are, checked in the order they're defined in the configuration. The package will add the `AnnotationsCollector`, which collects `@typescript` annotated classes automatically at the end.
+Collectors are checked in the same order they're defined in the configuration. The package will add the `AnnotationsCollector`, which collects `@typescript` annotated classes automatically at the end. This always you to overwrite this behaviour by adding your own version of the `AnnotationsCollector`.
