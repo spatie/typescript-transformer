@@ -4,9 +4,7 @@ namespace Spatie\TypescriptTransformer\Support;
 
 use phpDocumentor\Reflection\Type;
 
-/**
- * @psalm-immutable
- */
+/** @psalm-immutable */
 class TypescriptType implements Type
 {
     private string $typescript;

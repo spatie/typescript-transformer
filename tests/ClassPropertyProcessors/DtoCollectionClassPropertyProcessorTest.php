@@ -3,8 +3,10 @@
 namespace Spatie\TypescriptTransformer\Tests\ClassPropertyProcessors;
 
 use phpDocumentor\Reflection\TypeResolver;
+use phpDocumentor\Reflection\Types\Array_;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypescriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
+use Spatie\TypescriptTransformer\Support\UnknownType;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
 use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\StringDtoCollection;
@@ -73,7 +75,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
             FakeReflectionProperty::create()
         );
 
-        $this->assertEquals('array', (string) $type);
+        $this->assertEquals(new Array_(new UnknownType()), $type);
     }
 
     /** @test */

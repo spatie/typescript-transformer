@@ -22,6 +22,7 @@ use phpDocumentor\Reflection\Types\This;
 use phpDocumentor\Reflection\Types\Void_;
 use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypescriptTransformer\Support\TypescriptType;
+use Spatie\TypescriptTransformer\Support\UnknownType;
 
 class TransformClassPropertyTypeAction
 {
@@ -87,7 +88,7 @@ class TransformClassPropertyTypeAction
             return 'any';
         }
 
-        if ($type instanceof Void_) {
+        if ($type instanceof Void_ || $type instanceof UnknownType) {
             return 'never';
         }
 

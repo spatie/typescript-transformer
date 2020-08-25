@@ -68,4 +68,7 @@ class Dto extends DataTransferObject
 
     /** @var DateTime[] */
     public array $array_replaced_default_type;
+
+    /** @var array<string,mixed> */
+    public array $array_as_object;
 }

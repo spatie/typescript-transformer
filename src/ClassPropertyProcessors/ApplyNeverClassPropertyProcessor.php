@@ -8,6 +8,7 @@ use phpDocumentor\Reflection\Types\Mixed_;
 use phpDocumentor\Reflection\Types\Null_;
 use ReflectionProperty;
 use Spatie\TypescriptTransformer\Support\TypescriptType;
+use Spatie\TypescriptTransformer\Support\UnknownType;
 
 class ApplyNeverClassPropertyProcessor implements ClassPropertyProcessor
 {
@@ -16,7 +17,7 @@ class ApplyNeverClassPropertyProcessor implements ClassPropertyProcessor
     public function process(Type $type, ReflectionProperty $reflection): ?Type
     {
         if ($this->shouldReplaceType($type)) {
-            return new TypescriptType('never');
+            return new UnknownType();
         }
 
         return $this->walk($type, function (Type $type) {
@@ -25,13 +26,13 @@ class ApplyNeverClassPropertyProcessor implements ClassPropertyProcessor
             }
 
             return $this->shouldReplaceType($type->getValueType())
-                ? $this->updateListType($type, new TypescriptType('never'))
+                ? $this->updateListType($type, new UnknownType())
                 : $type;
         });
     }
 
     private function shouldReplaceType(Type $type): bool
     {
-        return $type instanceof Null_ || $type instanceof Mixed_;
+        return $type instanceof Null_;
     }
 }

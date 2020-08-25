@@ -12,6 +12,7 @@ use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
+use Spatie\TypescriptTransformer\Support\UnknownType;
 
 class DtoCollectionClassPropertyProcessor implements ClassPropertyProcessor
 {
@@ -41,7 +42,7 @@ class DtoCollectionClassPropertyProcessor implements ClassPropertyProcessor
         $returnType = $reflection->getMethod('current')->getReturnType();
 
         if (empty($returnType)) {
-            return new Mixed_();
+            return new UnknownType();
         }
 
         $type = $returnType->isBuiltin()

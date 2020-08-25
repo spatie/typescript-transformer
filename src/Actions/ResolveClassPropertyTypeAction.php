@@ -14,6 +14,7 @@ use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
 use ReflectionProperty;
 use ReflectionType;
+use Spatie\TypescriptTransformer\Support\UnknownType;
 
 class ResolveClassPropertyTypeAction
 {
@@ -34,7 +35,7 @@ class ResolveClassPropertyTypeAction
         }
 
         if (empty($types)) {
-            return new Mixed_();
+            return new UnknownType();
         }
 
         $types = array_unique($types);
@@ -47,7 +48,7 @@ class ResolveClassPropertyTypeAction
     public function resolveFromDocBlock(ReflectionProperty $reflection): array
     {
         preg_match(
-            '/@var ((?:(?:[\w?|\\\\<>])+(?:\[])?)+)/',
+            '/@var ((?:(?:[\w?|\\\\<>,])+(?:\[])?)+)/',
             $reflection->getDocComment(),
             $matches
         );

@@ -171,7 +171,7 @@ class ResolveClassPropertyTypeActionTest extends TestCase
         $type = $this->action->execute(
             FakeReflectionProperty::create()
                 ->withType(FakeReflectionType::create()->withType('int')->withAllowsNull())
-                ->withDocComment("@var $docbloc}")
+                ->withDocComment("@var {$docbloc}")
         );
 
         $this->assertEquals($outputType, (string) $type);

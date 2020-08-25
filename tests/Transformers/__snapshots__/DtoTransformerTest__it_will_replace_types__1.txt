@@ -6,7 +6,7 @@ export type Typed = {
     boolean: boolean;
     float: number;
     object: object;
-    array: Array<never>;
+    array: Array<any>;
     none: never;
     documented_string: string;
     mixed: number | string;
@@ -24,4 +24,5 @@ export type Typed = {
     reflection_replaced_default_type: string;
     docblock_replaced_default_type: string;
     array_replaced_default_type: Array<string>;
+    array_as_object: { [key: string]: any };
 }

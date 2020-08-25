@@ -8,13 +8,14 @@ use phpDocumentor\Reflection\Types\Integer;
 use phpDocumentor\Reflection\Types\Null_;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypescriptTransformer\ClassPropertyProcessors\ApplyNeverClassPropertyProcessor;
+use Spatie\TypescriptTransformer\Support\UnknownType;
 use Spatie\TypescriptTransformer\Tests\Fakes\FakeReflectionProperty;
 
 class ApplyNeverClassPropertyProcessorTest extends TestCase
 {
     private ApplyNeverClassPropertyProcessor $processor;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -31,6 +32,10 @@ class ApplyNeverClassPropertyProcessorTest extends TestCase
 
         $type = $this->processor->process($type, FakeReflectionProperty::create());
 
-        $this->assertEquals('int[]|never[]', (string)$type);
+
+        $this->assertEquals(new Compound([
+            new Array_(new Integer()),
+            new Array_(new UnknownType()),
+        ]), $type);
     }
 }
