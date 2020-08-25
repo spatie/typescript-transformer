@@ -62,7 +62,7 @@ class ResolveClassPropertyTypeActionTest extends TestCase
             FakeReflectionProperty::create()
         );
 
-        $this->assertEquals('mixed', (string) $type);
+        $this->assertEquals('never', (string) $type);
     }
 
     /** @test */
@@ -72,7 +72,7 @@ class ResolveClassPropertyTypeActionTest extends TestCase
             FakeReflectionProperty::create()->withDocComment('@method bla')
         );
 
-        $this->assertEquals('mixed', (string) $type);
+        $this->assertEquals('never', (string) $type);
     }
 
     /** @test */
