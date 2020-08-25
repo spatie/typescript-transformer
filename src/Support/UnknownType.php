@@ -9,6 +9,6 @@ class UnknownType implements Type
 {
     public function __toString(): string
     {
-        return 'mixed';
+        return 'never';
     }
 }
