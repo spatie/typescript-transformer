@@ -4,10 +4,8 @@ namespace Spatie\TypescriptTransformer\ClassPropertyProcessors;
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\AbstractList;
-use phpDocumentor\Reflection\Types\Mixed_;
 use phpDocumentor\Reflection\Types\Null_;
 use ReflectionProperty;
-use Spatie\TypescriptTransformer\Support\TypescriptType;
 use Spatie\TypescriptTransformer\Support\UnknownType;
 
 class ApplyNeverClassPropertyProcessor implements ClassPropertyProcessor
