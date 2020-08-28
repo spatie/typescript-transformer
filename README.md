@@ -1,4 +1,4 @@
-# Transform PHP types to Typescript
+# Transform PHP types to TypeScript
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
 [![Tests](https://github.com/spatie/typescript-transformer/workflows/run-tests/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3Arun-tests)
@@ -8,7 +8,7 @@
 
 **This package is still under heavy development, please do not use it (yet)**
 
-Always wanted type safety within PHP and Typescript without duplicating a lot of code? Then you will like this package! Let's say you have an enum:
+Always wanted type safety within PHP and TypeScript without duplicating a lot of code? Then you will like this package! Let's say you have an enum:
 
 ```php
 class Languages extends Enum
@@ -18,7 +18,7 @@ class Languages extends Enum
 }
 ```
 
-Wouldn't it be cool if you could have an automatically generated Typescript definition like this:
+Wouldn't it be cool if you could have an automatically generated TypeScript definition like this:
 
 ```typescript
 export type Languages = 'typescript' | 'php';
@@ -35,7 +35,7 @@ class Languages extends Enum
 }
 ```
 
-You can even take it a bit further and generate Typescript from classes:
+You can even take it a bit further and generate TypeScript from classes:
 
 ```php
 /** @typescript */
