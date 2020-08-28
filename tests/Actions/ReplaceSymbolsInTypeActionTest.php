@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInTypeAction;
 use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
