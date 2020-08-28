@@ -174,10 +174,10 @@ Typing objects can be done as such:
 ```php
 class Dto
 {
-    /** @var array<string, \DateTime> */
+    /** @var array<string,\DateTime> */
     public $object_with_string_keys;
 
-    /** @var array<int, \DateTime> */
+    /** @var array<int,\DateTime> */
     public $object_with_int_keys;
 }
 ```
