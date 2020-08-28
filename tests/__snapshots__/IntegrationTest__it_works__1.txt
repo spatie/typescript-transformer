@@ -28,18 +28,18 @@ export type Dto = {
     array_as_object: { [key: string]: any };
 }
 
+export type DtoWithChildren = {
+    name: string;
+    other_dto: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto;
+    other_dto_array: Array<Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
+}
+
 export type Enum = 'yes' | 'no';
 export type OtherDto = {
     name: string;
 }
 
 export type OtherDtoCollection = {
-}
-
-export type DtoWithChildren = {
-    name: string;
-    other_dto: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto;
-    other_dto_array: Array<Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
 }
 
 }
