@@ -20,7 +20,7 @@ class Languages extends Enum
 
 Wouldn't it be cool if you could have an automatically generated TypeScript definition like this:
 
-```typescript
+```ts
 export type Languages = 'typescript' | 'php';
 ```
 
@@ -51,7 +51,7 @@ class User
 
 This will be transformed to:
 
-```typescript
+```ts
 export type User = {
     int: number;
     name: string;
