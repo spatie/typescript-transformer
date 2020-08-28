@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Steps;
+namespace Spatie\TypeScriptTransformer\Steps;
 
-use Spatie\TypescriptTransformer\Structures\TransformedType;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class PersistTypesCollectionStep
 {

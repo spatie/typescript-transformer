@@ -3,7 +3,7 @@ title: Annotations
 weight: 3
 ---
 
-When using the `@typescript` annotation, the PHP class's name will be used for the Typescript type:
+When using the `@typescript` annotation, the PHP class's name will be used for the TypeScript type:
 
 ```php
 /** @typescript */
@@ -14,7 +14,7 @@ class Languages extends Enum{
 }
 ```
 
-The package will produce the following Typescript:
+The package will produce the following TypeScript:
 
 ```tsx
 export type Languages = 'en' | 'nl' | 'fr';
@@ -27,7 +27,7 @@ You can also give the type another name:
 class Languages extends Enum{}
 ```
 
-Now the transformed Typescript looks like this:
+Now the transformed TypeScript looks like this:
 
 ```tsx
 export type Talen = 'en' | 'nl' | 'fr';
@@ -38,7 +38,7 @@ Want to define a specific transformer for the file? You can use the following an
 ```php
 /** 
  * @typescript
- * @typescript-transformer \Spatie\LaravelTypescriptTransformer\Transformers\SpatieEnumTransformer
+ * @typescript-transformer \Spatie\LaravelTypeScriptTransformer\Transformers\SpatieEnumTransformer
  */
 class Languages extends Enum{}
 ```

@@ -1,18 +1,18 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Steps;
+namespace Spatie\TypeScriptTransformer\Tests\Steps;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypescriptTransformer\Steps\ResolveTypesStep;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnum;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnumWithCustomTransformer;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnumWithName;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeTypescriptCollector;
-use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
+use Spatie\TypeScriptTransformer\Steps\ResolveTypesStep;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnumWithCustomTransformer;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnumWithName;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTypeScriptCollector;
+use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
 class ResolveTypesStepTest extends TestCase
@@ -44,20 +44,20 @@ class ResolveTypesStepTest extends TestCase
     /** @test */
     public function it_parses_a_typescript_enum_correctly()
     {
-        $type = $this->action->execute()[TypescriptEnum::class];
+        $type = $this->action->execute()[TypeScriptEnum::class];
 
-        $this->assertEquals(new ReflectionClass(new TypescriptEnum('js')), $type->reflection);
-        $this->assertEquals('TypescriptEnum', $type->name);
-        $this->assertEquals("export type TypescriptEnum = 'js';", $type->transformed);
+        $this->assertEquals(new ReflectionClass(new TypeScriptEnum('js')), $type->reflection);
+        $this->assertEquals('TypeScriptEnum', $type->name);
+        $this->assertEquals("export type TypeScriptEnum = 'js';", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
     }
 
     /** @test */
     public function it_parses_a_typescript_enum_with_name_correctly()
     {
-        $type = $this->action->execute()[TypescriptEnumWithName::class];
+        $type = $this->action->execute()[TypeScriptEnumWithName::class];
 
-        $this->assertEquals(new ReflectionClass(new TypescriptEnumWithName('js')), $type->reflection);
+        $this->assertEquals(new ReflectionClass(new TypeScriptEnumWithName('js')), $type->reflection);
         $this->assertEquals('EnumWithName', $type->name);
         $this->assertEquals("export type EnumWithName = 'js';", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
@@ -66,10 +66,10 @@ class ResolveTypesStepTest extends TestCase
     /** @test */
     public function it_parses_a_typescript_enum_with_custom_transformer_correctly()
     {
-        $type = $this->action->execute()[TypescriptEnumWithCustomTransformer::class];
+        $type = $this->action->execute()[TypeScriptEnumWithCustomTransformer::class];
 
-        $this->assertEquals(new ReflectionClass(new TypescriptEnumWithCustomTransformer('js')), $type->reflection);
-        $this->assertEquals('TypescriptEnumWithCustomTransformer', $type->name);
+        $this->assertEquals(new ReflectionClass(new TypeScriptEnumWithCustomTransformer('js')), $type->reflection);
+        $this->assertEquals('TypeScriptEnumWithCustomTransformer', $type->name);
         $this->assertEquals("fake", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
     }
@@ -80,7 +80,7 @@ class ResolveTypesStepTest extends TestCase
         $this->action = new ResolveTypesStep(
             new Finder(),
             TypeScriptTransformerConfig::create()
-                ->searchingPath(__DIR__ . '/../FakeClasses/Enum/TypescriptEnum.php')
+                ->searchingPath(__DIR__ . '/../FakeClasses/Enum/TypeScriptEnum.php')
                 ->transformers([MyclabsEnumTransformer::class])
                 ->collectors([AnnotationCollector::class])
                 ->outputFile('types.d.ts')
@@ -89,7 +89,7 @@ class ResolveTypesStepTest extends TestCase
         $types = $this->action->execute();
 
         $this->assertCount(1, $types);
-        $this->assertArrayHasKey(TypescriptEnum::class, $types);
+        $this->assertArrayHasKey(TypeScriptEnum::class, $types);
     }
 
     /** @test */
@@ -99,7 +99,7 @@ class ResolveTypesStepTest extends TestCase
             new Finder(),
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/../FakeClasses/Enum')
-                ->collectors([FakeTypescriptCollector::class])
+                ->collectors([FakeTypeScriptCollector::class])
                 ->outputFile('types.d.ts')
         );
 
@@ -107,8 +107,8 @@ class ResolveTypesStepTest extends TestCase
 
         $this->assertCount(4, $types);
         $this->assertArrayHasKey(RegularEnum::class, $types);
-        $this->assertArrayHasKey(TypescriptEnum::class, $types);
-        $this->assertArrayHasKey(TypescriptEnumWithCustomTransformer::class, $types);
-        $this->assertArrayHasKey(TypescriptEnumWithName::class, $types);
+        $this->assertArrayHasKey(TypeScriptEnum::class, $types);
+        $this->assertArrayHasKey(TypeScriptEnumWithCustomTransformer::class, $types);
+        $this->assertArrayHasKey(TypeScriptEnumWithName::class, $types);
     }
 }

@@ -1,15 +1,15 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\ClassPropertyProcessors;
+namespace Spatie\TypeScriptTransformer\Tests\ClassPropertyProcessors;
 
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Compound;
 use phpDocumentor\Reflection\Types\Integer;
 use phpDocumentor\Reflection\Types\Null_;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypescriptTransformer\ClassPropertyProcessors\ApplyNeverClassPropertyProcessor;
-use Spatie\TypescriptTransformer\Support\UnknownType;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeReflectionProperty;
+use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ApplyNeverClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\Support\UnknownType;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 
 class ApplyNeverClassPropertyProcessorTest extends TestCase
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Fakes;
+namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Collectors\Collector;
-use Spatie\TypescriptTransformer\Support\CollectedOccurrence;
-use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypeScriptTransformer\Collectors\Collector;
+use Spatie\TypeScriptTransformer\Support\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 
-class FakeTypescriptCollector extends Collector
+class FakeTypeScriptCollector extends Collector
 {
     public function shouldCollect(ReflectionClass $class): bool
     {

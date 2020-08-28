@@ -22,7 +22,7 @@ The laravel package has some extra transformers:
 A transformer is a class that implements the `Transformer` interface:
 
 ```php
-use Spatie\TypescriptTransformer\Transformers\Transformer;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
 class EnumTransformer implements Transformer
 {
@@ -33,7 +33,7 @@ class EnumTransformer implements Transformer
 
     public function transform(ReflectionClass $class, string $name): TransformedType
     {
-        // get the typescript representation of the class
+        // get the TypeScript representation of the class
     }
 }
 ```
@@ -42,13 +42,13 @@ In the `canTransform` method, you should decide if this transformer can convert 
 
 ### Creating transformed types
 
-A `TransformedType` always has three properties: the `ReflectionClass` of the type you're transforming, the name of the type and off course the transformed Typescript code:
+A `TransformedType` always has three properties: the `ReflectionClass` of the type you're transforming, the name of the type and off course the transformed TypeScript code:
 
 ```php
 TransformedType::create(
     ReflectionClass $class, // The reflection class
     string $name, // The name of the Type
-    string $transformed // The Typescript representation of the class
+    string $transformed // The TypeScript representation of the class
 );
 ```
 
@@ -63,7 +63,7 @@ TransformedType::create(
 );
 ```
 
-A `MissingSymbolsCollection` will contain links to other types. The package will replace these links with correct Typescript types. 
+A `MissingSymbolsCollection` will contain links to other types. The package will replace these links with correct TypeScript types. 
 
 Consider the following class as an example:
 
@@ -97,7 +97,7 @@ $type = $missingSymbols->add(RoleEnum::class); // Will return {%RoleEnum::class%
 
 The `add` method will return a token that can be used in your transformed type. It's the link we described above between the two types and will later be replaced by the actual type implementation.
 
-When no type was found (for example: because it wasn't converted to Typescript) the type will default to TypeScript's `any` type.
+When no type was found (for example: because it wasn't converted to TypeScript) the type will default to TypeScript's `any` type.
 
 But in this specific example, the package will produce the following output:
 
@@ -112,9 +112,9 @@ export type User = {
 
 #### Inline types
 
-It is also possible to create an inline type. These types will not create a whole new Typescript type but replace a type inline in another type. In our previous example, if we would transform `Enum` classes with an inline type, the generated TypeScript would look like this:
+It is also possible to create an inline type. These types will not create a whole new TypeScript type but replace a type inline in another type. In our previous example, if we would transform `Enum` classes with an inline type, the generated TypeScript would look like this:
 
-```typescript
+```ts
 export type User = {
     name : string;
     role : 'guest' | 'admin';

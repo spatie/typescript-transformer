@@ -1,21 +1,21 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Steps;
+namespace Spatie\TypeScriptTransformer\Steps;
 
 use hanneskod\classtools\Iterator\ClassIterator;
 use IteratorAggregate;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\ClassIteratorFileFilter;
-use Spatie\TypescriptTransformer\Collectors\Collector;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\ClassIteratorFileFilter;
+use Spatie\TypeScriptTransformer\Collectors\Collector;
+use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
 class ResolveTypesStep
 {
     protected Finder $finder;
 
-    /** @var \Spatie\TypescriptTransformer\Collectors\Collector[] */
+    /** @var \Spatie\TypeScriptTransformer\Collectors\Collector[] */
     protected array $collectors;
 
     protected TypeScriptTransformerConfig $config;

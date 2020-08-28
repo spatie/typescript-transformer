@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Fakes;
+namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
 use Exception;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 
 class FakeTransformedType extends TransformedType
 {

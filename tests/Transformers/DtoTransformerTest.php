@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Transformers;
+namespace Spatie\TypeScriptTransformer\Tests\Transformers;
 
 use DateTime;
 use phpDocumentor\Reflection\Type;
@@ -9,15 +9,15 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\Snapshots\MatchesSnapshots;
-use Spatie\TypescriptTransformer\ClassPropertyProcessors\ClassPropertyProcessor;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Dto;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto;
-use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDto;
+use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class DtoTransformerTest extends TestCase
 {

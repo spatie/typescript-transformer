@@ -1,13 +1,13 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Structures;
+namespace Spatie\TypeScriptTransformer\Tests\Structures;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\TypescriptEnum;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeTransformedType;
+use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
+use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
 
 class TypesCollectionTest extends TestCase
 {
@@ -61,7 +61,7 @@ class TypesCollectionTest extends TestCase
     /** @test */
     public function it_can_add_a_real_type()
     {
-        $reflection = new ReflectionClass(TypescriptEnum::class);
+        $reflection = new ReflectionClass(TypeScriptEnum::class);
 
         $structure = TypesCollection::create();
 
@@ -69,7 +69,7 @@ class TypesCollectionTest extends TestCase
 
         $this->assertCount(1, $structure);
         $this->assertEquals([
-            TypescriptEnum::class => $fake,
+            TypeScriptEnum::class => $fake,
         ], iterator_to_array($structure));
     }
 

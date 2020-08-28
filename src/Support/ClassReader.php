@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Support;
+namespace Spatie\TypeScriptTransformer\Support;
 
 use Exception;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Exceptions\InvalidTransformerGiven;
-use Spatie\TypescriptTransformer\Transformers\Transformer;
+use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
 class ClassReader
 {
@@ -28,7 +28,7 @@ class ClassReader
         );
 
         if (count($annotations) !== 2) {
-            throw new Exception("Wrong typescript definition in {$class->getName()}");
+            throw new Exception("Wrong TypeScript definition in {$class->getName()}");
         }
 
         $name = $annotations[1];

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\ClassPropertyProcessors;
+namespace Spatie\TypeScriptTransformer\ClassPropertyProcessors;
 
 use phpDocumentor\Reflection\Fqsen;
 use phpDocumentor\Reflection\Type;
@@ -11,7 +11,7 @@ use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
-use Spatie\TypescriptTransformer\Support\UnknownType;
+use Spatie\TypeScriptTransformer\Support\UnknownType;
 
 class DtoCollectionClassPropertyProcessor implements ClassPropertyProcessor
 {

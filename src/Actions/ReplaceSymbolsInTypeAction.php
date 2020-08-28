@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Actions;
+namespace Spatie\TypeScriptTransformer\Actions;
 
 use Exception;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
 class ReplaceSymbolsInTypeAction
 {
@@ -17,8 +17,8 @@ class ReplaceSymbolsInTypeAction
 
     public function execute(TransformedType $type, array $chain = []): string
     {
-        if (in_array($type->getTypescriptName(), $chain)) {
-            $chain = array_merge($chain, [$type->getTypescriptName()]);
+        if (in_array($type->getTypeScriptName(), $chain)) {
+            $chain = array_merge($chain, [$type->getTypeScriptName()]);
 
             /** TODO: use dedicated exception */
             throw new Exception("Circular dependency chain found: ". implode(' -> ', $chain));
@@ -42,14 +42,14 @@ class ReplaceSymbolsInTypeAction
         }
 
         if (! $found->isInline) {
-            $type->replaceSymbol($missingSymbol, $found->getTypescriptName());
+            $type->replaceSymbol($missingSymbol, $found->getTypeScriptName());
 
             return $type;
         }
 
         $transformed = $this->execute(
             $found,
-            array_merge($chain, [$type->getTypescriptName()])
+            array_merge($chain, [$type->getTypeScriptName()])
         );
 
         $type->replaceSymbol($missingSymbol, $transformed);

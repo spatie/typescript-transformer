@@ -1,9 +1,9 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\FakeClasses\Collections;
+namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections;
 
 use Spatie\DataTransferObject\DataTransferObjectCollection;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Dto;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 
 class DtoCollection extends DataTransferObjectCollection
 {

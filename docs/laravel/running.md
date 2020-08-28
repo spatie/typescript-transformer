@@ -3,7 +3,7 @@ title: Running
 weight: 2
 ---
 
-When you've configured Typescript transformer in the `typescript-transformer.php` config file you only have to run one command:
+When you've configured TypeScript transformer in the `typescript-transformer.php` config file you only have to run one command:
 
 ```bash
 php artisan typescript:transform

@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Actions;
+namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypescriptTransformer\Actions\ReplaceSymbolsInTypeAction;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeTransformedType;
+use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInTypeAction;
+use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
 
 class ReplaceSymbolsInTypeActionTest extends TestCase
 {

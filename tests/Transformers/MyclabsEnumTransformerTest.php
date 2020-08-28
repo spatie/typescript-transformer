@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Transformers;
+namespace Spatie\TypeScriptTransformer\Tests\Transformers;
 
 use MyCLabs\Enum\Enum;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 
 class MyclabsEnumTransformerTest extends TestCase
 {

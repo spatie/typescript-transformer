@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer;
+namespace Spatie\TypeScriptTransformer;
 
 use hanneskod\classtools\Iterator\ClassIterator;
 use hanneskod\classtools\Iterator\Filter;

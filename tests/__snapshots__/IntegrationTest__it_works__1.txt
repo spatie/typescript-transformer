@@ -1,4 +1,4 @@
-namespace Spatie.TypescriptTransformer.Tests.FakeClasses.Integration {
+namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration {
 export type Dto = {
     string: string;
     nullbable: string | null;
@@ -14,13 +14,13 @@ export type Dto = {
     documented_array: Array<number>;
     mixed_with_array: number | string | Array<number | string>;
     array_with_null: Array<number | null>;
-    enum: Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.Enum;
+    enum: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.Enum;
     non_typescripted_type: any;
-    other_dto: Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto;
-    other_dto_array: Array<Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
-    other_dto_collection: Array<Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
-    dto_with_children: Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.DtoWithChildren;
-    another_namespace_dto: Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.LevelUp.YetAnotherDto;
+    other_dto: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto;
+    other_dto_array: Array<Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
+    other_dto_collection: Array<Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
+    dto_with_children: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.DtoWithChildren;
+    another_namespace_dto: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.LevelUp.YetAnotherDto;
     nullable_string: string | null | number | null;
     reflection_replaced_default_type: string;
     docblock_replaced_default_type: string;
@@ -38,12 +38,12 @@ export type OtherDtoCollection = {
 
 export type DtoWithChildren = {
     name: string;
-    other_dto: Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto;
-    other_dto_array: Array<Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
+    other_dto: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto;
+    other_dto_array: Array<Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
 }
 
 }
-namespace Spatie.TypescriptTransformer.Tests.FakeClasses.Integration.LevelUp {
+namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.LevelUp {
 export type YetAnotherDto = {
     name: string;
 }

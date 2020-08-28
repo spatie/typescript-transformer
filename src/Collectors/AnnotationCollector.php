@@ -1,14 +1,14 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Collectors;
+namespace Spatie\TypeScriptTransformer\Collectors;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypescriptTransformer\Support\ClassReader;
-use Spatie\TypescriptTransformer\Support\CollectedOccurrence;
-use Spatie\TypescriptTransformer\Support\TransformerFactory;
-use Spatie\TypescriptTransformer\Transformers\Transformer;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
+use Spatie\TypeScriptTransformer\Support\ClassReader;
+use Spatie\TypeScriptTransformer\Support\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Support\TransformerFactory;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class AnnotationCollector extends Collector
 {

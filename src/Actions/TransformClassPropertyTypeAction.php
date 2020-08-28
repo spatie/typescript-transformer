@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Actions;
+namespace Spatie\TypeScriptTransformer\Actions;
 
 use Exception;
 use phpDocumentor\Reflection\Type;
@@ -20,9 +20,9 @@ use phpDocumentor\Reflection\Types\Static_;
 use phpDocumentor\Reflection\Types\String_;
 use phpDocumentor\Reflection\Types\This;
 use phpDocumentor\Reflection\Types\Void_;
-use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypescriptTransformer\Support\TypescriptType;
-use Spatie\TypescriptTransformer\Support\UnknownType;
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Support\TypeScriptType;
+use Spatie\TypeScriptTransformer\Support\UnknownType;
 
 class TransformClassPropertyTypeAction
 {
@@ -56,7 +56,7 @@ class TransformClassPropertyTypeAction
             return $this->resolveObjectType($type);
         }
 
-        if ($type instanceof TypescriptType) {
+        if ($type instanceof TypeScriptType) {
             return (string) $type;
         }
 
@@ -107,7 +107,7 @@ class TransformClassPropertyTypeAction
 
     private function resolveListType(AbstractList $list): string
     {
-        if ($this->isTypescriptArray($list->getKeyType())) {
+        if ($this->isTypeScriptArray($list->getKeyType())) {
             return "Array<{$this->execute($list->getValueType())}>";
         }
 
@@ -130,7 +130,7 @@ class TransformClassPropertyTypeAction
         );
     }
 
-    private function isTypescriptArray(Type $keyType): bool
+    private function isTypeScriptArray(Type $keyType): bool
     {
         if (! $keyType instanceof Compound) {
             return false;

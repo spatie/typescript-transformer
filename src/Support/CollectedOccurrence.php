@@ -1,8 +1,8 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Support;
+namespace Spatie\TypeScriptTransformer\Support;
 
-use Spatie\TypescriptTransformer\Transformers\Transformer;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
 class CollectedOccurrence
 {

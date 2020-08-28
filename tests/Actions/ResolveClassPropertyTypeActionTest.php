@@ -1,14 +1,14 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Actions;
+namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use phpDocumentor\Reflection\TypeResolver;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypescriptTransformer\Actions\ResolveClassPropertyTypeAction;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Test;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeReflectionProperty;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeReflectionType;
+use Spatie\TypeScriptTransformer\Actions\ResolveClassPropertyTypeAction;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Test;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
 
 class ResolveClassPropertyTypeActionTest extends TestCase
 {

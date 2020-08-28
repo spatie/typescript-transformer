@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\FakeClasses\Collections;
+namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections;
 
 use Spatie\DataTransferObject\DataTransferObjectCollection;
 

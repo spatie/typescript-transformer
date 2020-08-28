@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Structures;
+namespace Spatie\TypeScriptTransformer\Structures;
 
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists;
+use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
 
 class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
 {
@@ -35,10 +35,10 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * @param null|string|\Spatie\TypescriptTransformer\Structures\TransformedType $class
-     * @param \Spatie\TypescriptTransformer\Structures\TransformedType $type
+     * @param null|string|\Spatie\TypeScriptTransformer\Structures\TransformedType $class
+     * @param \Spatie\TypeScriptTransformer\Structures\TransformedType $type
      *
-     * @throws \Spatie\TypescriptTransformer\Exceptions\SymbolAlreadyExists
+     * @throws \Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists
      */
     public function offsetSet($class, $type): void
     {

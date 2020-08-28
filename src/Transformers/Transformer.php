@@ -1,9 +1,9 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Transformers;
+namespace Spatie\TypeScriptTransformer\Transformers;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 
 interface Transformer
 {

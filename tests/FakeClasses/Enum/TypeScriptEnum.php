@@ -4,7 +4,8 @@ namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum;
 
 use MyCLabs\Enum\Enum;
 
-class RegularEnum extends Enum
+/** @typescript */
+class TypeScriptEnum extends Enum
 {
     const JS = 'js';
 }

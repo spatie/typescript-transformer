@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\FakeClasses\Integration;
+namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration;
 
 use DateTime;
 use Spatie\DataTransferObject\DataTransferObject;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
 
 /** @typescript */
 class Dto extends DataTransferObject
@@ -49,7 +49,7 @@ class Dto extends DataTransferObject
 
     public OtherDto $other_dto;
 
-    /** @var \Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto[] */
+    /** @var \Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDto[] */
     public array $other_dto_array;
 
     public OtherDtoCollection $other_dto_collection;

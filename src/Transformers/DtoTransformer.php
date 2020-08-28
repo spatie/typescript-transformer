@@ -1,18 +1,18 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Transformers;
+namespace Spatie\TypeScriptTransformer\Transformers;
 
 use phpDocumentor\Reflection\TypeResolver;
 use ReflectionClass;
 use ReflectionProperty;
-use Spatie\TypescriptTransformer\Actions\ResolveClassPropertyTypeAction;
-use Spatie\TypescriptTransformer\Actions\TransformClassPropertyTypeAction;
-use Spatie\TypescriptTransformer\ClassPropertyProcessors\ApplyNeverClassPropertyProcessor;
-use Spatie\TypescriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
-use Spatie\TypescriptTransformer\ClassPropertyProcessors\ReplaceDefaultTypesClassPropertyProcessor;
-use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Actions\ResolveClassPropertyTypeAction;
+use Spatie\TypeScriptTransformer\Actions\TransformClassPropertyTypeAction;
+use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ApplyNeverClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ReplaceDefaultTypesClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class DtoTransformer implements Transformer
 {
@@ -56,8 +56,8 @@ class DtoTransformer implements Transformer
     }
 
     /**
-     * @return \Spatie\TypescriptTransformer\ClassPropertyProcessors\ClassPropertyProcessor[]
-     * @throws \Spatie\TypescriptTransformer\Exceptions\InvalidClassPropertyReplacer
+     * @return \Spatie\TypeScriptTransformer\ClassPropertyProcessors\ClassPropertyProcessor[]
+     * @throws \Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer
      */
     protected function getClassPropertyProcessors(): array
     {

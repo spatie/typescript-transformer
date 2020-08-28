@@ -1,14 +1,14 @@
 <?php
 
-namespace Spatie\TypescriptTransformer;
+namespace Spatie\TypeScriptTransformer;
 
-use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionStep;
-use Spatie\TypescriptTransformer\Steps\ReplaceMissingSymbolsStep;
-use Spatie\TypescriptTransformer\Steps\ResolveTypesStep;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Steps\PersistTypesCollectionStep;
+use Spatie\TypeScriptTransformer\Steps\ReplaceMissingSymbolsStep;
+use Spatie\TypeScriptTransformer\Steps\ResolveTypesStep;
+use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Symfony\Component\Finder\Finder;
 
-class TypescriptTransformer
+class TypeScriptTransformer
 {
     protected TypeScriptTransformerConfig $config;
 

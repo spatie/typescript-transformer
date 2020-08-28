@@ -1,9 +1,9 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Steps;
+namespace Spatie\TypeScriptTransformer\Steps;
 
-use Spatie\TypescriptTransformer\Actions\ReplaceSymbolsInTypeAction;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInTypeAction;
+use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
 class ReplaceMissingSymbolsStep
 {

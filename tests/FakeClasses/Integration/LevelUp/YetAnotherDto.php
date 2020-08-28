@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\LevelUp;
+namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\LevelUp;
 
 use Spatie\DataTransferObject\DataTransferObject;
 

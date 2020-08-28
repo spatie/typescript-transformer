@@ -1,13 +1,13 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Fakes;
+namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Structures\TransformedType;
-use Spatie\TypescriptTransformer\Transformers\Transformer;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
-class FakeTypescriptTransformer implements Transformer
+class FakeTypeScriptTransformer implements Transformer
 {
     private string $transformed = 'fake';
 

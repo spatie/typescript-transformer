@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Actions;
+namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use phpDocumentor\Reflection\TypeResolver;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypescriptTransformer\Actions\TransformClassPropertyTypeAction;
-use Spatie\TypescriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypeScriptTransformer\Actions\TransformClassPropertyTypeAction;
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 
 class TransformClassPropertyTypeActionTest extends TestCase
 {

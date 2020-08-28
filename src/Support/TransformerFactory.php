@@ -1,9 +1,9 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Support;
+namespace Spatie\TypeScriptTransformer\Support;
 
-use Spatie\TypescriptTransformer\Transformers\Transformer;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TransformerFactory
 {

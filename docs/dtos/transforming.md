@@ -67,12 +67,12 @@ TypeScriptTransformerConfig::create()
     ...
 ```
  
-If you want to convert to a literal/specific TypeScript type you can use the `TypescriptType` class like this:
+If you want to convert to a literal/specific TypeScript type you can use the `TypeScriptType` class like this:
 
 ```php
 TypeScriptTransformerConfig::create()
     ->classPropertyReplacements([
-        DateTime::class => TypescriptType::create('SomeGenericType<string>'),
+        DateTime::class => TypeScriptType::create('SomeGenericType<string>'),
     ])
     ...
 ```

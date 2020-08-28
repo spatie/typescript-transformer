@@ -1,6 +1,6 @@
 {
     "name": "spatie/typescript-transformer",
-    "description": "Transform your PHP structures to Typescript types",
+    "description": "Transform your PHP structures to TypeScript types",
     "keywords": [
         "spatie",
         "typescript-transformer"
@@ -32,12 +32,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\TypescriptTransformer\\": "src"
+            "Spatie\\TypeScriptTransformer\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\TypescriptTransformer\\Tests\\": "tests"
+            "Spatie\\TypeScriptTransformer\\Tests\\": "tests"
         }
     },
     "scripts": {

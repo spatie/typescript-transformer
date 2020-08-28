@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Steps;
+namespace Spatie\TypeScriptTransformer\Tests\Steps;
 
 use PHPUnit\Framework\TestCase;
-use Spatie\TypescriptTransformer\Steps\ReplaceMissingSymbolsStep;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeTransformedType;
+use Spatie\TypeScriptTransformer\Steps\ReplaceMissingSymbolsStep;
+use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
 
 class ReplaceMissingSymbolsStepTest extends TestCase
 {

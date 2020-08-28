@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Actions;
+namespace Spatie\TypeScriptTransformer\Actions;
 
 use phpDocumentor\Reflection\Fqsen;
 use phpDocumentor\Reflection\Type;
@@ -13,7 +13,7 @@ use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
 use ReflectionProperty;
 use ReflectionType;
-use Spatie\TypescriptTransformer\Support\UnknownType;
+use Spatie\TypeScriptTransformer\Support\UnknownType;
 
 class ResolveClassPropertyTypeAction
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Support;
+namespace Spatie\TypeScriptTransformer\Tests\Support;
 
 use PHPUnit\Framework\TestCase;
-use Spatie\TypescriptTransformer\Support\TransformerFactory;
-use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
-use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Support\TransformerFactory;
+use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
+use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TransformerFactoryTest extends TestCase
 {

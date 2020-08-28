@@ -1,17 +1,17 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\ClassPropertyProcessors;
+namespace Spatie\TypeScriptTransformer\Tests\ClassPropertyProcessors;
 
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Array_;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypescriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
-use Spatie\TypescriptTransformer\Support\UnknownType;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\StringDtoCollection;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollection;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeReflectionProperty;
+use Spatie\TypeScriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\Support\UnknownType;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\StringDtoCollection;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollection;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 
 class DtoCollectionClassPropertyProcessorTest extends TestCase
 {
@@ -37,7 +37,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
         );
 
         $this->assertEquals(
-            '\Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Dto[]',
+            '\Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto[]',
             (string) $type
         );
     }
@@ -51,7 +51,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
         );
 
         $this->assertEquals(
-            '?\Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Dto[]',
+            '?\Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto[]',
             (string) $type
         );
     }

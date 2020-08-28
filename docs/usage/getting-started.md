@@ -14,12 +14,14 @@ $config = TypeScriptTransformerConfig::create()
 
 This is the minimal required configuration that should get you started. There are some more configuration options, but we'll go over these later in the documentation.
 
+Using Laravel? Then you can use a Laravel config file, more info about that [here](https://docs.spatie.be/typescript-transformer/v1/laravel/installation-and-setup/.
+
 Let's use this configuration to start the transformation process:
 
 ```php
-TypescriptTransformer::create($config)->transform();
+TypeScriptTransformer::create($config)->transform();
 ```
 
-That's it! All the enum classes with a `@typescript` annotation are now transformed to Typescript.
+That's it! All the enum classes with a `@typescript` annotation are now transformed to TypeScript.
 
 Classes not converted? You probably should write some transformers. Let's continue!

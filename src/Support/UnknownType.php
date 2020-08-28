@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Support;
+namespace Spatie\TypeScriptTransformer\Support;
 
 use phpDocumentor\Reflection\Type;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\FakeClasses\Integration;
+namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration;
 
 use Spatie\DataTransferObject\DataTransferObject;
 
@@ -11,6 +11,6 @@ class DtoWithChildren extends DataTransferObject
 
     public OtherDto $other_dto;
 
-    /** @var \Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\OtherDto[] */
+    /** @var \Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDto[] */
     public array $other_dto_array;
 }

@@ -16,7 +16,7 @@ The package will automatically register a service provider.
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\LaravelTypescriptTransformer\TypescriptTransformerServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Spatie\LaravelTypeScriptTransformer\TypeScriptTransformerServiceProvider" --tag="config"
 ```
 
 This is the default content of the config file:
@@ -28,7 +28,7 @@ return [
     | Searching path
     |--------------------------------------------------------------------------
     |
-    | The path where typescript transformer will look for PHP classes
+    | The path where typescript-transformer will look for PHP classes
     | to transform, this will be the `app` path by default.
     |
     */
@@ -47,7 +47,7 @@ return [
     */
 
     'collectors' => [
-        Spatie\TypescriptTransformer\Collectors\AnnotationCollector::class,
+        Spatie\TypeScriptTransformer\Collectors\AnnotationCollector::class,
     ],
 
     /*
@@ -56,14 +56,14 @@ return [
     |--------------------------------------------------------------------------
     |
     | In these classes, you transform your PHP classes(e.g., enums) to
-    | their Typescript counterparts.
+    | their TypeScript counterparts.
     |
     */
 
     'transformers' => [
-        Spatie\LaravelTypescriptTransformer\Transformers\SpatieEnumTransformer::class,
-        Spatie\LaravelTypescriptTransformer\Transformers\SpatieStateTransformer::class,
-        Spatie\TypescriptTransformer\Transformers\DtoTransformer::class,
+        Spatie\LaravelTypeScriptTransformer\Transformers\SpatieEnumTransformer::class,
+        Spatie\LaravelTypeScriptTransformer\Transformers\SpatieStateTransformer::class,
+        Spatie\TypeScriptTransformer\Transformers\DtoTransformer::class,
     ],
 
     /*
@@ -89,7 +89,7 @@ return [
     | Output file
     |--------------------------------------------------------------------------
     |
-    | Typescript transformer will write it's Typescript structures to this
+    | TypeScript transformer will write it's TypeScript structures to this
     | file.
     |
     */

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\ClassPropertyProcessors;
+namespace Spatie\TypeScriptTransformer\Tests\ClassPropertyProcessors;
 
 use DateTime;
 use phpDocumentor\Reflection\TypeResolver;
@@ -8,10 +8,10 @@ use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\String_;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypescriptTransformer\ClassPropertyProcessors\ReplaceDefaultTypesClassPropertyProcessor;
-use Spatie\TypescriptTransformer\Support\TypescriptType;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Dto;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeReflectionProperty;
+use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ReplaceDefaultTypesClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\Support\TypeScriptType;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 
 class ReplaceDefaultTypesClassPropertyProcessorTest extends TestCase
 {
@@ -27,7 +27,7 @@ class ReplaceDefaultTypesClassPropertyProcessorTest extends TestCase
 
         $this->processor = new ReplaceDefaultTypesClassPropertyProcessor([
             DateTime::class => new String_(),
-            Dto::class => new TypescriptType('array'),
+            Dto::class => new TypeScriptType('array'),
         ]);
     }
 
@@ -39,7 +39,7 @@ class ReplaceDefaultTypesClassPropertyProcessorTest extends TestCase
             FakeReflectionProperty::create()
         );
 
-        $this->assertEquals(new TypescriptType('array'), $type);
+        $this->assertEquals(new TypeScriptType('array'), $type);
     }
 
     /** @test */

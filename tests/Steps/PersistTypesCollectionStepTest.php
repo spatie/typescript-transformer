@@ -1,15 +1,15 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Steps;
+namespace Spatie\TypeScriptTransformer\Tests\Steps;
 
 use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Spatie\TypescriptTransformer\Steps\PersistTypesCollectionStep;
-use Spatie\TypescriptTransformer\Structures\TypesCollection;
-use Spatie\TypescriptTransformer\Tests\Fakes\FakeTransformedType;
-use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Steps\PersistTypesCollectionStep;
+use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
+use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class PersistTypesCollectionStepTest extends TestCase
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\TypescriptTransformer;
+namespace Spatie\TypeScriptTransformer;
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
-use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypescriptTransformer\Exceptions\InvalidClassPropertyReplacer;
-use Spatie\TypescriptTransformer\Support\TransformerFactory;
+use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
+use Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer;
+use Spatie\TypeScriptTransformer\Support\TransformerFactory;
 
 class TypeScriptTransformerConfig
 {
@@ -71,7 +71,7 @@ class TypeScriptTransformerConfig
     }
 
     /**
-     * @return \Spatie\TypescriptTransformer\Transformers\Transformer[]
+     * @return \Spatie\TypeScriptTransformer\Transformers\Transformer[]
      */
     public function getTransformers(): array
     {
@@ -89,7 +89,7 @@ class TypeScriptTransformerConfig
     }
 
     /**
-     * @return \Spatie\TypescriptTransformer\Collectors\Collector[]
+     * @return \Spatie\TypeScriptTransformer\Collectors\Collector[]
      */
     public function getCollectors(): array
     {

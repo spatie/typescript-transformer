@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Spatie\TypescriptTransformer\Collectors;
+namespace Spatie\TypeScriptTransformer\Collectors;
 
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Support\CollectedOccurrence;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Support\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 abstract class Collector
 {

@@ -49,7 +49,7 @@ class MyClassPropertyProcessor implements ClassPropertyProcessor
 {
     public function process(Type $type, ReflectionProperty $reflection): ?Type
     {
-        return TypescriptType::create('SomeGenericType<string>');
+        return TypeScriptType::create('SomeGenericType<string>');
     }
 }
 ```

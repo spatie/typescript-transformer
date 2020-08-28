@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Structures;
+namespace Spatie\TypeScriptTransformer\Structures;
 
 use ReflectionClass;
 
@@ -63,7 +63,7 @@ class TransformedType
         return explode('\\', $namespace);
     }
 
-    public function getTypescriptName(): string
+    public function getTypeScriptName(): string
     {
         $segments = array_merge(
             $this->getNamespaceSegments(),

@@ -1,16 +1,16 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Collectors;
+namespace Spatie\TypeScriptTransformer\Tests\Collectors;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypescriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypescriptTransformer\Support\CollectedOccurrence;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Enum;
-use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
-use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
+use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
+use Spatie\TypeScriptTransformer\Support\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
+use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class AnnotationCollectorTest extends TestCase
 {
@@ -67,7 +67,7 @@ class AnnotationCollectorTest extends TestCase
     {
         /**
          * @typescript
-         * @typescript-transformer \Spatie\TypescriptTransformer\Transformers\DtoTransformer
+         * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\DtoTransformer
          */
         $class = new class('a') extends Enum {
             const A = 'a';

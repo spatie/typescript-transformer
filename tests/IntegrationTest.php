@@ -1,17 +1,17 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests;
+namespace Spatie\TypeScriptTransformer\Tests;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Spatie\TypescriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Test;
-use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
-use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
-use Spatie\TypescriptTransformer\TypescriptTransformer;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Test;
+use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
+use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class IntegrationTest extends TestCase
 {
@@ -22,7 +22,7 @@ class IntegrationTest extends TestCase
     {
         $temporaryDirectory = (new TemporaryDirectory())->create();
 
-        $transformer = new TypescriptTransformer(
+        $transformer = new TypeScriptTransformer(
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/FakeClasses/Integration')
                 ->classPropertyReplacements([

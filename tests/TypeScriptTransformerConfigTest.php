@@ -1,17 +1,17 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests;
+namespace Spatie\TypeScriptTransformer\Tests;
 
 use DateTime;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\String_;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypescriptTransformer\Exceptions\InvalidClassPropertyReplacer;
-use Spatie\TypescriptTransformer\Support\TypescriptType;
-use Spatie\TypescriptTransformer\Tests\FakeClasses\Integration\Dto;
-use Spatie\TypescriptTransformer\Transformers\DtoTransformer;
-use Spatie\TypescriptTransformer\Transformers\MyclabsEnumTransformer;
-use Spatie\TypescriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer;
+use Spatie\TypeScriptTransformer\Support\TypeScriptType;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
+use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
+use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TypeScriptTransformerConfigTest extends TestCase
 {
@@ -64,11 +64,11 @@ class TypeScriptTransformerConfigTest extends TestCase
     public function it_can_use_a_typescript_type_in_a_class_property_replacer()
     {
         $config = TypeScriptTransformerConfig::create()->classPropertyReplacements([
-            Dto::class => new TypescriptType('any'),
+            Dto::class => new TypeScriptType('any'),
         ]);
 
         $this->assertEquals(
-            [Dto::class => new TypescriptType('any')],
+            [Dto::class => new TypeScriptType('any')],
             $config->getClassPropertyReplacements()
         );
     }

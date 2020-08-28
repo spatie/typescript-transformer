@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypescriptTransformer\Tests\Fakes;
+namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
 use ReflectionProperty;
 
