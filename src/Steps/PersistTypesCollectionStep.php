@@ -43,7 +43,11 @@ class PersistTypesCollectionStep
 
         $output = '';
 
+        ksort($namespaces);
+
         foreach ($namespaces as $namespace => $types) {
+            asort($types);
+
             $output .= "namespace {$namespace} {".PHP_EOL;
 
             $output .= join(PHP_EOL, array_map(
