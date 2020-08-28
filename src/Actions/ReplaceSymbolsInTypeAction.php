@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use Exception;
+use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
@@ -20,8 +20,7 @@ class ReplaceSymbolsInTypeAction
         if (in_array($type->getTypeScriptName(), $chain)) {
             $chain = array_merge($chain, [$type->getTypeScriptName()]);
 
-            /** TODO: use dedicated exception */
-            throw new Exception("Circular dependency chain found: ". implode(' -> ', $chain));
+            throw CircularDependencyChain::create($chain);
         }
 
         foreach ($type->missingSymbols->all() as $missingSymbol) {

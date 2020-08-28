@@ -10,13 +10,13 @@ use Spatie\TypeScriptTransformer\Support\TransformerFactory;
 
 class TypeScriptTransformerConfig
 {
-    protected string $searchingPath;
+    private string $searchingPath;
 
-    protected array $transformers = [];
+    private array $transformers = [];
 
-    protected array $collectors;
+    private array $collectors;
 
-    protected string $outputFile = 'types.d.ts';
+    private string $outputFile = 'types.d.ts';
 
     private array $classPropertyReplacements = [];
 
@@ -70,9 +70,7 @@ class TypeScriptTransformerConfig
         return $this->searchingPath;
     }
 
-    /**
-     * @return \Spatie\TypeScriptTransformer\Transformers\Transformer[]
-     */
+    /**@return \Spatie\TypeScriptTransformer\Transformers\Transformer[] */
     public function getTransformers(): array
     {
         $factory = new TransformerFactory($this);
@@ -88,9 +86,7 @@ class TypeScriptTransformerConfig
         return $this->outputFile;
     }
 
-    /**
-     * @return \Spatie\TypeScriptTransformer\Collectors\Collector[]
-     */
+    /** @return \Spatie\TypeScriptTransformer\Collectors\Collector[] */
     public function getCollectors(): array
     {
         return array_map(

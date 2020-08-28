@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Tests\Actions;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInTypeAction;
+use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
 
@@ -54,7 +55,7 @@ class ReplaceSymbolsInTypeActionTest extends TestCase
     /** @test */
     public function it_will_throw_an_exception_when_doing_circular_dependencies()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(CircularDependencyChain::class);
 
         $typeA = FakeTransformedType::fake('A')
             ->isInline()

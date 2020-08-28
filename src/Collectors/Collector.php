@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Spatie\TypeScriptTransformer\Collectors;
 
 use ReflectionClass;

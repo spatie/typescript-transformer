@@ -14,7 +14,7 @@ class AnnotationCollector extends Collector
 {
     protected ClassReader $classReader;
 
-    private TransformerFactory $transformerFactory;
+    protected TransformerFactory $transformerFactory;
 
     public function __construct(TypeScriptTransformerConfig $config)
     {
