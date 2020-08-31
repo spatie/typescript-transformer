@@ -1,5 +1,5 @@
 ---
-title: Class property processors
+title: Changing types using class property processors
 weight: 3
 ---
 
