@@ -1,5 +1,5 @@
 ---
-title: Collectors
+title: Selecting classes using collectors
 weight: 4
 ---
 

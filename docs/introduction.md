@@ -2,9 +2,10 @@
 title: Introduction
 weight: 1
 ---
-**This package is still under heavy development, please do not use it (yet)**
 
-Always wanted type safety within PHP and TypeScript without duplicating a lot of code? Then you will like this package! Let's say you have an enum:
+This package allows you to convert PHP types to TypeScript.
+
+Let's say you have an enum:
 
 ```php
 class Languages extends Enum
@@ -14,7 +15,7 @@ class Languages extends Enum
 }
 ```
 
-Wouldn't it be cool if you could have a automatically generated TypeScript definitions like this?
+Wouldn't it be cool if you could have an automatically generated TypeScript definitions like this?
 
 ```tsx
 export type Languages = 'typescript' | 'php';

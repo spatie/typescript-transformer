@@ -1,5 +1,5 @@
 ---
-title: Annotations
+title: Customizing the output using annotations
 weight: 3
 ---
 
@@ -43,4 +43,4 @@ Want to define a specific transformer for the file? You can use the following an
 class Languages extends Enum{}
 ```
 
-It is also possible to transform types without adding annotations. You can read more about it [here](https://docs.spatie.be/typescript-transformer/v1/usage/collectors/)
+It is also possible to transform types without adding annotations. You can read more about it [here](https://docs.spatie.be/typescript-transformer/v1/usage/collectors/).
