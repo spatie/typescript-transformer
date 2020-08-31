@@ -48,7 +48,7 @@ class User
 
 This will be transformed to:
 
-```tsx
+```ts
 export type User = {
     int: number;
     name: string;
