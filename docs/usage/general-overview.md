@@ -119,14 +119,14 @@ class UserController
 
 ## Transforming DTOs to TypeScript
 
-```
-@typescript
+```php
+/** @typescript */
 class UserResource extends DataTransferObject implements Arrayable
 {
     // ...
 }
 
-@typescript
+/** @typescript */
 class AddressResource extends DataTransferObject implements Arrayable
 {
     // ...
