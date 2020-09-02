@@ -16,7 +16,7 @@ The package will automatically register a service provider.
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\LaravelTypeScriptTransformer\TypeScriptTransformerServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Spatie\LaravelTypeScriptTransformer\TypeScriptTransformerServiceProvider"
 ```
 
 This is the default content of the config file:
