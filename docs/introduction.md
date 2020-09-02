@@ -3,9 +3,9 @@ title: Introduction
 weight: 1
 ---
 
-This package allows you to convert PHP types to TypeScript.
+This package allows you to convert PHP types to TypeScript. 
 
-Let's say you have an enum:
+This enum ...
 
 ```php
 class Languages extends Enum
@@ -15,24 +15,14 @@ class Languages extends Enum
 }
 ```
 
-Wouldn't it be cool if you could have an automatically generated TypeScript definitions like this?
+... can be converted to this TypeScript definition:
 
 ```tsx
 export type Languages = 'typescript' | 'php';
 ```
 
-This package will automatically generate such definitions for you, the only thing you have to do is adding this annotation:
 
-```php
-/** @typescript */
-class Languages extends Enum
-{
-    const TYPESCRIPT = 'typescript';
-    const PHP = 'php';
-}
-```
-
-You can even take it a step further and generate TypeScript from public class properties:
+It can also convert a class like this to TypeScript.
 
 ```php
 /** @typescript */
@@ -46,7 +36,7 @@ class User
 }
 ```
 
-This will be transformed to:
+This is the TypeScript equivalent.
 
 ```ts
 export type User = {
@@ -55,5 +45,3 @@ export type User = {
     address: string | null;
 }
 ```
-
-We've written a more [practical walkthrough](https://spatie.be/docs/typescript-transformer/v1/a-practical-walkthrough) on how to use this package. It is written with Laravel, but knowledge of the framework is not required for following along.
