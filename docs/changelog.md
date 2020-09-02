@@ -1,6 +1,6 @@
 ---
 title: Changelog
-weight: 6
+weight: 7
 ---
 
 All notable changes to the `typescript-transformer` package will be documented in [the changelog on GitHub](https://github.com/spatie/typescript-transformer/blob/master/CHANGELOG.md).

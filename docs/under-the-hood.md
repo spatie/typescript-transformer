@@ -1,6 +1,6 @@
 ---
 title: Under the hood
-weight: 4
+weight: 5
 ---
 
 Reading this page is not required for knowing how to use the package. We recommend  to first read through the other documentation and then come back to read this page.
