@@ -3,25 +3,10 @@ title: Introduction
 weight: 1
 ---
 
-This package allows you to convert PHP types to TypeScript. 
+This package allows you to convert PHP classes to TypeScript. 
 
-This enum ...
 
-```php
-class Languages extends Enum
-{
-    const TYPESCRIPT = 'typescript';
-    const PHP = 'php';
-}
-```
-
-... can be converted to this TypeScript definition:
-
-```tsx
-export type Languages = 'typescript' | 'php';
-```
-
-It can also convert PHP classes to TypeScript.
+This class...
 
 ```php
 /** @typescript */
@@ -33,7 +18,7 @@ class User
 }
 ```
 
-This is the TypeScript equivalent.
+will be converted to this TypeScript type:
 
 ```ts
 export type User = {
@@ -41,4 +26,20 @@ export type User = {
     name: string;
     address: string | null;
 }
+```
+
+Here's another example.
+
+```php
+class Languages extends Enum
+{
+    const TYPESCRIPT = 'typescript';
+    const PHP = 'php';
+}
+```
+
+The `Languages` enum will be converted to:
+
+```tsx
+export type Languages = 'typescript' | 'php';
 ```
