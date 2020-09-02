@@ -5,7 +5,7 @@ weight: 1
 
 On this page we'll share a real world use case of how the package can be used. We're not going to use the default Laravel resources because they cannot be typed. Instead, we're going to use the [spatie.data-transfer-object](https://github.com/spatie/data-transfer-object) package.
 
-Let's first create a `UserResource`
+Let's first create a `UserResource`:
 
 ```php
 class UserResource extends DataTransferObject implements Arrayable
@@ -37,7 +37,7 @@ class AddressResource extends DataTransferObject implements Arrayable
 }
 ```
 
-Each propery is nullable so it's easy to send an empty instance to the front end where necessary.
+Each property is nullable, so it's easy to send an empty instance to the front end where necessary.
 
 To easily convert a user to a `UserResource`, we're going to add a static `make` function to it. We'll also implement `Illuminate\Contracts\Support\Arrayable` so the resource can be converted to an array when sending it to the front end. This interface requires the object to have a `toArray` method. The implementation of the `toArray` method lives in the `DataTransferObject` base class which will use the public properties of the object.
 
@@ -591,8 +591,6 @@ EOT
 ```
 
 ## Further reading
-
-The package can do a whole lot more:
 
 - [Changing](https://spatie.be/docs/typescript-transformer/v1/usage/annotations) names and transformers in a type's annotation
 - [Adding](https://spatie.be/docs/typescript-transformer/v1/dtos/typing-properties) rich types to your DTO's

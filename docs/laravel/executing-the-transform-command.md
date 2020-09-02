@@ -3,13 +3,11 @@ title: Executing the transform command
 weight: 2
 ---
 
-When you've configured TypeScript transformer in the `typescript-transformer.php` config file you only have to run one command:
+After configuring the package in the `typescript-transformer` config file, you can run this command to write the typescript output file:
 
 ```bash
 php artisan typescript:transform
 ```
-
-That's it. Your types are now transformed!
 
 ## Command options
 
