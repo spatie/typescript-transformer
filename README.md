@@ -6,50 +6,21 @@
 [![Psalm](https://github.com/spatie/typescript-transformer/workflows/Psalm/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3APsalm)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
 
-**This package is still under heavy development, please do not use it (yet)**
+This package allows you to convert PHP classes to TypeScript. 
 
-Always wanted type safety within PHP and TypeScript without duplicating a lot of code? Then you will like this package! Let's say you have an enum:
-
-```php
-class Languages extends Enum
-{
-    const TYPESCRIPT = 'typescript';
-    const PHP = 'php';
-}
-```
-
-Wouldn't it be cool if you could have an automatically generated TypeScript definition like this:
-
-```ts
-export type Languages = 'typescript' | 'php';
-```
-
-This package will automatically generate such definitions for you, the only thing you have to do is adding this annotation:
-
-```php
-/** @typescript **/
-class Languages extends Enum
-{
-    const TYPESCRIPT = 'typescript';
-    const PHP = 'php';
-}
-```
-
-You can even take it a bit further and generate TypeScript from classes:
+This class...
 
 ```php
 /** @typescript */
 class User
 {
     public int $id;
-
     public string $name;
-
     public ?string $address;
 }
 ```
 
-This will be transformed to:
+... will be converted to this TypeScript type:
 
 ```ts
 export type User = {
@@ -59,7 +30,23 @@ export type User = {
 }
 ```
 
-Want to know more? You can find the documentation [here](https://docs.spatie.be/typescript-transformer/v1/introduction/).
+Here's another example.
+
+```php
+class Languages extends Enum
+{
+    const TYPESCRIPT = 'typescript';
+    const PHP = 'php';
+}
+```
+
+The `Languages` enum will be converted to:
+
+```tsx
+export type Languages = 'typescript' | 'php';
+```
+
+You can find the full documentation [here](https://docs.spatie.be/typescript-transformer/v1/introduction/).
 
 ## Support us
 
