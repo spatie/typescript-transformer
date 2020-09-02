@@ -21,17 +21,14 @@ class Languages extends Enum
 export type Languages = 'typescript' | 'php';
 ```
 
-
-It can also convert a class like this to TypeScript.
+It can also convert PHP classes to TypeScript.
 
 ```php
 /** @typescript */
 class User
 {
     public int $id;
-
     public string $name;
-
     public ?string $address;
 }
 ```
