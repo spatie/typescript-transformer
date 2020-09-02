@@ -18,7 +18,7 @@ class User
 }
 ```
 
-will be converted to this TypeScript type:
+... will be converted to this TypeScript type:
 
 ```ts
 export type User = {
