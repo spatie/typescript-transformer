@@ -1,6 +1,6 @@
 ---
 title: Customizing the output using annotations
-weight: 3
+weight: 4
 ---
 
 When using the `@typescript` annotation, the PHP class's name will be used for the TypeScript type:

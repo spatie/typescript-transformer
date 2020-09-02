@@ -1,6 +1,6 @@
 ---
-title: A practical walkthrough
-weight: 4
+title: General overview
+weight: 1
 ---
 
 On this page we'll share a real world use case of how the package can be used. We're not going to use the default Laravel resources because they cannot be typed. Instead, we're going to use the [spatie.data-transfer-object](https://github.com/spatie/data-transfer-object) package.

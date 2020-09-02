@@ -1,6 +1,6 @@
 ---
 title: Selecting classes using collectors
-weight: 4
+weight: 5
 ---
 
 In some cases, you'll want to transform classes without the `@typescript` annotation. For example Laravel's API resources are almost always sent to the front and should always have a TypeScript defintion ready to be used.

@@ -1,6 +1,6 @@
 ---
 title: Using transformers
-weight: 2
+weight: 3
 ---
 
 Transformers are the heart of the package. They take a PHP class and determine if it can be transformed into TypeScript, if that's possible, the transformer will transform the PHP class to a TypeScript definition.
