@@ -55,3 +55,5 @@ export type User = {
     address: string | null;
 }
 ```
+
+We've written a more [practical walkthrough](https://spatie.be/docs/typescript-transformer/v1/a-practical-walkthrough) on how to use this package. It is written with Laravel, but knowledge of the framework is not required for following along.
