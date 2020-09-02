@@ -3,7 +3,7 @@ title: General overview
 weight: 1
 ---
 
-On this page we'll share a real world use case of how the package can be used. We're not going to use the default Laravel resources because they cannot be typed. Instead, we're going to use the [spatie.data-transfer-object](https://github.com/spatie/data-transfer-object) package.
+On this page we'll share a real world use case of how the package can transform PHP types to TypeScript. We're not going to use the default Laravel resources because they cannot be typed. Instead, we're going to use the [spatie.data-transfer-object](https://github.com/spatie/data-transfer-object) package.
 
 Let's first create a `UserResource`:
 
@@ -117,7 +117,7 @@ class UserController
 }
 ```
 
-## Transforming DTOs to Typescript
+## Transforming DTOs to TypeScript
 
 ```
 @typescript
@@ -247,11 +247,11 @@ Finally, `ResourceCollector` should be added to the list of collectors in the co
     ...
 ```
 
-Now you can run `php artisan typescript:transform` to create the typescript definitions.
+Now you can run `php artisan typescript:transform` to create the TypeScript definitions.
 
 ### Using class property replacements
 
-You can specify to which Typescript type a PHP type should be converted.
+You can specify to which TypeScript type a PHP type should be converted.
 
 Let's add a `$birthday` property to the `UserResource`, which is of type `Carbon`.
 
@@ -299,7 +299,7 @@ abstract class Resource extends DataTransferObject implements Arrayable
 }
 ```
 
-This class will transform it will transform it to the `any` typescript type, but you can make it more specific.  In the `typescript-transformer` config file, you can specify to which typescript type and PHP type should be converted to.
+This class will transform it will transform it to the `any` TypeScript type, but you can make it more specific.  In the `typescript-transformer` config file, you can specify to which TypeScript type and PHP type should be converted to.
 
 ```
 	...
@@ -473,7 +473,7 @@ Transformers should be added to `typescript-transformer` config file:
 
 
 
-Running `php artisan typescript:transform` will generate these Typescript types:
+Running `php artisan typescript:transform` will generate these TypeScript types:
 
 ```ts
 namespace App.Http.Resources {
