@@ -24,7 +24,7 @@ class User
 
 ```ts
 export type User = {
-    int: number;
+    id: number;
     name: string;
     address: string | null;
 }
