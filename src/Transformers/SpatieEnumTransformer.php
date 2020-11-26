@@ -29,7 +29,7 @@ class SpatieEnumTransformer implements Transformer
 
         $options = array_map(
             fn ($enum) => "'{$enum}'",
-            array_keys($enum::toArray())
+            $enum::toValues()
         );
 
         return implode(' | ', $options);
