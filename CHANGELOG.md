@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 1.1.1 - 2020-11-26
+
+- Add PHP8 support
+
 ## 1.1.0 - 2020-11-26
 
 - Fix some capitalization in namespace names

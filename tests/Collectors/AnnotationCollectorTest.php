@@ -58,7 +58,7 @@ class AnnotationCollectorTest extends TestCase
         $this->assertTrue($this->collector->shouldCollect($reflection));
         $this->assertEquals(CollectedOccurrence::create(
             new MyclabsEnumTransformer(),
-            get_class($class)
+            $reflection->getShortName()
         ), $this->collector->getCollectedOccurrence($reflection));
     }
 
@@ -80,7 +80,7 @@ class AnnotationCollectorTest extends TestCase
         $this->assertTrue($this->collector->shouldCollect($reflection));
         $this->assertEquals(CollectedOccurrence::create(
             new DtoTransformer($this->config),
-            get_class($class)
+            $reflection->getShortName()
         ), $this->collector->getCollectedOccurrence($reflection));
     }
 
