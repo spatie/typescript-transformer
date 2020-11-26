@@ -38,7 +38,7 @@ Want to define a specific transformer for the file? You can use the following an
 ```php
 /** 
  * @typescript
- * @typescript-transformer \Spatie\LaravelTypeScriptTransformer\Transformers\SpatieEnumTransformer
+ * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\SpatieEnumTransformer::class
  */
 class Languages extends Enum{}
 ```

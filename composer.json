@@ -24,6 +24,7 @@
         "friendsofphp/php-cs-fixer": "^2.16",
         "larapack/dd": "^1.1",
         "myclabs/php-enum": "^1.7",
+        "spatie/enum" : "^3.0",
         "phpunit/phpunit": "^9.0",
         "spatie/phpunit-snapshot-assertions": "^4.2",
         "spatie/data-transfer-object": "^2.0",
