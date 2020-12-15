@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Steps;
+namespace Spatie\TypeScriptTransformer\Actions;
 
 use hanneskod\classtools\Iterator\ClassIterator;
 use IteratorAggregate;
@@ -11,7 +11,7 @@ use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
-class ResolveTypesStep
+class ResolveTypesCollectionAction
 {
     protected Finder $finder;
 

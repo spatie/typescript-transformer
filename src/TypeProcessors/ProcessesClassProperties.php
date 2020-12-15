@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\ClassPropertyProcessors;
+namespace Spatie\TypeScriptTransformer\TypeProcessors;
 
 use Closure;
 use phpDocumentor\Reflection\Type;

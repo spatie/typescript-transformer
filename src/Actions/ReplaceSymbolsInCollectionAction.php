@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;

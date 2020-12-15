@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypeScriptTransformer\Support\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;

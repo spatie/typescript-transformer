@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Support;
+namespace Spatie\TypeScriptTransformer\Structures;
 
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 

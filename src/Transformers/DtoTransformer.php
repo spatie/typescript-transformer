@@ -6,12 +6,14 @@ use phpDocumentor\Reflection\TypeResolver;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Actions\ResolveClassPropertyTypeAction;
-use Spatie\TypeScriptTransformer\Actions\TransformClassPropertyTypeAction;
-use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ApplyNeverClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ReplaceDefaultTypesClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
+use Spatie\TypeScriptTransformer\TypeProcessors\ApplyNeverTypeProcessor;
+use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
+use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultTypesTypeProcessor;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\TypeReflectors\PropertyTypeReflector;
+use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class DtoTransformer implements Transformer
@@ -56,17 +58,16 @@ class DtoTransformer implements Transformer
     }
 
     /**
-     * @return \Spatie\TypeScriptTransformer\ClassPropertyProcessors\ClassPropertyProcessor[]
+     * @return \Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor[]
      * @throws \Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer
      */
     protected function getClassPropertyProcessors(): array
     {
         return [
-            new ReplaceDefaultTypesClassPropertyProcessor(
+            new ReplaceDefaultTypesTypeProcessor(
                 $this->config->getClassPropertyReplacements()
             ),
-            new DtoCollectionClassPropertyProcessor(),
-            new ApplyNeverClassPropertyProcessor(),
+            new DtoCollectionTypeProcessor(),
         ];
     }
 
@@ -85,11 +86,7 @@ class DtoTransformer implements Transformer
         ReflectionProperty $reflection,
         MissingSymbolsCollection $missingSymbolsCollection
     ): ?string {
-        $resolveClassPropertyTypeAction = new ResolveClassPropertyTypeAction(
-            new TypeResolver()
-        );
-
-        $type = $resolveClassPropertyTypeAction->execute($reflection);
+        $type = TypeReflector::new($reflection)->reflect();
 
         foreach ($this->getClassPropertyProcessors() as $processor) {
             $type = $processor->process($type, $reflection);
@@ -99,7 +96,7 @@ class DtoTransformer implements Transformer
             }
         }
 
-        $transformClassPropertyTypeAction = new TransformClassPropertyTypeAction(
+        $transformClassPropertyTypeAction = new TranspileTypeToTypeScriptAction(
             $missingSymbolsCollection,
             $reflection->getDeclaringClass()->getName()
         );

@@ -4,6 +4,9 @@ namespace Spatie\TypeScriptTransformer;
 
 use Spatie\TypeScriptTransformer\Steps\PersistTypesCollectionStep;
 use Spatie\TypeScriptTransformer\Steps\ResolveTypesStep;
+use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
+use Spatie\TypeScriptTransformer\Actions\ReplaceMissingSymbolsAction;
+use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Symfony\Component\Finder\Finder;
 
@@ -23,7 +26,7 @@ class TypeScriptTransformer
 
     public function transform(): TypesCollection
     {
-        $typesCollection = (new ResolveTypesStep(
+        $typesCollection = (new ResolveTypesCollectionAction(
             new Finder(),
             $this->config,
         ))->execute();

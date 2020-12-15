@@ -4,13 +4,13 @@ namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use phpDocumentor\Reflection\TypeResolver;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypeScriptTransformer\Actions\TransformClassPropertyTypeAction;
+use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 
-class TransformClassPropertyTypeActionTest extends TestCase
+class TranspileTypeToTypeScriptActionTest extends TestCase
 {
-    private TransformClassPropertyTypeAction $action;
+    private TranspileTypeToTypeScriptAction $action;
 
     private MissingSymbolsCollection $missingSymbols;
 
@@ -24,7 +24,7 @@ class TransformClassPropertyTypeActionTest extends TestCase
 
         $this->typeResolver = new TypeResolver();
 
-        $this->action = new TransformClassPropertyTypeAction(
+        $this->action = new TranspileTypeToTypeScriptAction(
             $this->missingSymbols,
             'fake_class'
         );

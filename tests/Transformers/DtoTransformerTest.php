@@ -7,9 +7,11 @@ use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\String_;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionMethod;
+use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\Snapshots\MatchesSnapshots;
-use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
@@ -63,8 +65,8 @@ class DtoTransformerTest extends TestCase
         $transformer = new class($config) extends DtoTransformer {
             protected function getClassPropertyProcessors(): array
             {
-                $onlyStringPropertiesProcessor = new class implements ClassPropertyProcessor {
-                    public function process(Type $type, ReflectionProperty $reflection): ?Type
+                $onlyStringPropertiesProcessor = new class implements TypeProcessor {
+                    public function process(Type $type, ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection): ?Type
                     {
                         return $type instanceof String_ ? $type : null;
                     }

@@ -1,12 +1,15 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\ClassPropertyProcessors;
+namespace Spatie\TypeScriptTransformer\TypeProcessors;
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\Object_;
+use ReflectionMethod;
+use ReflectionParameter;
 use ReflectionProperty;
+use ReflectionType;
 
-class ReplaceDefaultTypesClassPropertyProcessor implements ClassPropertyProcessor
+class ReplaceDefaultTypesTypeProcessor implements TypeProcessor
 {
     use ProcessesClassProperties;
 
@@ -18,8 +21,10 @@ class ReplaceDefaultTypesClassPropertyProcessor implements ClassPropertyProcesso
         $this->mapping = $mapping;
     }
 
-    public function process(Type $type, ReflectionProperty $reflection): ?Type
-    {
+    public function process(
+        Type $type,
+        ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection
+    ): ?Type {
         return $this->walk($type, function (Type $type) {
             if (! $type instanceof Object_) {
                 return $type;

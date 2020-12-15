@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
+use ReflectionNamedType;
 use ReflectionType;
 
-class FakeReflectionType extends ReflectionType
+class FakeReflectionType extends ReflectionNamedType
 {
     private ?string $type = null;
 
@@ -55,5 +56,10 @@ class FakeReflectionType extends ReflectionType
     public function allowsNull()
     {
         return $this->allowsNull;
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 }

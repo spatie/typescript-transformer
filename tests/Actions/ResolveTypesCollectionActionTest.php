@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Steps;
+namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypeScriptTransformer\Steps\ResolveTypesStep;
+use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnumWithCustomTransformer;
@@ -15,15 +15,15 @@ use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
-class ResolveTypesStepTest extends TestCase
+class ResolveTypesCollectionActionTest extends TestCase
 {
-    private ResolveTypesStep $action;
+    private ResolveTypesCollectionAction $action;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->action = new ResolveTypesStep(
+        $this->action = new ResolveTypesCollectionAction(
             new Finder(),
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/../FakeClasses/Enum')
@@ -77,7 +77,7 @@ class ResolveTypesStepTest extends TestCase
     /** @test */
     public function it_can_parse_a_specified_file_only()
     {
-        $this->action = new ResolveTypesStep(
+        $this->action = new ResolveTypesCollectionAction(
             new Finder(),
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/../FakeClasses/Enum/TypeScriptEnum.php')
@@ -95,7 +95,7 @@ class ResolveTypesStepTest extends TestCase
     /** @test */
     public function it_can_add_an_collector_for_types()
     {
-        $this->action = new ResolveTypesStep(
+        $this->action = new ResolveTypesCollectionAction(
             new Finder(),
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/../FakeClasses/Enum')

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\ClassPropertyProcessors;
+namespace Spatie\TypeScriptTransformer\TypeProcessors;
 
 use phpDocumentor\Reflection\Fqsen;
 use phpDocumentor\Reflection\Type;
@@ -9,16 +9,22 @@ use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
+use ReflectionMethod;
+use ReflectionParameter;
 use ReflectionProperty;
+use ReflectionType;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
+use Spatie\TypeScriptTransformer\Support\TypeScriptType;
 use Spatie\TypeScriptTransformer\Support\UnknownType;
 
-class DtoCollectionClassPropertyProcessor implements ClassPropertyProcessor
+class DtoCollectionTypeProcessor implements TypeProcessor
 {
     use ProcessesClassProperties;
 
-    public function process(Type $type, ReflectionProperty $reflection): ?Type
-    {
+    public function process(
+        Type $type,
+        ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection
+    ): ?Type {
         return $this->walk($type, function (Type $type) {
             if (! $type instanceof Object_) {
                 return $type;
@@ -41,7 +47,7 @@ class DtoCollectionClassPropertyProcessor implements ClassPropertyProcessor
         $returnType = $reflection->getMethod('current')->getReturnType();
 
         if (empty($returnType)) {
-            return new UnknownType();
+            return new TypeScriptType('any');
         }
 
         $type = $returnType->isBuiltin()

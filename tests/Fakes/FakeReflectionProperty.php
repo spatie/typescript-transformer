@@ -3,10 +3,11 @@
 namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
 use ReflectionProperty;
+use ReflectionType;
 
 class FakeReflectionProperty extends ReflectionProperty
 {
-    private ?FakeReflectionType $type = null;
+    private null|FakeReflectionType|FakeReflectionUnionType $type = null;
 
     private ?string $docComment = null;
 
@@ -19,7 +20,7 @@ class FakeReflectionProperty extends ReflectionProperty
     {
     }
 
-    public function withType(FakeReflectionType $type): self
+    public function withType(FakeReflectionType|FakeReflectionUnionType $type): self
     {
         $this->type = $type;
 
@@ -33,7 +34,7 @@ class FakeReflectionProperty extends ReflectionProperty
         return $this;
     }
 
-    public function getType(): ?FakeReflectionType
+    public function getType(): null|FakeReflectionType|FakeReflectionUnionType
     {
         return $this->type;
     }
@@ -45,5 +46,15 @@ class FakeReflectionProperty extends ReflectionProperty
         }
 
         return $this->docComment;
+    }
+
+    public function getModifiers()
+    {
+        return 0;
+    }
+
+    public function getAttributes(?string $name = null, int $flags = 0): array
+    {
+        return [];
     }
 }

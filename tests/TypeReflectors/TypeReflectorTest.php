@@ -1,28 +1,18 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Actions;
+namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
 
 use phpDocumentor\Reflection\TypeResolver;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Actions\ResolveClassPropertyTypeAction;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Test;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionUnionType;
+use Spatie\TypeScriptTransformer\TypeReflectors\PropertyTypeReflector;
 
-class ResolveClassPropertyTypeActionTest extends TestCase
+class TypeReflectorTest extends TestCase
 {
-    private ResolveClassPropertyTypeAction $action;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->action = new ResolveClassPropertyTypeAction(
-            new TypeResolver()
-        );
-    }
-
     /**
      * @test
      * @dataProvider docblockTypesProvider
@@ -32,12 +22,11 @@ class ResolveClassPropertyTypeActionTest extends TestCase
      */
     public function it_can_resolve_types_from_docblocks(string $input, string $outputType)
     {
-        $type = $this->action->execute(
-            FakeReflectionProperty::create()
-                ->withDocComment("@var {$input}")
+        $reflector = new PropertyTypeReflector(
+            FakeReflectionProperty::create()->withDocComment("@var {$input}")
         );
 
-        $this->assertEquals($outputType, (string) $type);
+        $this->assertEquals($outputType, (string) $reflector->reflect());
     }
 
     public function docblockTypesProvider(): array
@@ -47,6 +36,7 @@ class ResolveClassPropertyTypeActionTest extends TestCase
             ['bool', 'bool'],
             ['string', 'string'],
             ['float', 'float'],
+            ['mixed', 'mixed'],
             ['array', 'array'],
 
             ['bool|int', 'bool|int'],
@@ -58,31 +48,31 @@ class ResolveClassPropertyTypeActionTest extends TestCase
     /** @test */
     public function it_will_handle_no_docblock()
     {
-        $type = $this->action->execute(
+        $reflector = new PropertyTypeReflector(
             FakeReflectionProperty::create()
         );
 
-        $this->assertEquals('never', (string) $type);
+        $this->assertEquals('any', (string) $reflector->reflect());
     }
 
     /** @test */
     public function it_can_handle_another_non_var_docblock()
     {
-        $type = $this->action->execute(
+        $reflector = new PropertyTypeReflector(
             FakeReflectionProperty::create()->withDocComment('@method bla')
         );
 
-        $this->assertEquals('never', (string) $type);
+        $this->assertEquals('any', (string) $reflector->reflect());
     }
 
     /** @test */
     public function it_can_handle_an_incorrect_docblock()
     {
-        $type = $this->action->execute(
+        $reflector = new PropertyTypeReflector(
             FakeReflectionProperty::create()->withDocComment('@var int  bool')
         );
 
-        $this->assertEquals('int', (string) $type);
+        $this->assertEquals('int', (string) $reflector->reflect());
     }
 
     /**
@@ -95,12 +85,13 @@ class ResolveClassPropertyTypeActionTest extends TestCase
      */
     public function it_can_resolve_reflection_types(string $input, bool $isBuiltIn, string $outputType)
     {
-        $type = $this->action->execute(
-            FakeReflectionProperty::create()
-                ->withType(FakeReflectionType::create()->withIsBuiltIn($isBuiltIn)->withType($input))
+        $reflection = FakeReflectionProperty::create()->withType(
+            FakeReflectionType::create()->withIsBuiltIn($isBuiltIn)->withType($input)
         );
 
-        $this->assertEquals($outputType, (string) $type);
+        $reflector = new PropertyTypeReflector($reflection);
+
+        $this->assertEquals($outputType, (string) $reflector->reflect());
     }
 
     public function reflectionTypesProvider(): array
@@ -108,6 +99,7 @@ class ResolveClassPropertyTypeActionTest extends TestCase
         return [
             ['int', true, 'int'],
             ['bool', true, 'bool'],
+            ['mixed', true, 'mixed'],
             ['string', true, 'string'],
             ['float', true, 'float'],
             ['array', true, 'array'],
@@ -129,13 +121,13 @@ class ResolveClassPropertyTypeActionTest extends TestCase
         string $docbloc,
         string $outputType
     ) {
-        $type = $this->action->execute(
-            FakeReflectionProperty::create()
-                ->withType(FakeReflectionType::create()->withType($reflection))
-                ->withDocComment($docbloc)
-        );
+        $reflection = FakeReflectionProperty::create()
+            ->withType(FakeReflectionType::create()->withType($reflection))
+            ->withDocComment($docbloc);
 
-        $this->assertEquals($outputType, (string) $type);
+        $reflector = new PropertyTypeReflector($reflection);
+
+        $this->assertEquals($outputType, (string) $reflector->reflect());
     }
 
     public function ignoredTypesProvider(): array
@@ -151,12 +143,13 @@ class ResolveClassPropertyTypeActionTest extends TestCase
     /** @test */
     public function it_can_only_use_reflection_property_for_typing()
     {
-        $type = $this->action->execute(
-            FakeReflectionProperty::create()
-                ->withType(FakeReflectionType::create()->withIsBuiltIn(true)->withType('string'))
+        $reflection = FakeReflectionProperty::create()->withType(
+            FakeReflectionType::create()->withIsBuiltIn(true)->withType('string')
         );
 
-        $this->assertEquals('string', (string) $type);
+        $reflector = new PropertyTypeReflector($reflection);
+
+        $this->assertEquals('string', (string) $reflector->reflect());
     }
 
     /**
@@ -168,21 +161,38 @@ class ResolveClassPropertyTypeActionTest extends TestCase
      */
     public function it_can_nullify_types_based_upon_reflection(string $docbloc, string $outputType)
     {
-        $type = $this->action->execute(
-            FakeReflectionProperty::create()
-                ->withType(FakeReflectionType::create()->withType('int')->withAllowsNull())
-                ->withDocComment("@var {$docbloc}")
-        );
+        $reflection = FakeReflectionProperty::create()->withType(
+            FakeReflectionType::create()->withType('int')->withAllowsNull()
+        )->withDocComment("@var {$docbloc}");
 
-        $this->assertEquals($outputType, (string) $type);
+        $reflector = new PropertyTypeReflector($reflection);
+
+        $this->assertEquals($outputType, (string) $reflector->reflect());
     }
 
     public function nullifiedTypesProvider(): array
     {
         return [
             ['', '?int'],
+            ['?int', '?int'],
             ['int', '?int'],
-            ['array|int', '?int|?array'],
+            ['array|int', 'array|int|null'],
+            ['array|int|null', 'array|int|null'],
         ];
+    }
+
+    /** @test */
+    public function it_can_use_an_union_type_with_reflection()
+    {
+        $reflection = FakeReflectionProperty::create()->withType(
+            FakeReflectionUnionType::create()->withType(
+                FakeReflectionType::create()->withType('int')->withAllowsNull(),
+                FakeReflectionType::create()->withType('float'),
+            )
+        );
+
+        $reflector = new PropertyTypeReflector($reflection);
+
+        $this->assertEquals('int|float|null', (string) $reflector->reflect());
     }
 }

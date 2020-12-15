@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Collectors;
 
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Support\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 abstract class Collector

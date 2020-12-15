@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Steps;
+namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class PersistTypesCollectionStep
+class PersistTypesCollectionAction
 {
     protected TypeScriptTransformerConfig $config;
 

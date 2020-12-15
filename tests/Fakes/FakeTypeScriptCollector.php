@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Collectors\Collector;
-use Spatie\TypeScriptTransformer\Support\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 
 class FakeTypeScriptCollector extends Collector

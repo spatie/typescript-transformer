@@ -1,11 +1,14 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\ClassPropertyProcessors;
+namespace Spatie\TypeScriptTransformer\Tests\TypeProcessors;
 
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Array_;
+use phpDocumentor\Reflection\Types\Mixed_;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypeScriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\Support\TypeScriptType;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
+use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\Support\UnknownType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
@@ -13,9 +16,9 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\StringDtoCollecti
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 
-class DtoCollectionClassPropertyProcessorTest extends TestCase
+class DtoCollectionTypeProcessorTest extends TestCase
 {
-    private DtoCollectionClassPropertyProcessor $processor;
+    private DtoCollectionTypeProcessor $processor;
 
     private TypeResolver $typeResolver;
 
@@ -25,7 +28,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
 
         $this->typeResolver = new TypeResolver();
 
-        $this->processor = new DtoCollectionClassPropertyProcessor();
+        $this->processor = new DtoCollectionTypeProcessor();
     }
 
     /** @test */
@@ -75,7 +78,7 @@ class DtoCollectionClassPropertyProcessorTest extends TestCase
             FakeReflectionProperty::create()
         );
 
-        $this->assertEquals(new Array_(new UnknownType()), $type);
+        $this->assertEquals(new Array_(new TypeScriptType('any')), $type);
     }
 
     /** @test */

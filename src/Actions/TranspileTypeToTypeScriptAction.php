@@ -24,7 +24,7 @@ use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptType;
 use Spatie\TypeScriptTransformer\Support\UnknownType;
 
-class TransformClassPropertyTypeAction
+class TranspileTypeToTypeScriptAction
 {
     private MissingSymbolsCollection $missingSymbolsCollection;
 
@@ -88,7 +88,7 @@ class TransformClassPropertyTypeAction
             return 'any';
         }
 
-        if ($type instanceof Void_ || $type instanceof UnknownType) {
+        if ($type instanceof Void_) {
             return 'never';
         }
 

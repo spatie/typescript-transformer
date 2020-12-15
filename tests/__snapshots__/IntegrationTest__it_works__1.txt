@@ -8,7 +8,7 @@ export type Dto = {
     float: number;
     object: object;
     array: Array<any>;
-    none: never;
+    none: any;
     documented_string: string;
     mixed: number | string;
     documented_array: Array<number>;
@@ -21,7 +21,7 @@ export type Dto = {
     other_dto_collection: Array<Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
     dto_with_children: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.DtoWithChildren;
     another_namespace_dto: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.LevelUp.YetAnotherDto;
-    nullable_string: string | null | number | null;
+    nullable_string: string | number | null;
     reflection_replaced_default_type: string;
     docblock_replaced_default_type: string;
     array_replaced_default_type: Array<string>;
