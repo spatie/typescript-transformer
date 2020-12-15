@@ -3,7 +3,6 @@
 namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
 use ReflectionNamedType;
-use ReflectionType;
 
 class FakeReflectionType extends ReflectionNamedType
 {

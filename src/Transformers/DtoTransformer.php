@@ -2,17 +2,13 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use phpDocumentor\Reflection\TypeResolver;
 use ReflectionClass;
 use ReflectionProperty;
-use Spatie\TypeScriptTransformer\Actions\ResolveClassPropertyTypeAction;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
-use Spatie\TypeScriptTransformer\TypeProcessors\ApplyNeverTypeProcessor;
-use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
-use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultTypesTypeProcessor;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
-use Spatie\TypeScriptTransformer\TypeReflectors\PropertyTypeReflector;
+use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
+use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultTypesTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 

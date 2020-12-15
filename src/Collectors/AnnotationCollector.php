@@ -4,8 +4,8 @@ namespace Spatie\TypeScriptTransformer\Collectors;
 
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypeScriptTransformer\Support\ClassReader;
 use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Support\ClassReader;
 use Spatie\TypeScriptTransformer\Support\TransformerFactory;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;

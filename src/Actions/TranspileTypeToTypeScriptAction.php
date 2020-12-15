@@ -22,7 +22,6 @@ use phpDocumentor\Reflection\Types\This;
 use phpDocumentor\Reflection\Types\Void_;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptType;
-use Spatie\TypeScriptTransformer\Support\UnknownType;
 
 class TranspileTypeToTypeScriptAction
 {

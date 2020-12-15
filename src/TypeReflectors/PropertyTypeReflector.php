@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\TypeReflectors;
 
-use ReflectionParameter;
 use ReflectionProperty;
 use ReflectionType;
 

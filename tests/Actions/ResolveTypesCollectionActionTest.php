@@ -4,8 +4,8 @@ namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
+use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnumWithCustomTransformer;

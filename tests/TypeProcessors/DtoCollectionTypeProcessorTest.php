@@ -4,17 +4,14 @@ namespace Spatie\TypeScriptTransformer\Tests\TypeProcessors;
 
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Array_;
-use phpDocumentor\Reflection\Types\Mixed_;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Support\TypeScriptType;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
-use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
-use Spatie\TypeScriptTransformer\Support\UnknownType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\StringDtoCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
+use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 
 class DtoCollectionTypeProcessorTest extends TestCase
 {

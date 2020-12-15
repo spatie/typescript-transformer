@@ -2,8 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
-use ReflectionNamedType;
-use ReflectionType;
 use ReflectionUnionType;
 
 class FakeReflectionUnionType extends ReflectionUnionType
@@ -34,8 +32,8 @@ class FakeReflectionUnionType extends ReflectionUnionType
 
     public function allowsNull(): bool
     {
-        foreach ($this->types as $type){
-            if($type->allowsNull()){
+        foreach ($this->types as $type) {
+            if ($type->allowsNull()) {
                 return true;
             }
         }

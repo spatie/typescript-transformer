@@ -2,9 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
 
-use phpDocumentor\Reflection\TypeResolver;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypeScriptTransformer\Actions\ResolveClassPropertyTypeAction;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;

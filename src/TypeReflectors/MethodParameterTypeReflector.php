@@ -2,9 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\TypeReflectors;
 
-use ReflectionMethod;
 use ReflectionParameter;
-use ReflectionProperty;
 use ReflectionType;
 
 class MethodParameterTypeReflector extends TypeReflector
