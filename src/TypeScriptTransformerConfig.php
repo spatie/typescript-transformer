@@ -79,9 +79,9 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function enableFormatting(): self
+    public function enableFormatting(bool $enableFormatting = true): self
     {
-        $this->enableFormatting = true;
+        $this->enableFormatting = $enableFormatting;
 
         return $this;
     }
