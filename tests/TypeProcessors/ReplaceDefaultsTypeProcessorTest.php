@@ -8,14 +8,16 @@ use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\String_;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypeScriptTransformer\Support\TypeScriptType;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
+use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
+use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultTypesTypeProcessor;
 
-class ReplaceDefaultTypesTypeProcessorTest extends TestCase
+class ReplaceDefaultsTypeProcessorTest extends TestCase
 {
-    private ReplaceDefaultTypesTypeProcessor $processor;
+    private ReplaceDefaultsTypeProcessor $processor;
 
     private TypeResolver $typeResolver;
 
@@ -25,7 +27,7 @@ class ReplaceDefaultTypesTypeProcessorTest extends TestCase
 
         $this->typeResolver = new TypeResolver();
 
-        $this->processor = new ReplaceDefaultTypesTypeProcessor([
+        $this->processor = new ReplaceDefaultsTypeProcessor([
             DateTime::class => new String_(),
             Dto::class => new TypeScriptType('array'),
         ]);

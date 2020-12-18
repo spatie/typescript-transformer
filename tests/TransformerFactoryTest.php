@@ -1,9 +1,9 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Support;
+namespace Spatie\TypeScriptTransformer\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Spatie\TypeScriptTransformer\Support\TransformerFactory;
+use Spatie\TypeScriptTransformer\TransformerFactory;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;

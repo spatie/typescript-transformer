@@ -14,7 +14,7 @@ use ReflectionProperty;
 use ReflectionType;
 use ReflectionUnionType;
 use RuntimeException;
-use Spatie\TypeScriptTransformer\Support\TypeScriptType;
+use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 use Spatie\TypeScriptTransformer\Support\UnknownType;
 
 abstract class TypeReflector
@@ -35,11 +35,7 @@ abstract class TypeReflector
             return new MethodParameterTypeReflector($reflection);
         }
 
-        if ($reflection instanceof ReflectionMethod) {
-            return new MethodReturnTypeReflector($reflection);
-        }
-
-        throw new RuntimeException('Could not reflect : ' . $reflection::class);
+        return new MethodReturnTypeReflector($reflection);
     }
 
     public function reflect(): Type
@@ -108,7 +104,7 @@ abstract class TypeReflector
     {
         $reflectionType = $this->getReflectionType();
 
-        if ($reflectionType === null || $reflectionType?->allowsNull() === false) {
+        if ($reflectionType === null || $reflectionType->allowsNull() === false) {
             return $type;
         }
 

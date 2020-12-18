@@ -9,7 +9,7 @@ use ReflectionParameter;
 use ReflectionProperty;
 use ReflectionType;
 
-class ReplaceDefaultTypesTypeProcessor implements TypeProcessor
+class ReplaceDefaultsTypeProcessor implements TypeProcessor
 {
     use ProcessesClassProperties;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Support;
+namespace Spatie\TypeScriptTransformer\Tests;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
-use Spatie\TypeScriptTransformer\Support\ClassReader;
+use Spatie\TypeScriptTransformer\ClassReader;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 
 class ClassReaderTest extends TestCase

@@ -14,7 +14,7 @@ use ReflectionParameter;
 use ReflectionProperty;
 use ReflectionType;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
-use Spatie\TypeScriptTransformer\Support\TypeScriptType;
+use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 use Spatie\TypeScriptTransformer\Support\UnknownType;
 
 class DtoCollectionTypeProcessor implements TypeProcessor

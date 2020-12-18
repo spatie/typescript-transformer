@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer;
 
 use Spatie\TypeScriptTransformer\Steps\PersistTypesCollectionStep;
 use Spatie\TypeScriptTransformer\Steps\ResolveTypesStep;
+use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
 use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Actions\ReplaceMissingSymbolsAction;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
@@ -31,7 +32,9 @@ class TypeScriptTransformer
             $this->config,
         ))->execute();
 
-        (new PersistTypesCollectionStep($this->config))->execute($typesCollection);
+        (new PersistTypesCollectionAction($this->config))->execute($typesCollection);
+
+        (new FormatTypeScriptAction($this->config))->execute();
 
         return $typesCollection;
     }

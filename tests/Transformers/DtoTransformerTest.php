@@ -63,7 +63,7 @@ class DtoTransformerTest extends TestCase
         $config = TypeScriptTransformerConfig::create();
 
         $transformer = new class($config) extends DtoTransformer {
-            protected function getClassPropertyProcessors(): array
+            protected function typeProcessors(): array
             {
                 $onlyStringPropertiesProcessor = new class implements TypeProcessor {
                     public function process(Type $type, ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection): ?Type
