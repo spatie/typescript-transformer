@@ -22,7 +22,7 @@ class IntegrationTest extends TestCase
     {
         return TypeScriptTransformerConfig::create()
             ->searchingPath(__DIR__ . '/FakeClasses/Integration')
-            ->classPropertyReplacements([
+            ->defaultTypeReplacements([
                 DateTime::class => 'string',
             ])
             ->transformers([

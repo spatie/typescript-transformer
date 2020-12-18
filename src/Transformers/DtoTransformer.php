@@ -54,13 +54,13 @@ class DtoTransformer implements Transformer
 
     /**
      * @return \Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor[]
-     * @throws \Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer
+     * @throws \Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer
      */
     protected function typeProcessors(): array
     {
         return [
             new ReplaceDefaultsTypeProcessor(
-                $this->config->getClassPropertyReplacements()
+                $this->config->getDefaultTypeReplacements()
             ),
             new DtoCollectionTypeProcessor(),
         ];

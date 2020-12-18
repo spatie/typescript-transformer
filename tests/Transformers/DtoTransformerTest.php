@@ -32,7 +32,7 @@ class DtoTransformerTest extends TestCase
         parent::setUp();
 
         $config = TypeScriptTransformerConfig::create()
-            ->classPropertyReplacements([
+            ->defaultTypeReplacements([
                 DateTime::class => 'string',
             ]);
 
