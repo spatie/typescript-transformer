@@ -5,10 +5,10 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
-use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
-use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
+use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -31,7 +31,7 @@ class DtoTransformer implements Transformer
         $missingSymbols = new MissingSymbolsCollection();
 
         $properties = array_map(
-            fn(ReflectionProperty $property) => $this->resolvePropertyType($property, $missingSymbols),
+            fn (ReflectionProperty $property) => $this->resolvePropertyType($property, $missingSymbols),
             $this->resolveProperties($class)
         );
 
@@ -39,7 +39,7 @@ class DtoTransformer implements Transformer
 
         $output .= array_reduce(
             array_filter($properties),
-            fn(?string $output, string $property) => "{$output}{$property}" . PHP_EOL,
+            fn (?string $output, string $property) => "{$output}{$property}" . PHP_EOL,
         );
 
         $output .= '}' . PHP_EOL;
@@ -70,7 +70,7 @@ class DtoTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn(ReflectionProperty $property) => ! $property->isStatic()
+            fn (ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);

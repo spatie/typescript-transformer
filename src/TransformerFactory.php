@@ -3,7 +3,6 @@
 namespace Spatie\TypeScriptTransformer;
 
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TransformerFactory
 {

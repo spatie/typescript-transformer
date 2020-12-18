@@ -6,8 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
-use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
-use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class FormatTypeScriptActionTest extends TestCase

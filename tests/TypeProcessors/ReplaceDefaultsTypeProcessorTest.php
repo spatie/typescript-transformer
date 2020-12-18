@@ -8,12 +8,10 @@ use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\String_;
 use PHPUnit\Framework\TestCase;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
-use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
-use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
-use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultTypesTypeProcessor;
+use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
+use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 
 class ReplaceDefaultsTypeProcessorTest extends TestCase
 {
