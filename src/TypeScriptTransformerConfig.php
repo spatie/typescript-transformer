@@ -6,6 +6,8 @@ use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer;
+use Spatie\TypeScriptTransformer\OutputFormatters\TypeDefinitionOutputFormatter;
+use Spatie\TypeScriptTransformer\OutputFormatters\OutputFormatter;
 use Spatie\TypeScriptTransformer\Support\TransformerFactory;
 
 class TypeScriptTransformerConfig
@@ -19,6 +21,8 @@ class TypeScriptTransformerConfig
     private string $outputFile = 'types.d.ts';
 
     private array $classPropertyReplacements = [];
+
+    private string $outputFormatter = TypeDefinitionOutputFormatter::class;
 
     public function __construct()
     {
@@ -51,6 +55,13 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
+    public function outputFormatter(string $outputFormatter): self
+    {
+        $this->outputFormatter = $outputFormatter;
+
+        return $this;
+    }
+
     public function outputFile(string $defaultFile): self
     {
         $this->outputFile = $defaultFile;
@@ -79,6 +90,11 @@ class TypeScriptTransformerConfig
             fn (string $transformer) => $factory->create($transformer),
             $this->transformers
         );
+    }
+
+    public function getOutputFormatter(): OutputFormatter
+    {
+        return new $this->outputFormatter;
     }
 
     public function getOutputFile(): string

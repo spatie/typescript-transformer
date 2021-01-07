@@ -10,9 +10,12 @@ class ReplaceSymbolsInTypeAction
 {
     protected TypesCollection $collection;
 
-    public function __construct(TypesCollection $collection)
+    protected bool $withFullyQualifiedNames;
+
+    public function __construct(TypesCollection $collection, $withFullyQualifiedNames = true)
     {
         $this->collection = $collection;
+        $this->withFullyQualifiedNames = $withFullyQualifiedNames;
     }
 
     public function execute(TransformedType $type, array $chain = []): string
@@ -41,7 +44,7 @@ class ReplaceSymbolsInTypeAction
         }
 
         if (! $found->isInline) {
-            $type->replaceSymbol($missingSymbol, $found->getTypeScriptName());
+            $type->replaceSymbol($missingSymbol, $found->getTypeScriptName($this->withFullyQualifiedNames));
 
             return $type;
         }
