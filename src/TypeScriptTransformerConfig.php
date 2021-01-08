@@ -6,11 +6,9 @@ use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer;
-use Spatie\TypeScriptTransformer\OutputFormatters\OutputFormatter;
-use Spatie\TypeScriptTransformer\OutputFormatters\TypeDefinitionOutputFormatter;
+use Spatie\TypeScriptTransformer\Support\TransformerFactory;
 use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
-use Spatie\TypeScriptTransformer\Support\TransformerFactory;
 
 class TypeScriptTransformerConfig
 {
