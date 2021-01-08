@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Structures;
 
-use Exception;
 use ReflectionClass;
 
 class TransformedType
