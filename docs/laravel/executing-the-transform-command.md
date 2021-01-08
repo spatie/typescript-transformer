@@ -24,3 +24,9 @@ php artisan typescript:transform --output=types.d.ts
 ```
 
 This file will be stored in the resource's path of your Laravel application.
+
+It is also possible to automatically format the generated TypeScript with prettier:
+
+```bash
+php artisan typescript:transform --format
+```

@@ -24,41 +24,26 @@ This is the default content of the config file:
 ```php
 return [
     /*
-    |--------------------------------------------------------------------------
-    | Searching path
-    |--------------------------------------------------------------------------
-    |
-    | The path where typescript-transformer will look for PHP classes
-    | to transform, this will be the `app` path by default.
-    |
-    */
+     * The path where typescript-transformer will look for PHP classes
+     * to transform, this will be the `app` path by default.
+     */
 
     'searching_path' => app_path(),
 
     /*
-    |--------------------------------------------------------------------------
-    | Collectors
-    |--------------------------------------------------------------------------
-    |
-    | In these classes you define which classes will be collected and fed to
-    | transformers. By default, we include an AnnotationCollector which will
-    | search for @typescript annotated classes to transform.
-    |
-    */
+     * Collectors will search for classes in your `searching_path` and choose the correct
+     * transformer to transform them. By default, we include an AnnotationCollector
+     * which will search for @typescript annotated classes to transform.
+     */
 
     'collectors' => [
         Spatie\TypeScriptTransformer\Collectors\AnnotationCollector::class,
     ],
 
     /*
-    |--------------------------------------------------------------------------
-    | Transformers
-    |--------------------------------------------------------------------------
-    |
-    | In these classes, you transform your PHP classes(e.g., enums) to
-    | their TypeScript counterparts.
-    |
-    */
+     * Transformers get PHP classes(e.g., enums) as an input and will output
+     * a TypeScript representation of the PHP class.
+     */
 
     'transformers' => [
         Spatie\LaravelTypeScriptTransformer\Transformers\SpatieStateTransformer::class,
@@ -67,17 +52,12 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
-    | Class property replacements
-    |--------------------------------------------------------------------------
-    |
-    | In your DTO's you sometimes have properties that should always be replaced
-    | by typescript representations. For example, you can replace a Datetime
-    | always with a string. These replacements can be defined here.
-    |
-    */
+     * In your classes you sometimes have types that should always be replaced
+     * by the same TypeScript representations. For example, you can replace
+     * a Datetime always with a string. You define this replacements here.
+     */
 
-    'class_property_replacements' => [
+    'default_type_replacements' => [
         DateTime::class => 'string',
         DateTimeImmutable::class => 'string',
         Carbon::class => 'string',
@@ -85,15 +65,16 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
-    | Output file
-    |--------------------------------------------------------------------------
-    |
-    | TypeScript transformer will write it's TypeScript structures to this
-    | file.
-    |
-    */
+     * The package will write the generated TypeScript to this file.
+     */
 
     'output_file' => resource_path('types/generated.d.ts'),
+
+    /*
+     * When enabled, the generated TypeScript file will be formatted by
+     * prettier when all types are transformed.
+     */
+
+    'enable_formatting' => false,
 ];
 ```

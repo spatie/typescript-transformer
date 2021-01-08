@@ -178,7 +178,7 @@ These types can now be used in TypeScript code. Referencing a `UserResource` can
 
 ## Using collectors to find resources
 
-Instead of manually adding `@typescript` to each class, we can use a [collector](https://spatie.be/docs/typescript-transformer/v1/usage/collectors).
+Instead of manually adding `@typescript` to each class, we can use a [collector](https://spatie.be/docs/typescript-transformer/v2/usage/collectors).
 
 Let's first create an abstract class Resource:
 
@@ -229,19 +229,14 @@ Finally, `ResourceCollector` should be added to the list of collectors in the co
 	...
 
     /*
-    |--------------------------------------------------------------------------
-    | Collectors
-    |--------------------------------------------------------------------------
-    |
-    | In these classes you define which classes will be collected and fed to
-    | transformers. By default, we include an AnnotationCollector which will
-    | search for @typescript annotated classes to transform.
-    |
-    */
+     * Collectors will search for classes in your `searching_path` and choose the correct
+     * transformer to transform them. By default, we include an AnnotationCollector
+     * which will search for @typescript annotated classes to transform.
+     */
 
     'collectors' => [
         Spatie\TypeScriptTransformer\Collectors\AnnotationCollector::class,
-        App\Support\TypeScriptTransformer\ ResourceCollector::class,
+        App\Support\TypeScriptTransformer\ResourceCollector::class,
     ],
     
     ...
@@ -249,7 +244,7 @@ Finally, `ResourceCollector` should be added to the list of collectors in the co
 
 Now you can run `php artisan typescript:transform` to create the TypeScript definitions.
 
-### Using class property replacements
+### Using type processors
 
 You can specify to which TypeScript type a PHP type should be converted.
 
@@ -305,17 +300,12 @@ This class will transform it will transform it to the `any` TypeScript type, but
 	...
 
     /*
-    |--------------------------------------------------------------------------
-    | Class property replacements
-    |--------------------------------------------------------------------------
-    |
-    | In your DTO's you sometimes have properties that should always be replaced
-    | by TypeScript representations. For example, you can replace a Datetime
-    | always with a string. These replacements can be defined here.
-    |
-    */
+     * In your classes you sometimes have types that should always be replaced
+     * by the same TypeScript representations. For example, you can replace
+     * a Datetime always with a string. You define this replacements here.
+     */
 
-    'class_property_replacements' => [
+    'default_type_replacements' => [
         // ...
         Carbon::class => 'string',
     ],
@@ -454,14 +444,9 @@ Transformers should be added to `typescript-transformer` config file:
 	...
 	
     /*
-    |--------------------------------------------------------------------------
-    | Transformers
-    |--------------------------------------------------------------------------
-    |
-    | In these classes, you transform your PHP classes(e.g., enums) to
-    | their TypeScript counterparts.
-    |
-    */
+     * Transformers get PHP classes(e.g., enums) as an input and will output
+     * a TypeScript representation of the PHP class.
+     */
 
     'transformers' => [
         App\Support\TypeScriptTransformer\CustomDateTransformer::class,
@@ -557,24 +542,19 @@ namespace App.Http.Resources {
 }
 ```
 
-Instead of using a dedicated `Transformer` as show above, you can define an inline type right in the `typescript-transformer` config file.
+Instead of using a dedicated `Transformer` as shown above, you can define an inline type right in the `typescript-transformer` config file.
 
 
 ```php
 	...
 
     /*
-    |--------------------------------------------------------------------------
-    | Class property replacements
-    |--------------------------------------------------------------------------
-    |
-    | In your DTO's you sometimes have properties that should always be replaced
-    | by TypeScript representations. For example, you can replace a Datetime
-    | always with a string. These replacements can be defined here.
-    |
-    */
+     * In your classes you sometimes have types that should always be replaced
+     * by the same TypeScript representations. For example, you can replace
+     * a Datetime always with a string. You define this replacements here.
+     */
 
-    'class_property_replacements' => [
+    'default_type_replacements' => [
         // ...
         CustomDate::class => TypeScriptType::create(<<<EOT
 {
@@ -592,7 +572,7 @@ EOT
 
 ## Further reading
 
-- [Changing](https://spatie.be/docs/typescript-transformer/v1/usage/annotations) names and transformers in a type's annotation
-- [Adding](https://spatie.be/docs/typescript-transformer/v1/dtos/typing-properties) rich types to your DTO's
-- [Write](https://spatie.be/docs/typescript-transformer/v1/dtos/changing-types-with-class-property-processors) class property processors that can change types completely
+- [Changing](https://spatie.be/docs/typescript-transformer/v2/usage/annotations) names and transformers in a type's annotation
+- [Adding](https://spatie.be/docs/typescript-transformer/v2/dtos/typing-properties) rich types to your DTO's
+- [Write](https://spatie.be/docs/typescript-transformer/v2/dtos/changing-types-with-type-processors) class property processors that can change types completely
 

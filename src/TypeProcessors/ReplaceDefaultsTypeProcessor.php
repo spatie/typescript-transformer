@@ -11,7 +11,7 @@ use ReflectionType;
 
 class ReplaceDefaultsTypeProcessor implements TypeProcessor
 {
-    use ProcessesClassProperties;
+    use ProcessesTypes;
 
     /** @var array<string, Type> */
     private array $mapping;

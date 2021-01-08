@@ -11,9 +11,9 @@ The package comes with a few transformers out of the box:
 
 - `MyclabsEnumTransformer`: this transforms an enum from [the `myclabs\enum` package](https://github.com/myclab/enum)
 - `SpatieEnumTransformer`: this transforms an enum from [the `spatie\enum` package](https://github.com/spatie/enum)
-- `DtoTransformer`: a powerful transformer that transforms classes and their properties, you can read more about it [here](https://docs.spatie.be/typescript-transformer/v1/dtos/transforming/)
+- `DtoTransformer`: a powerful transformer that transforms classes and their properties, you can read more about it [here](https://docs.spatie.be/typescript-transformer/v2/dtos/transforming/)
 
-[The laravel package](docs/typescript-transformer/v1/laravel/installation-and-setup) has some extra transformers:
+[The laravel package](docs/typescript-transformer/v2/laravel/installation-and-setup) has some extra transformers:
 
 - `SpatieStateTransformer`: this transforms a state from [the `spatie\laravel-model-states` package](https://github.com/spatie/laravel-model-status)
 

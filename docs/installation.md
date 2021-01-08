@@ -11,4 +11,4 @@ You can install this package via composer:
 composer require spatie/typescript-transformer
 ```
 
-We also created a Laravel specific package, you can find the installation instructions: [here](https://docs.spatie.be/typescript-transformer/v1/laravel/installation-and-setup/).
+We also created a Laravel specific package, you can find the installation instructions: [here](https://docs.spatie.be/typescript-transformer/v2/laravel/installation-and-setup/).

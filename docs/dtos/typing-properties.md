@@ -7,7 +7,7 @@ Let's take a look at how we can type individual properties of a PHP class.
 
 ## Using PHP's built-in typed properties
 
-Since PHP 7.4 it's possible to use typed properties in a class. This package makes these types an A-class citizen.
+It's possible to use typed properties in a class. This package makes these types an A-class citizen.
 
 ```php
 class Dto
@@ -21,6 +21,8 @@ class Dto
     public bool $bool;
 
     public array $array;
+    
+    public mixed $mixed;
 }
 ```
 
@@ -30,6 +32,15 @@ It is also possible to use nullable types:
 class Dto
 {
     public ?string $string;
+}
+```
+
+You can even use these union types:
+
+```php
+class Dto
+{
+    public float|int $float_or_int;
 }
 ```
 
@@ -90,7 +101,7 @@ class Dto
 }
 ```
 
-Note: always use the fully qualified class name (FCCN). At this moment the package cannot determine imported classes used in a docblock:
+Note: always use the fully qualified class name (FQCN). At this moment the package cannot determine imported classes used in a docblock:
 
 ```php
 use App\DataTransferObjects\UserData;
@@ -165,7 +176,7 @@ class Dto
     public $another_array;
 
     /** @var array<string|int,\DateTime> */
-    public $you_propably_wont_write_this;
+    public $you_probably_wont_write_this;
 }
 ```
 
@@ -184,18 +195,6 @@ class Dto
 
 ## Combining regular types and docblocks
 
-It is possible and recommended combine regular type with docblock annotations for more specific typing. Let's have a look:
+Whenever a property has a docblock, that docblock will be used to type the property, the 'real' PHP type will be omitted. 
 
-```php
-class Dto
-{
-    /** @var string[] */
-    public array $array;
-}
-```
-
-The package knows `string[]` is a more specific version of the `array` type and will internally remove the redundant `Array` type. The outputted type definition looks like this:
-
-```tsx
-array: Array<string>
-```
+If the property is nullable and has a docblock that isn't nullable, then the package will make the TypeScript type nullable.

@@ -49,7 +49,7 @@ It is possible to define these simple replacements in the config:
 
 ```php
 TypeScriptTransformerConfig::create()
-    ->classPropertyReplacements([
+    ->defaultTypeReplacements([
         DateTime::class => 'string',
     ])
     ...
@@ -61,7 +61,7 @@ For example, should you want to represent a `DateTime` as an array of strings, t
  
 ```php
 TypeScriptTransformerConfig::create()
-    ->classPropertyReplacements([
+    ->defaultTypeReplacements([
         DateTime::class => 'string[]',
     ])
     ...
@@ -71,7 +71,7 @@ If you want to convert to a literal/specific TypeScript type you can use the `Ty
 
 ```php
 TypeScriptTransformerConfig::create()
-    ->classPropertyReplacements([
+    ->defaultTypeReplacements([
         DateTime::class => TypeScriptType::create('SomeGenericType<string>'),
     ])
     ...
@@ -94,21 +94,21 @@ class DtoTransformer extends DtoTransformer
         return array_values($class->getProperties(ReflectionProperty::IS_PUBLIC));
     }
 
-    protected function getClassPropertyProcessors(): array
+    protected function typeProcessors(): array
     {
         return [
-            new ReplaceDefaultTypesClassPropertyProcessor(
-                $this->config->getClassPropertyReplacements()
+            new ReplaceDefaultsTypeProcessor(
+                $this->config->getDefaultTypeReplacements()
             ),
-            new DtoCollectionClassPropertyProcessor(),
-            new ApplyNeverClassPropertyProcessor(),
+            new LaravelCollectionTypeProcessor(),
+            new DtoCollectionTypeProcessor(),
         ];
     }
 }
 ```
 
-First of all, `canTransform` still returns `true` if a transformer can handle the type conversion. In this specific example, we created a transformer that will only transform DTOs from our `spatie/data-transfer-object` package. We've also overwritten the `resolveProperties` method to not exclude static properties.
+First of all, `canTransform` still returns `true` if a transformer can handle the type conversion. In this specific example, we created a transformer that will only transform DTOs extending from our `spatie/data-transfer-object` package. We've also overwritten the `resolveProperties` method to not exclude static properties.
 
-As you can see, we're defining some `ClassPropertyProcessors`. These processors will be used to replace the type of a property with a more primitive version and will run before any missing symbols are replaced. [You can read more about class property processors here](https://docs.spatie.be/typescript-transformer/v1/dtos/class-property-processors/).
+As you can see, we're defining some `TypeProcessors`. These processors will be used to replace the type of a property with a more primitive version and will run before any missing symbols are replaced. [You can read more about type processors here](https://docs.spatie.be/typescript-transformer/v2/dtos/changing-types-with-type-processors/).
 
 When creating your own `DtoTransformer`, do not forget to register it in your configuration!

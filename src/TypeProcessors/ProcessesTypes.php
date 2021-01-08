@@ -10,7 +10,7 @@ use phpDocumentor\Reflection\Types\Integer;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\String_;
 
-trait ProcessesClassProperties
+trait ProcessesTypes
 {
     protected function walk(Type $type, Closure $closure): ?Type
     {

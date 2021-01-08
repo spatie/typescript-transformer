@@ -19,7 +19,7 @@ use Spatie\TypeScriptTransformer\Support\UnknownType;
 
 class DtoCollectionTypeProcessor implements TypeProcessor
 {
-    use ProcessesClassProperties;
+    use ProcessesTypes;
 
     public function process(
         Type $type,
