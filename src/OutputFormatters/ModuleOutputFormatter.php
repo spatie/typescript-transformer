@@ -14,7 +14,7 @@ class ModuleOutputFormatter implements OutputFormatter
 
         $iterator = $collection->getIterator();
         $iterator->uasort(function (TransformedType $a, TransformedType $b) {
-           return strcmp($a->name, $b->name);
+            return strcmp($a->name, $b->name);
         });
 
         foreach ($iterator as $type) {
