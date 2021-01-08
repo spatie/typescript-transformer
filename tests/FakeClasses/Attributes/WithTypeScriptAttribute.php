@@ -8,5 +8,4 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 #[TypeScript]
 class WithTypeScriptAttribute extends Enum
 {
-
 }

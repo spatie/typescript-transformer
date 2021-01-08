@@ -4,10 +4,7 @@ namespace Spatie\TypeScriptTransformer\Tests\Collectors;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Attributes\TypeScript;
-use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Collectors\AttributeCollector;
-use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptTransformerAttribute;
