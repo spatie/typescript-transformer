@@ -63,8 +63,12 @@ class TransformedType
         return explode('\\', $namespace);
     }
 
-    public function getTypeScriptName(): string
+    public function getTypeScriptName($fullyQualified = true): string
     {
+        if (! $fullyQualified) {
+            return $this->name;
+        }
+
         $segments = array_merge(
             $this->getNamespaceSegments(),
             [$this->name]
