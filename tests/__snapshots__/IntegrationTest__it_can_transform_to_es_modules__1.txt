@@ -27,8 +27,10 @@ export type Dto = {
     array_as_object: { [key: string]: any };
 }
 
-export type YetAnotherDto = {
+export type DtoWithChildren = {
     name: string;
+    other_dto: OtherDto;
+    other_dto_array: Array<OtherDto>;
 }
 
 export type Enum = 'yes' | 'no';
@@ -39,9 +41,7 @@ export type OtherDto = {
 export type OtherDtoCollection = {
 }
 
-export type DtoWithChildren = {
+export type YetAnotherDto = {
     name: string;
-    other_dto: OtherDto;
-    other_dto_array: Array<OtherDto>;
 }
 

@@ -1,9 +1,9 @@
 <?php
 
-
 namespace Spatie\TypeScriptTransformer\OutputFormatters;
 
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInCollectionAction;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
 class ModuleOutputFormatter implements OutputFormatter
@@ -12,7 +12,12 @@ class ModuleOutputFormatter implements OutputFormatter
     {
         $output = '';
 
-        foreach ($collection as $type) {
+        $iterator = $collection->getIterator();
+        $iterator->uasort(function (TransformedType $a, TransformedType $b) {
+           return strcmp($a->name, $b->name);
+        });
+
+        foreach ($iterator as $type) {
             if ($type->isInline) {
                 continue;
             }
