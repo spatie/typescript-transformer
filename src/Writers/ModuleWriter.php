@@ -12,7 +12,9 @@ class ModuleWriter implements Writer
     {
         $output = '';
 
+        /** @var \ArrayIterator $iterator */
         $iterator = $collection->getIterator();
+
         $iterator->uasort(function (TransformedType $a, TransformedType $b) {
             return strcmp($a->name, $b->name);
         });

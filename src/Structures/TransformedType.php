@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Structures;
 
+use Exception;
 use ReflectionClass;
 
 class TransformedType
@@ -66,7 +67,7 @@ class TransformedType
     public function getTypeScriptName($fullyQualified = true): string
     {
         if (! $fullyQualified) {
-            return $this->name;
+            return $this->name ?? '';
         }
 
         $segments = array_merge(
