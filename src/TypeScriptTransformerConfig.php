@@ -8,6 +8,8 @@ use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer;
 use Spatie\TypeScriptTransformer\OutputFormatters\OutputFormatter;
 use Spatie\TypeScriptTransformer\OutputFormatters\TypeDefinitionOutputFormatter;
+use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
+use Spatie\TypeScriptTransformer\Writers\Writer;
 use Spatie\TypeScriptTransformer\Support\TransformerFactory;
 
 class TypeScriptTransformerConfig
@@ -22,7 +24,7 @@ class TypeScriptTransformerConfig
 
     private array $classPropertyReplacements = [];
 
-    private string $outputFormatter = TypeDefinitionOutputFormatter::class;
+    private string $writer = TypeDefinitionWriter::class;
 
     public function __construct()
     {
@@ -55,9 +57,9 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function outputFormatter(string $outputFormatter): self
+    public function writer(string $writer): self
     {
-        $this->outputFormatter = $outputFormatter;
+        $this->writer = $writer;
 
         return $this;
     }
@@ -92,9 +94,9 @@ class TypeScriptTransformerConfig
         );
     }
 
-    public function getOutputFormatter(): OutputFormatter
+    public function getWriter(): Writer
     {
-        return new $this->outputFormatter;
+        return new $this->writer;
     }
 
     public function getOutputFile(): string

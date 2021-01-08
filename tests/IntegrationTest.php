@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypeScriptTransformer\OutputFormatters\ModuleOutputFormatter;
+use Spatie\TypeScriptTransformer\Writers\ModuleWriter;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Test;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
@@ -58,7 +58,7 @@ class IntegrationTest extends TestCase
 
         $transformer = new TypeScriptTransformer(
             $this->getTransformerConfig()
-                ->outputFormatter(ModuleOutputFormatter::class)
+                ->writer(ModuleWriter::class)
                 ->outputFile($temporaryDirectory->path('types.ts'))
         );
 

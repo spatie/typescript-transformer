@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\OutputFormatters;
+namespace Spatie\TypeScriptTransformer\Writers;
 
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
-interface OutputFormatter
+interface Writer
 {
     public function format(TypesCollection $collection): string;
 

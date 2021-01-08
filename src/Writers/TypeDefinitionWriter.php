@@ -1,16 +1,16 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\OutputFormatters;
+namespace Spatie\TypeScriptTransformer\Writers;
 
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
-class TypeDefinitionOutputFormatter implements OutputFormatter
+class TypeDefinitionWriter implements Writer
 {
     public function format(TypesCollection $collection): string
     {
-        list($namespaces, $rootTypes) = $this->groupByNamespace($collection);
+        [$namespaces, $rootTypes] = $this->groupByNamespace($collection);
 
         $output = '';
 

@@ -19,7 +19,7 @@ class PersistTypesCollectionStep
         $this->ensureOutputFileExists();
 
         $output = $this->config
-            ->getOutputFormatter()
+            ->getWriter()
             ->replaceMissingSymbols($collection)
             ->format($collection);
 
