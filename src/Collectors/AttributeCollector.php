@@ -40,7 +40,6 @@ class AttributeCollector extends Collector
 
     public function getCollectedOccurrence(ReflectionClass $class): CollectedOccurrence
     {
-        /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScript $typeScriptAttribute */
         $typeScriptAttribute = $class->getAttributes(
             TypeScript::class,
             ReflectionAttribute::IS_INSTANCEOF
@@ -48,7 +47,7 @@ class AttributeCollector extends Collector
 
         return CollectedOccurrence::create(
             $this->resolveTransformer($class),
-            $typeScriptAttribute->name
+            $typeScriptAttribute?->newInstance()->name ?? $class->getShortName()
         );
     }
 
@@ -64,7 +63,7 @@ class AttributeCollector extends Collector
             /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformer $transformerClass */
             $transformerAttribute = $transformerAttributes[0];
 
-            return $this->transformerFactory->create($transformerAttribute->transformer);
+            return $this->transformerFactory->create($transformerAttribute->newInstance()->transformer);
         }
 
         foreach ($this->config->getTransformers() as $transformer) {
@@ -75,5 +74,4 @@ class AttributeCollector extends Collector
 
         throw TransformerNotFound::create($class);
     }
-
 }

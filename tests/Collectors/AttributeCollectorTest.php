@@ -9,6 +9,8 @@ use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Collectors\AttributeCollector;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptAttribute;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptTransformerAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
@@ -46,16 +48,9 @@ class AttributeCollectorTest extends TestCase
     }
 
     /** @test */
-    public function it_will_collect_annotated_classes()
+    public function it_will_collect_classes_with_attributes()
     {
-        #[TypeScript]
-        $class = new class('a') extends Enum {
-            const A = 'a';
-        };
-
-        $reflection = new ReflectionClass(
-            $class
-        );
+        $reflection = new ReflectionClass(WithTypeScriptAttribute::class);
 
         $this->assertTrue($this->collector->shouldCollect($reflection));
         $this->assertEquals(CollectedOccurrence::create(
@@ -67,39 +62,12 @@ class AttributeCollectorTest extends TestCase
     /** @test */
     public function it_will_read_overwritten_transformers()
     {
-        /**
-         * @typescript
-         * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\DtoTransformer
-         */
-        $class = new class('a') extends Enum {
-            const A = 'a';
-        };
-
-        $reflection = new ReflectionClass(
-            $class
-        );
+        $reflection = new ReflectionClass(WithTypeScriptTransformerAttribute::class);
 
         $this->assertTrue($this->collector->shouldCollect($reflection));
         $this->assertEquals(CollectedOccurrence::create(
             new DtoTransformer($this->config),
             $reflection->getShortName()
         ), $this->collector->getCollectedOccurrence($reflection));
-    }
-
-    /** @test */
-    public function it_will_throw_an_exception_if_a_transformer_is_not_found()
-    {
-        $this->expectException(TransformerNotFound::class);
-
-        /** @typescript */
-        $class = new class {
-        };
-
-        $reflection = new ReflectionClass(
-            $class
-        );
-
-
-        $this->collector->getCollectedOccurrence($reflection);
     }
 }
