@@ -5,11 +5,8 @@ namespace Spatie\TypeScriptTransformer;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer;
-use Spatie\TypeScriptTransformer\Support\TransformerFactory;
 use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
-use Spatie\TypeScriptTransformer\TransformerFactory;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
 
 class TypeScriptTransformerConfig
