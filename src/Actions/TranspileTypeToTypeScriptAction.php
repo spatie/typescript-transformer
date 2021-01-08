@@ -27,11 +27,11 @@ class TranspileTypeToTypeScriptAction
 {
     private MissingSymbolsCollection $missingSymbolsCollection;
 
-    private string $currentClass;
+    private ?string $currentClass;
 
     public function __construct(
         MissingSymbolsCollection $missingSymbolsCollection,
-        string $currentClass
+        ?string $currentClass = null
     ) {
         $this->missingSymbolsCollection = $missingSymbolsCollection;
         $this->currentClass = $currentClass;
@@ -39,65 +39,28 @@ class TranspileTypeToTypeScriptAction
 
     public function execute(Type $type): string
     {
-        if ($type instanceof Compound) {
-            return $this->resolveCompoundType($type);
-        }
-
-        if ($type instanceof AbstractList) {
-            return $this->resolveListType($type);
-        }
-
-        if ($type instanceof Nullable) {
-            return $this->resolveNullableType($type);
-        }
-
-        if ($type instanceof Object_) {
-            return $this->resolveObjectType($type);
-        }
-
-        if ($type instanceof TypeScriptType) {
-            return (string) $type;
-        }
-
-        if ($type instanceof Boolean) {
-            return 'boolean';
-        }
-
-        if ($type instanceof Float_ || $type instanceof Integer) {
-            return 'number';
-        }
-
-        if ($type instanceof String_ || $type instanceof ClassString) {
-            return 'string';
-        }
-
-        if ($type instanceof Null_) {
-            return 'null';
-        }
-
-        if ($type instanceof Self_ || $type instanceof Static_ || $type instanceof This) {
-            return $this->missingSymbolsCollection->add($this->currentClass);
-        }
-
-        if ($type instanceof Scalar) {
-            return 'string|number|boolean';
-        }
-
-        if ($type instanceof Mixed_) {
-            return 'any';
-        }
-
-        if ($type instanceof Void_) {
-            return 'never';
-        }
-
-        throw new Exception("Could not transform type: {$type}");
+        return match (true) {
+            $type instanceof Compound => $this->resolveCompoundType($type),
+            $type instanceof AbstractList => $this->resolveListType($type),
+            $type instanceof Nullable => $this->resolveNullableType($type),
+            $type instanceof Object_ => $this->resolveObjectType($type),
+            $type instanceof TypeScriptType => (string) $type,
+            $type instanceof Boolean => 'boolean',
+            $type instanceof Float_, $type instanceof Integer => 'number',
+            $type instanceof String_, $type instanceof ClassString => 'string',
+            $type instanceof Null_ => 'null',
+            $type instanceof Self_, $type instanceof Static_, $type instanceof This => $this->resolveSelfReferenceType(),
+            $type instanceof Scalar => 'string|number|boolean',
+            $type instanceof Mixed_ => 'any',
+            $type instanceof Void_ => 'never',
+            default => throw new Exception("Could not transform type: {$type}")
+        };
     }
 
     private function resolveCompoundType(Compound $compound): string
     {
         $transformed = array_map(
-            fn (Type $type) => $this->execute($type),
+            fn(Type $type) => $this->execute($type),
             iterator_to_array($compound->getIterator())
         );
 
@@ -118,7 +81,7 @@ class TranspileTypeToTypeScriptAction
         return "{$this->execute($nullable->getActualType())} | null";
     }
 
-    private function resolveObjectType(Object_ $object)
+    private function resolveObjectType(Object_ $object): string
     {
         if ($object->getFqsen() === null) {
             return 'object';
@@ -127,6 +90,15 @@ class TranspileTypeToTypeScriptAction
         return $this->missingSymbolsCollection->add(
             (string) $object->getFqsen()
         );
+    }
+
+    private function resolveSelfReferenceType(): string
+    {
+        if ($this->currentClass === null) {
+            return 'any';
+        }
+
+        return $this->missingSymbolsCollection->add($this->currentClass);
     }
 
     private function isTypeScriptArray(Type $keyType): bool

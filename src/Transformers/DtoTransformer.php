@@ -11,9 +11,12 @@ use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\TransformsTypes;
 
 class DtoTransformer implements Transformer
 {
+    use TransformsTypes;
+
     protected TypeScriptTransformerConfig $config;
 
     public function __construct(TypeScriptTransformerConfig $config)
@@ -30,32 +33,32 @@ class DtoTransformer implements Transformer
     {
         $missingSymbols = new MissingSymbolsCollection();
 
-        $properties = array_map(
-            fn (ReflectionProperty $property) => $this->resolvePropertyType($property, $missingSymbols),
-            $this->resolveProperties($class)
+        $output = array_reduce(
+            $this->resolveProperties($class),
+            function (string $carry, ReflectionProperty $property) use ($missingSymbols) {
+                $transformed = $this->reflectionToTypeScript(
+                    $property,
+                    $missingSymbols,
+                    ...$this->typeProcessors()
+                );
+
+                if ($transformed === null) {
+                    return $carry;
+                }
+
+                return "{$carry}{$property->getName()}: {$transformed};";
+            },
+            ''
         );
-
-        $output = "export type {$name} = {" . PHP_EOL;
-
-        $output .= array_reduce(
-            array_filter($properties),
-            fn (?string $output, string $property) => "{$output}{$property}" . PHP_EOL,
-        );
-
-        $output .= '}' . PHP_EOL;
 
         return TransformedType::create(
             $class,
             $name,
-            $output,
+            "export type {$name} = {{$output}}",
             $missingSymbols
         );
     }
 
-    /**
-     * @return \Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor[]
-     * @throws \Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer
-     */
     protected function typeProcessors(): array
     {
         return [
@@ -70,31 +73,9 @@ class DtoTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn (ReflectionProperty $property) => ! $property->isStatic()
+            fn(ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);
-    }
-
-    protected function resolvePropertyType(
-        ReflectionProperty $reflection,
-        MissingSymbolsCollection $missingSymbolsCollection
-    ): ?string {
-        $type = TypeReflector::new($reflection)->reflect();
-
-        foreach ($this->typeProcessors() as $processor) {
-            $type = $processor->process($type, $reflection);
-
-            if ($type === null) {
-                return null;
-            }
-        }
-
-        $transformClassPropertyTypeAction = new TranspileTypeToTypeScriptAction(
-            $missingSymbolsCollection,
-            $reflection->getDeclaringClass()->getName()
-        );
-
-        return "{$reflection->getName()}: {$transformClassPropertyTypeAction->execute($type)};";
     }
 }

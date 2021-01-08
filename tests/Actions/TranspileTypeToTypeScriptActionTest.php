@@ -3,6 +3,9 @@
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use phpDocumentor\Reflection\TypeResolver;
+use phpDocumentor\Reflection\Types\Self_;
+use phpDocumentor\Reflection\Types\Static_;
+use phpDocumentor\Reflection\Types\This;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
@@ -97,5 +100,15 @@ class TranspileTypeToTypeScriptActionTest extends TestCase
             // Mixed
             ['mixed', 'any'],
         ];
+    }
+
+    /** @test */
+    public function it_can_resolve_self_referencing_types_without_current_class()
+    {
+        $action = new TranspileTypeToTypeScriptAction($this->missingSymbols);
+
+        $this->assertEquals('any', $action->execute(new Self_()));
+        $this->assertEquals('any', $action->execute(new Static_()));
+        $this->assertEquals('any', $action->execute(new This()));
     }
 }
