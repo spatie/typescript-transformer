@@ -17,6 +17,12 @@ The package comes with a few transformers out of the box:
 
 - `SpatieStateTransformer`: this transforms a state from [the `spatie\laravel-model-states` package](https://github.com/spatie/laravel-model-status)
 
+There are also some packages with community transformers:
+
+- A [transformer](https://github.com/wt-health/laravel-enum-transformer) for `bensampo/laravel-enum` enums
+
+If you've written a transformer package, let us know, and we add it to the list!
+
 ## Writing transformers
 
 A transformer is a class that implements the `Transformer` interface:
