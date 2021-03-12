@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Collectors\AttributeCollector;
 use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithAlreadyTransformedAndNameAttributeAttribute;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithAlreadyTransformedAttributeAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptTransformerAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
@@ -64,6 +66,34 @@ class AttributeCollectorTest extends TestCase
         $this->assertTrue($this->collector->shouldCollect($reflection));
         $this->assertEquals(CollectedOccurrence::create(
             new DtoTransformer($this->config),
+            $reflection->getShortName()
+        ), $this->collector->getCollectedOccurrence($reflection));
+    }
+
+    /** @test */
+    public function it_will_collect_classes_with_already_transformed_attributes()
+    {
+        $this->markTestIncomplete();
+
+        $reflection = new ReflectionClass(WithAlreadyTransformedAttributeAttribute::class);
+
+        $this->assertTrue($this->collector->shouldCollect($reflection));
+        $this->assertEquals(CollectedOccurrence::create(
+            new MyclabsEnumTransformer(),
+            $reflection->getShortName()
+        ), $this->collector->getCollectedOccurrence($reflection));
+    }
+
+    /** @test */
+    public function it_will_collect_classes_with_already_transformed_attributes_and_take_a_name_into_account()
+    {
+        $this->markTestIncomplete();
+
+        $reflection = new ReflectionClass(WithAlreadyTransformedAndNameAttributeAttribute::class);
+
+        $this->assertTrue($this->collector->shouldCollect($reflection));
+        $this->assertEquals(CollectedOccurrence::create(
+            new MyclabsEnumTransformer(),
             $reflection->getShortName()
         ), $this->collector->getCollectedOccurrence($reflection));
     }

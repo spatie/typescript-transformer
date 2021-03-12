@@ -11,6 +11,7 @@ use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\Snapshots\MatchesSnapshots;
+use Spatie\TypeScriptTransformer\Attributes\PureTypeScript;
 use Spatie\TypeScriptTransformer\Attributes\TransformAsTypescript;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
@@ -97,6 +98,12 @@ class DtoTransformerTest extends TestCase
 
             #[TransformAsTypescript(['an_int' => 'int', 'a_bool' => 'bool'])]
             public $object;
+
+            #[PureTypeScript('never')]
+            public $pure_typescript;
+
+            #[PureTypeScript(['an_any' => 'any', 'a_never' => 'never'])]
+            public $pure_typescript_object;
 
             public int $regular_type;
         };

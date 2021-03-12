@@ -10,7 +10,7 @@ use Spatie\TypeScriptTransformer\Exceptions\UnableToTransformUsingAttribute;
 use Spatie\TypeScriptTransformer\Types\StructType;
 
 #[Attribute]
-class TransformAsTypescript
+class TransformAsTypescript implements TypeScriptTransformableAttribute
 {
     private Type|array|string $type;
 

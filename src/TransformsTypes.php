@@ -9,6 +9,7 @@ use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Attributes\TransformAsTypescript;
+use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
@@ -42,19 +43,17 @@ trait TransformsTypes
     ): Type {
         $attributes = array_filter(
             $reflection->getAttributes(),
-            fn(ReflectionAttribute $attribute) => $attribute->getName() === TransformAsTypescript::class
+            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
         );
 
         if (! empty($attributes)) {
-            /** @var \Spatie\TypeScriptTransformer\Attributes\TransformAsTypescript $attribute */
+            /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute $attribute */
             $attribute = current($attributes)->newInstance();
 
             return $attribute->getType();
         }
 
-        $type = TypeReflector::new($reflection)->reflect();
-
-        return $type;
+        return TypeReflector::new($reflection)->reflect();
     }
 
     protected function typeToTypeScript(
