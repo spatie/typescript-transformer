@@ -21,6 +21,7 @@ use phpDocumentor\Reflection\Types\String_;
 use phpDocumentor\Reflection\Types\This;
 use phpDocumentor\Reflection\Types\Void_;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Types\StructType;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 
 class TranspileTypeToTypeScriptAction
@@ -44,6 +45,7 @@ class TranspileTypeToTypeScriptAction
             $type instanceof AbstractList => $this->resolveListType($type),
             $type instanceof Nullable => $this->resolveNullableType($type),
             $type instanceof Object_ => $this->resolveObjectType($type),
+            $type instanceof StructType => $this->resolveStructType($type),
             $type instanceof TypeScriptType => (string) $type,
             $type instanceof Boolean => 'boolean',
             $type instanceof Float_, $type instanceof Integer => 'number',
@@ -90,6 +92,17 @@ class TranspileTypeToTypeScriptAction
         return $this->missingSymbolsCollection->add(
             (string) $object->getFqsen()
         );
+    }
+
+    private function resolveStructType(StructType $type): string
+    {
+        $transformed = "{";
+
+        foreach ($type->getTypes() as $name => $type) {
+            $transformed .= "{$name}:{$this->execute($type)};";
+        }
+
+        return "{$transformed}}";
     }
 
     private function resolveSelfReferenceType(): string

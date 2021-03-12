@@ -1,0 +1,1 @@
+export type Typed = {int: number;overwritable: number | boolean;object: {an_int:number;a_bool:boolean;};regular_type: number;}

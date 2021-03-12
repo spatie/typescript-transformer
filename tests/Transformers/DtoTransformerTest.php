@@ -11,7 +11,7 @@ use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\Snapshots\MatchesSnapshots;
-use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
+use Spatie\TypeScriptTransformer\Attributes\TransformAsTypescript;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
@@ -19,6 +19,7 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDto;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
+use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class DtoTransformerTest extends TestCase
@@ -58,7 +59,7 @@ class DtoTransformerTest extends TestCase
     }
 
     /** @test */
-    public function a_property_processor_can_remove_properties()
+    public function a_type_processor_can_remove_properties()
     {
         $config = TypeScriptTransformerConfig::create();
 
@@ -82,5 +83,29 @@ class DtoTransformerTest extends TestCase
         );
 
         $this->assertMatchesTextSnapshot($type->transformed);
+    }
+
+    /** @test */
+    public function it_will_take_transform_as_typescript_attributes_into_account()
+    {
+        $class = new class {
+            #[TransformAsTypescript('int')]
+            public $int;
+
+            #[TransformAsTypescript('int|bool')]
+            public int $overwritable;
+
+            #[TransformAsTypescript(['an_int' => 'int', 'a_bool' => 'bool'])]
+            public $object;
+
+            public int $regular_type;
+        };
+
+        $type = $this->transformer->transform(
+            new ReflectionClass($class),
+            'Typed'
+        );
+
+        $this->assertMatchesSnapshot($type->transformed);
     }
 }

@@ -1,0 +1,1 @@
+{a_string:string;a_float:number;a_class:{%Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum%};an_array:Array<number>;a_self_reference:{%fake_class%};an_object:{a_bool:boolean;an_int:number;};}

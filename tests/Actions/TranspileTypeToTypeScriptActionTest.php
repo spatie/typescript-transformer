@@ -7,12 +7,17 @@ use phpDocumentor\Reflection\Types\Self_;
 use phpDocumentor\Reflection\Types\Static_;
 use phpDocumentor\Reflection\Types\This;
 use PHPUnit\Framework\TestCase;
+use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypeScriptTransformer\Types\StructType;
 
 class TranspileTypeToTypeScriptActionTest extends TestCase
 {
+    use MatchesSnapshots;
+
     private TranspileTypeToTypeScriptAction $action;
 
     private MissingSymbolsCollection $missingSymbols;
@@ -110,5 +115,25 @@ class TranspileTypeToTypeScriptActionTest extends TestCase
         $this->assertEquals('any', $action->execute(new Self_()));
         $this->assertEquals('any', $action->execute(new Static_()));
         $this->assertEquals('any', $action->execute(new This()));
+    }
+
+    /** @test */
+    public function it_can_resolve_a_struct_type()
+    {
+        $transformed = $this->action->execute(StructType::fromArray([
+            'a_string' => 'string',
+            'a_float' => 'float',
+            'a_class' => RegularEnum::class,
+            'an_array' => 'int[]',
+            'a_self_reference' => '$this',
+            'an_object' => [
+                'a_bool' => 'bool',
+                'an_int' => 'int',
+            ],
+        ]));
+
+        $this->assertMatchesSnapshot($transformed);
+        $this->assertContains(RegularEnum::class, $this->missingSymbols->all());
+        $this->assertContains('fake_class', $this->missingSymbols->all());
     }
 }
