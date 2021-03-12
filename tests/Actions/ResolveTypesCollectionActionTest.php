@@ -6,11 +6,20 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
+use Spatie\TypeScriptTransformer\Exceptions\NoSearchingPathsDefined;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnumWithCustomTransformer;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnumWithName;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDto;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDtoCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTypeScriptCollector;
+use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
@@ -39,6 +48,19 @@ class ResolveTypesCollectionActionTest extends TestCase
         $typesCollection = $this->action->execute();
 
         $this->assertCount(3, $typesCollection);
+    }
+
+    /** @test */
+    public function it_will_check_if_searching_paths_are_defined()
+    {
+        $this->expectException(NoSearchingPathsDefined::class);
+
+        $action = new ResolveTypesCollectionAction(
+            new Finder(),
+            TypeScriptTransformerConfig::create()
+        );
+
+        $action->execute();
     }
 
     /** @test */
@@ -75,21 +97,34 @@ class ResolveTypesCollectionActionTest extends TestCase
     }
 
     /** @test */
-    public function it_can_parse_a_specified_file_only()
+    public function it_can_parse_multiple_directories()
     {
         $this->action = new ResolveTypesCollectionAction(
             new Finder(),
             TypeScriptTransformerConfig::create()
-                ->searchingPath(__DIR__ . '/../FakeClasses/Enum/TypeScriptEnum.php')
-                ->transformers([MyclabsEnumTransformer::class])
+                ->searchingPath(
+                    __DIR__ . '/../FakeClasses/Enum/',
+                    __DIR__ . '/../FakeClasses/Integration/'
+                )
+                ->transformers([MyclabsEnumTransformer::class, DtoTransformer::class])
                 ->collectors([AnnotationCollector::class])
                 ->outputFile('types.d.ts')
         );
 
         $types = $this->action->execute();
 
-        $this->assertCount(1, $types);
+        $this->assertCount(9, $types);
+
         $this->assertArrayHasKey(TypeScriptEnum::class, $types);
+        $this->assertArrayHasKey(TypeScriptEnumWithCustomTransformer::class, $types);
+        $this->assertArrayHasKey(TypeScriptEnumWithName::class, $types);
+
+        $this->assertArrayHasKey(Dto::class, $types);
+        $this->assertArrayHasKey(DtoWithChildren::class, $types);
+        $this->assertArrayHasKey(Enum::class, $types);
+        $this->assertArrayHasKey(OtherDto::class, $types);
+        $this->assertArrayHasKey(OtherDtoCollection::class, $types);
+        $this->assertArrayHasKey(YetAnotherDto::class, $types);
     }
 
     /** @test */

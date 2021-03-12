@@ -11,10 +11,10 @@ php artisan typescript:transform
 
 ## Command options
 
-There are some extra commands you can use when running the command. It is also possible to only transform one class:
+There are some extra commands you can use when running the command. It is also possible to transform classes in specified path:
                                                                     
 ```bash
-php artisan typescript:transform --class=app/Enums/RoleEnum.php
+php artisan typescript:transform --path=app/Enums
 ```
 
 Or you can define another output file than the default one:

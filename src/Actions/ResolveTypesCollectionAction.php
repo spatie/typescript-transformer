@@ -7,6 +7,7 @@ use IteratorAggregate;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\ClassIteratorFileFilter;
 use Spatie\TypeScriptTransformer\Collectors\Collector;
+use Spatie\TypeScriptTransformer\Exceptions\NoSearchingPathsDefined;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
@@ -33,7 +34,13 @@ class ResolveTypesCollectionAction
     {
         $collection = new TypesCollection();
 
-        foreach ($this->resolveIterator() as $class) {
+        $searchingPaths = $this->config->getSearchingPaths();
+
+        if(empty($searchingPaths)){
+            throw NoSearchingPathsDefined::create();
+        }
+
+        foreach ($this->resolveIterator($searchingPaths) as $class) {
             $collector = $this->resolveCollector($class);
 
             if ($collector === null) {
@@ -53,23 +60,16 @@ class ResolveTypesCollectionAction
         return $collection;
     }
 
-    protected function resolveIterator(): IteratorAggregate
+    protected function resolveIterator(array $searchingPaths): IteratorAggregate
     {
-        $searchingPath = is_dir($this->config->getSearchingPath())
-            ? $this->config->getSearchingPath()
-            : dirname($this->config->getSearchingPath());
+        $searchingPaths = array_map(
+            fn(string $searchingPath) => is_dir($searchingPath) ? $searchingPath : dirname($searchingPath),
+            $searchingPaths
+        );
 
-        $iterator = new ClassIterator($this->finder->in($searchingPath));
+        $iterator = new ClassIterator($this->finder->in($searchingPaths));
 
-        $iterator->enableAutoloading();
-
-        if (is_file($this->config->getSearchingPath())) {
-            return $iterator->filter(
-                new ClassIteratorFileFilter($this->config->getSearchingPath())
-            );
-        }
-
-        return $iterator;
+        return $iterator->enableAutoloading();
     }
 
     protected function resolveCollector(ReflectionClass $class): ?Collector
