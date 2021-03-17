@@ -14,3 +14,5 @@ Nieuw:
 - Add support for formatters
 - Attributes for parsing classes
 - PHP 8 union types
+
+Voor relase -> laravel-typescript transforer (dependencies naar local weg halen)

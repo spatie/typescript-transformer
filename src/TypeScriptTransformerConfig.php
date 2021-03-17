@@ -78,7 +78,7 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function formatter(string $formatter): self
+    public function formatter(?string $formatter): self
     {
         $this->formatter = $formatter;
 

@@ -6,6 +6,7 @@ use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Exceptions\UnableToTransformUsingAttribute;
 
+/** @psalm-immutable */
 class StructType implements Type
 {
     /** @var array<string, \phpDocumentor\Reflection\Type> */
