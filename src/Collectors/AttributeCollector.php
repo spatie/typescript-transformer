@@ -2,15 +2,16 @@
 
 namespace Spatie\TypeScriptTransformer\Collectors;
 
-use Exception;
 use ReflectionAttribute;
 use ReflectionClass;
+use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\ClassReader;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TransformerFactory;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -39,7 +40,7 @@ class AttributeCollector extends Collector
         return ! empty($attributes);
     }
 
-    public function getCollectedOccurrence(ReflectionClass $class): CollectedOccurrence
+    public function getTransformedType(ReflectionClass $class): TransformedType
     {
         $name = $this->resolveName($class);
 
@@ -48,17 +49,26 @@ class AttributeCollector extends Collector
             ReflectionAttribute::IS_INSTANCEOF
         );
 
-        if (! empty($typeScriptTransformableAttributes)) {
-            /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute $attribute */
-            $attribute = current($typeScriptTransformableAttributes);
+        if (empty($typeScriptTransformableAttributes)) {
+            $transformer = $this->resolveTransformer($class);
 
-            throw new Exception('Not yet implemented');
-            // TODO: implement a transformer
+            return $transformer->transform($class, $name);
         }
 
-        return CollectedOccurrence::create(
-            $this->resolveTransformer($class),
-            $name
+        /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute $attribute */
+        $attribute = current($typeScriptTransformableAttributes)->newInstance();
+
+        $missingSymbols = new MissingSymbolsCollection();
+
+        $transpiler = new TranspileTypeToTypeScriptAction(
+            $missingSymbols,
+            $class->getName()
+        );
+
+        return TransformedType::create(
+            $class,
+            $name,
+            "export type {$name} = {$transpiler->execute($attribute->getType())};"
         );
     }
 
@@ -93,13 +103,13 @@ class AttributeCollector extends Collector
             ReflectionAttribute::IS_INSTANCEOF
         );
 
-        if (empty($nameAttribute)) {
+        if (empty($nameAttributes)) {
             return $class->getShortName();
         }
 
         /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScript $nameAttribute */
         $nameAttribute = $nameAttributes[0]->newInstance();
 
-        return $nameAttribute->name;
+        return $nameAttribute->name ?? $class->getShortName();
     }
 }

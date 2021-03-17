@@ -47,14 +47,7 @@ class ResolveTypesCollectionAction
                 continue;
             }
 
-            $collectedOccurrence = $collector->getCollectedOccurrence($class);
-
-            $type = $collectedOccurrence->transformer->transform(
-                $class,
-                $collectedOccurrence->name
-            );
-
-            $collection[] = $type;
+            $collection[] = $collector->getTransformedType($class);
         }
 
         return $collection;

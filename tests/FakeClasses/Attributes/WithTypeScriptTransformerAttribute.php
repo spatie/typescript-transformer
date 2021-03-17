@@ -10,4 +10,5 @@ use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 #[TypeScriptTransformer(DtoTransformer::class)]
 class WithTypeScriptTransformerAttribute
 {
+    public int $an_int;
 }

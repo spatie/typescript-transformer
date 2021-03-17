@@ -8,4 +8,6 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 #[TypeScript]
 class WithTypeScriptAttribute extends Enum
 {
+    const A = 'a';
+    const B = 'b';
 }

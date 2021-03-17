@@ -6,6 +6,7 @@ use ReflectionClass;
 use Spatie\TypeScriptTransformer\ClassReader;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TransformerFactory;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -29,17 +30,16 @@ class AnnotationCollector extends Collector
         return (bool) strpos($class->getDocComment(), '@typescript');
     }
 
-    public function getCollectedOccurrence(ReflectionClass $class): CollectedOccurrence
+    public function getTransformedType(ReflectionClass $class): TransformedType
     {
         [
             'name' => $name,
             'transformer' => $transformer,
         ] = $this->classReader->forClass($class);
 
-        return CollectedOccurrence::create(
-            $this->resolveTransformer($class, $transformer),
-            $name
-        );
+        $transformer = $this->resolveTransformer($class, $transformer);
+
+        return $transformer->transform($class, $name);
     }
 
     protected function resolveTransformer(

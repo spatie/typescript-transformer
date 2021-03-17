@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
+use Spatie\TypeScriptTransformer\Formatters\Formatter;
+use Spatie\TypeScriptTransformer\Formatters\PrettierFormatter;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class FormatTypeScriptActionTest extends TestCase
@@ -16,7 +18,7 @@ class FormatTypeScriptActionTest extends TestCase
 
     private string $outputFile;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -28,9 +30,16 @@ class FormatTypeScriptActionTest extends TestCase
     /** @test */
     public function it_can_format_an_generated_file()
     {
+        $formatter = new class implements Formatter {
+            public function format(string $file): void
+            {
+                file_put_contents($file, 'formatted');
+            }
+        };
+
         $action = new FormatTypeScriptAction(
             TypeScriptTransformerConfig::create()
-                ->enableFormatting()
+                ->formatter($formatter::class)
                 ->outputFile($this->outputFile)
         );
 
@@ -41,7 +50,7 @@ class FormatTypeScriptActionTest extends TestCase
 
         $action->execute();
 
-        $this->assertMatchesFileSnapshot($this->outputFile);
+        $this->assertEquals('formatted', file_get_contents($this->outputFile));
     }
 
     /** @test */

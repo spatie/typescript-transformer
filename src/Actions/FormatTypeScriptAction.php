@@ -3,8 +3,6 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
 class FormatTypeScriptAction
 {
@@ -15,19 +13,14 @@ class FormatTypeScriptAction
         $this->config = $config;
     }
 
-    public function execute()
+    public function execute(): void
     {
-        if (! $this->config->isFormattingEnabled()) {
+        $formatter = $this->config->getFormatter();
+
+        if ($formatter === null) {
             return;
         }
 
-        $file = $this->config->getOutputFile();
-
-        $process = new Process(['prettier', '--write', $file]);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
+        $formatter->format($this->config->getOutputFile());
     }
 }

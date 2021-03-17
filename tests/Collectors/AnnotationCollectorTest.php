@@ -56,19 +56,16 @@ class AnnotationCollectorTest extends TestCase
         );
 
         $this->assertTrue($this->collector->shouldCollect($reflection));
-        $this->assertEquals(CollectedOccurrence::create(
-            new MyclabsEnumTransformer(),
-            $reflection->getShortName()
-        ), $this->collector->getCollectedOccurrence($reflection));
+        $this->assertStringContainsString(
+            " = 'a' | 'yes' | 'no';",
+            $this->collector->getTransformedType($reflection)->transformed,
+        );
     }
 
     /** @test */
-    public function it_will_read_overwritten_transformers()
+    public function it_will_collect_annotated_classes_and_use_the_given_name()
     {
-        /**
-         * @typescript
-         * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\DtoTransformer
-         */
+        /** @typescript EnumTransformed */
         $class = new class('a') extends Enum {
             const A = 'a';
         };
@@ -78,10 +75,34 @@ class AnnotationCollectorTest extends TestCase
         );
 
         $this->assertTrue($this->collector->shouldCollect($reflection));
-        $this->assertEquals(CollectedOccurrence::create(
-            new DtoTransformer($this->config),
-            $reflection->getShortName()
-        ), $this->collector->getCollectedOccurrence($reflection));
+        $this->assertEquals(
+            "export type EnumTransformed = 'a' | 'yes' | 'no';",
+            $this->collector->getTransformedType($reflection)->transformed,
+        );
+    }
+
+    /** @test */
+    public function it_will_read_overwritten_transformers()
+    {
+        /**
+         * @typescript DtoTransformed
+         * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\DtoTransformer
+         */
+        $class = new class('a') extends Enum {
+            const A = 'a';
+
+            public int $an_integer;
+        };
+
+        $reflection = new ReflectionClass(
+            $class
+        );
+
+        $this->assertTrue($this->collector->shouldCollect($reflection));
+        $this->assertStringContainsString(
+            "export type DtoTransformed = {an_integer: number;}",
+            $this->collector->getTransformedType($reflection)->transformed,
+        );
     }
 
     /** @test */
@@ -97,7 +118,6 @@ class AnnotationCollectorTest extends TestCase
             $class
         );
 
-
-        $this->collector->getCollectedOccurrence($reflection);
+        $this->collector->getTransformedType($reflection);
     }
 }

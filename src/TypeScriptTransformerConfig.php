@@ -6,6 +6,7 @@ use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
+use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
@@ -23,7 +24,7 @@ class TypeScriptTransformerConfig
 
     private string $writer = TypeDefinitionWriter::class;
 
-    private bool $enableFormatting = false;
+    private ?string $formatter = null;
 
     public function __construct()
     {
@@ -77,9 +78,9 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function enableFormatting(bool $enableFormatting = true): self
+    public function formatter(string $formatter): self
     {
-        $this->enableFormatting = $enableFormatting;
+        $this->formatter = $formatter;
 
         return $this;
     }
@@ -95,7 +96,7 @@ class TypeScriptTransformerConfig
         $factory = new TransformerFactory($this);
 
         return array_map(
-            fn (string $transformer) => $factory->create($transformer),
+            fn(string $transformer) => $factory->create($transformer),
             $this->transformers
         );
     }
@@ -114,7 +115,7 @@ class TypeScriptTransformerConfig
     public function getCollectors(): array
     {
         return array_map(
-            fn (string $collector) => new $collector($this),
+            fn(string $collector) => new $collector($this),
             $this->collectors
         );
     }
@@ -138,8 +139,12 @@ class TypeScriptTransformerConfig
         return $replacements;
     }
 
-    public function isFormattingEnabled(): bool
+    public function getFormatter(): ?Formatter
     {
-        return $this->enableFormatting;
+        if ($this->formatter === null) {
+            return null;
+        }
+
+        return new $this->formatter;
     }
 }

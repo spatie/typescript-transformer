@@ -52,7 +52,7 @@ class DtoTransformer implements Transformer
         return TransformedType::create(
             $class,
             $name,
-            "export type {$name} = {{$output}}",
+            "export type {$name} = {{$output}};",
             $missingSymbols
         );
     }

@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer\Collectors;
 
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 abstract class Collector
@@ -17,5 +18,5 @@ abstract class Collector
 
     abstract public function shouldCollect(ReflectionClass $class): bool;
 
-    abstract public function getCollectedOccurrence(ReflectionClass $class): CollectedOccurrence;
+    abstract public function getTransformedType(ReflectionClass $class): TransformedType;
 }
