@@ -31,7 +31,25 @@ class DtoTransformer implements Transformer
     {
         $missingSymbols = new MissingSymbolsCollection();
 
-        $output = array_reduce(
+        $type = join([
+            $this->transformProperties($class, $missingSymbols),
+            $this->transformMethods($class, $missingSymbols),
+            $this->transformExtra($class, $missingSymbols),
+        ]);
+
+        return TransformedType::create(
+            $class,
+            $name,
+            "export type {$name} = {{$type}};",
+            $missingSymbols
+        );
+    }
+
+    protected function transformProperties(
+        ReflectionClass $class,
+        MissingSymbolsCollection $missingSymbols
+    ): string {
+        return array_reduce(
             $this->resolveProperties($class),
             function (string $carry, ReflectionProperty $property) use ($missingSymbols) {
                 $transformed = $this->reflectionToTypeScript(
@@ -48,13 +66,20 @@ class DtoTransformer implements Transformer
             },
             ''
         );
+    }
 
-        return TransformedType::create(
-            $class,
-            $name,
-            "export type {$name} = {{$output}};",
-            $missingSymbols
-        );
+    protected function transformMethods(
+        ReflectionClass $class,
+        MissingSymbolsCollection $missingSymbols
+    ): string {
+        return '';
+    }
+
+    protected function transformExtra(
+        ReflectionClass $class,
+        MissingSymbolsCollection $missingSymbols
+    ): string {
+        return '';
     }
 
     protected function typeProcessors(): array
@@ -71,7 +96,7 @@ class DtoTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn (ReflectionProperty $property) => ! $property->isStatic()
+            fn(ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);
