@@ -66,32 +66,19 @@ class ClassReaderTest extends TestCase
     }
 
     /** @test */
-    public function it_will_will_throw_an_exception_with_non_existing_transformers()
+    public function inline_case(): void
     {
-        $this->expectException(InvalidTransformerGiven::class);
-        $this->expectDeprecationMessageMatches("/does not exist!/");
-
         /**
-         * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\IDoNotExist
+         * @typescript
+         * @typescript-inline
          */
         $fake = new class {
         };
 
-        $this->reader->forClass(new ReflectionClass($fake));
-    }
+        ['inline' => $inline] = $this->reader->forClass(
+            new ReflectionClass($fake)
+        );
 
-    /** @test */
-    public function it_will_will_throw_an_exception_with_class_that_does_not_implement_transformer()
-    {
-        $this->expectException(InvalidTransformerGiven::class);
-        $this->expectDeprecationMessageMatches("/does not implement the Transformer interface!/");
-
-        /**
-         * @typescript-transformer \Spatie\TypeScriptTransformer\Structures\TransformedType
-         */
-        $fake = new class {
-        };
-
-        $this->reader->forClass(new ReflectionClass($fake));
+        $this->assertTrue($inline);
     }
 }

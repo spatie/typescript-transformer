@@ -8,6 +8,7 @@ use ReflectionClass;
 use Spatie\TypeScriptTransformer\ClassIteratorFileFilter;
 use Spatie\TypeScriptTransformer\Collectors\Collector;
 use Spatie\TypeScriptTransformer\Exceptions\NoSearchingPathsDefined;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
@@ -36,18 +37,18 @@ class ResolveTypesCollectionAction
 
         $searchingPaths = $this->config->getSearchingPaths();
 
-        if(empty($searchingPaths)){
+        if (empty($searchingPaths)) {
             throw NoSearchingPathsDefined::create();
         }
 
         foreach ($this->resolveIterator($searchingPaths) as $class) {
-            $collector = $this->resolveCollector($class);
+            $transformedType = $this->resolveTransformedType($class);
 
-            if ($collector === null) {
+            if ($transformedType === null) {
                 continue;
             }
 
-            $collection[] = $collector->getTransformedType($class);
+            $collection[] = $transformedType;
         }
 
         return $collection;
@@ -65,11 +66,13 @@ class ResolveTypesCollectionAction
         return $iterator->enableAutoloading();
     }
 
-    protected function resolveCollector(ReflectionClass $class): ?Collector
+    protected function resolveTransformedType(ReflectionClass $class): ?TransformedType
     {
         foreach ($this->collectors as $collector) {
-            if ($collector->shouldCollect($class)) {
-                return $collector;
+            $transformedType = $collector->getTransformedType($class);
+
+            if ($transformedType !== null) {
+                return $transformedType;
             }
         }
 

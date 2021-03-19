@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
+use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Test;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
@@ -30,7 +31,7 @@ class IntegrationTest extends TestCase
                 DtoTransformer::class,
             ])
             ->collectors([
-                AnnotationCollector::class,
+                DefaultCollector::class,
             ]);
     }
 

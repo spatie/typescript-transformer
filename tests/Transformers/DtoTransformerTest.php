@@ -11,8 +11,8 @@ use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\Snapshots\MatchesSnapshots;
-use Spatie\TypeScriptTransformer\Attributes\PureTypeScript;
-use Spatie\TypeScriptTransformer\Attributes\TransformAsTypescript;
+use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
+use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
@@ -90,19 +90,19 @@ class DtoTransformerTest extends TestCase
     public function it_will_take_transform_as_typescript_attributes_into_account()
     {
         $class = new class {
-            #[TransformAsTypescript('int')]
+            #[TypeScriptType('int')]
             public $int;
 
-            #[TransformAsTypescript('int|bool')]
+            #[TypeScriptType('int|bool')]
             public int $overwritable;
 
-            #[TransformAsTypescript(['an_int' => 'int', 'a_bool' => 'bool'])]
+            #[TypeScriptType(['an_int' => 'int', 'a_bool' => 'bool'])]
             public $object;
 
-            #[PureTypeScript('never')]
+            #[LiteralTypeScriptType('never')]
             public $pure_typescript;
 
-            #[PureTypeScript(['an_any' => 'any', 'a_never' => 'never'])]
+            #[LiteralTypeScriptType(['an_any' => 'any', 'a_never' => 'never'])]
             public $pure_typescript_object;
 
             public int $regular_type;

@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\Types\StructType;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 
 #[Attribute]
-class PureTypeScript implements TypeScriptTransformableAttribute
+class LiteralTypeScriptType implements TypeScriptTransformableAttribute
 {
     private string|array $typeScript;
 

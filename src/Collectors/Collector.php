@@ -16,7 +16,5 @@ abstract class Collector
         $this->config = $config;
     }
 
-    abstract public function shouldCollect(ReflectionClass $class): bool;
-
-    abstract public function getTransformedType(ReflectionClass $class): TransformedType;
+    abstract public function getTransformedType(ReflectionClass $class): ?TransformedType;
 }

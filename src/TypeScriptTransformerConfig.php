@@ -6,6 +6,7 @@ use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Collectors\AttributeCollector;
+use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
@@ -18,7 +19,7 @@ class TypeScriptTransformerConfig
 
     private array $transformers = [];
 
-    private array $collectors;
+    private array $collectors = [DefaultCollector::class];
 
     private string $outputFile = 'types.d.ts';
 
@@ -27,11 +28,6 @@ class TypeScriptTransformerConfig
     private string $writer = TypeDefinitionWriter::class;
 
     private ?string $formatter = null;
-
-    public function __construct()
-    {
-        $this->collectors = [AttributeCollector::class, AnnotationCollector::class];
-    }
 
     public static function create(): self
     {
@@ -54,7 +50,7 @@ class TypeScriptTransformerConfig
 
     public function collectors(array $collectors)
     {
-        $this->collectors = array_merge($collectors, [AttributeCollector::class, AnnotationCollector::class]);
+        $this->collectors = array_merge($collectors, [DefaultCollector::class]);
 
         return $this;
     }

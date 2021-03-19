@@ -6,14 +6,13 @@ use ReflectionClass;
 
 class FakeReflectionClass extends ReflectionClass
 {
+    use FakedReflection;
+
     private ?string $withNamespace = null;
 
-    private ?string $withName = null;
-
-    public static function create(): self
+    public function __construct()
     {
-        return new self(new class {
-        });
+        parent::__construct(new class{});
     }
 
     public function withNamespace(string $namespace): self
@@ -30,13 +29,6 @@ class FakeReflectionClass extends ReflectionClass
         return $this;
     }
 
-    public function withName(string $name): self
-    {
-        $this->withName = $name;
-
-        return $this;
-    }
-
     public function getNamespaceName()
     {
         return $this->withNamespace ?? parent::getNamespaceName();
@@ -44,7 +36,7 @@ class FakeReflectionClass extends ReflectionClass
 
     public function getName()
     {
-        $name = $this->withName ?? parent::getShortName();
+        $name = $this->entityName ?? parent::getShortName();
 
         return empty($this->getNamespaceName())
             ? $name

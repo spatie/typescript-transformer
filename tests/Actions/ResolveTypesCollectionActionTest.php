@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
+use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\NoSearchingPathsDefined;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
@@ -37,7 +38,7 @@ class ResolveTypesCollectionActionTest extends TestCase
             TypeScriptTransformerConfig::create()
                 ->searchingPath(__DIR__ . '/../FakeClasses/Enum')
                 ->transformers([MyclabsEnumTransformer::class])
-                ->collectors([AnnotationCollector::class])
+                ->collectors([DefaultCollector::class])
                 ->outputFile('types.d.ts')
         );
     }
@@ -107,7 +108,7 @@ class ResolveTypesCollectionActionTest extends TestCase
                     __DIR__ . '/../FakeClasses/Integration/'
                 )
                 ->transformers([MyclabsEnumTransformer::class, DtoTransformer::class])
-                ->collectors([AnnotationCollector::class])
+                ->collectors([DefaultCollector::class])
                 ->outputFile('types.d.ts')
         );
 

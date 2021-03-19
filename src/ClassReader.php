@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer;
 
-use Exception;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
@@ -12,9 +11,16 @@ class ClassReader
     public function forClass(ReflectionClass $class): array
     {
         return [
+            'transformable' => $this->resolveTransformable($class),
             'name' => $this->resolveName($class),
             'transformer' => $this->resolveTransformer($class),
+            'inline' => $this->resolveInline($class),
         ];
+    }
+
+    protected function resolveTransformable(ReflectionClass $class): bool
+    {
+        return str_contains($class->getDocComment(), '@typescript');
     }
 
     protected function resolveName(ReflectionClass $class): string
@@ -27,14 +33,10 @@ class ClassReader
             $annotations
         );
 
-        if (count($annotations) !== 2) {
-            throw new Exception("Wrong TypeScript definition in {$class->getName()}");
-        }
+        $name = $annotations[1] ?? null;
 
-        $name = $annotations[1];
-
-        if (empty($name)) {
-            $name = $class->getShortName();
+        if (count($annotations) !== 2 || empty($name)) {
+            return $class->getShortName();
         }
 
         return $name;
@@ -54,16 +56,11 @@ class ClassReader
             return null;
         }
 
-        $transformerClass = $annotations[1];
+        return $annotations[1];
+    }
 
-        if (! class_exists($transformerClass)) {
-            throw InvalidTransformerGiven::classDoesNotExist($class, $transformerClass);
-        }
-
-        if (! is_subclass_of($transformerClass, Transformer::class)) {
-            throw InvalidTransformerGiven::classIsNotATransformer($class, $transformerClass);
-        }
-
-        return $transformerClass;
+    private function resolveInline(ReflectionClass $class): bool
+    {
+        return str_contains($class->getDocComment(), '@typescript-inline');
     }
 }
