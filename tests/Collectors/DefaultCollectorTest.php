@@ -112,7 +112,7 @@ class DefaultCollectorTest extends TestCase
         $this->assertNotNull($transformedType);
         $this->assertEquals('DtoTransformed', $transformedType->name);
         $this->assertEquals(
-            "{an_integer: number;}",
+            '{'.PHP_EOL.'an_integer: number;'.PHP_EOL.'}',
             $transformedType->transformed,
         );
     }
@@ -159,7 +159,7 @@ class DefaultCollectorTest extends TestCase
         $this->assertNotNull($transformedType);
         $this->assertEquals('WithTypeScriptTransformerAttribute', $transformedType->name);
         $this->assertEquals(
-            '{an_int: number;}',
+            '{'.PHP_EOL.'an_int: number;'.PHP_EOL.'}',
             $transformedType->transformed,
         );
     }

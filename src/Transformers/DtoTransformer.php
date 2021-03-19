@@ -39,7 +39,7 @@ class DtoTransformer implements Transformer
         return TransformedType::create(
             $class,
             $name,
-            "{{$type}}",
+            "{" . PHP_EOL . $type . "}",
             $missingSymbols
         );
     }
@@ -66,7 +66,7 @@ class DtoTransformer implements Transformer
                     return $carry;
                 }
 
-                return "{$carry}{$property->getName()}: {$transformed};";
+                return "{$carry}{$property->getName()}: {$transformed};" . PHP_EOL;
             },
             ''
         );

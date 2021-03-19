@@ -1,1 +1,5 @@
-{string: string;default: string;documented_string: string;}
+{
+string: string;
+default: string;
+documented_string: string;
+}
