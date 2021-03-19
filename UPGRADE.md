@@ -7,5 +7,9 @@
 - The DTO transformer was completely rewritten, please take a look at the docs how to create you own
 
 Laravel
-- In the Laravel config `searching_path` is renamed to `searching_paths`
+- In the Laravel config:
+    - `searching_path` is renamed to `searching_paths`
+    -  `class_property_replacements` is renamed to `default_type_relacements`
+    -  `writer` and `formatter` were added 
+- You should add the `AttributeCollector::class` to your `collectors` key in the config file when you want to use attributes
 - It is not possible anymore to convert one file to TypeScript
