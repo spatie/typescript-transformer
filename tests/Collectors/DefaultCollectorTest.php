@@ -10,6 +10,7 @@ use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithAlreadyTransformedAttributeAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptAttribute;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptInlineAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptTransformerAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
@@ -171,6 +172,34 @@ class DefaultCollectorTest extends TestCase
             'export type WithAlreadyTransformedAttributeAttribute = {an_int:number;a_bool:boolean;};',
             $transformedType->transformed,
         );
+    }
+
+    /** @test */
+    public function it_can_inline_collected_classes_with_annotations()
+    {
+        $reflection = new ReflectionClass(WithTypeScriptInlineAttribute::class);
+
+        $transformedType = $this->collector->getTransformedType($reflection);
+
+        $this->assertNotNull($transformedType);
+        $this->assertTrue($transformedType->isInline);
+    }
+
+    /** @test */
+    public function it_can_inline_collected_classes_with_attributes()
+    {
+        /**
+         * @typescript
+         * @typescript-inline
+         */
+        $class = new class('a') extends Enum {
+            const A = 'a';
+        };
+
+        $transformedType = $this->collector->getTransformedType(new ReflectionClass($class));
+
+        $this->assertNotNull($transformedType);
+        $this->assertTrue($transformedType->isInline);
     }
 
     /** @test */

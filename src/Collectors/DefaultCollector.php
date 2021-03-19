@@ -21,57 +21,79 @@ class DefaultCollector extends Collector
             return null;
         }
 
-        return $this->resolveTransformedType($reflector);
-    }
+        $transformedType = $reflector->getType()
+            ? $this->resolveAlreadyTransformedType($reflector)
+            : $this->resolveTypeViaTransformer($reflector);
 
-    protected function resolveTransformedType(ClassTypeReflector $reflector): TransformedType
-    {
-        if ($reflector->getType()) {
-            $missingSymbols = new MissingSymbolsCollection();
-            $name = $reflector->getName();
-
-            $transpiler = new TranspileTypeToTypeScriptAction(
-                $missingSymbols,
-                $name
-            );
-
-            return TransformedType::create(
-                $reflector->getReflectionClass(),
-                $reflector->getName(),
-                "export type {$name} = {$transpiler->execute($reflector->getType())};"
-            );
+        if ($reflector->isInline()) {
+            $transformedType->name = null;
+            $transformedType->isInline = true;
         }
 
+        return $transformedType;
+    }
+
+    protected function resolveAlreadyTransformedType(ClassTypeReflector $reflector): TransformedType
+    {
+        $missingSymbols = new MissingSymbolsCollection();
+        $name = $reflector->getName();
+
+        $transpiler = new TranspileTypeToTypeScriptAction(
+            $missingSymbols,
+            $name
+        );
+
+        return TransformedType::create(
+            $reflector->getReflectionClass(),
+            $reflector->getName(),
+            "export type {$name} = {$transpiler->execute($reflector->getType())};"
+        );
+    }
+
+    protected function resolveTypeViaTransformer(ClassTypeReflector $reflector): ?TransformedType
+    {
         $transformerClass = $reflector->getTransformerClass();
 
         if ($transformerClass !== null) {
-            if (! class_exists($transformerClass)) {
-                throw InvalidTransformerGiven::classDoesNotExist(
-                    $reflector->getReflectionClass(),
-                    $transformerClass
-                );
-            }
-
-            if (! is_subclass_of($transformerClass, Transformer::class)) {
-                throw InvalidTransformerGiven::classIsNotATransformer(
-                    $reflector->getReflectionClass(),
-                    $transformerClass
-                );
-            }
-
-            $transformer = $this->config->buildTransformer($transformerClass);
-
-            return $transformer->transform($reflector->getReflectionClass(), $reflector->getName());
+            return $this->resolveTypeViaPredefinedTransformer($reflector);
         }
 
-        $foundTransformer = null;
-
         foreach ($this->config->getTransformers() as $transformer) {
-            if ($transformed = $transformer->transform($reflector->getReflectionClass(), $reflector->getName())) {
+            $transformed = $transformer->transform(
+                $reflector->getReflectionClass(),
+                $reflector->getName()
+            );
+
+            if ($transformed !== null) {
                 return $transformed;
             }
         }
 
         throw TransformerNotFound::create($reflector->getReflectionClass());
     }
+
+    protected function resolveTypeViaPredefinedTransformer(ClassTypeReflector $reflector): ?TransformedType
+    {
+        if (! class_exists($reflector->getTransformerClass())) {
+            throw InvalidTransformerGiven::classDoesNotExist(
+                $reflector->getReflectionClass(),
+                $reflector->getTransformerClass()
+            );
+        }
+
+        if (! is_subclass_of($reflector->getTransformerClass(), Transformer::class)) {
+            throw InvalidTransformerGiven::classIsNotATransformer(
+                $reflector->getReflectionClass(),
+                $reflector->getTransformerClass()
+            );
+        }
+
+        $transformer = $this->config->buildTransformer($reflector->getTransformerClass());
+
+        return $transformer->transform(
+            $reflector->getReflectionClass(),
+            $reflector->getName()
+        );
+    }
+
 }

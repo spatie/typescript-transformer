@@ -13,3 +13,12 @@ Laravel
     -  `writer` and `formatter` were added 
 - You should add the `AttributeCollector::class` to your `collectors` key in the config file when you want to use attributes
 - It is not possible anymore to convert one file to TypeScript
+
+TODO:
+- default collector
+- update docs
+- inline type testen
+- collectors omzetten naar interface?
+- transformer en collector changes beschrijven
+- laravel package updaten
+- changes seb

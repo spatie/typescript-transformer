@@ -20,6 +20,19 @@ class ClassReaderTest extends TestCase
     }
 
     /** @test */
+    public function non_transformable_case(): void
+    {
+        $fake = new class {
+        };
+
+        ['transformable' => $transformable] = $this->reader->forClass(
+            new ReflectionClass($fake)
+        );
+
+        $this->assertFalse($transformable);
+    }
+
+    /** @test */
     public function default_case(): void
     {
         /**
