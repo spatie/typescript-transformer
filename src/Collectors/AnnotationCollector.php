@@ -15,14 +15,11 @@ class AnnotationCollector extends Collector
 {
     protected ClassReader $classReader;
 
-    protected TransformerFactory $transformerFactory;
-
     public function __construct(TypeScriptTransformerConfig $config)
     {
         parent::__construct($config);
 
         $this->classReader = new ClassReader();
-        $this->transformerFactory = new TransformerFactory($config);
     }
 
     public function shouldCollect(ReflectionClass $class): bool
@@ -47,7 +44,7 @@ class AnnotationCollector extends Collector
         ?string $transformer
     ): Transformer {
         if ($transformer !== null) {
-            return $this->transformerFactory->create($transformer);
+            return $this->config->buildTransformer($transformer);
         }
 
         foreach ($this->config->getTransformers() as $transformer) {

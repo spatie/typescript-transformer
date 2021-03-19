@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer;
+namespace Spatie\TypeScriptTransformer\Transformers;
 
 use phpDocumentor\Reflection\Type;
 use ReflectionAttribute;
@@ -8,7 +8,6 @@ use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
-use Spatie\TypeScriptTransformer\Attributes\TransformAsTypescript;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;

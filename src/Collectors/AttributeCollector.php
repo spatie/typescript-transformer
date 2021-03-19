@@ -20,14 +20,11 @@ class AttributeCollector extends Collector
 {
     protected ClassReader $classReader;
 
-    protected TransformerFactory $transformerFactory;
-
     public function __construct(TypeScriptTransformerConfig $config)
     {
         parent::__construct($config);
 
         $this->classReader = new ClassReader();
-        $this->transformerFactory = new TransformerFactory($config);
     }
 
     public function shouldCollect(ReflectionClass $class): bool
@@ -84,7 +81,7 @@ class AttributeCollector extends Collector
             /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformer $transformerClass */
             $transformerAttribute = $transformerAttributes[0];
 
-            return $this->transformerFactory->create($transformerAttribute->newInstance()->transformer);
+            return $this->config->buildTransformer($transformerAttribute->newInstance()->transformer);
         }
 
         foreach ($this->config->getTransformers() as $transformer) {

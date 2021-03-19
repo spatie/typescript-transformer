@@ -5,8 +5,10 @@ namespace Spatie\TypeScriptTransformer;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
+use Spatie\TypeScriptTransformer\Collectors\AttributeCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
@@ -28,7 +30,7 @@ class TypeScriptTransformerConfig
 
     public function __construct()
     {
-        $this->collectors = [AnnotationCollector::class];
+        $this->collectors = [AttributeCollector::class, AnnotationCollector::class];
     }
 
     public static function create(): self
@@ -52,7 +54,7 @@ class TypeScriptTransformerConfig
 
     public function collectors(array $collectors)
     {
-        $this->collectors = array_merge($collectors, [AnnotationCollector::class]);
+        $this->collectors = array_merge($collectors, [AttributeCollector::class, AnnotationCollector::class]);
 
         return $this;
     }
@@ -93,12 +95,17 @@ class TypeScriptTransformerConfig
     /**@return \Spatie\TypeScriptTransformer\Transformers\Transformer[] */
     public function getTransformers(): array
     {
-        $factory = new TransformerFactory($this);
-
         return array_map(
-            fn(string $transformer) => $factory->create($transformer),
+            fn(string $transformer) => $this->buildTransformer($transformer),
             $this->transformers
         );
+    }
+
+    public function buildTransformer(string $transformer): Transformer
+    {
+        return method_exists($transformer, '__construct')
+            ? new $transformer($this)
+            : new $transformer;
     }
 
     public function getWriter(): Writer
