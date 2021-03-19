@@ -71,7 +71,7 @@ class ResolveTypesCollectionActionTest extends TestCase
 
         $this->assertEquals(new ReflectionClass(new TypeScriptEnum('js')), $type->reflection);
         $this->assertEquals('TypeScriptEnum', $type->name);
-        $this->assertEquals("export type TypeScriptEnum = 'js';", $type->transformed);
+        $this->assertEquals("'js'", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
     }
 
@@ -82,7 +82,7 @@ class ResolveTypesCollectionActionTest extends TestCase
 
         $this->assertEquals(new ReflectionClass(new TypeScriptEnumWithName('js')), $type->reflection);
         $this->assertEquals('EnumWithName', $type->name);
-        $this->assertEquals("export type EnumWithName = 'js';", $type->transformed);
+        $this->assertEquals("'js'", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
     }
 

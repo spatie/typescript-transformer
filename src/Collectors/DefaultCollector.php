@@ -46,7 +46,7 @@ class DefaultCollector extends Collector
         return TransformedType::create(
             $reflector->getReflectionClass(),
             $reflector->getName(),
-            "export type {$name} = {$transpiler->execute($reflector->getType())};"
+            $transpiler->execute($reflector->getType()),
         );
     }
 

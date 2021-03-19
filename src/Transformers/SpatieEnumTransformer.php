@@ -17,7 +17,7 @@ class SpatieEnumTransformer implements Transformer
         return TransformedType::create(
             $class,
             $name,
-            "export type {$name} = {$this->resolveOptions($class)};"
+            $this->resolveOptions($class)
         );
     }
 

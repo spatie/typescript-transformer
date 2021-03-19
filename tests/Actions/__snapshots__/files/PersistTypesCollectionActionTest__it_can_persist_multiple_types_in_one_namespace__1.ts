@@ -1,6 +1,6 @@
 namespace test {
-transformed test\Enum
-transformed test\OtherEnum
+export type Enum = transformed test\Enum;
+export type OtherEnum = transformed test\OtherEnum;
 }
-transformed Enum
-transformed OtherEnum
+export type Enum = transformed Enum;
+export type OtherEnum = transformed OtherEnum;

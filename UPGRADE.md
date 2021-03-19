@@ -22,3 +22,4 @@ TODO:
 - transformer en collector changes beschrijven
 - laravel package updaten
 - changes seb
+- transformed type now takes as type a type and not export [name] => type

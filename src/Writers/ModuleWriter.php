@@ -24,7 +24,7 @@ class ModuleWriter implements Writer
                 continue;
             }
 
-            $output .= $type->transformed.PHP_EOL;
+            $output .= "export type {$type->name} = {$type->transformed};".PHP_EOL;
         }
 
         return $output;

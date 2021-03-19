@@ -41,7 +41,7 @@ class SpatieEnumTransformerTest extends TestCase
             'FakeEnum'
         );
 
-        $this->assertEquals("export type FakeEnum = 'draft' | 'published' | 'archived';", $type->transformed);
+        $this->assertEquals("'draft' | 'published' | 'archived'", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
         $this->assertFalse($type->isInline);
     }

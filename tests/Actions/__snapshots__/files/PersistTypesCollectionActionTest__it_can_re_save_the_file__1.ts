@@ -1,4 +1,4 @@
 namespace test {
-fake-transformed
+export type Enum = fake-transformed;
 }
-fake-transformed
+export type Enum = fake-transformed;

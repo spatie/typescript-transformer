@@ -62,8 +62,8 @@ class DefaultCollectorTest extends TestCase
         $transformedType = $this->collector->getTransformedType($reflection);
 
         $this->assertNotNull($transformedType);
-        $this->assertStringContainsString(
-            " = 'a' | 'yes' | 'no';",
+        $this->assertEquals(
+            "'a' | 'yes' | 'no'",
             $transformedType->transformed,
         );
     }
@@ -83,8 +83,9 @@ class DefaultCollectorTest extends TestCase
         $transformedType = $this->collector->getTransformedType($reflection);
 
         $this->assertNotNull($transformedType);
-        $this->assertStringContainsString(
-            "export type EnumTransformed = 'a' | 'yes' | 'no';",
+        $this->assertEquals('EnumTransformed', $transformedType->name);
+        $this->assertEquals(
+            "'a' | 'yes' | 'no'",
             $transformedType->transformed,
         );
     }
@@ -109,8 +110,9 @@ class DefaultCollectorTest extends TestCase
         $transformedType = $this->collector->getTransformedType($reflection);
 
         $this->assertNotNull($transformedType);
-        $this->assertStringContainsString(
-            "export type DtoTransformed = {an_integer: number;}",
+        $this->assertEquals('DtoTransformed', $transformedType->name);
+        $this->assertEquals(
+            "{an_integer: number;}",
             $transformedType->transformed,
         );
     }
@@ -140,8 +142,9 @@ class DefaultCollectorTest extends TestCase
         $transformedType = $this->collector->getTransformedType($reflection);
 
         $this->assertNotNull($transformedType);
-        $this->assertStringContainsString(
-            "export type WithTypeScriptAttribute = 'a' | 'b';",
+        $this->assertEquals('WithTypeScriptAttribute', $transformedType->name);
+        $this->assertEquals(
+            "'a' | 'b'",
             $transformedType->transformed,
         );
     }
@@ -154,8 +157,9 @@ class DefaultCollectorTest extends TestCase
         $transformedType = $this->collector->getTransformedType($reflection);
 
         $this->assertNotNull($transformedType);
-        $this->assertStringContainsString(
-            'export type WithTypeScriptTransformerAttribute = {an_int: number;};',
+        $this->assertEquals('WithTypeScriptTransformerAttribute', $transformedType->name);
+        $this->assertEquals(
+            '{an_int: number;}',
             $transformedType->transformed,
         );
     }
@@ -168,8 +172,8 @@ class DefaultCollectorTest extends TestCase
         $transformedType = $this->collector->getTransformedType($reflection);
 
         $this->assertNotNull($transformedType);
-        $this->assertStringContainsString(
-            'export type WithAlreadyTransformedAttributeAttribute = {an_int:number;a_bool:boolean;};',
+        $this->assertEquals(
+            '{an_int:number;a_bool:boolean;}',
             $transformedType->transformed,
         );
     }

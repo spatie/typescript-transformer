@@ -1,1 +1,1 @@
-export type Typed = {int: number;overwritable: number | boolean;object: {an_int:number;a_bool:boolean;};pure_typescript: never;pure_typescript_object: {an_any:any;a_never:never;};regular_type: number;};
+{int: number;overwritable: number | boolean;object: {an_int:number;a_bool:boolean;};pure_typescript: never;pure_typescript_object: {an_any:any;a_never:never;};regular_type: number;}

@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
+use App\Support\Options\SelectOption;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
@@ -38,7 +39,7 @@ class DtoTransformer implements Transformer
         return TransformedType::create(
             $class,
             $name,
-            "export type {$name} = {{$type}};",
+            "{{$type}}",
             $missingSymbols
         );
     }

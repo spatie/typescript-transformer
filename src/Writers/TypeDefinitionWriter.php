@@ -20,16 +20,16 @@ class TypeDefinitionWriter implements Writer
             $output .= "namespace {$namespace} {".PHP_EOL;
 
             $output .= join(PHP_EOL, array_map(
-                fn (TransformedType $type) => $type->transformed,
+                fn (TransformedType $type) => "export type {$type->name} = {$type->transformed};",
                 $types
             ));
 
-            $output .= PHP_EOL;
-            $output .= "}".PHP_EOL;
+
+            $output .= PHP_EOL."}".PHP_EOL;
         }
 
         $output .= join(PHP_EOL, array_map(
-            fn (TransformedType $type) => $type->transformed,
+            fn (TransformedType $type) =>  "export type {$type->name} = {$type->transformed};",
             $rootTypes
         ));
 
