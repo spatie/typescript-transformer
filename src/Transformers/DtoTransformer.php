@@ -23,6 +23,10 @@ class DtoTransformer implements Transformer
 
     public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
+        if (! $this->canTransform($class)) {
+            return null;
+        }
+
         $missingSymbols = new MissingSymbolsCollection();
 
         $type = join([
@@ -37,6 +41,11 @@ class DtoTransformer implements Transformer
             "export type {$name} = {{$type}};",
             $missingSymbols
         );
+    }
+
+    protected function canTransform(ReflectionClass $class): bool
+    {
+        return true;
     }
 
     protected function transformProperties(
