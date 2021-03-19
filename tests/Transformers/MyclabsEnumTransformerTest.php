@@ -29,8 +29,8 @@ class MyclabsEnumTransformerTest extends TestCase
         $noEnum = new class {
         };
 
-        $this->assertTrue($this->transformer->canTransform(new ReflectionClass($enum)));
-        $this->assertFalse($this->transformer->canTransform(new ReflectionClass($noEnum)));
+        $this->assertNotNull($this->transformer->transform(new ReflectionClass($enum), 'Enum'));
+        $this->assertNull($this->transformer->transform(new ReflectionClass($noEnum), 'Enum'));
     }
 
     /** @test */

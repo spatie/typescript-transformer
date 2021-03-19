@@ -21,12 +21,7 @@ class DtoTransformer implements Transformer
         $this->config = $config;
     }
 
-    public function canTransform(ReflectionClass $class): bool
-    {
-        return true;
-    }
-
-    public function transform(ReflectionClass $class, string $name): TransformedType
+    public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
         $missingSymbols = new MissingSymbolsCollection();
 

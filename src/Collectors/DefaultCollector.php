@@ -67,17 +67,11 @@ class DefaultCollector extends Collector
         $foundTransformer = null;
 
         foreach ($this->config->getTransformers() as $transformer) {
-            if ($transformer->canTransform($reflector->getReflectionClass())) {
-                $foundTransformer = $transformer;
-
-                break;
+            if ($transformed = $transformer->transform($reflector->getReflectionClass(), $reflector->getName())) {
+                return $transformed;
             }
         }
 
-        if($foundTransformer === null){
-            throw TransformerNotFound::create($reflector->getReflectionClass());
-        }
-
-        return $foundTransformer->transform($reflector->getReflectionClass(), $reflector->getName());
+        throw TransformerNotFound::create($reflector->getReflectionClass());
     }
 }

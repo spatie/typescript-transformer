@@ -7,7 +7,5 @@ use Spatie\TypeScriptTransformer\Structures\TransformedType;
 
 interface Transformer
 {
-    public function canTransform(ReflectionClass $class): bool;
-
-    public function transform(ReflectionClass $class, string $name): TransformedType;
+    public function transform(ReflectionClass $class, string $name): ?TransformedType;
 }

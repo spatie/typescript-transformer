@@ -8,13 +8,12 @@ use Spatie\TypeScriptTransformer\Structures\TransformedType;
 
 class MyclabsEnumTransformer implements Transformer
 {
-    public function canTransform(ReflectionClass $class): bool
+    public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
-        return $class->isSubclassOf(Enum::class);
-    }
+        if($class->isSubclassOf(Enum::class) === false){
+            return null;
+        }
 
-    public function transform(ReflectionClass $class, string $name): TransformedType
-    {
         return TransformedType::create(
             $class,
             $name,
