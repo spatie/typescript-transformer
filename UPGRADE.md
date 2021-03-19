@@ -1,18 +1,11 @@
 # Upgrading to v2
 
-- The Laravel package now needs an array of searching paths instead of a string
+- The `ClassPropertyProcessor` interface was renamed to `TypeProcessor` and now takes a union of reflection objects
+- In the config `classPropertyReplacements` was renamed to `defaultTypeReplacements`
+- In the DTO transformer `getClassPropertyProcessors` was renamed to `typeProcessors`
+- Collectors now should return a `TransformedType` instead of a `CollectedOccurrence`
+- The DTO transformer was completely rewritten, please take a look at the docs how to create you own
+
+Laravel
 - In the Laravel config `searching_path` is renamed to `searching_paths`
-- default_type_replacements renamed
-- property processors renamed
-- Removal of collected occurrence
-- Collectors now return transformed types
-
-
-Nieuw:
-- Typereflectors
-- Attributes for custom typescript (both on classes and methods, propeties in classes)
-- Add support for formatters
-- Attributes for parsing classes
-- PHP 8 union types
-
-Voor relase -> laravel-typescript transforer (dependencies naar local weg halen)
+- It is not possible anymore to convert one file to TypeScript
