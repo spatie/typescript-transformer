@@ -27,7 +27,7 @@ class PersistTypesCollectionActionTest extends TestCase
 
         $this->action = new PersistTypesCollectionAction(
             TypeScriptTransformerConfig::create()
-                ->searchingPath(__DIR__ . '/../FakeClasses')
+                ->autoDiscoverTypes(__DIR__ . '/../FakeClasses')
                 ->transformers([MyclabsEnumTransformer::class])
                 ->outputFile($this->temporaryDirectory->path('types.d.ts'))
         );

@@ -15,7 +15,7 @@ use Spatie\TypeScriptTransformer\Writers\Writer;
 
 class TypeScriptTransformerConfig
 {
-    private array $searchingPaths = [];
+    private array $autoDiscoverTypesPaths = [];
 
     private array $transformers = [];
 
@@ -34,9 +34,9 @@ class TypeScriptTransformerConfig
         return new self();
     }
 
-    public function searchingPath(string ...$searchingPaths): self
+    public function autoDiscoverTypes(string ...$paths): self
     {
-        $this->searchingPaths = array_merge($this->searchingPaths, $searchingPaths);
+        $this->autoDiscoverTypesPaths = array_merge($this->autoDiscoverTypesPaths, $paths);
 
         return $this;
     }
@@ -83,9 +83,9 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function getSearchingPaths(): array
+    public function getAutoDiscoverTypesPaths(): array
     {
-        return $this->searchingPaths;
+        return $this->autoDiscoverTypesPaths;
     }
 
     /**@return \Spatie\TypeScriptTransformer\Transformers\Transformer[] */

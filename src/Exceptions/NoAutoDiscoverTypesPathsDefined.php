@@ -4,10 +4,10 @@ namespace Spatie\TypeScriptTransformer\Exceptions;
 
 use Exception;
 
-class NoSearchingPathsDefined extends Exception
+class NoAutoDiscoverTypesPathsDefined extends Exception
 {
     public static function create(): self
     {
-        return new self("There were no searching paths defined");
+        return new self("There were no auto discover types paths defined");
     }
 }

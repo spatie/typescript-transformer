@@ -7,7 +7,7 @@ use ReflectionClass;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
-use Spatie\TypeScriptTransformer\Exceptions\NoSearchingPathsDefined;
+use Spatie\TypeScriptTransformer\Exceptions\NoAutoDiscoverTypesPathsDefined;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
@@ -36,7 +36,7 @@ class ResolveTypesCollectionActionTest extends TestCase
         $this->action = new ResolveTypesCollectionAction(
             new Finder(),
             TypeScriptTransformerConfig::create()
-                ->searchingPath(__DIR__ . '/../FakeClasses/Enum')
+                ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
                 ->transformers([MyclabsEnumTransformer::class])
                 ->collectors([DefaultCollector::class])
                 ->outputFile('types.d.ts')
@@ -52,9 +52,9 @@ class ResolveTypesCollectionActionTest extends TestCase
     }
 
     /** @test */
-    public function it_will_check_if_searching_paths_are_defined()
+    public function it_will_check_if_auto_discover_types_paths_are_defined()
     {
-        $this->expectException(NoSearchingPathsDefined::class);
+        $this->expectException(NoAutoDiscoverTypesPathsDefined::class);
 
         $action = new ResolveTypesCollectionAction(
             new Finder(),
@@ -103,7 +103,7 @@ class ResolveTypesCollectionActionTest extends TestCase
         $this->action = new ResolveTypesCollectionAction(
             new Finder(),
             TypeScriptTransformerConfig::create()
-                ->searchingPath(
+                ->autoDiscoverTypes(
                     __DIR__ . '/../FakeClasses/Enum/',
                     __DIR__ . '/../FakeClasses/Integration/'
                 )
@@ -134,7 +134,7 @@ class ResolveTypesCollectionActionTest extends TestCase
         $this->action = new ResolveTypesCollectionAction(
             new Finder(),
             TypeScriptTransformerConfig::create()
-                ->searchingPath(__DIR__ . '/../FakeClasses/Enum')
+                ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
                 ->collectors([FakeTypeScriptCollector::class])
                 ->outputFile('types.d.ts')
         );

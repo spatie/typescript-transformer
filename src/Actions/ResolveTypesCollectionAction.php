@@ -7,7 +7,7 @@ use IteratorAggregate;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\ClassIteratorFileFilter;
 use Spatie\TypeScriptTransformer\Collectors\Collector;
-use Spatie\TypeScriptTransformer\Exceptions\NoSearchingPathsDefined;
+use Spatie\TypeScriptTransformer\Exceptions\NoAutoDiscoverTypesPathsDefined;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -35,13 +35,13 @@ class ResolveTypesCollectionAction
     {
         $collection = new TypesCollection();
 
-        $searchingPaths = $this->config->getSearchingPaths();
+        $paths = $this->config->getAutoDiscoverTypesPaths();
 
-        if (empty($searchingPaths)) {
-            throw NoSearchingPathsDefined::create();
+        if (empty($paths)) {
+            throw NoAutoDiscoverTypesPathsDefined::create();
         }
 
-        foreach ($this->resolveIterator($searchingPaths) as $class) {
+        foreach ($this->resolveIterator($paths) as $class) {
             $transformedType = $this->resolveTransformedType($class);
 
             if ($transformedType === null) {
@@ -54,14 +54,14 @@ class ResolveTypesCollectionAction
         return $collection;
     }
 
-    protected function resolveIterator(array $searchingPaths): IteratorAggregate
+    protected function resolveIterator(array $paths): IteratorAggregate
     {
-        $searchingPaths = array_map(
-            fn(string $searchingPath) => is_dir($searchingPath) ? $searchingPath : dirname($searchingPath),
-            $searchingPaths
+        $paths = array_map(
+            fn(string $path) => is_dir($path) ? $path : dirname($path),
+            $paths
         );
 
-        $iterator = new ClassIterator($this->finder->in($searchingPaths));
+        $iterator = new ClassIterator($this->finder->in($paths));
 
         return $iterator->enableAutoloading();
     }

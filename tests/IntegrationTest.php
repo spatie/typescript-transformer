@@ -22,7 +22,7 @@ class IntegrationTest extends TestCase
     private function getTransformerConfig(): TypeScriptTransformerConfig
     {
         return TypeScriptTransformerConfig::create()
-            ->searchingPath(__DIR__ . '/FakeClasses/Integration')
+            ->autoDiscoverTypes(__DIR__ . '/FakeClasses/Integration')
             ->defaultTypeReplacements([
                 DateTime::class => 'string',
             ])
