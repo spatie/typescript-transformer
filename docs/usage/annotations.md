@@ -1,5 +1,5 @@
 ---
-title: Describing types using attributes and annotations
+title: Describing types
 weight: 3
 ---
 

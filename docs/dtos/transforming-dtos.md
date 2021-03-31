@@ -1,5 +1,5 @@
 ---
-title: Extending the transformer
+title: Customization
 weight: 2
 ---
 
