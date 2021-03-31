@@ -3,7 +3,10 @@
 namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
+use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionAttribute;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionUnionType;
@@ -192,5 +195,20 @@ class TypeReflectorTest extends TestCase
         $reflector = new PropertyTypeReflector($reflection);
 
         $this->assertEquals('int|float|null', (string) $reflector->reflect());
+    }
+
+    /** @test */
+    public function it_can_use_a_transformable_attribute_as_type()
+    {
+        $class = new class() {
+            #[LiteralTypeScriptType('EnumType[]')]
+            public $literal;
+        };
+
+        $reflection = new ReflectionProperty($class, 'literal');
+
+        $reflector = new PropertyTypeReflector($reflection);
+
+        $this->assertEquals('EnumType[]', (string) $reflector->reflect());
     }
 }

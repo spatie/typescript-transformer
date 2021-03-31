@@ -33,4 +33,9 @@ class PropertyTypeReflector extends TypeReflector
     {
         return $this->reflection->getType();
     }
+
+    protected function getAttributes(): array
+    {
+        return $this->reflection->getAttributes();
+    }
 }

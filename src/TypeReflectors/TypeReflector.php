@@ -7,15 +7,16 @@ use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Compound;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Nullable;
+use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
 use ReflectionType;
 use ReflectionUnionType;
-use RuntimeException;
-use Spatie\TypeScriptTransformer\Types\TypeScriptType;
+use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute;
 use Spatie\TypeScriptTransformer\Support\UnknownType;
+use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 
 abstract class TypeReflector
 {
@@ -24,6 +25,8 @@ abstract class TypeReflector
     abstract protected function docblockRegex(): string;
 
     abstract protected function getReflectionType(): ?ReflectionType;
+
+    abstract protected function getAttributes(): array;
 
     public static function new(ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection): static
     {
@@ -40,19 +43,36 @@ abstract class TypeReflector
 
     public function reflect(): Type
     {
-        $type = $this->reflectFromDocblock();
-
-        if ($type !== null) {
+        if ($type = $this->reflectionFromAttribute()) {
             return $type;
         }
 
-        $type = $this->reflectFromReflection();
+        if ($type = $this->reflectFromDocblock()) {
+            return $type;
+        }
 
-        if ($type !== null) {
+        if ($type = $this->reflectFromReflection()) {
             return $type;
         }
 
         return new TypeScriptType('any');
+    }
+
+    private function reflectionFromAttribute(): ?Type
+    {
+        $attributes = array_filter(
+            $this->getAttributes(),
+            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
+        );
+
+        if (empty($attributes)) {
+            return null;
+        }
+
+        /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute $attribute */
+        $attribute = current($attributes)->newInstance();
+
+        return $attribute->getType();
     }
 
     private function reflectFromDocblock(): ?Type

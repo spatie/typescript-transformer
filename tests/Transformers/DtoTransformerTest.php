@@ -13,6 +13,7 @@ use ReflectionProperty;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
@@ -68,7 +69,11 @@ class DtoTransformerTest extends TestCase
             protected function typeProcessors(): array
             {
                 $onlyStringPropertiesProcessor = new class implements TypeProcessor {
-                    public function process(Type $type, ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection): ?Type
+                    public function process(
+                        Type $type,
+                        ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection,
+                        MissingSymbolsCollection $missingSymbolsCollection
+                    ): ?Type
                     {
                         return $type instanceof String_ ? $type : null;
                     }

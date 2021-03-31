@@ -53,7 +53,7 @@ namespace App.Enums {
     export type Language = 'nl' | 'en' | 'fr';
 };
 
-namespace App.Enums {
+namespace App.Models {
     export type User = {
         name: string;
         language: App.Enums.Language
@@ -88,7 +88,7 @@ interface Writer
 }
 ```
 
-The `format` method takes a `TypesColellection` and outputs a string containing the TypeScript representation of the types. 
+The `format` method takes a `TypesCollection` and outputs a string containing the TypeScript representation of the types. 
 
-In the `replacesSymbolsWithFullyQualifiedIdentifiers` method a bool is returned whether to use fully qualified identifiers when replacing symbols or not. The `TypeDefinitionWriter` uses fully qualified identifiers whereas the `ModuleWriter` doesn't.
+In the `replacesSymbolsWithFullyQualifiedIdentifiers` method a boolean is returned that indicates whether to use fully qualified identifiers when replacing symbols or not. The `TypeDefinitionWriter` uses fully qualified identifiers whereas the `ModuleWriter` doesn't.
 

@@ -20,14 +20,14 @@ trait TransformsTypes
         MissingSymbolsCollection $missingSymbolsCollection,
         TypeProcessor ...$typeProcessors
     ): ?string {
-        $type = $this->reflectionToType($reflection);
+        $type = $this->reflectionToType(
+            $reflection,
+            $missingSymbolsCollection,
+            ...$typeProcessors
+        );
 
-        foreach ($typeProcessors as $processor) {
-            $type = $processor->process($type, $reflection);
-
-            if ($type === null) {
-                return null;
-            }
+        if($type === null){
+            return null;
         }
 
         return $this->typeToTypeScript(
@@ -38,21 +38,26 @@ trait TransformsTypes
     }
 
     protected function reflectionToType(
-        ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection
-    ): Type {
-        $attributes = array_filter(
-            $reflection->getAttributes(),
-            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
-        );
+        ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection,
+        MissingSymbolsCollection $missingSymbolsCollection,
+        TypeProcessor ...$typeProcessors
+    ): ?Type
+    {
+        $type = TypeReflector::new($reflection)->reflect();
 
-        if (! empty($attributes)) {
-            /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute $attribute */
-            $attribute = current($attributes)->newInstance();
+        foreach ($typeProcessors as $processor) {
+            $type = $processor->process(
+                $type,
+                $reflection,
+                $missingSymbolsCollection
+            );
 
-            return $attribute->getType();
+            if ($type === null) {
+                return null;
+            }
         }
 
-        return TypeReflector::new($reflection)->reflect();
+        return $type;
     }
 
     protected function typeToTypeScript(

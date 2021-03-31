@@ -7,9 +7,12 @@ weight: 2
 
 ```php
 $config = TypeScriptTransformerConfig::create()
-    ->autoDiscoverTypes(__DIR__ . '/src') // path where your PHP classes are
-    ->transformers([MyclabsEnumTransformer::class]) // list of transformers
-    ->outputFile(__DIR__ . '/js/generated.d.ts'); // file where TypeScript type definitions will be written
+    // path where your PHP classes are
+    ->autoDiscoverTypes(__DIR__ . '/src')
+    // list of transformers
+    ->transformers([MyclabsEnumTransformer::class]) 
+    // file where TypeScript type definitions will be written
+    ->outputFile(__DIR__ . '/js/generated.d.ts'); 
 ```
 
 This is the minimal required configuration that should get you started. There are some more configuration options, but we'll go over these later in the documentation.
@@ -21,8 +24,6 @@ TypeScriptTransformer::create($config)->transform();
 ```
 
 That's it! All the enum classes with a `@typescript` annotation are now transformed to TypeScript.
-
-Classes not converted? You probably should write your own [transformers](/docs/typescript-transformer/v2/usage/transformers).
 
 ## Laravel
 

@@ -1,6 +1,6 @@
 ---
 title: Typing properties
-weight: 2
+weight: 1
 ---
 
 Let's take a look at how we can type individual properties of a PHP class.
@@ -52,6 +52,10 @@ class Dto
     public DateTime $datetime;
 }
 ```
+
+## Using attributes
+
+You can use one of the 2 attributes provided by the package to directly transform them to TypeScript, more information about this [here](https://).
 
 ## Using docblocks
 

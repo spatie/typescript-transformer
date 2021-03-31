@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionParameter;
+use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\TypeReflectors\MethodParameterTypeReflector;
 
 class MethodParameterTypeReflectorTest extends TestCase
@@ -99,6 +100,26 @@ class MethodParameterTypeReflectorTest extends TestCase
         $this->assertEquals(
             'any',
             (string) MethodParameterTypeReflector::create($parameters[4])->reflect()
+        );
+    }
+
+    /** @test */
+    public function it_cannot_reflect_from_attribute()
+    {
+        $class = new class {
+            #[LiteralTypeScriptType('int')]
+            public function method(
+                $int,
+            ) {
+
+            }
+        };
+
+        $parameters = (new ReflectionMethod($class, 'method'))->getParameters();
+
+        $this->assertEquals(
+            'any',
+            (string) MethodParameterTypeReflector::create($parameters[0])->reflect()
         );
     }
 }

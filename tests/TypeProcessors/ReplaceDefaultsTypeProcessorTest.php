@@ -8,6 +8,7 @@ use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\String_;
 use PHPUnit\Framework\TestCase;
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
@@ -36,7 +37,8 @@ class ReplaceDefaultsTypeProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(Dto::class),
-            FakeReflectionProperty::create()
+            FakeReflectionProperty::create(),
+            new MissingSymbolsCollection()
         );
 
         $this->assertEquals(new TypeScriptType('array'), $type);
@@ -47,7 +49,8 @@ class ReplaceDefaultsTypeProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve('?' . DateTime::class),
-            FakeReflectionProperty::create()
+            FakeReflectionProperty::create(),
+            new MissingSymbolsCollection()
         );
 
         $this->assertEquals(new Nullable(new String_()), $type);
@@ -58,7 +61,8 @@ class ReplaceDefaultsTypeProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(DateTime::class . '[]'),
-            FakeReflectionProperty::create()
+            FakeReflectionProperty::create(),
+            new MissingSymbolsCollection()
         );
 
         $this->assertEquals(new Array_(new String_()), $type);

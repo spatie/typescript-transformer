@@ -33,4 +33,9 @@ class MethodParameterTypeReflector extends TypeReflector
     {
         return $this->reflection->getType();
     }
+
+    protected function getAttributes(): array
+    {
+        return [];
+    }
 }

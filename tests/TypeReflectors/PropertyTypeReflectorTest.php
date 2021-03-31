@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
+use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\TypeReflectors\MethodReturnTypeReflector;
 use Spatie\TypeScriptTransformer\TypeReflectors\PropertyTypeReflector;
 
@@ -89,6 +90,20 @@ class PropertyTypeReflectorTest extends TestCase
         $this->assertEquals(
             'any',
             (string) PropertyTypeReflector::create(new ReflectionProperty($class, 'p5'))->reflect()
+        );
+    }
+
+    /** @test */
+    public function it_can_reflect_from_attribute()
+    {
+        $class = new class {
+            #[LiteralTypeScriptType('Integer')]
+            public $p1;
+        };
+
+        $this->assertEquals(
+            'Integer',
+            (string) PropertyTypeReflector::create(new ReflectionProperty($class, 'p1'))->reflect()
         );
     }
 }

@@ -15,8 +15,6 @@ trait FakedReflection
 
     private ?string $docComment = null;
 
-    private ?array $attributes = null;
-
     public function __construct()
     {
     }
@@ -43,13 +41,6 @@ trait FakedReflection
     public function withType(FakeReflectionType|ReflectionType $type): self
     {
         $this->type = $type;
-
-        return $this;
-    }
-
-    public function withAttributes(FakeReflectionAttribute ...$attributes)
-    {
-        $this->attributes = $attributes;
 
         return $this;
     }
@@ -83,10 +74,6 @@ trait FakedReflection
 
     public function getAttributes(?string $name = null, int $flags = 0): array
     {
-        if ($this->type === null) {
-            return [];
-        }
-
-        return $this->attributes;
+        return [];
     }
 }

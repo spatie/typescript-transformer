@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Tests\TypeProcessors;
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Array_;
 use PHPUnit\Framework\TestCase;
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\StringDtoCollection;
@@ -33,7 +34,8 @@ class DtoCollectionTypeProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(DtoCollection::class),
-            FakeReflectionProperty::create()
+            FakeReflectionProperty::create(),
+            new MissingSymbolsCollection()
         );
 
         $this->assertEquals(
@@ -47,7 +49,8 @@ class DtoCollectionTypeProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(NullableDtoCollection::class),
-            FakeReflectionProperty::create()
+            FakeReflectionProperty::create(),
+            new MissingSymbolsCollection()
         );
 
         $this->assertEquals(
@@ -61,7 +64,8 @@ class DtoCollectionTypeProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(StringDtoCollection::class),
-            FakeReflectionProperty::create()
+            FakeReflectionProperty::create(),
+            new MissingSymbolsCollection()
         );
 
         $this->assertEquals('string[]', (string) $type);
@@ -72,7 +76,8 @@ class DtoCollectionTypeProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve(UntypedDtoCollection::class),
-            FakeReflectionProperty::create()
+            FakeReflectionProperty::create(),
+            new MissingSymbolsCollection()
         );
 
         $this->assertEquals(new Array_(new TypeScriptType('any')), $type);
@@ -83,7 +88,8 @@ class DtoCollectionTypeProcessorTest extends TestCase
     {
         $type = $this->processor->process(
             $this->typeResolver->resolve('string'),
-            FakeReflectionProperty::create()
+            FakeReflectionProperty::create(),
+            new MissingSymbolsCollection()
         );
 
         $this->assertEquals('string', (string) $type);

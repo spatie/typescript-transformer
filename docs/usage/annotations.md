@@ -3,7 +3,9 @@ title: Describing types using attributes and annotations
 weight: 3
 ---
 
-When using the `@typescript` annotation, the PHP class's name will be used for the TypeScript type:
+PHP classes will only be converted to TypeScript when they are annotated, there are quite a few ways to do this, let's take a look.
+
+When using the `@typescript` annotation, the PHP class's name will be used as name for the TypeScript type:
 
 ```php
 /** @typescript */
@@ -157,7 +159,7 @@ class Post
 }
 ```
 
-## Describing your PHP types within PHP
+## Using php doc types to write TypeScript
 
 When you have a very specific type you want to describe in PHP then you can use the `TypeScriptType` which can transform every type [phpdocumentor](https://www.phpdoc.org) can read. For example, let's say you have an array that always has the same keys as this one:
 
@@ -187,7 +189,7 @@ export type UserRepository = {
 };
 ```
 
-We can dot better then this, since we know the keys of the array:
+We can dot better than this, since we know the keys of the array:
 
 ```php
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;#[TypeScript]
@@ -214,6 +216,10 @@ export type UserRepository = {
     };
 };
 ```
+
+As you can see, the package is smart enough to convert `Language::class` to an inline enum we defined earlier.
+
+## Selecting a transformer
 
 Want to define a specific transformer for the file? You can use the following annotation:
 

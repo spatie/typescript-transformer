@@ -33,4 +33,9 @@ class MethodReturnTypeReflector extends TypeReflector
     {
         return $this->reflection->getReturnType();
     }
+
+    protected function getAttributes(): array
+    {
+        return $this->reflection->getAttributes();
+    }
 }
