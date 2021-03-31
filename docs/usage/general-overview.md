@@ -212,14 +212,21 @@ class ResourceCollector extends Collector
     {
         return $class->isSubclassOf(Resource::class);
     }
-
-    public function getCollectedOccurrence(ReflectionClass $class): CollectedOccurrence
-    {
-        return CollectedOccurrence::create(
-            new DtoTransformer($this->config),
-            Str::before($class->getShortName(), 'Resource') // do not use the "Resource" suffix in the converted typescript
+    
+     public function getTransformedType(ReflectionClass $class): ?TransformedType
+     {
+        if(! $class->isSubclassOf(Resource::class))
+        {
+            return null;
+        }
+     
+        $transformer = new DtoTransformer($this->config);
+        
+        return $transformer->transform(
+            $class,
+            Str::before($class->getShortName(), 'Resource')
         );
-    }
+     }
 }
 ```
 
@@ -244,7 +251,7 @@ Finally, `ResourceCollector` should be added to the list of collectors in the co
 
 Now you can run `php artisan typescript:transform` to create the TypeScript definitions.
 
-### Using type processors
+### Using default type replacements
 
 You can specify to which TypeScript type a PHP type should be converted.
 
@@ -412,18 +419,18 @@ export type User = {
 }
 ```
 
-That `any` does not describe our home-made `CustomDate` type. Let's fix that by uisng a `Transformer`:
+That `any` does not describe our home-made `CustomDate` type. Let's fix that by using a `Transformer`:
 
 ```php
 class CustomDateTransformer implements Transformer
 {
-    public function canTransform(ReflectionClass $class): bool
+    public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
-        return $class->getName() === CustomDate::class;
-    }
-
-    public function transform(ReflectionClass $class, string $name): TransformedType
-    {
+        if(!$class->getName() === CustomDate::class)
+        {
+            return null;
+        }
+        
         $type = <<<EOT
 export type {$name} = {
     year: number;
@@ -494,15 +501,15 @@ If you don't need a separate `App.Support.CustomDate` type, you can choose to in
 ```php
 class CustomDateTransformer implements Transformer
 {
-    public function canTransform(ReflectionClass $class): bool
+    public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
-        return $class->getName() === CustomDate::class;
-    }
-
-    public function transform(ReflectionClass $class, string $name): TransformedType
-    {
+        if(!$class->getName() === CustomDate::class)
+        {
+            return null;
+        }
+        
         $type = <<<EOT
-{
+export type {$name} = {
     year: number;
     month: number;
     day: number;
@@ -510,7 +517,7 @@ class CustomDateTransformer implements Transformer
 }
 EOT;
 
-        return TransformedType::createInline($class, $type);
+        return TransformedType::createInline($class, $name, $type);
     }
 }
 ```

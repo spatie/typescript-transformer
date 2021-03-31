@@ -7,7 +7,7 @@ weight: 2
 
 ```php
 $config = TypeScriptTransformerConfig::create()
-    ->searchingPath(__DIR__ . '/src') // path where your PHP classes are
+    ->autoDiscoverTypes(__DIR__ . '/src') // path where your PHP classes are
     ->transformers([MyclabsEnumTransformer::class]) // list of transformers
     ->outputFile(__DIR__ . '/js/generated.d.ts'); // file where TypeScript type definitions will be written
 ```

@@ -30,10 +30,8 @@ class ModuleWriter implements Writer
         return $output;
     }
 
-    public function replaceMissingSymbols(TypesCollection $collection): self
+    public function replacesSymbolsWithFullyQualifiedIdentifiers(): bool
     {
-        (new ReplaceSymbolsInCollectionAction())->execute($collection, false);
-
-        return $this;
+        return false;
     }
 }

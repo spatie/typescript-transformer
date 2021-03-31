@@ -12,7 +12,7 @@ use Spatie\TypeScriptTransformer\Types\StructType;
 #[Attribute]
 class TypeScriptType implements TypeScriptTransformableAttribute
 {
-    private Type|array|string $type;
+    private array|string $type;
 
     public function __construct(string|array $type)
     {

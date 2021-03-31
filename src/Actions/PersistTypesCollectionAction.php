@@ -18,12 +18,17 @@ class PersistTypesCollectionAction
     {
         $this->ensureOutputFileExists();
 
-        $output = $this->config
-            ->getWriter()
-            ->replaceMissingSymbols($collection)
-            ->format($collection);
+        $writer = $this->config->getWriter();
 
-        file_put_contents($this->config->getOutputFile(), $output);
+        (new ReplaceSymbolsInCollectionAction())->execute(
+            $collection,
+            $writer->replacesSymbolsWithFullyQualifiedIdentifiers()
+        );
+
+        file_put_contents(
+            $this->config->getOutputFile(),
+            $writer->format($collection)
+        );
     }
 
     protected function ensureOutputFileExists(): void

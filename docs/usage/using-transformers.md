@@ -1,9 +1,9 @@
 ---
 title: Using transformers
-weight: 3
+weight: 4
 ---
 
-Transformers are the heart of the package. They take a PHP class and determine if it can be transformed into TypeScript, if that's possible, the transformer will transform the PHP class to a TypeScript definition.
+Transformers are the heart of the package. They take a PHP class and determine if it can be transformed into TypeScript, if that's possible, they will try to do this kind of transformation.
 
 ## Default transformers
 
@@ -16,6 +16,7 @@ The package comes with a few transformers out of the box:
 [The laravel package](docs/typescript-transformer/v2/laravel/installation-and-setup) has some extra transformers:
 
 - `SpatieStateTransformer`: this transforms a state from [the `spatie\laravel-model-states` package](https://github.com/spatie/laravel-model-status)
+- `DtoTransformer`: a more Laravel specific transformer based upon the default `DtoTransformer`
 
 There are also some packages with community transformers:
 
@@ -32,19 +33,15 @@ use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
 class EnumTransformer implements Transformer
 {
-    public function canTransform(ReflectionClass $class): bool
+    public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
-        // can this transformer handle the given class?
-    }
-
-    public function transform(ReflectionClass $class, string $name): TransformedType
-    {
-        // get the TypeScript representation of the class
     }
 }
 ```
 
-In the `canTransform` method, you should decide if this transformer can convert the class. In the `transform` method, you should return a transformed version of the PHP type as a `TransformedType`. Let's take a look at how to create one.
+In the `transform` method, you should transform a PHP `ReflectionClass` into a `TransformedType`. This transformed includes the TypeScript representation of the PHP class and some extra information.
+
+When a transformer cannot transform the given `ReflectionClass` then the method should return `null`, indicating the type cannot be transformed.
 
 ### Creating transformed types
 
@@ -69,7 +66,7 @@ TransformedType::create(
 );
 ```
 
-A `MissingSymbolsCollection` will contain links to other types. The package will replace these links with correct TypeScript types. 
+A `MissingSymbolsCollection` will contain references to other types. The package will replace these references with correct TypeScript types. 
 
 Consider the following class as an example:
 
@@ -90,7 +87,6 @@ As you can see it has a `RoleEnum` as a property, which looks like this:
 class RoleEnum extends Enum
 {
     const GUEST = 'guest';
-    
     const ADMIN = 'admin';
 }
 ```
@@ -101,11 +97,11 @@ When transforming the `User` class we don't have any context or types for the `R
 $type = $missingSymbols->add(RoleEnum::class); // Will return {%RoleEnum::class%}
 ```
 
-The `add` method will return a token that can be used in your transformed type. It's the link we described above between the two types and will later be replaced by the actual type implementation.
+The `add` method will return a token that can be used in your transformed type. It's a link between the two types and will later be replaced by the actual type implementation.
 
 When no type was found (for example: because it wasn't converted to TypeScript) the type will default to TypeScript's `any` type.
 
-But in this specific example, the package will produce the following output:
+In the end the package will produce the following output:
 
 ```tsx
 export type RoleEnum = 'guest' | 'admin';
@@ -118,16 +114,9 @@ export type User = {
 
 #### Inline types
 
-It is also possible to create an inline type. These types will not create a whole new TypeScript type but replace a type inline in another type. In our previous example, if we would transform `Enum` classes with an inline type, the generated TypeScript would look like this:
+It is also possible to create an inline type, you can read more about inline types [here](https://docs.spatie.be/typescript-transformer/v2/usage/annotations/).
 
-```ts
-export type User = {
-    name : string;
-    role : 'guest' | 'admin';
-}
-```
-
-Inline types can be created like regular `TransformedType`s but they do not need a name:
+Inline types can be created like a regular `TransformedType` but they do not need a name:
 
 ```php
 TransformedType::createInline(

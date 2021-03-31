@@ -10,6 +10,8 @@ class TypeDefinitionWriter implements Writer
 {
     public function format(TypesCollection $collection): string
     {
+        (new ReplaceSymbolsInCollectionAction())->execute($collection);
+
         [$namespaces, $rootTypes] = $this->groupByNamespace($collection);
 
         $output = '';
@@ -36,11 +38,9 @@ class TypeDefinitionWriter implements Writer
         return $output;
     }
 
-    public function replaceMissingSymbols(TypesCollection $collection): self
+    public function replacesSymbolsWithFullyQualifiedIdentifiers(): bool
     {
-        (new ReplaceSymbolsInCollectionAction())->execute($collection);
-
-        return $this;
+        return true;
     }
 
     protected function groupByNamespace(TypesCollection $collection): array

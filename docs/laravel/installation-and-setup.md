@@ -28,7 +28,7 @@ return [
      * to transform, this will be the `app` path by default.
      */
 
-    'searching_paths' => [
+    'auto_discover_types' => [
         app_path()
     ],
 
@@ -39,7 +39,7 @@ return [
      */
 
     'collectors' => [
-        Spatie\TypeScriptTransformer\Collectors\AnnotationCollector::class,
+        Spatie\TypeScriptTransformer\Collectors\DefaultCollector::class,
     ],
 
     /*
@@ -62,8 +62,8 @@ return [
     'default_type_replacements' => [
         DateTime::class => 'string',
         DateTimeImmutable::class => 'string',
-        Carbon::class => 'string',
-        CarbonImmutable::class => 'string',
+        Carbon\CarbonImmutable::class => 'string',
+        Carbon\Carbon::class => 'string',
     ],
 
     /*
@@ -73,10 +73,20 @@ return [
     'output_file' => resource_path('types/generated.d.ts'),
 
     /*
-     * When enabled, the generated TypeScript file will be formatted by
-     * prettier when all types are transformed.
+     * When the package is writing types to the output file, a writer is used
+     * to determine the format. By default this is the `TypeDefinitionWriter`
+     * but you can also use the `ModuleWriter` or implement your own.
      */
 
-    'enable_formatting' => false,
+    'writer' => Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter::class,
+
+    /*
+     * The generated TypeScript file can be formatter like Prettier, we ship a prettier formatter
+     * out of the box: `Spatie\TypeScriptTransformer\Formatters\PrettierFormatter` but you can
+     * also implement your own one. The generated TypeScript will not be formatted when no
+     * formatter was set.
+     */
+
+    'formatter' => null,
 ];
 ```
