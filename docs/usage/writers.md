@@ -1,5 +1,5 @@
 ---
-title: Writing TypeScript
+title: Writers
 weight: 6
 ---
 

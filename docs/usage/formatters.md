@@ -1,5 +1,5 @@
 ---
-title: Formatting TypeScript
+title: Formatters
 weight: 7
 ---
 
