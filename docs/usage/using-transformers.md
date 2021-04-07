@@ -26,8 +26,6 @@ There are also some packages with community transformers:
 
 If you've written a transformer package, let us know, and we add it to the list!
 
-## Writing transformers
-
 You should supply a list of transformers the package should use in your config:
 
 ```php
