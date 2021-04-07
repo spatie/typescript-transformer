@@ -16,16 +16,15 @@ class EnumTransformer implements Transformer
 }
 ```
 
-In the `transform` method, you should transform a PHP `ReflectionClass` into a `TransformedType`. This transformed
-includes the TypeScript representation of the PHP class and some extra information.
+In the `transform` method, you should transform a PHP `ReflectionClass` into a `TransformedType`. This `TransformedType` will
+include the TypeScript representation of the PHP class and some extra information.
 
-When a transformer cannot transform the given `ReflectionClass` then the method should return `null`, indicating the
-type cannot be transformed.
+When a transformer cannot transform the given `ReflectionClass` then the method should return `null`, indicating that the transformer is not suitable for the type.
 
 ### Creating transformed types
 
 A `TransformedType` always has three properties: the `ReflectionClass` of the type you're transforming, the name of the
-type and off course the transformed TypeScript code:
+type and, of course, the transformed TypeScript code:
 
 ```php
 TransformedType::create(
@@ -61,7 +60,7 @@ class User extends DataTransferObject
 }
 ```
 
-As you can see it has a `RoleEnum` as a property, which looks like this:
+As you can see, it has a `RoleEnum` as a property, which looks like this:
 
 ```php
 /** @typescript **/
@@ -82,10 +81,10 @@ $type = $missingSymbols->add(RoleEnum::class); // Will return {%RoleEnum::class%
 The `add` method will return a token that can be used in your transformed type. It's a link between the two types and
 will later be replaced by the actual type implementation.
 
-When no type was found (for example: because it wasn't converted to TypeScript) the type will default to
+When no type was found (for example: because it wasn't converted to TypeScript), the type will default to
 TypeScript's `any` type.
 
-In the end the package will produce the following output:
+In the end, the package will produce the following output:
 
 ```tsx
 export type RoleEnum = 'guest' | 'admin';
@@ -98,8 +97,8 @@ export type User = {
 
 #### Inline types
 
-It is also possible to create an inline type, these types are replaced directly in other types. You can read more about
-inline types [here](https://spatie.be/docs/typescript-transformer/v2/usage/annotations#inlining-types).
+It is also possible to create an inline type. These types are replaced directly in other types. You can read more about
+inline types [here](/docs/typescript-transformer/v2/usage/annotations#inlining-types).
 
 Inline types can be created like a regular `TransformedType` but they do not need a name:
 

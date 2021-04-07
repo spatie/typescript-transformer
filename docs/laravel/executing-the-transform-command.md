@@ -11,8 +11,8 @@ php artisan typescript:transform
 
 ## Command options
 
-There are some extra commands you can use when running the command. It is also possible to transform classes in specified path:
-                                                                    
+There are some extra commands you can use when running the command. It is also possible to transform classes in a specified path:
+
 ```bash
 php artisan typescript:transform --path=app/Enums
 ```

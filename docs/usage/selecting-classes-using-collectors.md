@@ -3,11 +3,11 @@ title: Collectors
 weight: 5
 ---
 
-In some cases, you'll want to transform classes without an attribute or annotation. For example Laravel's API resources are almost always sent to the front and should always have a TypeScript defintion ready to be used.
+In some cases, you'll want to transform classes without an attribute or annotation. For example, Laravel's API resources are almost always sent to the front and should always have a TypeScript definition ready to be used.
 
-Collectors allow you to specify what PHP classes should be transformed to TypeScript and what transformer should be used. 
+Collectors allow you to specify which PHP classes should be transformed to TypeScript and what transformer should be used.
 
-The package comes out of the box with the pre-configured `DefaultCollector` to find and transform classes marked with the `@typescript` annotation and attributes.
+The package comes out of the box with the pre-configured `DefaultCollector` to find and transform classes marked with the `@typescript` annotation and `#[TypeScript]` attributes.
 
 A collector is a class that extends the abstract `Collector` class  and implements the `getTransformedType` method:
 
@@ -30,14 +30,14 @@ $config = TypeScriptTransformerConfig::create()
    ...
 ```
 
-Collectors will be checked in order, if a perfect collector fit was found for a type. Then all the other collectors after that collector will be ignored for that type.
+Collectors will be checked in order if a perfect collector fit was found for a type. Then all the other collectors after that collector will be ignored for that type.
 
 ## Difference between Collectors and Transformers
 
-Allthough the two concepts share a very similar interface they are indeed different.
+Although the two concepts share a very similar interface, they are indeed different.
 
-A collector takes Types and gives them to a specific transformer that was decided by the collector, for example, the `DefaultCollector` will run a type through each transformer you've configured to find the right one. 
+A collector takes Types and gives them to a specific transformer that the collector decided. For example, the `DefaultCollector` will run a type through each transformer you've configured to find the right one.
 
-Collectors can also change names for specific Types, for example, a ResourceCollector could strip the Resource prefix of each type it collects.
+Collectors can also change names for specific Types. For example, a ResourceCollector could strip the Resource prefix of each class it collects.
 
-Transformers on the other hand transform types, they take a `ReflectionClass` and try to transform it to TypeScript.
+Transformers, on the other hand, transform types. They take a `ReflectionClass` and try to transform it to TypeScript.

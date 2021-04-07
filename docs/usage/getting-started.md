@@ -23,9 +23,8 @@ Let's use this configuration to start the transformation process:
 TypeScriptTransformer::create($config)->transform();
 ```
 
-That's it! All the enum classes with a `@typescript` annotation are now transformed to TypeScript.
+That's it! Each class with a `@typescript` annotation or `#[TypeScript]` are now transformed to TypeScript if a suitable transformer can be found.
 
 ## Laravel
 
-Using Laravel? Then you can use a Laravel config file, more info about that [here](https://docs.spatie.be/typescript-transformer/v2/laravel/installation-and-setup/).
-
+Are you using Laravel? Then you can use a Laravel config file, more info about that [here](https://docs.spatie.be/typescript-transformer/v2/laravel/installation-and-setup/).

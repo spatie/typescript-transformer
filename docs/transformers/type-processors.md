@@ -1,9 +1,9 @@
 ---
-title: Type processors 
+title: Type processors
 weight: 3
 ---
 
-Type processors can be used to change the internal `Type` of an entity before it is transpiled into TypeScript.
+You can use type processors to change an entity's internal `Type` before it is transpiled into TypeScript.
 
 ## Default type processors
 
@@ -17,7 +17,7 @@ Specifically for Laravel, we also include the following type processors in the L
 
 ## Using type processors in your transformers
 
-When you're using the `TransformsTypes` [trait](https://spatie.be) in your transformer and use
+When you're using the `TransformsTypes` [trait](https://github.com/spatie/typescript-transformer/blob/master/src/Transformers/TransformsTypes.php) in your transformer and use
 the `reflectionToTypeScript` then you can additionally pass type processors:
 
 ```php
@@ -52,7 +52,7 @@ class MyClassPropertyProcessor implements TypeProcessor
 
 You can either return a PHPDocumenter type or a `TypeScriptType` instance for literal TypeScript types.
 
-Let's take a look at an example, with this type processor, each property type will be converted into a `string`.
+Let's take a look at an example. With this type processor, it will convert each property type into a `string`.
 
 Using a `TypeScriptType`:
 

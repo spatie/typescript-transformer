@@ -3,7 +3,7 @@ title: Writers
 weight: 6
 ---
 
-When all types are transformed, the package will write them out in one big output file. A writer will determine how this output will look like.
+When all types are transformed, the package will write them out in one big output file. A writer will determine how this output will look.
 
 You can configure a writer as such:
 
@@ -13,11 +13,11 @@ $config = TypeScriptTransformerConfig::create()
     ...
 ```
 
-By default the `TypeDefinitionWriter` is used when no Writer was configured. You can use one of the Writers shipped with the package out of the box or write your own one.
+By default, the `TypeDefinitionWriter` is used when no writer was configured. You can use one of the Writers shipped with the package out of the box or write your own one.
 
 ## TypeDefinitionWriter
 
-The `TypeDefinitionWriter` will group types into namespaces that follow the structure of the PHP namespaces. 
+The `TypeDefinitionWriter` will group types into namespaces that follow the structure of the PHP namespaces.
 
 Let's take a look at an example with two PHP classes:
 
@@ -63,7 +63,7 @@ namespace App.Models {
 
 ## ModuleWriter
 
-The `ModuleWriter` will ignore namespaces and list all the types as individual modules. 
+The `ModuleWriter` will ignore namespaces and list all the types as individual modules.
 
 When we use the same classes from the previous example, the written TypeScript now looks like this:
 
@@ -88,7 +88,9 @@ interface Writer
 }
 ```
 
-The `format` method takes a `TypesCollection` and outputs a string containing the TypeScript representation of the types. 
+The `format` method takes a `TypesCollection` and outputs a string containing the TypeScript representation.
 
-In the `replacesSymbolsWithFullyQualifiedIdentifiers` method a boolean is returned that indicates whether to use fully qualified identifiers when replacing symbols or not. The `TypeDefinitionWriter` uses fully qualified identifiers whereas the `ModuleWriter` doesn't.
+In the `replacesSymbolsWithFullyQualifiedIdentifiers` method, a boolean is returned that indicates whether to use fully qualified identifiers when replacing symbols or not.
+
+The `TypeDefinitionWriter` uses fully qualified identifiers with a namespace, whereas the `ModuleWriter` doesn't.
 

@@ -12,10 +12,10 @@ or `ReflectionParameter` and convert it into a `Type` which can be easily transp
 A type reflector uses the following information to deduce a type:
 
 - attributes added to the PHP definition
-- an annotation that was added with the PHP definition
-- the type written in PHP and if it is nullable
+- an annotation was added with the PHP definition
+- the type is written in PHP, and if it is nullable
 
-It will use all this information and creates a`Type` object from
+It will use all this information and creates a `Type` object from
 the [phpDocumentor/TypeResolver](https://github.com/phpDocumentor/TypeResolver) package, examples of such types are:
 
 - Array_
@@ -41,9 +41,7 @@ class Properties{
 };
 ```
 
-We can now write a transformer that uses the `TransformsTypes` trait, this trait adds the `reflectionToTypeScript`
-method to your transformer which takes a reflected entity and a missing symbols collection and transforms it to
-Typescript.
+We can now write a transformer that uses the `TransformsTypes` trait. This trait adds the `reflectionToTypeScript` method to your transformer, which takes a reflected entity and a missing symbols collection and transforms it to Typescript.
 
 ```php
 
@@ -69,7 +67,7 @@ class PropertyTransformer implements Transformer{
 }
 ```
 
-This will transform the `Properties` class into:
+This transformer will transform the `Properties` class into:
 
 ```tsx
 {

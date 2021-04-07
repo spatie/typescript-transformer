@@ -104,7 +104,7 @@ export type Post = {
 }
 ```
 
-## Using TypeScript within PHP
+## Using TypeScript to write TypeScript
 
 It is possible to directly represent a type as TypeScript within your PHP code:
 
@@ -159,7 +159,7 @@ class Post
 }
 ```
 
-## Using php doc types to write TypeScript
+## Using PHP types to write TypeScript
 
 When you have a very specific type you want to describe in PHP then you can use the `TypeScriptType` which can transform every type [phpdocumentor](https://www.phpdoc.org) can read. For example, let's say you have an array that always has the same keys as this one:
 
@@ -231,4 +231,4 @@ Want to define a specific transformer for the file? You can use the following an
 class Languages extends Enum{}
 ```
 
-It is also possible to transform types without adding annotations. You can read more about it [here](https://docs.spatie.be/typescript-transformer/v2/usage/collectors/).
+It is also possible to transform types without adding annotations. You can read more about it [here](https://spatie.be/docs/typescript-transformer/v2/usage/selecting-classes-using-collectors).

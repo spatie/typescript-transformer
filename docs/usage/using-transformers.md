@@ -12,7 +12,7 @@ The package comes with a few transformers out of the box:
 - `MyclabsEnumTransformer`: this transforms an enum from the [`myclabs\enum`](https://github.com/myclab/enum) package
 - `SpatieEnumTransformer`: this transforms an enum from the [`spatie\enum`](https://github.com/spatie/enum) package
 - `DtoTransformer`: a powerful transformer that transforms entire classes and their properties, you can read more about
-  it [here](https://docs.spatie.be/typescript-transformer/v2/dtos/transforming/)
+  it [here](/docs/typescript-transformer/v2/dtos/typing-properties)
 
 [The laravel package](/docs/typescript-transformer/v2/laravel/installation-and-setup) has some extra transformers:
 
@@ -28,3 +28,14 @@ If you've written a transformer package, let us know, and we add it to the list!
 
 ## Writing transformers
 
+You should supply a list of transformers the package should use in your config:
+
+```php
+$config = TypeScriptTransformerConfig::create()
+    ->transformers([MyclabsEnumTransformer::class, DtoTransformer::class])
+   ...
+```
+
+## Writing your own transformers
+
+We've added a whole section in the docs about [writing transformers](docs/typescript-transformer/v2/transformers/getting-started).

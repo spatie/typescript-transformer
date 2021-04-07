@@ -1,75 +1,134 @@
-<?php
+---
+title: Type processors
+weight: 3
+---
 
-namespace Spatie\TypeScriptTransformer\Transformers;
+You can use type processors to change an entity's internal `Type` before it is transpiled into TypeScript.
 
-use phpDocumentor\Reflection\Type;
-use ReflectionAttribute;
-use ReflectionMethod;
-use ReflectionParameter;
-use ReflectionProperty;
-use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
-use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute;
-use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
-use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
+## Default type processors
 
-trait TransformsTypes
+- `ReplaceDefaultsTypeProcessor` replaces some types defined in the configuration
+- `DtoCollectionTypeProcessor` replaces `DtoCollections` from the `spatie/data-transfer-object` package with their
+TypeScript equivalent
+
+Specifically for Laravel, we also include the following type processors in the Laravel package:
+
+- `LaravelCollectionTypeProcessor` handles Laravel's `Collection` classes like `array`s
+
+## Using type processors in your transformers
+
+When you're using the `TransformsTypes` [trait](https://github.com/spatie/typescript-transformer/blob/master/src/Transformers/TransformsTypes.php) in your transformer and use
+the `reflectionToTypeScript` then you can additionally pass type processors:
+
+```php
+$this->reflectionToTypeScript(
+$reflection,
+$missingSymbolsCollection,
+new ReplaceDefaultsTypeProcessor(),
+new DtoCollectionTypeProcessor(),
+// and so on ...
+);
+```
+
+## Writing type processors
+
+A class property processor is any class that implements the `ClassPropertyProcessor` interface:
+
+```php
+class MyClassPropertyProcessor implements TypeProcessor
 {
-    protected function reflectionToTypeScript(
-        ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection,
-        MissingSymbolsCollection $missingSymbolsCollection,
-        TypeProcessor ...$typeProcessors
-    ): ?string {
-        $type = $this->reflectionToType(
-            $reflection,
-            $missingSymbolsCollection,
-            ...$typeProcessors
-        );
+public function process(
+Type $type,
+ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection,
+MissingSymbolsCollection $missingSymbolsCollection
+): ?Type
+{
+// Transform the types of the property
+}
+}
+```
 
-        if($type === null){
-            return null;
-        }
+### Returning a type
 
-        return $this->typeToTypeScript(
-            $type,
-            $missingSymbolsCollection,
-            $reflection->getDeclaringClass()?->getName()
-        );
+You can either return a PHPDocumenter type or a `TypeScriptType` instance for literal TypeScript types.
+
+Let's take a look at an example. With this type processor, it will convert each property type into a `string`.
+
+Using a `TypeScriptType`:
+
+```php
+class MyClassPropertyProcessor implements TypeProcessor
+{
+public function process(
+Type $type,
+ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection,
+MissingSymbolsCollection $missingSymbolsCollection
+): ?Type
+{
+return TypeScriptType::create('SomeGenericType<string>');
     }
+    }
+    ```
 
-    protected function reflectionToType(
-        ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection,
-        MissingSymbolsCollection $missingSymbolsCollection,
-        TypeProcessor ...$typeProcessors
+    Or using a PHPDocumenter type:
+
+    ```php
+    class MyClassPropertyProcessor implements TypeProcessor
+    {
+    public function process(
+    Type $type,
+    ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection,
+    MissingSymbolsCollection $missingSymbolsCollection
     ): ?Type
     {
-        $type = TypeReflector::new($reflection)->reflect();
+    return new String_();
+    }
+    }
+    ```
 
-        foreach ($typeProcessors as $processor) {
-            $type = $processor->process(
-                $type,
-                $reflection,
-                $missingSymbolsCollection
-            );
+    You can find all the possible PHPDocumenter
+    types [here](https://github.com/phpDocumentor/TypeResolver/tree/1.x/src/Types).
 
-            if ($type === null) {
-                return null;
-            }
-        }
+    ### Walking over types
 
-        return $type;
+    Since any type can exist of arrays, compound types, nullable types, and more, you'll sometimes need to walk (or loop)
+    over these types to specify types case by case. This can be done by including the `ProcessesTypes` trait into your type
+    processor.
+
+    This trait will add a `walk` method that takes an initial type and closure.
+
+    Let's say you have a compound type like `string|bool|int`. The `walk` method will run a `string`, `bool` and `int` type
+    through the closure. You can then decide a type to be returned for each type given to the closure. Finally, the updated
+    compound type will also be passed to the closure.
+
+    You can remove a type by returning `null`.
+
+    Let's take a look at an example where we only keep `string` types and remove any others:
+
+    ```php
+    class MyClassPropertyProcessor implements TypeProcessor
+    {
+    use ProcessesTypes;
+
+    public function process(
+    Type $type,
+    ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection,
+    MissingSymbolsCollection $missingSymbolsCollection
+    ): ?Type
+    {
+    return $this->walk($type, function (Type $type) {
+    if ($type instanceof _String || $type instanceof Compound) {
+    return $type;
     }
 
-    protected function typeToTypeScript(
-        Type $type,
-        MissingSymbolsCollection $missingSymbolsCollection,
-        ?string $currentClass = null,
-    ): string {
-        $transpiler = new TranspileTypeToTypeScriptAction(
-            $missingSymbolsCollection,
-            $currentClass
-        );
-
-        return $transpiler->execute($type);
+    return null;
+    });
     }
-}
+    }
+    ```
+
+    As you can see, we check in the closure if the type is a `string` or a `compound` type. If it is none of these two
+    types, we remove it by returning `null`.
+
+    Why checking if the given type is a compound type? In the end, the compound type will be given to the closure. If we
+    removed it, the whole property could be removed from the TypeScript definition.
