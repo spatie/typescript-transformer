@@ -58,7 +58,7 @@ abstract class TypeReflector
         return new TypeScriptType('any');
     }
 
-    private function reflectionFromAttribute(): ?Type
+    public function reflectionFromAttribute(): ?Type
     {
         $attributes = array_filter(
             $this->getAttributes(),
@@ -75,7 +75,7 @@ abstract class TypeReflector
         return $attribute->getType();
     }
 
-    private function reflectFromDocblock(): ?Type
+    public function reflectFromDocblock(): ?Type
     {
         preg_match(
             $this->docblockRegex(),
@@ -94,7 +94,7 @@ abstract class TypeReflector
         return $this->nullifyType($type);
     }
 
-    private function reflectFromReflection(): ?Type
+    public function reflectFromReflection(): ?Type
     {
         $reflectionType = $this->getReflectionType();
 
@@ -137,6 +137,7 @@ abstract class TypeReflector
         }
 
         if ($type instanceof Compound) {
+            /** @psalm-suppress InvalidArgument */
             return new Compound(array_merge(
                 iterator_to_array($type->getIterator()),
                 [new Null_()],

@@ -25,6 +25,7 @@ class TypeScriptType implements TypeScriptTransformableAttribute
             return (new TypeResolver())->resolve($this->type);
         }
 
+        /** @psalm-suppress RedundantCondition  */
         if (is_array($this->type)) {
             return StructType::fromArray($this->type);
         }
