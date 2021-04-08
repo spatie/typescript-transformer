@@ -2,13 +2,15 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
-## 2.0.0 - 2021-03-19
+## 2.0.0 - 2021-04-08
 
 - The package is now PHP 8 only
-- Added TypeReflectors to reflect method return types, method parameters & class properties 
+- Added TypeReflectors to reflect method return types, method parameters & class properties within your transformers
 - Added support for attributes
-- Added support for manually adding TypeScript to a class
+- Added support for manually adding TypeScript to a class or property
 - Added formatters like Prettier which can format TypeScript code
+- Added support for inlining types directly
+- Updated the DtoTransformer to be a lot more flexible for your own projects
 - Added support for PHP 8 union types
 
 ## 1.1.2 - 2021-01-07
