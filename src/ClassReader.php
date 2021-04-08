@@ -3,8 +3,6 @@
 namespace Spatie\TypeScriptTransformer;
 
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
-use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
 class ClassReader
 {

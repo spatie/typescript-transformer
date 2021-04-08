@@ -10,7 +10,7 @@ class SpatieEnumTransformer implements Transformer
 {
     public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
-        if($class->isSubclassOf(Enum::class) === false){
+        if ($class->isSubclassOf(Enum::class) === false) {
             return null;
         }
 

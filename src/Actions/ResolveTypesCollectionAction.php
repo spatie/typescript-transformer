@@ -5,8 +5,6 @@ namespace Spatie\TypeScriptTransformer\Actions;
 use hanneskod\classtools\Iterator\ClassIterator;
 use IteratorAggregate;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\ClassIteratorFileFilter;
-use Spatie\TypeScriptTransformer\Collectors\Collector;
 use Spatie\TypeScriptTransformer\Exceptions\NoAutoDiscoverTypesPathsDefined;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
@@ -57,7 +55,7 @@ class ResolveTypesCollectionAction
     protected function resolveIterator(array $paths): IteratorAggregate
     {
         $paths = array_map(
-            fn(string $path) => is_dir($path) ? $path : dirname($path),
+            fn (string $path) => is_dir($path) ? $path : dirname($path),
             $paths
         );
 

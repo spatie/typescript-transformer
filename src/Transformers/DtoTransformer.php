@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use App\Support\Options\SelectOption;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
@@ -100,7 +99,7 @@ class DtoTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn(ReflectionProperty $property) => ! $property->isStatic()
+            fn (ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);

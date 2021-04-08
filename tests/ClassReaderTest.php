@@ -5,7 +5,6 @@ namespace Spatie\TypeScriptTransformer\Tests;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\ClassReader;
-use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 
 class ClassReaderTest extends TestCase

@@ -4,8 +4,6 @@ namespace Spatie\TypeScriptTransformer;
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
-use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypeScriptTransformer\Collectors\AttributeCollector;
 use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
@@ -92,7 +90,7 @@ class TypeScriptTransformerConfig
     public function getTransformers(): array
     {
         return array_map(
-            fn(string $transformer) => $this->buildTransformer($transformer),
+            fn (string $transformer) => $this->buildTransformer($transformer),
             $this->transformers
         );
     }
@@ -118,7 +116,7 @@ class TypeScriptTransformerConfig
     public function getCollectors(): array
     {
         return array_map(
-            fn(string $collector) => new $collector($this),
+            fn (string $collector) => new $collector($this),
             $this->collectors
         );
     }

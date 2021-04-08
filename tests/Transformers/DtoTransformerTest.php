@@ -71,10 +71,9 @@ class DtoTransformerTest extends TestCase
                 $onlyStringPropertiesProcessor = new class implements TypeProcessor {
                     public function process(
                         Type $type,
-                        ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection,
+                        ReflectionProperty | ReflectionParameter | ReflectionMethod $reflection,
                         MissingSymbolsCollection $missingSymbolsCollection
-                    ): ?Type
-                    {
+                    ): ?Type {
                         return $type instanceof String_ ? $type : null;
                     }
                 };

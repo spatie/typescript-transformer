@@ -6,14 +6,11 @@ use Generator;
 use phpDocumentor\Reflection\Type;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Attributes\TypeScript;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithAlreadyTransformedAndNameAttributeAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithAlreadyTransformedAttributeAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptInlineAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptNamedAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptTransformerAttribute;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionAttribute;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionClass;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\TypeReflectors\ClassTypeReflector;
@@ -33,7 +30,7 @@ class ClassTypeReflectorTest extends TestCase
      * @param \phpDocumentor\Reflection\Type|null $type
      */
     public function it_can_correctly_reflect_classes(
-        FakeReflectionClass|ReflectionClass $reflection,
+        FakeReflectionClass | ReflectionClass $reflection,
         bool $transformable,
         bool $inline,
         ?string $name,

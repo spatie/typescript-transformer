@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
-use ReflectionParameter;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\TypeReflectors\MethodParameterTypeReflector;
 
@@ -17,11 +16,10 @@ class MethodParameterTypeReflectorTest extends TestCase
             public function method(
                 int $int,
                 ?int $nullable_int,
-                int|float $union,
-                null|int|float $nullable_union,
+                int | float $union,
+                null | int | float $nullable_union,
                 $without_type
             ) {
-
             }
         };
 
@@ -71,7 +69,6 @@ class MethodParameterTypeReflectorTest extends TestCase
                 $nullable_union,
                 $without_type
             ) {
-
             }
         };
 
@@ -111,7 +108,6 @@ class MethodParameterTypeReflectorTest extends TestCase
             public function method(
                 $int,
             ) {
-
             }
         };
 

@@ -95,5 +95,4 @@ class DefaultCollector extends Collector
             $reflector->getName()
         );
     }
-
 }

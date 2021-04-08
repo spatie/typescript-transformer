@@ -11,7 +11,6 @@ use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\DataTransferObject\DataTransferObjectCollection;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypeScriptTransformer\Support\UnknownType;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
 
 class DtoCollectionTypeProcessor implements TypeProcessor
@@ -20,7 +19,7 @@ class DtoCollectionTypeProcessor implements TypeProcessor
 
     public function process(
         Type $type,
-        ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection,
+        ReflectionProperty | ReflectionParameter | ReflectionMethod $reflection,
         MissingSymbolsCollection $missingSymbolsCollection
     ): ?Type {
         return $this->walk($type, function (Type $type) {

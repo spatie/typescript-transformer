@@ -3,12 +3,10 @@
 namespace Spatie\TypeScriptTransformer\Transformers;
 
 use phpDocumentor\Reflection\Type;
-use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
-use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
@@ -16,7 +14,7 @@ use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
 trait TransformsTypes
 {
     protected function reflectionToTypeScript(
-        ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection,
+        ReflectionMethod | ReflectionProperty | ReflectionParameter $reflection,
         MissingSymbolsCollection $missingSymbolsCollection,
         TypeProcessor ...$typeProcessors
     ): ?string {
@@ -26,7 +24,7 @@ trait TransformsTypes
             ...$typeProcessors
         );
 
-        if($type === null){
+        if ($type === null) {
             return null;
         }
 
@@ -38,11 +36,10 @@ trait TransformsTypes
     }
 
     protected function reflectionToType(
-        ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection,
+        ReflectionMethod | ReflectionProperty | ReflectionParameter $reflection,
         MissingSymbolsCollection $missingSymbolsCollection,
         TypeProcessor ...$typeProcessors
-    ): ?Type
-    {
+    ): ?Type {
         $type = TypeReflector::new($reflection)->reflect();
 
         foreach ($typeProcessors as $processor) {

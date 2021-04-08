@@ -3,7 +3,6 @@
 namespace Spatie\TypeScriptTransformer\Collectors;
 
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Structures\CollectedOccurrence;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 

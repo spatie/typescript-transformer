@@ -25,8 +25,8 @@ class StructTypeTest extends TestCase
             'an_array' => 'int[]',
             'an_object' => [
                 'a_bool' => 'bool',
-                'an_int' => 'int'
-            ]
+                'an_int' => 'int',
+            ],
         ]);
 
         $this->assertInstanceOf(StructType::class, $struct);
@@ -37,8 +37,8 @@ class StructTypeTest extends TestCase
             'an_array' => new Array_(new Integer()),
             'an_object' => new StructType([
                 'a_bool' => new Boolean(),
-                'an_int' => new Integer()
-            ])
+                'an_int' => new Integer(),
+            ]),
         ], $struct->getTypes());
     }
 }

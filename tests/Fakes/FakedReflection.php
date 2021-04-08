@@ -2,14 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
-use Attribute;
-use ReflectionAttribute;
 use ReflectionType;
 use ReflectionUnionType;
 
 trait FakedReflection
 {
-    private null|ReflectionType|FakeReflectionType $type = null;
+    private null | ReflectionType | FakeReflectionType $type = null;
 
     private ?string $entityName = null;
 
@@ -38,7 +36,7 @@ trait FakedReflection
         return $this;
     }
 
-    public function withType(FakeReflectionType|ReflectionType $type): self
+    public function withType(FakeReflectionType | ReflectionType $type): self
     {
         $this->type = $type;
 
@@ -63,7 +61,7 @@ trait FakedReflection
         return $this->entityName;
     }
 
-    public function getType(): null|ReflectionType|ReflectionUnionType|FakeReflectionType
+    public function getType(): null | ReflectionType | ReflectionUnionType | FakeReflectionType
     {
         if ($this->type === null) {
             return null;

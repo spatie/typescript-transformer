@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionAttribute;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionUnionType;

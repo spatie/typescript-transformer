@@ -31,7 +31,7 @@ class TypeDefinitionWriter implements Writer
         }
 
         $output .= join(PHP_EOL, array_map(
-            fn (TransformedType $type) =>  "export type {$type->name} = {$type->transformed};",
+            fn (TransformedType $type) => "export type {$type->name} = {$type->transformed};",
             $rootTypes
         ));
 

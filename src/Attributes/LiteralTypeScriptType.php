@@ -10,9 +10,9 @@ use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 #[Attribute]
 class LiteralTypeScriptType implements TypeScriptTransformableAttribute
 {
-    private string|array $typeScript;
+    private string | array $typeScript;
 
-    public function __construct(string|array $typeScript)
+    public function __construct(string | array $typeScript)
     {
         $this->typeScript = $typeScript;
     }
@@ -24,7 +24,7 @@ class LiteralTypeScriptType implements TypeScriptTransformableAttribute
         }
 
         $types = array_map(
-            fn(string $type) => new TypeScriptType($type),
+            fn (string $type) => new TypeScriptType($type),
             $this->typeScript
         );
 

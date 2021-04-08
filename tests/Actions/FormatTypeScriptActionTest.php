@@ -7,7 +7,6 @@ use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
-use Spatie\TypeScriptTransformer\Formatters\PrettierFormatter;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class FormatTypeScriptActionTest extends TestCase

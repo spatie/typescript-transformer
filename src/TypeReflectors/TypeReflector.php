@@ -15,7 +15,6 @@ use ReflectionProperty;
 use ReflectionType;
 use ReflectionUnionType;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute;
-use Spatie\TypeScriptTransformer\Support\UnknownType;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 
 abstract class TypeReflector
@@ -28,7 +27,7 @@ abstract class TypeReflector
 
     abstract protected function getAttributes(): array;
 
-    public static function new(ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection): static
+    public static function new(ReflectionMethod | ReflectionProperty | ReflectionParameter $reflection): static
     {
         if ($reflection instanceof ReflectionProperty) {
             return new PropertyTypeReflector($reflection);
@@ -62,7 +61,7 @@ abstract class TypeReflector
     {
         $attributes = array_filter(
             $this->getAttributes(),
-            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
+            fn (ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
         );
 
         if (empty($attributes)) {
@@ -104,7 +103,7 @@ abstract class TypeReflector
 
         if ($reflectionType instanceof ReflectionUnionType) {
             $type = new Compound(array_map(
-                fn(ReflectionNamedType $reflectionType) => (new TypeResolver())->resolve($reflectionType->getName()),
+                fn (ReflectionNamedType $reflectionType) => (new TypeResolver())->resolve($reflectionType->getName()),
                 $reflectionType->getTypes()
             ));
 

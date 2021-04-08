@@ -12,7 +12,8 @@ class FakeReflectionClass extends ReflectionClass
 
     public function __construct()
     {
-        parent::__construct(new class{});
+        parent::__construct(new class {
+        });
     }
 
     public function withNamespace(string $namespace): self

@@ -78,14 +78,13 @@ class ClassTypeReflector
             ->reflectInline($attributes)
             ->reflectType($attributes)
             ->reflectTransformer($attributes);
-
     }
 
     private function reflectName(array $attributes): self
     {
         $nameAttributes = array_values(array_filter(
             $attributes,
-            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScript::class, true)
+            fn (ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScript::class, true)
         ));
 
         if (! empty($nameAttributes)) {
@@ -103,7 +102,7 @@ class ClassTypeReflector
     {
         $inlineAttributes = array_values(array_filter(
             $attributes,
-            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), InlineTypeScriptType::class, true)
+            fn (ReflectionAttribute $attribute) => is_a($attribute->getName(), InlineTypeScriptType::class, true)
         ));
 
         if (! empty($inlineAttributes)) {
@@ -118,7 +117,7 @@ class ClassTypeReflector
     {
         $transformableAttributes = array_values(array_filter(
             $attributes,
-            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
+            fn (ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
         ));
 
         if (! empty($transformableAttributes)) {
@@ -140,7 +139,7 @@ class ClassTypeReflector
 
         $transformerAttributes = array_values(array_filter(
             $attributes,
-            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformer::class, true)
+            fn (ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformer::class, true)
         ));
 
         if (! empty($transformerAttributes)) {

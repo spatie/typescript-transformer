@@ -3,10 +3,8 @@
 namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
 
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
-use Spatie\TypeScriptTransformer\TypeReflectors\MethodReturnTypeReflector;
 use Spatie\TypeScriptTransformer\TypeReflectors\PropertyTypeReflector;
 
 class PropertyTypeReflectorTest extends TestCase
@@ -17,8 +15,8 @@ class PropertyTypeReflectorTest extends TestCase
         $class = new class {
             public int $p1;
             public ?int $p2;
-            public int|float $p3;
-            public int|float|null $p4;
+            public int | float $p3;
+            public int | float | null $p4;
             public $p5;
         };
 

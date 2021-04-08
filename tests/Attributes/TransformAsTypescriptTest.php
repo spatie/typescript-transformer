@@ -2,9 +2,9 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Attributes;
 
+use phpDocumentor\Reflection\Type;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
-use phpDocumentor\Reflection\Type;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Types\StructType;
 
@@ -29,8 +29,8 @@ class TransformAsTypescriptTest extends TestCase
             'an_array' => 'int[]',
             'an_object' => [
                 'a_bool' => 'bool',
-                'an_int' => 'int'
-            ]
+                'an_int' => 'int',
+            ],
         ]);
 
         $this->assertInstanceOf(StructType::class, $attribute->getType());

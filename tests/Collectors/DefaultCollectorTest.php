@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Tests\Collectors;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
 use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
@@ -239,5 +238,4 @@ class DefaultCollectorTest extends TestCase
 
         $this->collector->getTransformedType(new ReflectionClass($class));
     }
-
 }

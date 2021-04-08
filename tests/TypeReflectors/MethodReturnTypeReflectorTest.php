@@ -5,7 +5,6 @@ namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
-use Spatie\TypeScriptTransformer\TypeReflectors\MethodParameterTypeReflector;
 use Spatie\TypeScriptTransformer\TypeReflectors\MethodReturnTypeReflector;
 
 class MethodReturnTypeReflectorTest extends TestCase
@@ -24,12 +23,12 @@ class MethodReturnTypeReflectorTest extends TestCase
                 return 42;
             }
 
-            public function m3(): int|float
+            public function m3(): int | float
             {
                 return 42;
             }
 
-            public function m4(): int|float|null
+            public function m4(): int | float | null
             {
                 return 42;
             }
