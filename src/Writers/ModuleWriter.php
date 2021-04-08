@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
-use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
@@ -24,16 +23,14 @@ class ModuleWriter implements Writer
                 continue;
             }
 
-            $output .= $type->transformed.PHP_EOL;
+            $output .= "export type {$type->name} = {$type->transformed};".PHP_EOL;
         }
 
         return $output;
     }
 
-    public function replaceMissingSymbols(TypesCollection $collection): self
+    public function replacesSymbolsWithFullyQualifiedIdentifiers(): bool
     {
-        (new ReplaceSymbolsInCollectionAction())->execute($collection, false);
-
-        return $this;
+        return false;
     }
 }

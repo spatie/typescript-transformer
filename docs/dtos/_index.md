@@ -1,4 +1,4 @@
 ---
-title: Dto's
-weight: 2
+title: Transforming PHP classes
+weight: 3
 ---

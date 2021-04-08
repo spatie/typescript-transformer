@@ -22,12 +22,14 @@ class SpatieEnumTransformerTest extends TestCase
     /** @test */
     public function it_will_only_convert_enums()
     {
-        $this->assertTrue($this->transformer->canTransform(
-            new ReflectionClass(SpatieEnum::class)
+        $this->assertNotNull($this->transformer->transform(
+            new ReflectionClass(SpatieEnum::class),
+            'State',
         ));
 
-        $this->assertFalse($this->transformer->canTransform(
-            new ReflectionClass(DateTime::class)
+        $this->assertNull($this->transformer->transform(
+            new ReflectionClass(DateTime::class),
+            'State',
         ));
     }
 
@@ -39,7 +41,7 @@ class SpatieEnumTransformerTest extends TestCase
             'FakeEnum'
         );
 
-        $this->assertEquals("export type FakeEnum = 'draft' | 'published' | 'archived';", $type->transformed);
+        $this->assertEquals("'draft' | 'published' | 'archived'", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
         $this->assertFalse($type->isInline);
     }

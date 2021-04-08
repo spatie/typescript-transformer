@@ -2,20 +2,18 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use phpDocumentor\Reflection\TypeResolver;
 use ReflectionClass;
 use ReflectionProperty;
-use Spatie\TypeScriptTransformer\Actions\ResolveClassPropertyTypeAction;
-use Spatie\TypeScriptTransformer\Actions\TransformClassPropertyTypeAction;
-use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ApplyNeverClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\ClassPropertyProcessors\DtoCollectionClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\ClassPropertyProcessors\ReplaceDefaultTypesClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
+use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class DtoTransformer implements Transformer
 {
+    use TransformsTypes;
+
     protected TypeScriptTransformerConfig $config;
 
     public function __construct(TypeScriptTransformerConfig $config)
@@ -23,53 +21,79 @@ class DtoTransformer implements Transformer
         $this->config = $config;
     }
 
-    public function canTransform(ReflectionClass $class): bool
+    public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
-        return true;
-    }
-
-    public function transform(ReflectionClass $class, string $name): TransformedType
-    {
-        $missingSymbols = new MissingSymbolsCollection();
-
-        $properties = array_map(
-            fn (ReflectionProperty $property) => $this->resolveTypeDefinition($property, $missingSymbols),
-            $this->resolveProperties($class)
-        );
-
-        $properties = array_filter($properties);
-
-        $output = "export type {$name} = {" . PHP_EOL;
-
-        foreach ($properties as $property) {
-            $output .= "    {$property}" . PHP_EOL;
+        if (! $this->canTransform($class)) {
+            return null;
         }
 
-        $output .= '}' . PHP_EOL;
+        $missingSymbols = new MissingSymbolsCollection();
+
+        $type = join([
+            $this->transformProperties($class, $missingSymbols),
+            $this->transformMethods($class, $missingSymbols),
+            $this->transformExtra($class, $missingSymbols),
+        ]);
 
         return TransformedType::create(
             $class,
             $name,
-            $output,
+            "{" . PHP_EOL . $type . "}",
             $missingSymbols
         );
     }
 
-    /**
-     * @return \Spatie\TypeScriptTransformer\ClassPropertyProcessors\ClassPropertyProcessor[]
-     * @throws \Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer
-     */
-    protected function getClassPropertyProcessors(): array
+    protected function canTransform(ReflectionClass $class): bool
     {
-        return [
-            new ReplaceDefaultTypesClassPropertyProcessor(
-                $this->config->getClassPropertyReplacements()
-            ),
-            new DtoCollectionClassPropertyProcessor(),
-            new ApplyNeverClassPropertyProcessor(),
-        ];
+        return true;
     }
 
+    protected function transformProperties(
+        ReflectionClass $class,
+        MissingSymbolsCollection $missingSymbols
+    ): string {
+        return array_reduce(
+            $this->resolveProperties($class),
+            function (string $carry, ReflectionProperty $property) use ($missingSymbols) {
+                $transformed = $this->reflectionToTypeScript(
+                    $property,
+                    $missingSymbols,
+                    ...$this->typeProcessors()
+                );
+
+                if ($transformed === null) {
+                    return $carry;
+                }
+
+                return "{$carry}{$property->getName()}: {$transformed};" . PHP_EOL;
+            },
+            ''
+        );
+    }
+
+    protected function transformMethods(
+        ReflectionClass $class,
+        MissingSymbolsCollection $missingSymbols
+    ): string {
+        return '';
+    }
+
+    protected function transformExtra(
+        ReflectionClass $class,
+        MissingSymbolsCollection $missingSymbols
+    ): string {
+        return '';
+    }
+
+    protected function typeProcessors(): array
+    {
+        return [
+            new ReplaceDefaultsTypeProcessor(
+                $this->config->getDefaultTypeReplacements()
+            ),
+            new DtoCollectionTypeProcessor(),
+        ];
+    }
 
     protected function resolveProperties(ReflectionClass $class): array
     {
@@ -79,31 +103,5 @@ class DtoTransformer implements Transformer
         );
 
         return array_values($properties);
-    }
-
-    protected function resolveTypeDefinition(
-        ReflectionProperty $reflection,
-        MissingSymbolsCollection $missingSymbolsCollection
-    ): ?string {
-        $resolveClassPropertyTypeAction = new ResolveClassPropertyTypeAction(
-            new TypeResolver()
-        );
-
-        $type = $resolveClassPropertyTypeAction->execute($reflection);
-
-        foreach ($this->getClassPropertyProcessors() as $processor) {
-            $type = $processor->process($type, $reflection);
-
-            if ($type === null) {
-                return null;
-            }
-        }
-
-        $transformClassPropertyTypeAction = new TransformClassPropertyTypeAction(
-            $missingSymbolsCollection,
-            $reflection->getDeclaringClass()->getName()
-        );
-
-        return "{$reflection->getName()}: {$transformClassPropertyTypeAction->execute($type)};";
     }
 }

@@ -1,13 +1,13 @@
 ---
 title: Typing properties
-weight: 2
+weight: 1
 ---
 
 Let's take a look at how we can type individual properties of a PHP class.
 
 ## Using PHP's built-in typed properties
 
-Since PHP 7.4 it's possible to use typed properties in a class. This package makes these types an A-class citizen.
+It's possible to use typed properties in a class. This package makes these types an A-class citizen.
 
 ```php
 class Dto
@@ -21,6 +21,8 @@ class Dto
     public bool $bool;
 
     public array $array;
+    
+    public mixed $mixed;
 }
 ```
 
@@ -33,6 +35,15 @@ class Dto
 }
 ```
 
+You can even use these union types:
+
+```php
+class Dto
+{
+    public float|int $float_or_int;
+}
+```
+
 Or use other types that can be replaced:
 
 ```php
@@ -42,9 +53,13 @@ class Dto
 }
 ```
 
+## Using attributes
+
+You can use one of the two attributes provided by the package to transform them to TypeScript directly, more information about this [here](https://spatie.be/docs/typescript-transformer/v2/usage/annotations#using-typescript-within-php).
+
 ## Using docblocks
 
-You can also use docblocks to type properties. A more detailed overview of this can be found [here](https://docs.phpdoc.org/latest/guides/types.html). While PHP's built-in typed properties are great, docblocks allow for a bit more flexibility:
+You can also use docblocks to type properties. You can find a more detailed overview of this [here](https://docs.phpdoc.org/latest/guides/types.html). While PHP's built-in typed properties are fine, docblocks allow for a bit more flexibility:
 
 ```php
 class Dto
@@ -90,7 +105,7 @@ class Dto
 }
 ```
 
-Note: always use the fully qualified class name (FCCN). At this moment the package cannot determine imported classes used in a docblock:
+Note: always use the fully qualified class name (FQCN). At this moment, the package cannot determine imported classes used in a docblock:
 
 ```php
 use App\DataTransferObjects\UserData;
@@ -115,7 +130,7 @@ class Dto
 }
 ```
 
-Or these special PHP specific types:
+Or these unusual PHP specific types:
 
 ```php
 class Dto
@@ -151,9 +166,9 @@ These will all transform to a `Dto` TypeScript type.
 
 ### Transforming arrays
 
-Arrays in PHP and TypeScript (JavaScript) are completely different concepts. This poses a couple of problems we'll address. A PHP array is a multi-use storage/memory structure. In TypeScript, a PHP array can be represented both as an `Array` and as an `Object` with specified keys. 
+Arrays in PHP and TypeScript (JavaScript) are entirely different concepts. This poses a couple of problems we'll address. A PHP array is a multi-use storage/memory structure. In TypeScript, a PHP array can be represented both as an `Array` and as an `Object` with specified keys.
 
-Depending on how your annotations are written the package will output either an `Array` or `Object`. Let's have a look at some examples that will transform into an `Array` type:
+Depending on how your annotations are written, the package will output either an `Array` or `Object`. Let's have a look at some examples that will transform into an `Array` type:
 
 ```php
 class Dto
@@ -165,11 +180,11 @@ class Dto
     public $another_array;
 
     /** @var array<string|int,\DateTime> */
-    public $you_propably_wont_write_this;
+    public $you_probably_wont_write_this;
 }
 ```
 
-Typing objects can be done as such:
+You can type objects as such:
 
 ```php
 class Dto
@@ -184,18 +199,6 @@ class Dto
 
 ## Combining regular types and docblocks
 
-It is possible and recommended combine regular type with docblock annotations for more specific typing. Let's have a look:
+Whenever a property has a docblock, that docblock will be used to type the property. The 'real' PHP type will be omitted.
 
-```php
-class Dto
-{
-    /** @var string[] */
-    public array $array;
-}
-```
-
-The package knows `string[]` is a more specific version of the `array` type and will internally remove the redundant `Array` type. The outputted type definition looks like this:
-
-```tsx
-array: Array<string>
-```
+If the property is nullable and has a docblock that isn't nullable, then the package will make the TypeScript type nullable.

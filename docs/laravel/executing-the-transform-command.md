@@ -11,10 +11,10 @@ php artisan typescript:transform
 
 ## Command options
 
-There are some extra commands you can use when running the command. It is also possible to only transform one class:
-                                                                    
+There are some extra commands you can use when running the command. It is also possible to transform classes in a specified path:
+
 ```bash
-php artisan typescript:transform --class=app/Enums/RoleEnum.php
+php artisan typescript:transform --path=app/Enums
 ```
 
 Or you can define another output file than the default one:
@@ -24,3 +24,9 @@ php artisan typescript:transform --output=types.d.ts
 ```
 
 This file will be stored in the resource's path of your Laravel application.
+
+It is also possible to automatically format the generated TypeScript with prettier:
+
+```bash
+php artisan typescript:transform --format
+```

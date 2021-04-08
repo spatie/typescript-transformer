@@ -8,5 +8,5 @@ interface Writer
 {
     public function format(TypesCollection $collection): string;
 
-    public function replaceMissingSymbols(TypesCollection $collection): self;
+    public function replacesSymbolsWithFullyQualifiedIdentifiers(): bool;
 }

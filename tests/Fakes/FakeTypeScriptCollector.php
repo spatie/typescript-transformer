@@ -5,8 +5,8 @@ namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Collectors\Collector;
-use Spatie\TypeScriptTransformer\Support\CollectedOccurrence;
-use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 
 class FakeTypeScriptCollector extends Collector
 {
@@ -15,11 +15,14 @@ class FakeTypeScriptCollector extends Collector
         return is_subclass_of($class->getName(), Enum::class);
     }
 
-    public function getCollectedOccurrence(ReflectionClass $class): CollectedOccurrence
+    public function getTransformedType(ReflectionClass $class): TransformedType
     {
-        return CollectedOccurrence::create(
-            new MyclabsEnumTransformer(),
-            $class->getShortName()
+        return new TransformedType(
+            $class,
+            $class->getShortName(),
+            'fake-collected-class',
+            new MissingSymbolsCollection(),
+            false
         );
     }
 }

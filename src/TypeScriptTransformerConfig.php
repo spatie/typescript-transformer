@@ -4,39 +4,37 @@ namespace Spatie\TypeScriptTransformer;
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
-use Spatie\TypeScriptTransformer\Collectors\AnnotationCollector;
-use Spatie\TypeScriptTransformer\Exceptions\InvalidClassPropertyReplacer;
-use Spatie\TypeScriptTransformer\Support\TransformerFactory;
+use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
+use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
+use Spatie\TypeScriptTransformer\Formatters\Formatter;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
 class TypeScriptTransformerConfig
 {
-    private string $searchingPath;
+    private array $autoDiscoverTypesPaths = [];
 
     private array $transformers = [];
 
-    private array $collectors;
+    private array $collectors = [DefaultCollector::class];
 
     private string $outputFile = 'types.d.ts';
 
-    private array $classPropertyReplacements = [];
+    private array $defaultTypeReplacements = [];
 
     private string $writer = TypeDefinitionWriter::class;
 
-    public function __construct()
-    {
-        $this->collectors = [AnnotationCollector::class];
-    }
+    private ?string $formatter = null;
 
     public static function create(): self
     {
         return new self();
     }
 
-    public function searchingPath(string $searchingPath): self
+    public function autoDiscoverTypes(string ...$paths): self
     {
-        $this->searchingPath = $searchingPath;
+        $this->autoDiscoverTypesPaths = array_merge($this->autoDiscoverTypesPaths, $paths);
 
         return $this;
     }
@@ -50,7 +48,7 @@ class TypeScriptTransformerConfig
 
     public function collectors(array $collectors)
     {
-        $this->collectors = array_merge($collectors, [AnnotationCollector::class]);
+        $this->collectors = array_merge($collectors, [DefaultCollector::class]);
 
         return $this;
     }
@@ -69,27 +67,39 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function classPropertyReplacements(array $classPropertyReplacements): self
+    public function defaultTypeReplacements(array $defaultTypeReplacements): self
     {
-        $this->classPropertyReplacements = $classPropertyReplacements;
+        $this->defaultTypeReplacements = $defaultTypeReplacements;
 
         return $this;
     }
 
-    public function getSearchingPath(): string
+    public function formatter(?string $formatter): self
     {
-        return $this->searchingPath;
+        $this->formatter = $formatter;
+
+        return $this;
+    }
+
+    public function getAutoDiscoverTypesPaths(): array
+    {
+        return $this->autoDiscoverTypesPaths;
     }
 
     /**@return \Spatie\TypeScriptTransformer\Transformers\Transformer[] */
     public function getTransformers(): array
     {
-        $factory = new TransformerFactory($this);
-
         return array_map(
-            fn (string $transformer) => $factory->create($transformer),
+            fn (string $transformer) => $this->buildTransformer($transformer),
             $this->transformers
         );
+    }
+
+    public function buildTransformer(string $transformer): Transformer
+    {
+        return method_exists($transformer, '__construct')
+            ? new $transformer($this)
+            : new $transformer;
     }
 
     public function getWriter(): Writer
@@ -111,15 +121,15 @@ class TypeScriptTransformerConfig
         );
     }
 
-    public function getClassPropertyReplacements(): array
+    public function getDefaultTypeReplacements(): array
     {
         $typeResolver = new TypeResolver();
 
         $replacements = [];
 
-        foreach ($this->classPropertyReplacements as $class => $replacement) {
+        foreach ($this->defaultTypeReplacements as $class => $replacement) {
             if (! class_exists($class)) {
-                throw InvalidClassPropertyReplacer::classDoesNotExist($class);
+                throw InvalidDefaultTypeReplacer::classDoesNotExist($class);
             }
 
             $replacements[$class] = $replacement instanceof Type
@@ -128,5 +138,14 @@ class TypeScriptTransformerConfig
         }
 
         return $replacements;
+    }
+
+    public function getFormatter(): ?Formatter
+    {
+        if ($this->formatter === null) {
+            return null;
+        }
+
+        return new $this->formatter;
     }
 }
