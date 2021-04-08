@@ -46,7 +46,7 @@ The `Languages` enum will be converted to:
 export type Languages = 'typescript' | 'php';
 ```
 
-You can find the full documentation [here](https://docs.spatie.be/typescript-transformer/v1/introduction/).
+You can find the full documentation [here](https://docs.spatie.be/typescript-transformer/v2/introduction/).
 
 ## Support us
 
