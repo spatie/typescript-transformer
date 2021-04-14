@@ -29,7 +29,7 @@
         "spatie/phpunit-snapshot-assertions": "^4.2",
         "spatie/data-transfer-object": "^2.0",
         "friendsofphp/php-cs-fixer": "^2.18",
-        "spatie/temporary-directory": "^1.2",
+        "spatie/temporary-directory": "^1.2|^2.0",
         "vimeo/psalm": "^4.2"
     },
     "autoload": {
