@@ -2,6 +2,14 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.0.2 - 2021-06-30
+
+- Fix default collector with missing symbols in attributes
+
+## 2.0.1 - 2021-04-14
+
+- Allow spatie/temporary-directory v2 on dev
+
 ## 2.0.0 - 2021-04-08
 
 - The package is now PHP 8 only
