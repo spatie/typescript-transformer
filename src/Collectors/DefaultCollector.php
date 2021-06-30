@@ -47,6 +47,7 @@ class DefaultCollector extends Collector
             $reflector->getReflectionClass(),
             $reflector->getName(),
             $transpiler->execute($reflector->getType()),
+            $missingSymbols
         );
     }
 
