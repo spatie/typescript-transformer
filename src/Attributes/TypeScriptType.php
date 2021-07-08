@@ -5,16 +5,15 @@ namespace Spatie\TypeScriptTransformer\Attributes;
 use Attribute;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
-use phpDocumentor\Reflection\Types\Integer;
 use Spatie\TypeScriptTransformer\Exceptions\UnableToTransformUsingAttribute;
 use Spatie\TypeScriptTransformer\Types\StructType;
 
 #[Attribute]
 class TypeScriptType implements TypeScriptTransformableAttribute
 {
-    private array|string $type;
+    private array | string $type;
 
-    public function __construct(string|array $type)
+    public function __construct(string | array $type)
     {
         $this->type = $type;
     }

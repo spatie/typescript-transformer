@@ -132,7 +132,6 @@ class DefaultCollectorTest extends TestCase
         $this->collector->getTransformedType($reflection);
     }
 
-
     /** @test */
     public function it_will_collect_classes_with_attributes()
     {
