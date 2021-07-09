@@ -17,43 +17,43 @@ class ProcessesTypesTest extends TestCase
         $this->assertProcessed(
             'string',
             'string',
-            fn(Type $type) => $type,
+            fn (Type $type) => $type,
         );
 
         $this->assertProcessed(
             null,
             'string',
-            fn(Type $type) => null,
+            fn (Type $type) => null,
         );
 
         $this->assertProcessed(
             'Array<int>',
             'Array<int>',
-            fn(Type $type) => $type,
+            fn (Type $type) => $type,
         );
 
         $this->assertProcessed(
             'string',
             'string|int',
-            fn(Type $type) => $type instanceof Integer ? null : $type,
+            fn (Type $type) => $type instanceof Integer ? null : $type,
         );
 
         $this->assertProcessed(
             'int[]',
             'int[]',
-            fn(Type $type) => $type,
+            fn (Type $type) => $type,
         );
 
         $this->assertProcessed(
             'Collection<DateTime>',
             'Collection<DateTime>',
-            fn(Type $type) => $type,
+            fn (Type $type) => $type,
         );
     }
 
     private function assertProcessed(
-        Type|string|null $expectedType,
-        Type|string $initialType,
+        Type | string | null $expectedType,
+        Type | string $initialType,
         Closure $closure
     ) {
         $processor = new class {
