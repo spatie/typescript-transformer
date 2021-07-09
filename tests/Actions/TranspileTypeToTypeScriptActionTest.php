@@ -104,6 +104,9 @@ class TranspileTypeToTypeScriptActionTest extends TestCase
 
             // Mixed
             ['mixed', 'any'],
+
+            // Collections
+            ['Collection<int>', 'Array<number>'],
         ];
     }
 
