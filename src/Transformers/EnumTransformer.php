@@ -15,7 +15,7 @@ class EnumTransformer implements Transformer
             return null;
         }
 
-        if ($class->isEnum() === false) {
+        if (! $class->isEnum()) {
             return null;
         }
 
