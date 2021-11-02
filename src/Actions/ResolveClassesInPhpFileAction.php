@@ -28,12 +28,12 @@ class ResolveClassesInPhpFileAction
 
         $namespace = $nodeFinder->findFirst(
             $statements,
-            fn($node) => $node instanceof Namespace_
+            fn ($node) => $node instanceof Namespace_
         );
 
         $classes = $nodeFinder->find(
             $statements,
-            fn($node) => $node instanceof Class_ || $node instanceof Interface_ || $node instanceof Trait_
+            fn ($node) => $node instanceof Class_ || $node instanceof Interface_ || $node instanceof Trait_
         );
 
         return array_map(function (Class_|Interface_|Trait_ $item) use ($namespace) {

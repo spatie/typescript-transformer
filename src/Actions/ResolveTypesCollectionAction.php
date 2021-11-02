@@ -4,13 +4,10 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Exception;
 use Generator;
-use IteratorAggregate;
 use ReflectionClass;
-use ReflectionException;
 use Spatie\TypeScriptTransformer\Exceptions\NoAutoDiscoverTypesPathsDefined;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
-use Spatie\TypeScriptTransformer\Support\ClassIterator2;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
