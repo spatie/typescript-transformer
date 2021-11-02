@@ -2,12 +2,15 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use hanneskod\classtools\Iterator\ClassIterator;
+use Exception;
+use Generator;
 use IteratorAggregate;
 use ReflectionClass;
+use ReflectionException;
 use Spatie\TypeScriptTransformer\Exceptions\NoAutoDiscoverTypesPathsDefined;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Support\ClassIterator2;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
@@ -52,16 +55,23 @@ class ResolveTypesCollectionAction
         return $collection;
     }
 
-    protected function resolveIterator(array $paths): IteratorAggregate
+    protected function resolveIterator(array $paths): Generator
     {
         $paths = array_map(
             fn (string $path) => is_dir($path) ? $path : dirname($path),
             $paths
         );
 
-        $iterator = new ClassIterator($this->finder->in($paths));
+        foreach ($this->finder->in($paths) as $fileInfo) {
+            try {
+                $classes = (new ResolveClassesInPhpFileAction())->execute($fileInfo);
 
-        return $iterator->enableAutoloading();
+                foreach ($classes as $name) {
+                    yield $name => new ReflectionClass($name);
+                }
+            } catch (Exception $exception) {
+            }
+        }
     }
 
     protected function resolveTransformedType(ReflectionClass $class): ?TransformedType
