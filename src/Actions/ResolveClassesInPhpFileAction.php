@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
+use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Namespace_;
@@ -33,10 +34,10 @@ class ResolveClassesInPhpFileAction
 
         $classes = $nodeFinder->find(
             $statements,
-            fn ($node) => $node instanceof Class_ || $node instanceof Interface_ || $node instanceof Trait_
+            fn ($node) => $node instanceof Class_ || $node instanceof Interface_ || $node instanceof Trait_ || $node instanceof Enum_
         );
 
-        return array_map(function (Class_|Interface_|Trait_ $item) use ($namespace) {
+        return array_map(function (Class_|Interface_|Trait_|Enum_ $item) use ($namespace) {
             $className = $namespace instanceof Namespace_
                 ? "{$namespace->name}\\{$item->name}"
                 : $item->name;
