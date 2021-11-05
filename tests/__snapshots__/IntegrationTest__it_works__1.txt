@@ -1,4 +1,4 @@
-namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration {
+declare namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration {
 export type Dto = {
 string: string;
 nullbable: string | null;
@@ -39,7 +39,7 @@ name: string;
 export type OtherDtoCollection = {
 };
 }
-namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.LevelUp {
+declare namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.LevelUp {
 export type YetAnotherDto = {
 name: string;
 };
