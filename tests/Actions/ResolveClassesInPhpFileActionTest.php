@@ -3,11 +3,12 @@
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use PHPUnit\Framework\TestCase;
-use Spatie\TypeScriptTransformer\Actions\ResolveClassesInPhpFileAction;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeClass;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeInterface;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeTrait;
 use Symfony\Component\Finder\SplFileInfo;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeTrait;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeClass;
+use Spatie\TypeScriptTransformer\Actions\ResolveClassesInPhpFileAction;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeInterface;
 
 class ResolveClassesInPhpFileActionTest extends TestCase
 {
@@ -41,6 +42,14 @@ class ResolveClassesInPhpFileActionTest extends TestCase
     {
         $this->assertEquals([SomeTrait::class,], $this->action->execute(
             new SplFileInfo(__DIR__ . '/../FakeClasses/Finder/SomeTrait.php', '', '')
+        ));
+    }
+
+    /** @test */
+    public function it_can_find_enums()
+    {
+        $this->assertEquals([SomeEnum::class,], $this->action->execute(
+            new SplFileInfo(__DIR__.'./../FakeClasses/Finder/SomeEnum.php', '', '')
         ));
     }
 }
