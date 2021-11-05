@@ -2,6 +2,12 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.0 - 2021-04-08
+
+- Remove classtools dependency
+- Add support for PHP 8.1 enums (#12)
+- Add `declare` keyword by default to generated output (#13)
+
 ## 2.0.3 - 2021-07-09
 
 - Fix `ProcessTypes` to work with Collection types 
