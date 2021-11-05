@@ -2,8 +2,8 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use ReflectionEnum;
 use ReflectionClass;
+use ReflectionEnum;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 
 class EnumTransformer implements Transformer

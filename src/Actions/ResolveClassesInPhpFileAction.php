@@ -2,8 +2,8 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Trait_;

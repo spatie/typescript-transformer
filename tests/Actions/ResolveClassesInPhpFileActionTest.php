@@ -3,12 +3,12 @@
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Finder\SplFileInfo;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeTrait;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeClass;
 use Spatie\TypeScriptTransformer\Actions\ResolveClassesInPhpFileAction;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeClass;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeInterface;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeTrait;
+use Symfony\Component\Finder\SplFileInfo;
 
 class ResolveClassesInPhpFileActionTest extends TestCase
 {
