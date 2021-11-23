@@ -19,7 +19,7 @@ class TypeDefinitionWriter implements Writer
         foreach ($namespaces as $namespace => $types) {
             asort($types);
 
-            $output .= "namespace {$namespace} {".PHP_EOL;
+            $output .= "declare namespace {$namespace} {".PHP_EOL;
 
             $output .= join(PHP_EOL, array_map(
                 fn (TransformedType $type) => "export {$type->toString()};",
