@@ -16,14 +16,17 @@ class TransformedType
 
     public bool $isInline;
 
+    public string $format;
+
     public static function create(
         ReflectionClass $class,
         string $name,
         string $transformed,
         ?MissingSymbolsCollection $missingSymbols = null,
-        bool $inline = false
+        bool $inline = false,
+        string $format = 'type'
     ): self {
-        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), $inline);
+        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $format);
     }
 
     public static function createInline(
@@ -39,13 +42,15 @@ class TransformedType
         ?string $name,
         string $transformed,
         MissingSymbolsCollection $missingSymbols,
-        bool $isInline
+        bool $isInline,
+        string $format = 'type'
     ) {
         $this->reflection = $class;
         $this->name = $name;
         $this->transformed = $transformed;
         $this->missingSymbols = $missingSymbols;
         $this->isInline = $isInline;
+        $this->format = $format;
     }
 
     public function getNamespaceSegments(): array
@@ -86,5 +91,17 @@ class TransformedType
             $replacement,
             $this->transformed
         );
+    }
+
+    public function toString() {
+        switch ($this->format) {
+            case 'enum': {
+                return "enum {$this->name} { {$this->transformed} };";
+            }
+
+            default: {
+                return "type {$this->name} = {$this->transformed};";
+            }
+        }
     }
 }
