@@ -95,8 +95,8 @@ class TransformedType
 
     public function toString() {
         return match ($this->format) {
-            'enum' => "enum {$this->name} { {$this->transformed} };",
-            default => "type {$this->name} = {$this->transformed};",
+            'enum' => "enum {$this->name} { {$this->transformed} }",
+            default => "type {$this->name} = {$this->transformed}",
         };
     }
 }
