@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.1 - 2021-12-08
+
+- add support for PHP 8.1 (#15)
+
 ## 2.1.0 - 2021-04-08
 
 - Remove classtools dependency
@@ -10,7 +14,7 @@ All notable changes to `typescript-transformer` will be documented in this file
 
 ## 2.0.3 - 2021-07-09
 
-- Fix `ProcessTypes` to work with Collection types 
+- Fix `ProcessTypes` to work with Collection types
 
 ## 2.0.2 - 2021-06-30
 
