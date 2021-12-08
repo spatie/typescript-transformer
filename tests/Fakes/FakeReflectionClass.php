@@ -8,7 +8,7 @@ class FakeReflectionClass extends ReflectionClass
 {
     use FakedReflection;
 
-    private ?string $withNamespace = null;
+    private string $withNamespace = '';
 
     public function __construct()
     {
@@ -30,12 +30,12 @@ class FakeReflectionClass extends ReflectionClass
         return $this;
     }
 
-    public function getNamespaceName()
+    public function getNamespaceName(): string
     {
         return $this->withNamespace ?? parent::getNamespaceName();
     }
 
-    public function getName()
+    public function getName(): string
     {
         $name = $this->entityName ?? parent::getShortName();
 

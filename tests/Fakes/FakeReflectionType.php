@@ -6,7 +6,7 @@ use ReflectionNamedType;
 
 class FakeReflectionType extends ReflectionNamedType
 {
-    private ?string $type = null;
+    private string $type = '';
 
     private bool $isBuiltIn = true;
 
@@ -42,17 +42,17 @@ class FakeReflectionType extends ReflectionNamedType
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->type;
     }
 
-    public function isBuiltin()
+    public function isBuiltin(): bool
     {
         return $this->isBuiltIn;
     }
 
-    public function allowsNull()
+    public function allowsNull(): bool
     {
         return $this->allowsNull;
     }
