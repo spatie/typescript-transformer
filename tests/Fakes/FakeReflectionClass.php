@@ -32,7 +32,7 @@ class FakeReflectionClass extends ReflectionClass
 
     public function getNamespaceName(): string
     {
-        return $this->withNamespace ?? parent::getNamespaceName();
+        return $this->withNamespace ?: parent::getNamespaceName();
     }
 
     public function getName(): string

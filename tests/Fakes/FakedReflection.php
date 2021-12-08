@@ -45,7 +45,7 @@ trait FakedReflection
 
     public function getDocComment(): string|false
     {
-        if ($this->docComment === null) {
+        if ($this->docComment === '') {
             return false;
         }
 
