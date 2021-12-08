@@ -29,7 +29,7 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
         return $this->types[$class] ?? null;
     }
 
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->types);
     }
@@ -60,12 +60,12 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
         unset($this->types[$class]);
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->types);
     }
 
-    protected function ensureTypeCanBeAdded(TransformedType $type)
+    protected function ensureTypeCanBeAdded(TransformedType $type): void
     {
         $namespace = array_reduce($type->getNamespaceSegments(), function (array $checkedSegments, string $segment) {
             $segments = array_merge($checkedSegments, [$segment]);

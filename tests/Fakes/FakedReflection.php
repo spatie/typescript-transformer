@@ -11,7 +11,7 @@ trait FakedReflection
 
     private ?string $entityName = null;
 
-    private ?string $docComment = null;
+    private string $docComment = '';
 
     public function __construct()
     {
@@ -43,19 +43,19 @@ trait FakedReflection
         return $this;
     }
 
-    public function getDocComment()
+    public function getDocComment(): string|false
     {
-        if ($this->docComment === null) {
+        if ($this->docComment === '') {
             return false;
         }
 
         return $this->docComment;
     }
 
-    public function getName()
+    public function getName(): string
     {
         if ($this->entityName === null) {
-            return null;
+            return '';
         }
 
         return $this->entityName;
