@@ -93,7 +93,8 @@ class TransformedType
         );
     }
 
-    public function toString(): string {
+    public function toString(): string
+    {
         return match ($this->keyword) {
             'enum' => "enum {$this->name} { {$this->transformed} }",
             default => "type {$this->name} = {$this->transformed}",

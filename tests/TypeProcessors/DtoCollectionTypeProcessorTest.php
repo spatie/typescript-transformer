@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Tests\TypeProcessors;
 
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Array_;
-use phpDocumentor\Reflection\Types\Mixed_;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\DtoCollection;

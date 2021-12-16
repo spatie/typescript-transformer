@@ -34,7 +34,7 @@ class EnumTransformer implements Transformer
         $enum = (new ReflectionEnum($class->getName()));
 
         $options = array_map(
-            fn($enum) => "'{$enum}' = '{$enum}'",
+            fn ($enum) => "'{$enum}' = '{$enum}'",
             array_keys($enum->getConstants())
         );
 
@@ -51,7 +51,7 @@ class EnumTransformer implements Transformer
         $enum = (new ReflectionEnum($class->getName()));
 
         $options = array_map(
-            fn($enum) => "'{$enum}'",
+            fn ($enum) => "'{$enum}'",
             array_keys($enum->getConstants())
         );
 

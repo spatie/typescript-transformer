@@ -30,8 +30,9 @@ class MyclabsEnumTransformer implements Transformer
         $enum = $class->getName();
 
         $options = array_map(
-            fn($key, $value) => "'{$key}' = '{$value}'",
-            array_keys($enum::toArray()), $enum::toArray()
+            fn ($key, $value) => "'{$key}' = '{$value}'",
+            array_keys($enum::toArray()),
+            $enum::toArray()
         );
 
         return TransformedType::create(
@@ -48,7 +49,7 @@ class MyclabsEnumTransformer implements Transformer
         $enum = $class->getName();
 
         $options = array_map(
-            fn(Enum $enum) => "'{$enum->getValue()}'",
+            fn (Enum $enum) => "'{$enum->getValue()}'",
             $enum::values()
         );
 
