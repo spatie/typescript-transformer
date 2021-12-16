@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer\Tests\TypeProcessors;
 
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Array_;
+use phpDocumentor\Reflection\Types\Mixed_;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
@@ -12,7 +13,6 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\StringDtoCollecti
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
-use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 
 class DtoCollectionTypeProcessorTest extends TestCase
 {
@@ -80,7 +80,7 @@ class DtoCollectionTypeProcessorTest extends TestCase
             new MissingSymbolsCollection()
         );
 
-        $this->assertEquals(new Array_(new TypeScriptType('any')), $type);
+        $this->assertEquals(new Array_(new Mixed_()), $type);
     }
 
     /** @test */
