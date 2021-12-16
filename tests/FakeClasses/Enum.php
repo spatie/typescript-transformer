@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\FakeClasses;
 
-
 /**
  * @typescript
  */
