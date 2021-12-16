@@ -27,6 +27,8 @@ class TypeScriptTransformerConfig
 
     private ?string $formatter = null;
 
+    private bool $transformToNativeEnums = false;
+
     public static function create(): self
     {
         return new self();
@@ -77,6 +79,13 @@ class TypeScriptTransformerConfig
     public function formatter(?string $formatter): self
     {
         $this->formatter = $formatter;
+
+        return $this;
+    }
+
+    public function transformToNativeEnums(bool $transformToNativeEnums = true): self
+    {
+        $this->transformToNativeEnums = $transformToNativeEnums;
 
         return $this;
     }
@@ -147,5 +156,10 @@ class TypeScriptTransformerConfig
         }
 
         return new $this->formatter;
+    }
+
+    public function shouldTransformToNativeEnums(): bool
+    {
+        return $this->transformToNativeEnums;
     }
 }

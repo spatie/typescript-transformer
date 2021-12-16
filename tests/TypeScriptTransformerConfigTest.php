@@ -22,7 +22,7 @@ class TypeScriptTransformerConfigTest extends TestCase
             MyclabsEnumTransformer::class,
         ]);
 
-        $this->assertEquals([new MyclabsEnumTransformer], $config->getTransformers());
+        $this->assertEquals([new MyclabsEnumTransformer($config)], $config->getTransformers());
     }
 
     /** @test */

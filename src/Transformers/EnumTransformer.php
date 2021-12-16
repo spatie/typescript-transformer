@@ -5,9 +5,14 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionEnum;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class EnumTransformer implements Transformer
 {
+    public function __construct(protected TypeScriptTransformerConfig $config)
+    {
+    }
+
     public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
         // If we're not on PHP >= 8.1, we don't support native enums.
@@ -19,22 +24,41 @@ class EnumTransformer implements Transformer
             return null;
         }
 
-        return TransformedType::create(
-            $class,
-            $name,
-            $this->resolveOptions($class)
-        );
+        return $this->config->shouldTransformToNativeEnums()
+            ? $this->toEnum($class, $name)
+            : $this->toType($class, $name);
     }
 
-    private function resolveOptions(ReflectionClass $class): string
+    protected function toEnum(ReflectionClass $class, string $name): TransformedType
     {
         $enum = (new ReflectionEnum($class->getName()));
 
         $options = array_map(
-            fn ($enum) => "'{$enum}'",
+            fn($enum) => "'{$enum}' = '{$enum}'",
             array_keys($enum->getConstants())
         );
 
-        return implode(' | ', $options);
+        return TransformedType::create(
+            $class,
+            $name,
+            implode(', ', $options),
+            keyword: 'enum'
+        );
+    }
+
+    protected function toType(ReflectionClass $class, string $name): TransformedType
+    {
+        $enum = (new ReflectionEnum($class->getName()));
+
+        $options = array_map(
+            fn($enum) => "'{$enum}'",
+            array_keys($enum->getConstants())
+        );
+
+        return TransformedType::create(
+            $class,
+            $name,
+            implode(' | ', $options)
+        );
     }
 }

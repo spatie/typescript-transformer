@@ -16,7 +16,7 @@ class TransformedType
 
     public bool $isInline;
 
-    public string $format;
+    public string $keyword;
 
     public static function create(
         ReflectionClass $class,
@@ -24,9 +24,9 @@ class TransformedType
         string $transformed,
         ?MissingSymbolsCollection $missingSymbols = null,
         bool $inline = false,
-        string $format = 'type'
+        string $keyword = 'type'
     ): self {
-        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $format);
+        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $keyword);
     }
 
     public static function createInline(
@@ -43,14 +43,14 @@ class TransformedType
         string $transformed,
         MissingSymbolsCollection $missingSymbols,
         bool $isInline,
-        string $format = 'type'
+        string $keyword = 'type'
     ) {
         $this->reflection = $class;
         $this->name = $name;
         $this->transformed = $transformed;
         $this->missingSymbols = $missingSymbols;
         $this->isInline = $isInline;
-        $this->format = $format;
+        $this->keyword = $keyword;
     }
 
     public function getNamespaceSegments(): array
@@ -93,8 +93,8 @@ class TransformedType
         );
     }
 
-    public function toString() {
-        return match ($this->format) {
+    public function toString(): string {
+        return match ($this->keyword) {
             'enum' => "enum {$this->name} { {$this->transformed} }",
             default => "type {$this->name} = {$this->transformed}",
         };
