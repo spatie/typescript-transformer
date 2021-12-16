@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.2 - 2021-12-16
+
+- fix deprecations
+
 ## 2.1.1 - 2021-12-08
 
 - add support for PHP 8.1 (#15)
