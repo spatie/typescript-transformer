@@ -9,6 +9,7 @@ Transformers are the heart of the package. They take a PHP class and try to make
 
 The package comes with a few transformers out of the box:
 
+- `EnumTransformer`: this transforms a PHP 8.1 native enum
 - `MyclabsEnumTransformer`: this transforms an enum from the [`myclabs\enum`](https://github.com/myclab/enum) package
 - `SpatieEnumTransformer`: this transforms an enum from the [`spatie\enum`](https://github.com/spatie/enum) package
 - `DtoTransformer`: a powerful transformer that transforms entire classes and their properties, you can read more about
@@ -32,6 +33,28 @@ You should supply a list of transformers the package should use in your config:
 $config = TypeScriptTransformerConfig::create()
     ->transformers([MyclabsEnumTransformer::class, DtoTransformer::class])
    ...
+```
+
+### Transforming enums
+
+The package ships with three enum transformers out of the box, by default these enums are transformed to TypeScript types like this:
+
+```tsx
+type Language = 'JS' | 'PHP'; 
+```
+
+It is possible to transform them to native TypeScript enums by changing the config:
+
+```php
+$config = TypeScriptTransformerConfig::create()
+    ->transformToNativeEnums()
+   ...
+```
+
+A transformed enum now looks like this:
+
+```tsx
+enum Language {'JS' = 'JS', 'PHP' = 'PHP'};
 ```
 
 ## Writing your own transformers

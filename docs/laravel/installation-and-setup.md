@@ -22,6 +22,8 @@ php artisan vendor:publish --provider="Spatie\LaravelTypeScriptTransformer\TypeS
 This is the default content of the config file:
 
 ```php
+<?php
+
 return [
     /*
      * The paths where typescript-transformer will look for PHP classes
@@ -87,6 +89,12 @@ return [
      */
 
     'formatter' => null,
-];
 
+    /*
+     * Enums can be transformed into types or native TypeScript enums, by default
+     * the package will transform them to types.
+     */
+    
+    'transform_to_native_enums' => false,
+];
 ```
