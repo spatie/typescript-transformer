@@ -128,7 +128,7 @@ abstract class TypeReflector
             return $type;
         }
 
-        if($type instanceof Mixed_){
+        if ($type instanceof Mixed_) {
             return $type;
         }
 
