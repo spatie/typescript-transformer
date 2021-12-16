@@ -13,6 +13,7 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\StringDtoCollecti
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
+use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 
 class DtoCollectionTypeProcessorTest extends TestCase
 {
@@ -80,7 +81,7 @@ class DtoCollectionTypeProcessorTest extends TestCase
             new MissingSymbolsCollection()
         );
 
-        $this->assertEquals(new Array_(new Mixed_()), $type);
+        $this->assertEquals(new Array_(new TypeScriptType('any')), $type);
     }
 
     /** @test */
