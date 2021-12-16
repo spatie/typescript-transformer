@@ -178,6 +178,7 @@ class TypeReflectorTest extends TestCase
             ['int', '?int'],
             ['array|int', 'array|int|null'],
             ['array|int|null', 'array|int|null'],
+            ['mixed', 'mixed'],
         ];
     }
 

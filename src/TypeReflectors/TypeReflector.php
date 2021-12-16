@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\TypeReflectors;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Compound;
+use phpDocumentor\Reflection\Types\Mixed_;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Nullable;
 use ReflectionAttribute;
@@ -124,6 +125,10 @@ abstract class TypeReflector
         $reflectionType = $this->getReflectionType();
 
         if ($reflectionType === null || $reflectionType->allowsNull() === false) {
+            return $type;
+        }
+
+        if($type instanceof Mixed_){
             return $type;
         }
 
