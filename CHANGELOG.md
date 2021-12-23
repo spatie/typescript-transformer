@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.4 - 2021-12-23
+
+- allow interfaces in default type replacements
+
 ## 2.1.3 - 2021-12-16
 
 - add support for transforming to native TypeScript enums
