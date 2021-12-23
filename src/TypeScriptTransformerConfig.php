@@ -137,7 +137,7 @@ class TypeScriptTransformerConfig
         $replacements = [];
 
         foreach ($this->defaultTypeReplacements as $class => $replacement) {
-            if (! class_exists($class)) {
+            if (! class_exists($class) && ! interface_exists($class)) {
                 throw InvalidDefaultTypeReplacer::classDoesNotExist($class);
             }
 
