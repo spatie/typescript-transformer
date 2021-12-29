@@ -2,6 +2,18 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.5 - 2021-12-29
+
+## What's Changed
+
+- Make compatible with Symfony 6.0 Process component by @firstred in https://github.com/spatie/typescript-transformer/pull/17
+
+## New Contributors
+
+- @firstred made their first contribution in https://github.com/spatie/typescript-transformer/pull/17
+
+**Full Changelog**: https://github.com/spatie/typescript-transformer/compare/2.1.4...2.1.5
+
 ## 2.1.4 - 2021-12-23
 
 - allow interfaces in default type replacements
