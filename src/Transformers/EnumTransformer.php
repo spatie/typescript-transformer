@@ -26,42 +26,41 @@ class EnumTransformer implements Transformer
             return null;
         }
 
-        return $this->config->shouldTransformToNativeEnums()
-            ? $this->toEnum($class, $name)
-            : $this->toType($class, $name);
-    }
-
-    protected function toEnum(ReflectionClass $class, string $name): TransformedType
-    {
         $enum = (new ReflectionEnum($class->getName()));
 
+        if (! $enum->isBacked()) {
+            return null;
+        }
+
+        return $this->config->shouldTransformToNativeEnums()
+            ? $this->toEnum($enum, $name)
+            : $this->toType($enum, $name);
+    }
+
+    protected function toEnum(ReflectionEnum $enum, string $name): TransformedType
+    {
         $options = array_map(
-            function (ReflectionEnumBackedCase|ReflectionEnumUnitCase $case) {
-                $value = $case instanceof ReflectionEnumBackedCase ? $case->getBackingValue() : $case->getName();
-                return "'{$case->getName()}' = '{$value}'";
-            },
+            fn (ReflectionEnumBackedCase $case) => "'{$case->getName()}' = '{$case->getBackingValue()}'",
             $enum->getCases()
         );
 
         return TransformedType::create(
-            $class,
+            $enum,
             $name,
             implode(', ', $options),
             keyword: 'enum'
         );
     }
 
-    protected function toType(ReflectionClass $class, string $name): TransformedType
+    protected function toType(ReflectionEnum $enum, string $name): TransformedType
     {
-        $enum = (new ReflectionEnum($class->getName()));
-
         $options = array_map(
-            fn ($enum) => "'{$enum}'",
-            array_keys($enum->getConstants())
+            fn (ReflectionEnumBackedCase $case) => "'{$case->getBackingValue()}'",
+            $enum->getCases(),
         );
 
         return TransformedType::create(
-            $class,
+            $enum,
             $name,
             implode(' | ', $options)
         );

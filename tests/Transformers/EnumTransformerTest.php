@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\Tests\Transformers;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\UnitEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\BackedEnum;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -29,7 +29,7 @@ class EnumTransformerTest extends TestCase
         );
 
         $this->assertNotNull($transformer->transform(
-            new ReflectionClass(Enum::class),
+            new ReflectionClass(BackedEnum::class),
             'Enum',
         ));
 
@@ -40,43 +40,22 @@ class EnumTransformerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_transform_an_enum_into_type()
+    public function it_does_not_transform_a_unit_enum()
     {
         $transformer = new EnumTransformer(
             TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
         );
 
         $type = $transformer->transform(
-            new ReflectionClass(Enum::class),
+            new ReflectionClass(UnitEnum::class),
             'Enum'
         );
 
-        $this->assertEquals("'JS' | 'PHP'", $type->transformed);
-        $this->assertTrue($type->missingSymbols->isEmpty());
-        $this->assertFalse($type->isInline);
-        $this->assertEquals('type', $type->keyword);
+        $this->assertNull($type);
     }
 
     /** @test */
-    public function it_can_transform_an_enum_into_enum()
-    {
-        $transformer = new EnumTransformer(
-            TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
-        );
-
-        $type = $transformer->transform(
-            new ReflectionClass(Enum::class),
-            'Enum'
-        );
-
-        $this->assertEquals("'JS' = 'JS', 'PHP' = 'PHP'", $type->transformed);
-        $this->assertTrue($type->missingSymbols->isEmpty());
-        $this->assertFalse($type->isInline);
-        $this->assertEquals('enum', $type->keyword);
-    }
-
-    /** @test */
-    public function it_can_transform_an_enum_with_backed_values()
+    public function it_can_transform_a_backed_enum_into_enum()
     {
         $transformer = new EnumTransformer(
             TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
@@ -84,12 +63,30 @@ class EnumTransformerTest extends TestCase
 
         $type = $transformer->transform(
             new ReflectionClass(BackedEnum::class),
-            'BackedEnum'
+            'Enum'
         );
 
         $this->assertEquals("'JS' = 'js', 'PHP' = 'php'", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
         $this->assertFalse($type->isInline);
         $this->assertEquals('enum', $type->keyword);
+    }
+
+    /** @test */
+    public function it_can_transform_a_backed_enum_into_a_union()
+    {
+        $transformer = new EnumTransformer(
+            TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
+        );
+
+        $type = $transformer->transform(
+            new ReflectionClass(BackedEnum::class),
+            'Enum'
+        );
+
+        $this->assertEquals("'js' | 'php'", $type->transformed);
+        $this->assertTrue($type->missingSymbols->isEmpty());
+        $this->assertFalse($type->isInline);
+        $this->assertEquals('type', $type->keyword);
     }
 }
