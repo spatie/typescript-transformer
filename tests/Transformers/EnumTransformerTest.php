@@ -6,6 +6,7 @@ use DateTime;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\BackedEnum;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -69,6 +70,24 @@ class EnumTransformerTest extends TestCase
         );
 
         $this->assertEquals("'JS' = 'JS', 'PHP' = 'PHP'", $type->transformed);
+        $this->assertTrue($type->missingSymbols->isEmpty());
+        $this->assertFalse($type->isInline);
+        $this->assertEquals('enum', $type->keyword);
+    }
+
+    /** @test */
+    public function it_can_transform_an_enum_with_backed_values()
+    {
+        $transformer = new EnumTransformer(
+            TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
+        );
+
+        $type = $transformer->transform(
+            new ReflectionClass(BackedEnum::class),
+            'BackedEnum'
+        );
+
+        $this->assertEquals("'JS' = 'js', 'PHP' = 'php'", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
         $this->assertFalse($type->isInline);
         $this->assertEquals('enum', $type->keyword);

@@ -34,8 +34,8 @@ class EnumTransformer implements Transformer
         $enum = (new ReflectionEnum($class->getName()));
 
         $options = array_map(
-            fn ($enum) => "'{$enum}' = '{$enum}'",
-            array_keys($enum->getConstants())
+            fn (ReflectionEnumBackedCase $case) => "'{$case->getName()}' = '{$case->getBackingValue()}'",
+            $enum->getCases()
         );
 
         return TransformedType::create(
