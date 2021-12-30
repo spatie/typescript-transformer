@@ -4,6 +4,8 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 
 use ReflectionClass;
 use ReflectionEnum;
+use ReflectionEnumUnitCase;
+use ReflectionEnumBackedCase;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -34,7 +36,10 @@ class EnumTransformer implements Transformer
         $enum = (new ReflectionEnum($class->getName()));
 
         $options = array_map(
-            fn (ReflectionEnumBackedCase $case) => "'{$case->getName()}' = '{$case->getBackingValue()}'",
+            function (ReflectionEnumBackedCase|ReflectionEnumUnitCase $case) {
+                $value = $case instanceof ReflectionEnumBackedCase ? $case->getBackingValue() : $case->getName();
+                return "'{$case->getName()}' = '{$value}'";
+            },
             $enum->getCases()
         );
 
