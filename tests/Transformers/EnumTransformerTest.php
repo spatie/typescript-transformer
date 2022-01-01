@@ -108,4 +108,22 @@ class EnumTransformerTest extends TestCase
         $this->assertFalse($type->isInline);
         $this->assertEquals('enum', $type->keyword);
     }
+
+    /** @test */
+    public function it_can_transform_a_backed_enum_with_integers_into_a_union()
+    {
+        $transformer = new EnumTransformer(
+            TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
+        );
+
+        $type = $transformer->transform(
+            new ReflectionClass(IntBackedEnum::class),
+            'Enum'
+        );
+
+        $this->assertEquals("1 | 2", $type->transformed);
+        $this->assertTrue($type->missingSymbols->isEmpty());
+        $this->assertFalse($type->isInline);
+        $this->assertEquals('type', $type->keyword);
+    }
 }
