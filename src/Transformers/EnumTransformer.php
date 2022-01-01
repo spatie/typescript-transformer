@@ -40,7 +40,7 @@ class EnumTransformer implements Transformer
     protected function toEnum(ReflectionEnum $enum, string $name): TransformedType
     {
         $options = array_map(
-            fn (ReflectionEnumBackedCase $case) => "'{$case->getName()}' = '{$case->getBackingValue()}'",
+            fn (ReflectionEnumBackedCase $case) => "'{$case->getName()}' = {$this->toEnumValue($case)}",
             $enum->getCases()
         );
 
@@ -55,7 +55,7 @@ class EnumTransformer implements Transformer
     protected function toType(ReflectionEnum $enum, string $name): TransformedType
     {
         $options = array_map(
-            fn (ReflectionEnumBackedCase $case) => "'{$case->getBackingValue()}'",
+            fn (ReflectionEnumBackedCase $case) => $this->toEnumValue($case),
             $enum->getCases(),
         );
 
@@ -64,5 +64,11 @@ class EnumTransformer implements Transformer
             $name,
             implode(' | ', $options)
         );
+    }
+
+    protected function toEnumValue(ReflectionEnumBackedCase $case): string
+    {
+        $value = $case->getBackingValue();
+        return is_string($value) ? "'{$value}'" : "{$value}";
     }
 }

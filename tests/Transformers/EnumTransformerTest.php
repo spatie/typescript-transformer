@@ -5,8 +5,9 @@ namespace Spatie\TypeScriptTransformer\Tests\Transformers;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\IntBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\UnitEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\BackedEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -29,7 +30,7 @@ class EnumTransformerTest extends TestCase
         );
 
         $this->assertNotNull($transformer->transform(
-            new ReflectionClass(BackedEnum::class),
+            new ReflectionClass(StringBackedEnum::class),
             'Enum',
         ));
 
@@ -62,7 +63,7 @@ class EnumTransformerTest extends TestCase
         );
 
         $type = $transformer->transform(
-            new ReflectionClass(BackedEnum::class),
+            new ReflectionClass(StringBackedEnum::class),
             'Enum'
         );
 
@@ -80,7 +81,7 @@ class EnumTransformerTest extends TestCase
         );
 
         $type = $transformer->transform(
-            new ReflectionClass(BackedEnum::class),
+            new ReflectionClass(StringBackedEnum::class),
             'Enum'
         );
 
@@ -88,5 +89,23 @@ class EnumTransformerTest extends TestCase
         $this->assertTrue($type->missingSymbols->isEmpty());
         $this->assertFalse($type->isInline);
         $this->assertEquals('type', $type->keyword);
+    }
+
+    /** @test */
+    public function it_can_transform_a_backed_enum_with_integers_into_an_enm()
+    {
+        $transformer = new EnumTransformer(
+            TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
+        );
+
+        $type = $transformer->transform(
+            new ReflectionClass(IntBackedEnum::class),
+            'Enum'
+        );
+
+        $this->assertEquals("'JS' = 1, 'PHP' = 2", $type->transformed);
+        $this->assertTrue($type->missingSymbols->isEmpty());
+        $this->assertFalse($type->isInline);
+        $this->assertEquals('enum', $type->keyword);
     }
 }
