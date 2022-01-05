@@ -4,6 +4,8 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 
 use ReflectionClass;
 use ReflectionEnum;
+use ReflectionEnumUnitCase;
+use ReflectionEnumBackedCase;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -24,41 +26,49 @@ class EnumTransformer implements Transformer
             return null;
         }
 
-        return $this->config->shouldTransformToNativeEnums()
-            ? $this->toEnum($class, $name)
-            : $this->toType($class, $name);
-    }
-
-    protected function toEnum(ReflectionClass $class, string $name): TransformedType
-    {
         $enum = (new ReflectionEnum($class->getName()));
 
+        if (! $enum->isBacked()) {
+            return null;
+        }
+
+        return $this->config->shouldTransformToNativeEnums()
+            ? $this->toEnum($enum, $name)
+            : $this->toType($enum, $name);
+    }
+
+    protected function toEnum(ReflectionEnum $enum, string $name): TransformedType
+    {
         $options = array_map(
-            fn ($enum) => "'{$enum}' = '{$enum}'",
-            array_keys($enum->getConstants())
+            fn (ReflectionEnumBackedCase $case) => "'{$case->getName()}' = {$this->toEnumValue($case)}",
+            $enum->getCases()
         );
 
         return TransformedType::create(
-            $class,
+            $enum,
             $name,
             implode(', ', $options),
             keyword: 'enum'
         );
     }
 
-    protected function toType(ReflectionClass $class, string $name): TransformedType
+    protected function toType(ReflectionEnum $enum, string $name): TransformedType
     {
-        $enum = (new ReflectionEnum($class->getName()));
-
         $options = array_map(
-            fn ($enum) => "'{$enum}'",
-            array_keys($enum->getConstants())
+            fn (ReflectionEnumBackedCase $case) => $this->toEnumValue($case),
+            $enum->getCases(),
         );
 
         return TransformedType::create(
-            $class,
+            $enum,
             $name,
             implode(' | ', $options)
         );
+    }
+
+    protected function toEnumValue(ReflectionEnumBackedCase $case): string
+    {
+        $value = $case->getBackingValue();
+        return is_string($value) ? "'{$value}'" : "{$value}";
     }
 }
