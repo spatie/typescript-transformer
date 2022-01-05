@@ -6,8 +6,8 @@ use DateTime;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\IntBackedEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\UnitEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\UnitEnum;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 

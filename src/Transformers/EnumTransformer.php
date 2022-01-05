@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 
 use ReflectionClass;
 use ReflectionEnum;
-use ReflectionEnumUnitCase;
 use ReflectionEnumBackedCase;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -69,6 +68,7 @@ class EnumTransformer implements Transformer
     protected function toEnumValue(ReflectionEnumBackedCase $case): string
     {
         $value = $case->getBackingValue();
+
         return is_string($value) ? "'{$value}'" : "{$value}";
     }
 }

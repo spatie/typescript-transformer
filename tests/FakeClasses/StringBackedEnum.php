@@ -10,4 +10,3 @@ enum StringBackedEnum: string
     case JS = 'js';
     case PHP = 'php';
 }
-
