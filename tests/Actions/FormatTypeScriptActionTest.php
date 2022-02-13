@@ -39,7 +39,7 @@ class FormatTypeScriptActionTest extends TestCase
         $action = new FormatTypeScriptAction(
             TypeScriptTransformerConfig::create()
                 ->formatter($formatter::class)
-                ->outputFile($this->outputFile)
+                ->outputDestination($this->outputFile)
         );
 
         file_put_contents(
@@ -56,7 +56,7 @@ class FormatTypeScriptActionTest extends TestCase
     public function it_can_disable_formatting()
     {
         $action = new FormatTypeScriptAction(
-            TypeScriptTransformerConfig::create()->outputFile($this->outputFile)
+            TypeScriptTransformerConfig::create()->outputDestination($this->outputFile)
         );
 
         file_put_contents(

@@ -41,7 +41,7 @@ class IntegrationTest extends TestCase
 
         $transformer = new TypeScriptTransformer(
             $this->getTransformerConfig()
-                ->outputFile($temporaryDirectory->path('types.d.ts'))
+                ->outputDestination($temporaryDirectory->path('types.d.ts'))
         );
 
         $transformer->transform();
@@ -59,7 +59,7 @@ class IntegrationTest extends TestCase
         $transformer = new TypeScriptTransformer(
             $this->getTransformerConfig()
                 ->writer(ModuleWriter::class)
-                ->outputFile($temporaryDirectory->path('types.ts'))
+                ->outputDestination($temporaryDirectory->path('types.ts'))
         );
 
         $transformer->transform();

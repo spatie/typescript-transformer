@@ -37,7 +37,7 @@ class ResolveTypesCollectionActionTest extends TestCase
                 ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
                 ->transformers([MyclabsEnumTransformer::class])
                 ->collectors([DefaultCollector::class])
-                ->outputFile('types.d.ts')
+                ->outputDestination('types.d.ts')
         );
     }
 
@@ -107,7 +107,7 @@ class ResolveTypesCollectionActionTest extends TestCase
                 )
                 ->transformers([MyclabsEnumTransformer::class, DtoTransformer::class])
                 ->collectors([DefaultCollector::class])
-                ->outputFile('types.d.ts')
+                ->outputDestination('types.d.ts')
         );
 
         $types = $this->action->execute();
@@ -134,7 +134,7 @@ class ResolveTypesCollectionActionTest extends TestCase
             TypeScriptTransformerConfig::create()
                 ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
                 ->collectors([FakeTypeScriptCollector::class])
-                ->outputFile('types.d.ts')
+                ->outputDestination('types.d.ts')
         );
 
         $types = $this->action->execute();

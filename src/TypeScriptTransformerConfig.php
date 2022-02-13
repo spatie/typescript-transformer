@@ -21,7 +21,7 @@ class TypeScriptTransformerConfig
 
     private array $collectors = [DefaultCollector::class];
 
-    private string $outputFile = 'types.d.ts';
+    private string $outputDestination = 'types.d.ts';
 
     private array $defaultTypeReplacements = [];
 
@@ -73,9 +73,9 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function outputFile(string $defaultFile): self
+    public function outputDestination(string $defaultDestination): self
     {
-        $this->outputFile = $defaultFile;
+        $this->outputDestination = $defaultDestination;
 
         return $this;
     }
@@ -132,7 +132,7 @@ class TypeScriptTransformerConfig
         return new $this->output($this);
     }
 
-    public function getOutputFile(): string
+    public function getOutputDestination(): string
     {
         return $this->outputDestination;
     }
