@@ -21,6 +21,12 @@ class FormatTypeScriptAction
             return;
         }
 
-        $formatter->format($this->config->getOutputFile());
+        $outputDestination = $this->config->getOutputDestination();
+
+        if ($this->config->getOutput()->writesMultipleFiles()) {
+            $outputDestination = is_file($outputDestination) ? dirname($outputDestination) : $outputDestination;
+        }
+
+        $formatter->format($outputDestination);
     }
 }
