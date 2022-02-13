@@ -18,6 +18,8 @@ class TransformedType
 
     public string $keyword;
 
+    public array $imports = [];
+
     public static function create(
         ReflectionClass $class,
         string $name,
@@ -91,6 +93,32 @@ class TransformedType
             $replacement,
             $this->transformed
         );
+    }
+
+    public function addImport(string $fullQualifiedName): void
+    {
+        if (in_array(strtolower($fullQualifiedName), ['any', 'array', 'boolean', 'never', 'null', 'number', 'string', 'object'])) {
+            return;
+        }
+
+        $replacementSegments = explode('\\', $fullQualifiedName);
+        $importName = array_pop($replacementSegments);
+        $thisSegments = $this->getNamespaceSegments();
+
+        while(count($thisSegments) && count($replacementSegments) && ($thisSegments[0] === $replacementSegments[0]))
+        {
+            array_shift($thisSegments);
+            array_shift($replacementSegments);
+        }
+
+        $relativePath = str_pad('', count($thisSegments) * 2, '../').implode('/', $replacementSegments);
+
+        if (count($thisSegments)) {
+            // path => module name
+            $this->imports[$relativePath] = $importName;
+        }
+
+        $this->imports["./{$importName}"] = $importName;
     }
 
     public function toString(): string

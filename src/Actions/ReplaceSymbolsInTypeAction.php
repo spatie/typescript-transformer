@@ -45,6 +45,7 @@ class ReplaceSymbolsInTypeAction
 
         if (! $found->isInline) {
             $type->replaceSymbol($missingSymbol, $found->getTypeScriptName($this->withFullyQualifiedNames));
+            $this->withFullyQualifiedNames || $type->addImport($missingSymbol);
 
             return $type;
         }

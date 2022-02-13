@@ -40,7 +40,9 @@ class TypeDefinitionWriter implements Writer
             $rootTypes
         ));
 
-        return $output;
+        $output->append($typescript, str_replace('.', '\\', 'Root'));
+
+        $output->writeOut('d.ts');
     }
 
     public function replacesSymbolsWithFullyQualifiedIdentifiers(): bool

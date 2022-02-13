@@ -13,9 +13,7 @@ class ModuleWriter implements Writer
 
     public function format(TypesCollection $collection): void
     {
-        $output = '';
-
-        /** @var \ArrayIterator $iterator */
+        /** @var \ArrayIterator|TransformedType[] $iterator */
         $iterator = $collection->getIterator();
 
         $iterator->uasort(function (TransformedType $a, TransformedType $b) {
@@ -29,10 +27,18 @@ class ModuleWriter implements Writer
                 continue;
             }
 
-            $output .= "export {$type->toString()};".PHP_EOL;
+            $imports = implode(PHP_EOL, array_map(
+                fn(string $path, string $module) => 'import {'.$module."} from '".$path."';",
+                array_keys($type->imports),
+                $type->imports
+            ));
+            $output->append(
+                sprintf('%s%sexport %s;%s', $imports, PHP_EOL, $type->toString(), PHP_EOL),
+                $namespace
+            );
         }
 
-        return $output;
+        $output->writeOut('ts');
     }
 
     public function replacesSymbolsWithFullyQualifiedIdentifiers(): bool
