@@ -5,32 +5,37 @@ namespace Spatie\TypeScriptTransformer\Writers;
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TypeDefinitionWriter implements Writer
 {
-    public function format(TypesCollection $collection): string
+    public function __construct(protected TypeScriptTransformerConfig $config)
+    {}
+
+    public function format(TypesCollection $collection): void
     {
         (new ReplaceSymbolsInCollectionAction())->execute($collection);
+        $output = $this->config->getOutput();
 
         [$namespaces, $rootTypes] = $this->groupByNamespace($collection);
-
-        $output = '';
 
         foreach ($namespaces as $namespace => $types) {
             asort($types);
 
-            $output .= "declare namespace {$namespace} {".PHP_EOL;
+            $typescript = "declare namespace {$namespace} {".PHP_EOL;
 
-            $output .= join(PHP_EOL, array_map(
+            $typescript .= join(PHP_EOL, array_map(
                 fn (TransformedType $type) => "export {$type->toString()};",
                 $types
             ));
 
 
-            $output .= PHP_EOL."}".PHP_EOL;
+            $typescript .= PHP_EOL."}".PHP_EOL;
+
+            $output->append($typescript, str_replace('.', '\\', $namespace));
         }
 
-        $output .= join(PHP_EOL, array_map(
+        $typescript = join(PHP_EOL, array_map(
             fn (TransformedType $type) => "export {$type->toString()};",
             $rootTypes
         ));

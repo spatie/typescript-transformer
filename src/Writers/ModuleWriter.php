@@ -4,10 +4,14 @@ namespace Spatie\TypeScriptTransformer\Writers;
 
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class ModuleWriter implements Writer
 {
-    public function format(TypesCollection $collection): string
+    public function __construct(protected TypeScriptTransformerConfig $config)
+    {}
+
+    public function format(TypesCollection $collection): void
     {
         $output = '';
 
@@ -18,7 +22,9 @@ class ModuleWriter implements Writer
             return strcmp($a->name, $b->name);
         });
 
-        foreach ($iterator as $type) {
+        $output = $this->config->getOutput();
+
+        foreach ($iterator as $namespace => $type) {
             if ($type->isInline) {
                 continue;
             }

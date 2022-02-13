@@ -7,6 +7,8 @@ use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
+use Spatie\TypeScriptTransformer\Output\Output;
+use Spatie\TypeScriptTransformer\Output\SingleFileOutput;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
@@ -24,6 +26,8 @@ class TypeScriptTransformerConfig
     private array $defaultTypeReplacements = [];
 
     private string $writer = TypeDefinitionWriter::class;
+
+    private string $output = SingleFileOutput::class;
 
     private ?string $formatter = null;
 
@@ -58,6 +62,13 @@ class TypeScriptTransformerConfig
     public function writer(string $writer): self
     {
         $this->writer = $writer;
+
+        return $this;
+    }
+
+    public function output(string $output): self
+    {
+        $this->output = $output;
 
         return $this;
     }
@@ -113,12 +124,17 @@ class TypeScriptTransformerConfig
 
     public function getWriter(): Writer
     {
-        return new $this->writer;
+        return new $this->writer($this);
+    }
+
+    public function getOutput(): Output
+    {
+        return new $this->output($this);
     }
 
     public function getOutputFile(): string
     {
-        return $this->outputFile;
+        return $this->outputDestination;
     }
 
     /** @return \Spatie\TypeScriptTransformer\Collectors\Collector[] */
