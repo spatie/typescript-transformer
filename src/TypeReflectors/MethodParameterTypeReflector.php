@@ -26,7 +26,7 @@ class MethodParameterTypeReflector extends TypeReflector
 
     protected function docblockRegex(): string
     {
-        return "/@param ((?:(?:[\\w?|\\\\<>,])+(?:\\[])?)+) \\\${$this->reflection->getName()}/";
+        return "/@param ((?:\\s?[\\w?|\\\\<>,]+(?:\\[])?)+) \\\${$this->reflection->getName()}/";
     }
 
     protected function getReflectionType(): ?ReflectionType
