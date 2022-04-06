@@ -26,7 +26,7 @@ class PropertyTypeReflector extends TypeReflector
 
     protected function docblockRegex(): string
     {
-        return '/@var ((?:(?:[\w?|\\\\<>,])+(?:\[])?)+)/';
+        return '/@var ((?:\s?[\\w?|\\\\<>,]+(?:\[])?)+)/';
     }
 
     protected function getReflectionType(): ?ReflectionType

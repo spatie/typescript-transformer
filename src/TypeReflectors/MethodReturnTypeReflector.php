@@ -26,7 +26,7 @@ class MethodReturnTypeReflector extends TypeReflector
 
     protected function docblockRegex(): string
     {
-        return '/@return ((?:(?:[\w?|\\\\<>,])+(?:\[])?)+)/';
+        return '/@return ((?:\s?[\w?|\\\\<>,]+(?:\[])?)+)/';
     }
 
     protected function getReflectionType(): ?ReflectionType
