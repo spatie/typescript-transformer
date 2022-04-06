@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.7 - 2022-04-06
+
+- Allow whitespace in type definitions (#27 )
+
 ## 2.1.6 - 2022-01-05
 
 - fix the transformation of PHP native enums
