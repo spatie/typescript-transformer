@@ -189,7 +189,7 @@ export type UserRepository = {
 };
 ```
 
-We can dot better than this, since we know the keys of the array:
+We can do better than this, since we know the keys of the array:
 
 ```php
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;#[TypeScript]
