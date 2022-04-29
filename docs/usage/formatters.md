@@ -3,7 +3,7 @@ title: Formatters
 weight: 7
 ---
 
-This output file with all the transformed types can be formatted using tools like Prettier. We ship a Prettier formatter by default with the package, which will run Prettier after the output file is generated. you can configure it as such:
+This output file with all the transformed types can be formatted using tools like Prettier. We ship an ESLint and a Prettier formatter, which will run after the output file is generated. For instance, you can configure the Prettier formatter as such:
 
 ```php
 $config = TypeScriptTransformerConfig::create()

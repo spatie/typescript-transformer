@@ -83,9 +83,9 @@ return [
     'writer' => Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter::class,
 
     /*
-     * The generated TypeScript file can be formatted. We ship a Prettier formatter
-     * out of the box: `PrettierFormatter` but you can also implement your own one.
-     * The generated TypeScript will not be formatted when no formatter was set.
+     * The generated TypeScript file can be formatted. We ship two formatters by
+     * default: a Prettier and an ESLint one. You can also implement your own.
+     * The generated TypeScript will not be formatted if none is configured.
      */
 
     'formatter' => null,
