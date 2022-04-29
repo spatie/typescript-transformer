@@ -2,6 +2,11 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.8 - 2022-04-29
+
+- add eslint formatter(#28)
+- let prettier formatter use `npx` (#29)
+
 ## 2.1.7 - 2022-04-06
 
 - Allow whitespace in type definitions (#27 )
