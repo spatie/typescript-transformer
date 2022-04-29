@@ -30,11 +30,15 @@ class TranspileTypeToTypeScriptAction
 
     private ?string $currentClass;
 
+    private bool $nullablesAreOptional;
+
     public function __construct(
         MissingSymbolsCollection $missingSymbolsCollection,
-        ?string $currentClass = null
+        bool $nullablesAreOptional = false,
+        ?string $currentClass = null,
     ) {
         $this->missingSymbolsCollection = $missingSymbolsCollection;
+        $this->nullablesAreOptional = $nullablesAreOptional;
         $this->currentClass = $currentClass;
     }
 
@@ -80,6 +84,10 @@ class TranspileTypeToTypeScriptAction
 
     private function resolveNullableType(Nullable $nullable): string
     {
+        if ($this->nullablesAreOptional) {
+            return $this->execute($nullable->getActualType());
+        }
+
         return "{$this->execute($nullable->getActualType())} | null";
     }
 

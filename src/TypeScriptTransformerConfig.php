@@ -29,6 +29,8 @@ class TypeScriptTransformerConfig
 
     private bool $transformToNativeEnums = false;
 
+    private bool $nullToOptional = false;
+
     public static function create(): self
     {
         return new self();
@@ -86,6 +88,13 @@ class TypeScriptTransformerConfig
     public function transformToNativeEnums(bool $transformToNativeEnums = true): self
     {
         $this->transformToNativeEnums = $transformToNativeEnums;
+
+        return $this;
+    }
+
+    public function nullToOptional(bool $nullToOptional = false): self
+    {
+        $this->nullToOptional = $nullToOptional;
 
         return $this;
     }
@@ -161,5 +170,10 @@ class TypeScriptTransformerConfig
     public function shouldTransformToNativeEnums(): bool
     {
         return $this->transformToNativeEnums;
+    }
+
+    public function shouldConsiderNullAsOptional(): bool
+    {
+        return $this->nullToOptional;
     }
 }

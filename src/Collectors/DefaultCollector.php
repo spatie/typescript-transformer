@@ -37,10 +37,12 @@ class DefaultCollector extends Collector
     {
         $missingSymbols = new MissingSymbolsCollection();
         $name = $reflector->getName();
+        $nullablesAreOptional = $this->config->shouldConsiderNullAsOptional();
 
         $transpiler = new TranspileTypeToTypeScriptAction(
             $missingSymbols,
-            $name
+            $nullablesAreOptional,
+            $name,
         );
 
         return TransformedType::create(

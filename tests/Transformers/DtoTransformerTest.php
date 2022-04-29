@@ -12,6 +12,7 @@ use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
+use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
@@ -113,6 +114,38 @@ class DtoTransformerTest extends TestCase
         };
 
         $type = $this->transformer->transform(
+            new ReflectionClass($class),
+            'Typed'
+        );
+
+        $this->assertMatchesSnapshot($type->transformed);
+    }
+
+    /** @test */
+    public function it_transforms_nullable_properties_to_optional_ones_when_using_optional_attribute()
+    {
+        $class = new class {
+            #[Optional]
+            public ?string $string;
+        };
+
+        $type = $this->transformer->transform(
+            new ReflectionClass($class),
+            'Typed'
+        );
+
+        $this->assertMatchesSnapshot($type->transformed);
+    }
+
+    /** @test */
+    public function it_transforms_nullable_properties_to_optional_ones_according_to_config()
+    {
+        $class = new class {
+            public ?string $string;
+        };
+
+        $config = TypeScriptTransformerConfig::create()->nullToOptional(true);
+        $type = (new DtoTransformer($config))->transform(
             new ReflectionClass($class),
             'Typed'
         );

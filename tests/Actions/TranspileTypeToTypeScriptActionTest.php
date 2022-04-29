@@ -3,8 +3,10 @@
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use phpDocumentor\Reflection\TypeResolver;
+use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Self_;
 use phpDocumentor\Reflection\Types\Static_;
+use phpDocumentor\Reflection\Types\String_;
 use phpDocumentor\Reflection\Types\This;
 use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -34,6 +36,7 @@ class TranspileTypeToTypeScriptActionTest extends TestCase
 
         $this->action = new TranspileTypeToTypeScriptAction(
             $this->missingSymbols,
+            false,
             'fake_class'
         );
     }
@@ -138,5 +141,21 @@ class TranspileTypeToTypeScriptActionTest extends TestCase
         $this->assertMatchesSnapshot($transformed);
         $this->assertContains(RegularEnum::class, $this->missingSymbols->all());
         $this->assertContains('fake_class', $this->missingSymbols->all());
+    }
+
+    /** @test */
+    public function it_does_not_add_nullable_unions_to_optional_properties()
+    {
+        $action = new TranspileTypeToTypeScriptAction(
+            $this->missingSymbols,
+            true
+        );
+
+        $transformed = $action->execute(StructType::fromArray([
+            'a_string' => 'string',
+            'a_nullable_string' => '?string',
+        ]));
+
+        $this->assertEquals('{a_string:string;a_nullable_string:string;}', $transformed);
     }
 }
