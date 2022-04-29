@@ -9,7 +9,7 @@ class PrettierFormatter implements Formatter
 {
     public function format(string $file): void
     {
-        $process = new Process(['prettier', '--write', $file]);
+        $process = new Process(['npx', '--yes', 'prettier', '--write', $file]);
         $process->run();
 
         if (! $process->isSuccessful()) {
