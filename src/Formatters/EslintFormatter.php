@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Formatters;
 
-use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
