@@ -5,9 +5,19 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionMethod;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TransformedType;
 
 class InterfaceTransformer extends DtoTransformer implements Transformer
 {
+    public function transform(ReflectionClass $class, string $name): ?TransformedType
+    {
+        $transformedType = parent::transform($class, $name);
+        $transformedType->keyword = 'interface';
+        $transformedType->trailingSemicolon = false;
+
+        return $transformedType;
+    }
+
     protected function transformMethods(
         ReflectionClass $class,
         MissingSymbolsCollection $missingSymbols
