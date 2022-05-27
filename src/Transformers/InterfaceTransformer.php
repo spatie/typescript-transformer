@@ -11,6 +11,10 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
 {
     public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
+        if (! $class->isInterface()) {
+            return null;
+        }
+
         $transformedType = parent::transform($class, $name);
         $transformedType->keyword = 'interface';
         $transformedType->trailingSemicolon = false;
@@ -46,7 +50,7 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
                 );
 
                 $returnType = 'any';
-                if ($method->getReturnType() !== null) {
+                if ($method->hasReturnType()) {
                     $returnType = $this->reflectionToTypeScript(
                         $method,
                         $missingSymbols,
