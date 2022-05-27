@@ -23,7 +23,7 @@ class ModuleWriter implements Writer
                 continue;
             }
 
-            $output .= "export {$type->toString()};".PHP_EOL;
+            $output .= "export {$type->toString()}".PHP_EOL;
         }
 
         return $output;
