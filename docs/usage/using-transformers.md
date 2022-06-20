@@ -14,6 +14,8 @@ The package comes with a few transformers out of the box:
 - `SpatieEnumTransformer`: this transforms an enum from the [`spatie\enum`](https://github.com/spatie/enum) package
 - `DtoTransformer`: a powerful transformer that transforms entire classes and their properties, you can read more about
   it [here](/docs/typescript-transformer/v2/dtos/typing-properties)
+- `InterfaceTransformer`: this transforms a PHP interface and its functions to a Typescript interface. If used, this 
+  transformer should always be included before the `DtoTransformer`.
 
 [The laravel package](/docs/typescript-transformer/v2/laravel/installation-and-setup) has some extra transformers:
 
