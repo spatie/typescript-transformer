@@ -59,7 +59,7 @@ class SpatieEnumTransformerTest extends TestCase
             'FakeEnum'
         );
 
-        $this->assertEquals("'draft' = 'Draft', 'published' = 'Published', 'archived' = 'Archived'", $type->transformed);
+        $this->assertEquals("'Draft' = 'draft', 'Published' = 'published', 'Archived' = 'archived'", $type->transformed);
         $this->assertTrue($type->missingSymbols->isEmpty());
         $this->assertFalse($type->isInline);
         $this->assertEquals('enum', $type->keyword);
