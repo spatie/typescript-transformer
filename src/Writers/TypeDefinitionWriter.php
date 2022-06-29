@@ -22,7 +22,7 @@ class TypeDefinitionWriter implements Writer
             $output .= "declare namespace {$namespace} {".PHP_EOL;
 
             $output .= join(PHP_EOL, array_map(
-                fn (TransformedType $type) => "export {$type->toString()};",
+                fn (TransformedType $type) => "export {$type->toString()}",
                 $types
             ));
 
@@ -31,7 +31,7 @@ class TypeDefinitionWriter implements Writer
         }
 
         $output .= join(PHP_EOL, array_map(
-            fn (TransformedType $type) => "export {$type->toString()};",
+            fn (TransformedType $type) => "export {$type->toString()}",
             $rootTypes
         ));
 

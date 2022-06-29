@@ -18,15 +18,18 @@ class TransformedType
 
     public string $keyword;
 
+    public bool $trailingSemicolon;
+
     public static function create(
         ReflectionClass $class,
         string $name,
         string $transformed,
         ?MissingSymbolsCollection $missingSymbols = null,
         bool $inline = false,
-        string $keyword = 'type'
+        string $keyword = 'type',
+        bool $trailingSemicolon = true,
     ): self {
-        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $keyword);
+        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $keyword, $trailingSemicolon);
     }
 
     public static function createInline(
@@ -43,7 +46,8 @@ class TransformedType
         string $transformed,
         MissingSymbolsCollection $missingSymbols,
         bool $isInline,
-        string $keyword = 'type'
+        string $keyword = 'type',
+        bool $trailingSemicolon = true,
     ) {
         $this->reflection = $class;
         $this->name = $name;
@@ -51,6 +55,7 @@ class TransformedType
         $this->missingSymbols = $missingSymbols;
         $this->isInline = $isInline;
         $this->keyword = $keyword;
+        $this->trailingSemicolon = $trailingSemicolon;
     }
 
     public function getNamespaceSegments(): array
@@ -95,9 +100,12 @@ class TransformedType
 
     public function toString(): string
     {
-        return match ($this->keyword) {
+        $output = match ($this->keyword) {
             'enum' => "enum {$this->name} { {$this->transformed} }",
+            'interface' => "interface {$this->name} {$this->transformed}",
             default => "type {$this->name} = {$this->transformed}",
         };
+
+        return $output . ($this->trailingSemicolon ? ';' : '');
     }
 }

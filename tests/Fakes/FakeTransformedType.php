@@ -9,7 +9,7 @@ use Spatie\TypeScriptTransformer\Structures\TransformedType;
 
 class FakeTransformedType extends TransformedType
 {
-    public static function create(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false, string $keyword = 'type'): TransformedType
+    public static function create(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false, string $keyword = 'type', bool $trailingSemicolon = true): TransformedType
     {
         throw new Exception("Fake type");
     }

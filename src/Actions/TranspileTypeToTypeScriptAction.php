@@ -54,7 +54,7 @@ class TranspileTypeToTypeScriptAction
             $type instanceof Self_, $type instanceof Static_, $type instanceof This => $this->resolveSelfReferenceType(),
             $type instanceof Scalar => 'string|number|boolean',
             $type instanceof Mixed_ => 'any',
-            $type instanceof Void_ => 'never',
+            $type instanceof Void_ => 'void',
             default => throw new Exception("Could not transform type: {$type}")
         };
     }
