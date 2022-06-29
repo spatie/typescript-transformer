@@ -30,7 +30,7 @@ class SpatieEnumTransformer implements Transformer
         $enum = $class->getName();
 
         $options = array_map(
-            fn ($key, $value) => "'{$key}' = '{$value}'",
+            fn ($key, $value) => "'{value}' = '{key}'",
             array_keys($enum::toArray()),
             $enum::toArray()
         );
