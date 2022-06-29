@@ -6,5 +6,5 @@ interface FakeInterface
 {
     public function testFunction(string $input, array $output): int;
 
-    function anotherTestFunction(): bool;
+    public function anotherTestFunction(): bool;
 }

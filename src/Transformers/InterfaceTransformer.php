@@ -29,7 +29,6 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
         return array_reduce(
             $class->getMethods(ReflectionMethod::IS_PUBLIC),
             function (string $carry, ReflectionMethod $method) use ($missingSymbols) {
-
                 $transformedParameters = \array_reduce(
                     $method->getParameters(),
                     function (string $parameterCarry, \ReflectionParameter $parameter) use ($missingSymbols) {
