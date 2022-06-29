@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.9 - 2022-06-29
+
+- allow transformation of interfaces (#32)
+
 ## 2.1.8 - 2022-04-29
 
 - add eslint formatter(#28)
