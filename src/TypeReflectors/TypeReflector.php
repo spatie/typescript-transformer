@@ -67,7 +67,7 @@ abstract class TypeReflector
     {
         $attributes = array_filter(
             $this->getAttributes(),
-            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
+            fn (ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
         );
 
         if (empty($attributes)) {
@@ -112,7 +112,7 @@ abstract class TypeReflector
 
         if ($reflectionType instanceof ReflectionUnionType) {
             $type = new Compound(array_map(
-                fn(ReflectionNamedType $reflectionType) => (new TypeResolver())->resolve(
+                fn (ReflectionNamedType $reflectionType) => (new TypeResolver())->resolve(
                     $reflectionType->getName(),
                 ),
                 $reflectionType->getTypes()
@@ -166,6 +166,5 @@ abstract class TypeReflector
     private function createType(
         ReflectionType $reflectionType,
     ): Type {
-
     }
 }

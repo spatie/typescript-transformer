@@ -11,6 +11,7 @@ class FakeReflectionProperty extends ReflectionProperty
 
     public function getDeclaringClass(): ReflectionClass
     {
-        return new ReflectionClass(new class{});
+        return new ReflectionClass(new class {
+        });
     }
 }
