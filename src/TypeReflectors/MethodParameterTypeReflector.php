@@ -7,8 +7,6 @@ use ReflectionType;
 
 class MethodParameterTypeReflector extends TypeReflector
 {
-    private ReflectionParameter $reflection;
-
     public static function create(ReflectionParameter $reflection): self
     {
         return new self($reflection);
@@ -16,7 +14,7 @@ class MethodParameterTypeReflector extends TypeReflector
 
     public function __construct(ReflectionParameter $reflection)
     {
-        $this->reflection = $reflection;
+        parent::__construct($reflection);
     }
 
     protected function getDocblock(): string

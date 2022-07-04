@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\TypeReflectors;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Compound;
+use phpDocumentor\Reflection\Types\ContextFactory;
 use phpDocumentor\Reflection\Types\Mixed_;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Nullable;
@@ -28,7 +29,11 @@ abstract class TypeReflector
 
     abstract protected function getAttributes(): array;
 
-    public static function new(ReflectionMethod | ReflectionProperty | ReflectionParameter $reflection): static
+    public function __construct(protected ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection)
+    {
+    }
+
+    public static function new(ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection): static
     {
         if ($reflection instanceof ReflectionProperty) {
             return new PropertyTypeReflector($reflection);
@@ -62,7 +67,7 @@ abstract class TypeReflector
     {
         $attributes = array_filter(
             $this->getAttributes(),
-            fn (ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
+            fn(ReflectionAttribute $attribute) => is_a($attribute->getName(), TypeScriptTransformableAttribute::class, true)
         );
 
         if (empty($attributes)) {
@@ -89,7 +94,10 @@ abstract class TypeReflector
             return null;
         }
 
-        $type = (new TypeResolver())->resolve($docDefinition);
+        $type = (new TypeResolver())->resolve(
+            $docDefinition,
+            (new ContextFactory())->createFromReflector($this->reflection)
+        );
 
         return $this->nullifyType($type);
     }
@@ -104,7 +112,9 @@ abstract class TypeReflector
 
         if ($reflectionType instanceof ReflectionUnionType) {
             $type = new Compound(array_map(
-                fn (ReflectionNamedType $reflectionType) => (new TypeResolver())->resolve($reflectionType->getName()),
+                fn(ReflectionNamedType $reflectionType) => (new TypeResolver())->resolve(
+                    $reflectionType->getName(),
+                ),
                 $reflectionType->getTypes()
             ));
 
@@ -115,7 +125,9 @@ abstract class TypeReflector
             return null;
         }
 
-        $type = (new TypeResolver())->resolve($reflectionType->getName());
+        $type = (new TypeResolver())->resolve(
+            $reflectionType->getName(),
+        );
 
         return $this->nullifyType($type);
     }
@@ -149,5 +161,11 @@ abstract class TypeReflector
         }
 
         return new Nullable($type);
+    }
+
+    private function createType(
+        ReflectionType $reflectionType,
+    ): Type {
+
     }
 }

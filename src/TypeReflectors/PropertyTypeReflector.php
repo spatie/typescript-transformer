@@ -7,8 +7,6 @@ use ReflectionType;
 
 class PropertyTypeReflector extends TypeReflector
 {
-    private ReflectionProperty $reflection;
-
     public static function create(ReflectionProperty $reflection): self
     {
         return new self($reflection);
@@ -16,7 +14,7 @@ class PropertyTypeReflector extends TypeReflector
 
     public function __construct(ReflectionProperty $reflection)
     {
-        $this->reflection = $reflection;
+        parent::__construct($reflection);
     }
 
     protected function getDocblock(): string

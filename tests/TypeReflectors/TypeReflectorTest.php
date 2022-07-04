@@ -5,6 +5,8 @@ namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Annotations\FakeAnnotationsClass;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
@@ -210,5 +212,24 @@ class TypeReflectorTest extends TestCase
         $reflector = new PropertyTypeReflector($reflection);
 
         $this->assertEquals('EnumType[]', (string) $reflector->reflect());
+    }
+
+    /** @test */
+    public function it_can_reflect_docblocks_without_a_complete_fsqen()
+    {
+        $this->assertEquals(
+            '\\' . Dto::class,
+            (string) PropertyTypeReflector::create(new ReflectionProperty(FakeAnnotationsClass::class, 'property'))->reflect()
+        );
+
+        $this->assertEquals(
+            '\\' . Dto::class,
+            (string) PropertyTypeReflector::create(new ReflectionProperty(FakeAnnotationsClass::class, 'fsqnProperty'))->reflect()
+        );
+
+        $this->assertEquals(
+            '\\' . Dto::class . '[]',
+            (string) PropertyTypeReflector::create(new ReflectionProperty(FakeAnnotationsClass::class, 'arrayProperty'))->reflect()
+        );
     }
 }

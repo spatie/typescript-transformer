@@ -7,8 +7,6 @@ use ReflectionType;
 
 class MethodReturnTypeReflector extends TypeReflector
 {
-    private ReflectionMethod $reflection;
-
     public static function create(ReflectionMethod $reflection): self
     {
         return new self($reflection);
@@ -16,7 +14,7 @@ class MethodReturnTypeReflector extends TypeReflector
 
     public function __construct(ReflectionMethod $reflection)
     {
-        $this->reflection = $reflection;
+        parent::__construct($reflection);
     }
 
     protected function getDocblock(): string
