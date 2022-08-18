@@ -29,7 +29,7 @@ There are also some packages with community transformers:
 
 If you've written a transformer package, let us know, and we add it to the list!
 
-You should supply a list of transformers the package should use in your config:
+You should supply a list of transformers the package should use in your config. The order of transformers matters and can lead to unexpected results if in the wrong order. A PHP declaration (e.g. classes, enums) will go through each transformer and stop once a transformer is able to handle it; this is a problem if `DtoTransformer` is listed before an enum transformer since `DtoTransformer` will incorrectly handle an enum as a class and never allow `MyclabsEnumTransformer` to handle it.
 
 ```php
 $config = TypeScriptTransformerConfig::create()
