@@ -63,6 +63,9 @@ class PropertyTypeReflectorTest extends TestCase
             public $p4;
 
             public $p5;
+
+            /** @var array<array-key, string> */
+            public $p6;
         };
 
         $this->assertEquals(
@@ -88,6 +91,11 @@ class PropertyTypeReflectorTest extends TestCase
         $this->assertEquals(
             'any',
             (string) PropertyTypeReflector::create(new ReflectionProperty($class, 'p5'))->reflect()
+        );
+
+        $this->assertEquals(
+            'array<array-key,string>',
+            (string) PropertyTypeReflector::create(new ReflectionProperty($class, 'p6'))->reflect()
         );
     }
 
