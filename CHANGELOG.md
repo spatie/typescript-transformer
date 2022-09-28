@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.11 - 2022-09-28
+
+- fix: Support Collection with array-key key type (#38)
+
 ## 2.1.10 - 2022-07-04
 
 - Allow non fully qualified names within annotations
