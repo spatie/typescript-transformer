@@ -97,6 +97,12 @@ class MethodReturnTypeReflectorTest extends TestCase
             {
                 return 42;
             }
+
+            /** @return array<array-key, string> */
+            public function m6()
+            {
+                return [];
+            }
         };
 
         $this->assertEquals(
@@ -122,6 +128,11 @@ class MethodReturnTypeReflectorTest extends TestCase
         $this->assertEquals(
             'any',
             (string) MethodReturnTypeReflector::create(new ReflectionMethod($class, 'm5'))->reflect()
+        );
+
+        $this->assertEquals(
+            'array<array-key,string>',
+            (string) MethodReturnTypeReflector::create(new ReflectionMethod($class, 'm6'))->reflect()
         );
     }
 

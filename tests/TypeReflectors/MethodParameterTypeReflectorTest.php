@@ -60,6 +60,7 @@ class MethodParameterTypeReflectorTest extends TestCase
              * @param ?int $nullable_int
              * @param int|float $union
              * @param int|float|null $nullable_union
+             * @param array<array-key, string> $array
              * @param $without_type
              */
             public function method(
@@ -67,6 +68,7 @@ class MethodParameterTypeReflectorTest extends TestCase
                 $nullable_int,
                 $union,
                 $nullable_union,
+                $array,
                 $without_type
             ) {
             }
@@ -95,8 +97,13 @@ class MethodParameterTypeReflectorTest extends TestCase
         );
 
         $this->assertEquals(
-            'any',
+            'array<array-key,string>',
             (string) MethodParameterTypeReflector::create($parameters[4])->reflect()
+        );
+
+        $this->assertEquals(
+            'any',
+            (string) MethodParameterTypeReflector::create($parameters[5])->reflect()
         );
     }
 
