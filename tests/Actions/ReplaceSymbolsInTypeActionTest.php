@@ -1,124 +1,104 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Actions;
-
-use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInTypeAction;
 use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
+use function PHPUnit\Framework\assertEquals;
 
-class ReplaceSymbolsInTypeActionTest extends TestCase
-{
-    private TypesCollection $collection;
+beforeEach(function () {
+    $this->collection = TypesCollection::create();
 
-    private ReplaceSymbolsInTypeAction $action;
+    $this->action = new ReplaceSymbolsInTypeAction($this->collection);
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('can replace symbols', function () {
+    $typeC = FakeTransformedType::fake('C')
+        ->isInline()
+        ->withTransformed('This is type C');
 
-        $this->collection = TypesCollection::create();
+    $typeB = FakeTransformedType::fake('B')
+        ->isInline()
+        ->withMissingSymbols(['C' => 'C'])
+        ->withTransformed('Depends on type C: {%C%}');
 
-        $this->action = new ReplaceSymbolsInTypeAction($this->collection);
-    }
+    $typeA = FakeTransformedType::fake('A')
+        ->isInline()
+        ->withMissingSymbols(['B' => 'B'])
+        ->withTransformed("Depends on type B: {%B%}");
 
-    /** @test */
-    public function it_can_replace_symbols()
-    {
-        $typeC = FakeTransformedType::fake('C')
-            ->isInline()
-            ->withTransformed('This is type C');
+    $this->collection[] = $typeA;
+    $this->collection[] = $typeB;
+    $this->collection[] = $typeC;
 
-        $typeB = FakeTransformedType::fake('B')
-            ->isInline()
-            ->withMissingSymbols(['C' => 'C'])
-            ->withTransformed('Depends on type C: {%C%}');
+    $transformed = $this->action->execute($typeA);
 
-        $typeA = FakeTransformedType::fake('A')
-            ->isInline()
-            ->withMissingSymbols(['B' => 'B'])
-            ->withTransformed("Depends on type B: {%B%}");
+    assertEquals('Depends on type B: Depends on type C: This is type C', $transformed);
+    assertEquals('Depends on type C: This is type C', $this->collection['B']->transformed);
+    assertEquals('This is type C', $this->collection['C']->transformed);
+});
 
-        $this->collection[] = $typeA;
-        $this->collection[] = $typeB;
-        $this->collection[] = $typeC;
+it('will throw an exception when doing circular dependencies', function () {
+    $this->expectException(CircularDependencyChain::class);
 
-        $transformed = $this->action->execute($typeA);
+    $typeA = FakeTransformedType::fake('A')
+        ->isInline()
+        ->withMissingSymbols(['B' => 'B'])
+        ->withTransformed("Depends on type B: {%B%}");
 
-        $this->assertEquals('Depends on type B: Depends on type C: This is type C', $transformed);
-        $this->assertEquals('Depends on type C: This is type C', $this->collection['B']->transformed);
-        $this->assertEquals('This is type C', $this->collection['C']->transformed);
-    }
+    $typeB = FakeTransformedType::fake('B')
+        ->isInline()
+        ->withMissingSymbols(['A' => 'A'])
+        ->withTransformed('Depends on type A: {%A%}');
 
-    /** @test */
-    public function it_will_throw_an_exception_when_doing_circular_dependencies()
-    {
-        $this->expectException(CircularDependencyChain::class);
+    $this->collection[] = $typeA;
+    $this->collection[] = $typeB;
 
-        $typeA = FakeTransformedType::fake('A')
-            ->isInline()
-            ->withMissingSymbols(['B' => 'B'])
-            ->withTransformed("Depends on type B: {%B%}");
+    $this->action->execute($typeA);
+});
 
-        $typeB = FakeTransformedType::fake('B')
-            ->isInline()
-            ->withMissingSymbols(['A' => 'A'])
-            ->withTransformed('Depends on type A: {%A%}');
+it('can replace non inline types circular', function () {
+    $typeB = FakeTransformedType::fake('B')
+        ->withMissingSymbols(['A' => 'A'])
+        ->withTransformed('Links to A: {%A%}');
 
-        $this->collection[] = $typeA;
-        $this->collection[] = $typeB;
+    $typeA = FakeTransformedType::fake('A')
+        ->withMissingSymbols(['B' => 'B'])
+        ->withTransformed('Links to B: {%B%}');
 
-        $this->action->execute($typeA);
-    }
+    $this->collection[] = $typeA;
+    $this->collection[] = $typeB;
 
-    /** @test */
-    public function it_can_replace_non_inline_types_circular()
-    {
-        $typeB = FakeTransformedType::fake('B')
-            ->withMissingSymbols(['A' => 'A'])
-            ->withTransformed('Links to A: {%A%}');
+    $transformedA = $this->action->execute($typeA);
+    $transformedB = $this->action->execute($typeB);
 
-        $typeA = FakeTransformedType::fake('A')
-            ->withMissingSymbols(['B' => 'B'])
-            ->withTransformed('Links to B: {%B%}');
+    assertEquals('Links to B: B', $transformedA);
+    assertEquals('Links to A: A', $transformedB);
+});
 
-        $this->collection[] = $typeA;
-        $this->collection[] = $typeB;
+it('can inline multiple dependencies', function () {
+    $typeC = FakeTransformedType::fake('C')
+        ->isInline()
+        ->withTransformed('This is type C');
 
-        $transformedA = $this->action->execute($typeA);
-        $transformedB = $this->action->execute($typeB);
+    $typeB = FakeTransformedType::fake('B')
+        ->isInline()
+        ->withMissingSymbols(['C' => 'C'])
+        ->withTransformed('Depends on type C: {%C%}');
 
-        $this->assertEquals('Links to B: B', $transformedA);
-        $this->assertEquals('Links to A: A', $transformedB);
-    }
+    $typeA = FakeTransformedType::fake('A')
+        ->isInline()
+        ->withMissingSymbols(['B' => 'B', 'C' => 'C'])
+        ->withTransformed('Depends on type B: {%B%} | depends on type C: {%C%}');
 
-    /** @test */
-    public function it_can_inline_multiple_dependencies()
-    {
-        $typeC = FakeTransformedType::fake('C')
-            ->isInline()
-            ->withTransformed('This is type C');
+    $this->collection[] = $typeA;
+    $this->collection[] = $typeB;
+    $this->collection[] = $typeC;
 
-        $typeB = FakeTransformedType::fake('B')
-            ->isInline()
-            ->withMissingSymbols(['C' => 'C'])
-            ->withTransformed('Depends on type C: {%C%}');
+    $transformed = $this->action->execute($typeA);
 
-        $typeA = FakeTransformedType::fake('A')
-            ->isInline()
-            ->withMissingSymbols(['B' => 'B', 'C' => 'C'])
-            ->withTransformed('Depends on type B: {%B%} | depends on type C: {%C%}');
-
-        $this->collection[] = $typeA;
-        $this->collection[] = $typeB;
-        $this->collection[] = $typeC;
-
-        $transformed = $this->action->execute($typeA);
-
-        $this->assertEquals(
-            'Depends on type B: Depends on type C: This is type C | depends on type C: This is type C',
-            $transformed
-        );
-    }
-}
+    assertEquals(
+        'Depends on type B: Depends on type C: This is type C | depends on type C: This is type C',
+        $transformed
+    );
+});
