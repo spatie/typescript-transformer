@@ -1,55 +1,37 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Actions;
-
-use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Actions\ResolveClassesInPhpFileAction;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeClass;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeInterface;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeTrait;
 use Symfony\Component\Finder\SplFileInfo;
+use function PHPUnit\Framework\assertEquals;
 
-class ResolveClassesInPhpFileActionTest extends TestCase
-{
-    private ResolveClassesInPhpFileAction $action;
+beforeEach(function () {
+    $this->action = new ResolveClassesInPhpFileAction();
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('can find classes', function () {
+    assertEquals([SomeClass::class,], $this->action->execute(
+        new SplFileInfo(__DIR__ . '/../FakeClasses/Finder/SomeClass.php', '', '')
+    ));
+});
 
-        $this->action = new ResolveClassesInPhpFileAction();
-    }
+it('can find interfaces', function () {
+    assertEquals([SomeInterface::class,], $this->action->execute(
+        new SplFileInfo(__DIR__ . '/../FakeClasses/Finder/SomeInterface.php', '', '')
+    ));
+});
 
-    /** @test */
-    public function it_can_find_classes()
-    {
-        $this->assertEquals([SomeClass::class,], $this->action->execute(
-            new SplFileInfo(__DIR__ . '/../FakeClasses/Finder/SomeClass.php', '', '')
-        ));
-    }
+it('can find traits', function () {
+    assertEquals([SomeTrait::class,], $this->action->execute(
+        new SplFileInfo(__DIR__ . '/../FakeClasses/Finder/SomeTrait.php', '', '')
+    ));
+});
 
-    /** @test */
-    public function it_can_find_interfaces()
-    {
-        $this->assertEquals([SomeInterface::class,], $this->action->execute(
-            new SplFileInfo(__DIR__ . '/../FakeClasses/Finder/SomeInterface.php', '', '')
-        ));
-    }
-
-    /** @test */
-    public function it_can_find_traits()
-    {
-        $this->assertEquals([SomeTrait::class,], $this->action->execute(
-            new SplFileInfo(__DIR__ . '/../FakeClasses/Finder/SomeTrait.php', '', '')
-        ));
-    }
-
-    /** @test */
-    public function it_can_find_enums()
-    {
-        $this->assertEquals([SomeEnum::class,], $this->action->execute(
-            new SplFileInfo(__DIR__.'./../FakeClasses/Finder/SomeEnum.php', '', '')
-        ));
-    }
-}
+it('can find enums', function () {
+    assertEquals([SomeEnum::class,], $this->action->execute(
+        new SplFileInfo(__DIR__.'./../FakeClasses/Finder/SomeEnum.php', '', '')
+    ));
+});
