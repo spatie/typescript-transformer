@@ -1,0 +1,5 @@
+{
+string: string;
+default: string;
+documented_string: string;
+}
