@@ -1,80 +1,59 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Actions;
-
-use PHPUnit\Framework\TestCase;
-use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use function Spatie\Snapshots\assertMatchesFileSnapshot;
 
-class PersistTypesCollectionActionTest extends TestCase
-{
-    use MatchesSnapshots;
+beforeEach(function () {
+    $this->temporaryDirectory = (new TemporaryDirectory())->create();
 
-    private PersistTypesCollectionAction $action;
+    $this->action = new PersistTypesCollectionAction(
+        TypeScriptTransformerConfig::create()
+        ->autoDiscoverTypes(__DIR__ . '/../FakeClasses')
+        ->transformers([MyclabsEnumTransformer::class])
+        ->outputFile($this->temporaryDirectory->path('types.d.ts'))
+    );
+});
 
-    private TemporaryDirectory $temporaryDirectory;
+it('will persist the types', function () {
+    $collection = TypesCollection::create();
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $collection[] = FakeTransformedType::fake('Enum')->withoutNamespace();
+    $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test');
+    $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test\test');
 
-        $this->temporaryDirectory = (new TemporaryDirectory())->create();
+    $this->action->execute($collection);
 
-        $this->action = new PersistTypesCollectionAction(
-            TypeScriptTransformerConfig::create()
-                ->autoDiscoverTypes(__DIR__ . '/../FakeClasses')
-                ->transformers([MyclabsEnumTransformer::class])
-                ->outputFile($this->temporaryDirectory->path('types.d.ts'))
-        );
-    }
+    assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
+});
 
-    /** @test */
-    public function it_will_persist_the_types()
-    {
-        $collection = TypesCollection::create();
+it('can persist multiple types in one namespace', function () {
+    $collection = TypesCollection::create();
 
-        $collection[] = FakeTransformedType::fake('Enum')->withoutNamespace();
-        $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test');
-        $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test\test');
+    $collection[] = FakeTransformedType::fake('Enum')->withTransformed('transformed Enum')->withoutNamespace();
+    $collection[] = FakeTransformedType::fake('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace();
+    $collection[] = FakeTransformedType::fake('Enum')->withTransformed('transformed test\Enum')->withNamespace('test');
+    $collection[] = FakeTransformedType::fake('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test');
 
-        $this->action->execute($collection);
+    $this->action->execute($collection);
 
-        $this->assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
-    }
+    assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
+});
 
-    /** @test */
-    public function it_can_persist_multiple_types_in_one_namespace()
-    {
-        $collection = TypesCollection::create();
+it('can re save the file', function () {
+    $collection = TypesCollection::create();
 
-        $collection[] = FakeTransformedType::fake('Enum')->withTransformed('transformed Enum')->withoutNamespace();
-        $collection[] = FakeTransformedType::fake('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace();
-        $collection[] = FakeTransformedType::fake('Enum')->withTransformed('transformed test\Enum')->withNamespace('test');
-        $collection[] = FakeTransformedType::fake('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test');
+    $collection[] = FakeTransformedType::fake('Enum')->withoutNamespace();
 
-        $this->action->execute($collection);
+    $this->action->execute($collection);
 
-        $this->assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
-    }
+    $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test');
 
-    /** @test */
-    public function it_can_re_save_the_file()
-    {
-        $collection = TypesCollection::create();
+    $this->action->execute($collection);
 
-        $collection[] = FakeTransformedType::fake('Enum')->withoutNamespace();
-
-        $this->action->execute($collection);
-
-        $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test');
-
-        $this->action->execute($collection);
-
-        $this->assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
-    }
-}
+    assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
+});

@@ -17,7 +17,7 @@ it('can format an generated file', function () {
     $formatter = new class implements Formatter {
         public function format(string $file): void
         {
-        file_put_contents($file, 'formatted');
+            file_put_contents($file, 'formatted');
         }
     };
 
