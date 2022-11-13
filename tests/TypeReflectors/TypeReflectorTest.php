@@ -1,235 +1,125 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\TypeReflectors;
-
-use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Annotations\FakeAnnotationsClass;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionUnionType;
 use Spatie\TypeScriptTransformer\TypeReflectors\PropertyTypeReflector;
+use function PHPUnit\Framework\assertEquals;
 
-class TypeReflectorTest extends TestCase
-{
-    /**
-     * @test
-     * @dataProvider docblockTypesProvider
-     *
-     * @param string $input
-     * @param string $outputType
-     */
-    public function it_can_resolve_types_from_docblocks(string $input, string $outputType)
-    {
-        $reflector = new PropertyTypeReflector(
-            FakeReflectionProperty::create()->withDocComment("@var {$input}")
-        );
+it('can resolve types from docblocks', function (string $input, string $outputType) {
+    $reflector = new PropertyTypeReflector(
+        FakeReflectionProperty::create()->withDocComment("@var {$input}")
+    );
 
-        $this->assertEquals($outputType, (string) $reflector->reflect());
-    }
+    assertEquals($outputType, (string) $reflector->reflect());
+})->with('docblock_types');
 
-    public function docblockTypesProvider(): array
-    {
-        return [
-            ['int', 'int'],
-            ['bool', 'bool'],
-            ['string', 'string'],
-            ['float', 'float'],
-            ['mixed', 'mixed'],
-            ['array', 'array'],
+it('will handle no docblock', function () {
+    $reflector = new PropertyTypeReflector(
+        FakeReflectionProperty::create()
+    );
 
-            ['bool|int', 'bool|int'],
-            ['?int', '?int'],
-            ['int[]', 'int[]'],
-        ];
-    }
+    assertEquals('any', (string) $reflector->reflect());
+});
 
-    /** @test */
-    public function it_will_handle_no_docblock()
-    {
-        $reflector = new PropertyTypeReflector(
-            FakeReflectionProperty::create()
-        );
+it('can handle another non var docblock', function () {
+    $reflector = new PropertyTypeReflector(
+        FakeReflectionProperty::create()->withDocComment('@method bla')
+    );
 
-        $this->assertEquals('any', (string) $reflector->reflect());
-    }
+    assertEquals('any', (string) $reflector->reflect());
+});
 
-    /** @test */
-    public function it_can_handle_another_non_var_docblock()
-    {
-        $reflector = new PropertyTypeReflector(
-            FakeReflectionProperty::create()->withDocComment('@method bla')
-        );
+it('can handle an incorrect docblock', function () {
+    $reflector = new PropertyTypeReflector(
+        FakeReflectionProperty::create()->withDocComment('@var int  bool')
+    );
 
-        $this->assertEquals('any', (string) $reflector->reflect());
-    }
+    assertEquals('int', (string) $reflector->reflect());
+});
 
-    /** @test */
-    public function it_can_handle_an_incorrect_docblock()
-    {
-        $reflector = new PropertyTypeReflector(
-            FakeReflectionProperty::create()->withDocComment('@var int  bool')
-        );
+it('can resolve reflection types', function (string $input, bool $isBuiltIn, string $outputType) {
+    $reflection = FakeReflectionProperty::create()->withType(
+        FakeReflectionType::create()->withIsBuiltIn($isBuiltIn)->withType($input)
+    );
 
-        $this->assertEquals('int', (string) $reflector->reflect());
-    }
+    $reflector = new PropertyTypeReflector($reflection);
 
-    /**
-     * @test
-     * @dataProvider reflectionTypesProvider
-     *
-     * @param string $input
-     * @param bool $isBuiltIn
-     * @param string $outputType
-     */
-    public function it_can_resolve_reflection_types(string $input, bool $isBuiltIn, string $outputType)
-    {
-        $reflection = FakeReflectionProperty::create()->withType(
-            FakeReflectionType::create()->withIsBuiltIn($isBuiltIn)->withType($input)
-        );
+    assertEquals($outputType, (string) $reflector->reflect());
+})->with('reflection_types');
 
-        $reflector = new PropertyTypeReflector($reflection);
+it('will ignore a reflected type if it is already in the docblock', function (string $reflection, string $docbloc, string $outputType) {
+    $reflection = FakeReflectionProperty::create()
+        ->withType(FakeReflectionType::create()->withType($reflection))
+        ->withDocComment($docbloc);
 
-        $this->assertEquals($outputType, (string) $reflector->reflect());
-    }
+    $reflector = new PropertyTypeReflector($reflection);
 
-    public function reflectionTypesProvider(): array
-    {
-        return [
-            ['int', true, 'int'],
-            ['bool', true, 'bool'],
-            ['mixed', true, 'mixed'],
-            ['string', true, 'string'],
-            ['float', true, 'float'],
-            ['array', true, 'array'],
+    assertEquals($outputType, (string) $reflector->reflect());
+})->with('ignored_types');
 
-            [Enum::class, false, '\\' . Enum::class],
-        ];
-    }
+it('can only use reflection property for typing', function () {
+    $reflection = FakeReflectionProperty::create()->withType(
+        FakeReflectionType::create()->withIsBuiltIn(true)->withType('string')
+    );
 
-    /**
-     * @test
-     * @dataProvider ignoredTypesProvider
-     *
-     * @param string $reflection
-     * @param string $docbloc
-     * @param string $outputType
-     */
-    public function it_will_ignore_a_reflected_type_if_it_is_already_in_the_docblock(
-        string $reflection,
-        string $docbloc,
-        string $outputType
-    ) {
-        $reflection = FakeReflectionProperty::create()
-            ->withType(FakeReflectionType::create()->withType($reflection))
-            ->withDocComment($docbloc);
+    $reflector = new PropertyTypeReflector($reflection);
 
-        $reflector = new PropertyTypeReflector($reflection);
+    assertEquals('string', (string) $reflector->reflect());
+});
 
-        $this->assertEquals($outputType, (string) $reflector->reflect());
-    }
+it('can nullify types based upon reflection', function (string $docbloc, string $outputType) {
+    $reflection = FakeReflectionProperty::create()->withType(
+        FakeReflectionType::create()->withType('int')->withAllowsNull()
+    )->withDocComment("@var {$docbloc}");
 
-    public function ignoredTypesProvider(): array
-    {
-        return [
-            ['int', 'int', 'int'],
-            ['int|array', 'array', 'int|array'],
-            ['int[]', 'array', 'int[]'],
-            ['?int[]', 'array', '?int[]'],
-        ];
-    }
+    $reflector = new PropertyTypeReflector($reflection);
 
-    /** @test */
-    public function it_can_only_use_reflection_property_for_typing()
-    {
-        $reflection = FakeReflectionProperty::create()->withType(
-            FakeReflectionType::create()->withIsBuiltIn(true)->withType('string')
-        );
+    assertEquals($outputType, (string) $reflector->reflect());
+})->with('nullified_types');
 
-        $reflector = new PropertyTypeReflector($reflection);
+it('can use an union type with reflection', function () {
+    $reflection = FakeReflectionProperty::create()->withType(
+        FakeReflectionUnionType::create()->withType(
+        FakeReflectionType::create()->withType('int')->withAllowsNull(),
+        FakeReflectionType::create()->withType('float'),
+        )
+    );
 
-        $this->assertEquals('string', (string) $reflector->reflect());
-    }
+    $reflector = new PropertyTypeReflector($reflection);
 
-    /**
-     * @test
-     * @dataProvider nullifiedTypesProvider
-     *
-     * @param string $docbloc
-     * @param string $outputType
-     */
-    public function it_can_nullify_types_based_upon_reflection(string $docbloc, string $outputType)
-    {
-        $reflection = FakeReflectionProperty::create()->withType(
-            FakeReflectionType::create()->withType('int')->withAllowsNull()
-        )->withDocComment("@var {$docbloc}");
+    assertEquals('int|float|null', (string) $reflector->reflect());
+});
 
-        $reflector = new PropertyTypeReflector($reflection);
+it('can use a transformable attribute as type', function () {
+    $class = new class() {
+        #[LiteralTypeScriptType('EnumType[]')]
+        public $literal;
+    };
 
-        $this->assertEquals($outputType, (string) $reflector->reflect());
-    }
+    $reflection = new ReflectionProperty($class, 'literal');
 
-    public function nullifiedTypesProvider(): array
-    {
-        return [
-            ['', '?int'],
-            ['?int', '?int'],
-            ['int', '?int'],
-            ['array|int', 'array|int|null'],
-            ['array|int|null', 'array|int|null'],
-            ['mixed', 'mixed'],
-        ];
-    }
+    $reflector = new PropertyTypeReflector($reflection);
 
-    /** @test */
-    public function it_can_use_an_union_type_with_reflection()
-    {
-        $reflection = FakeReflectionProperty::create()->withType(
-            FakeReflectionUnionType::create()->withType(
-                FakeReflectionType::create()->withType('int')->withAllowsNull(),
-                FakeReflectionType::create()->withType('float'),
-            )
-        );
+    assertEquals('EnumType[]', (string) $reflector->reflect());
+});
 
-        $reflector = new PropertyTypeReflector($reflection);
+it('can reflect docblocks without a complete fsqen', function () {
+    assertEquals(
+        '\\' . Dto::class,
+        (string) PropertyTypeReflector::create(new ReflectionProperty(FakeAnnotationsClass::class, 'property'))->reflect()
+    );
 
-        $this->assertEquals('int|float|null', (string) $reflector->reflect());
-    }
+    assertEquals(
+        '\\' . Dto::class,
+        (string) PropertyTypeReflector::create(new ReflectionProperty(FakeAnnotationsClass::class, 'fsqnProperty'))->reflect()
+    );
 
-    /** @test */
-    public function it_can_use_a_transformable_attribute_as_type()
-    {
-        $class = new class() {
-            #[LiteralTypeScriptType('EnumType[]')]
-            public $literal;
-        };
-
-        $reflection = new ReflectionProperty($class, 'literal');
-
-        $reflector = new PropertyTypeReflector($reflection);
-
-        $this->assertEquals('EnumType[]', (string) $reflector->reflect());
-    }
-
-    /** @test */
-    public function it_can_reflect_docblocks_without_a_complete_fsqen()
-    {
-        $this->assertEquals(
-            '\\' . Dto::class,
-            (string) PropertyTypeReflector::create(new ReflectionProperty(FakeAnnotationsClass::class, 'property'))->reflect()
-        );
-
-        $this->assertEquals(
-            '\\' . Dto::class,
-            (string) PropertyTypeReflector::create(new ReflectionProperty(FakeAnnotationsClass::class, 'fsqnProperty'))->reflect()
-        );
-
-        $this->assertEquals(
-            '\\' . Dto::class . '[]',
-            (string) PropertyTypeReflector::create(new ReflectionProperty(FakeAnnotationsClass::class, 'arrayProperty'))->reflect()
-        );
-    }
-}
+    assertEquals(
+        '\\' . Dto::class . '[]',
+        (string) PropertyTypeReflector::create(new ReflectionProperty(FakeAnnotationsClass::class, 'arrayProperty'))->reflect()
+    );
+});
