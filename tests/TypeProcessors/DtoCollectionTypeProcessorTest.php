@@ -1,10 +1,7 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\TypeProcessors;
-
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Array_;
-use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
@@ -13,85 +10,66 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollect
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
+use function PHPUnit\Framework\assertEquals;
 
-class DtoCollectionTypeProcessorTest extends TestCase
-{
-    private DtoCollectionTypeProcessor $processor;
+beforeEach(function () {
+    $this->typeResolver = new TypeResolver();
 
-    private TypeResolver $typeResolver;
+    $this->processor = new DtoCollectionTypeProcessor();
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('will process a dto collection', function () {
+    $type = $this->processor->process(
+        $this->typeResolver->resolve(DtoCollection::class),
+        FakeReflectionProperty::create(),
+        new MissingSymbolsCollection()
+    );
 
-        $this->typeResolver = new TypeResolver();
+    assertEquals(
+        '\Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto[]',
+        (string) $type
+    );
+});
 
-        $this->processor = new DtoCollectionTypeProcessor();
-    }
+it('will process a nullable dto collection', function () {
+    $type = $this->processor->process(
+        $this->typeResolver->resolve(NullableDtoCollection::class),
+        FakeReflectionProperty::create(),
+        new MissingSymbolsCollection()
+    );
 
-    /** @test */
-    public function it_will_process_a_dto_collection()
-    {
-        $type = $this->processor->process(
-            $this->typeResolver->resolve(DtoCollection::class),
-            FakeReflectionProperty::create(),
-            new MissingSymbolsCollection()
-        );
+    assertEquals(
+        '?\Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto[]',
+        (string) $type
+    );
+});
 
-        $this->assertEquals(
-            '\Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto[]',
-            (string) $type
-        );
-    }
+it('will process a dto collection with built in type', function () {
+    $type = $this->processor->process(
+        $this->typeResolver->resolve(StringDtoCollection::class),
+        FakeReflectionProperty::create(),
+        new MissingSymbolsCollection()
+    );
 
-    /** @test */
-    public function it_will_process_a_nullable_dto_collection()
-    {
-        $type = $this->processor->process(
-            $this->typeResolver->resolve(NullableDtoCollection::class),
-            FakeReflectionProperty::create(),
-            new MissingSymbolsCollection()
-        );
+    assertEquals('string[]', (string) $type);
+});
 
-        $this->assertEquals(
-            '?\Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto[]',
-            (string) $type
-        );
-    }
+it('will process a dto collection without type', function () {
+    $type = $this->processor->process(
+        $this->typeResolver->resolve(UntypedDtoCollection::class),
+        FakeReflectionProperty::create(),
+        new MissingSymbolsCollection()
+    );
 
-    /** @test */
-    public function it_will_process_a_dto_collection_with_built_in_type()
-    {
-        $type = $this->processor->process(
-            $this->typeResolver->resolve(StringDtoCollection::class),
-            FakeReflectionProperty::create(),
-            new MissingSymbolsCollection()
-        );
+    assertEquals(new Array_(new TypeScriptType('any')), $type);
+});
 
-        $this->assertEquals('string[]', (string) $type);
-    }
+it('will pass non dto collections', function () {
+    $type = $this->processor->process(
+        $this->typeResolver->resolve('string'),
+        FakeReflectionProperty::create(),
+        new MissingSymbolsCollection()
+    );
 
-    /** @test */
-    public function it_will_process_a_dto_collection_without_type()
-    {
-        $type = $this->processor->process(
-            $this->typeResolver->resolve(UntypedDtoCollection::class),
-            FakeReflectionProperty::create(),
-            new MissingSymbolsCollection()
-        );
-
-        $this->assertEquals(new Array_(new TypeScriptType('any')), $type);
-    }
-
-    /** @test */
-    public function it_will_pass_non_dto_collections()
-    {
-        $type = $this->processor->process(
-            $this->typeResolver->resolve('string'),
-            FakeReflectionProperty::create(),
-            new MissingSymbolsCollection()
-        );
-
-        $this->assertEquals('string', (string) $type);
-    }
-}
+    assertEquals('string', (string) $type);
+});
