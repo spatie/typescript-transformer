@@ -2,8 +2,6 @@
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\String_;
-use PHPUnit\Framework\TestCase;
-use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
