@@ -1,9 +1,5 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Collectors;
-
-use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
@@ -14,227 +10,195 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptTran
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertNull;
+use function PHPUnit\Framework\assertTrue;
 
-class DefaultCollectorTest extends TestCase
-{
-    private DefaultCollector $collector;
+beforeEach(function () {
+    $this->config = TypeScriptTransformerConfig::create()->transformers([
+        MyclabsEnumTransformer::class,
+    ]);
 
-    private TypeScriptTransformerConfig $config;
+    $this->collector = new DefaultCollector($this->config);
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('will not collect non annotated classes', function () {
+    $class = new class('a') extends Enum {
+        const A = 'a';
+    };
 
-        $this->config = TypeScriptTransformerConfig::create()->transformers([
-            MyclabsEnumTransformer::class,
-        ]);
+    $reflection = new ReflectionClass(
+        $class
+    );
 
-        $this->collector = new DefaultCollector($this->config);
-    }
+    assertNull($this->collector->getTransformedType($reflection));
+});
 
-    /** @test */
-    public function it_will_not_collect_non_annotated_classes()
-    {
-        $class = new class('a') extends Enum {
-            const A = 'a';
-        };
+it('will collect annotated classes', function () {
+    /** @typescript */
+    $class = new class('a') extends Enum {
+        const A = 'a';
+    };
 
-        $reflection = new ReflectionClass(
-            $class
-        );
+    $reflection = new ReflectionClass(
+        $class
+    );
 
-        $this->assertNull($this->collector->getTransformedType($reflection));
-    }
+    $transformedType = $this->collector->getTransformedType($reflection);
 
-    /** @test */
-    public function it_will_collect_annotated_classes()
-    {
-        /** @typescript */
-        $class = new class('a') extends Enum {
-            const A = 'a';
-        };
+    assertNotNull($transformedType);
+    assertEquals(
+        "'a' | 'yes' | 'no'",
+        $transformedType->transformed,
+    );
+});
 
-        $reflection = new ReflectionClass(
-            $class
-        );
+it('will collect annotated classes and use the given name', function () {
+    /** @typescript EnumTransformed */
+    $class = new class('a') extends Enum {
+        const A = 'a';
+    };
 
-        $transformedType = $this->collector->getTransformedType($reflection);
+    $reflection = new ReflectionClass(
+        $class
+    );
 
-        $this->assertNotNull($transformedType);
-        $this->assertEquals(
-            "'a' | 'yes' | 'no'",
-            $transformedType->transformed,
-        );
-    }
+    $transformedType = $this->collector->getTransformedType($reflection);
 
-    /** @test */
-    public function it_will_collect_annotated_classes_and_use_the_given_name()
-    {
-        /** @typescript EnumTransformed */
-        $class = new class('a') extends Enum {
-            const A = 'a';
-        };
+    assertNotNull($transformedType);
+    assertEquals('EnumTransformed', $transformedType->name);
+    assertEquals(
+        "'a' | 'yes' | 'no'",
+        $transformedType->transformed,
+    );
+});
 
-        $reflection = new ReflectionClass(
-            $class
-        );
+it('will read overwritten transformers', function () {
+    /**
+     * @typescript DtoTransformed
+     * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\DtoTransformer
+     */
+    $class = new class('a') extends Enum {
+        const A = 'a';
 
-        $transformedType = $this->collector->getTransformedType($reflection);
+        public int $an_integer;
+    };
 
-        $this->assertNotNull($transformedType);
-        $this->assertEquals('EnumTransformed', $transformedType->name);
-        $this->assertEquals(
-            "'a' | 'yes' | 'no'",
-            $transformedType->transformed,
-        );
-    }
+    $reflection = new ReflectionClass(
+        $class
+    );
 
-    /** @test */
-    public function it_will_read_overwritten_transformers()
-    {
-        /**
-         * @typescript DtoTransformed
-         * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\DtoTransformer
-         */
-        $class = new class('a') extends Enum {
-            const A = 'a';
+    $transformedType = $this->collector->getTransformedType($reflection);
 
-            public int $an_integer;
-        };
+    assertNotNull($transformedType);
+    assertEquals('DtoTransformed', $transformedType->name);
+    assertEquals(
+        '{'.PHP_EOL.'an_integer: number;'.PHP_EOL.'}',
+        $transformedType->transformed,
+    );
+});
 
-        $reflection = new ReflectionClass(
-            $class
-        );
+it('will throw an exception if a transformer is not found', function () {
+    /** @typescript */
+    $class = new class {
+    };
 
-        $transformedType = $this->collector->getTransformedType($reflection);
+    $reflection = new ReflectionClass(
+        $class
+    );
 
-        $this->assertNotNull($transformedType);
-        $this->assertEquals('DtoTransformed', $transformedType->name);
-        $this->assertEquals(
-            '{'.PHP_EOL.'an_integer: number;'.PHP_EOL.'}',
-            $transformedType->transformed,
-        );
-    }
+    $this->collector->getTransformedType($reflection);
+})->throws(TransformerNotFound::class);
 
-    /** @test */
-    public function it_will_throw_an_exception_if_a_transformer_is_not_found()
-    {
-        $this->expectException(TransformerNotFound::class);
+it('will collect classes with attributes', function () {
+    $reflection = new ReflectionClass(WithTypeScriptAttribute::class);
 
-        /** @typescript */
-        $class = new class {
-        };
+    $transformedType = $this->collector->getTransformedType($reflection);
 
-        $reflection = new ReflectionClass(
-            $class
-        );
+    assertNotNull($transformedType);
+    assertEquals('WithTypeScriptAttribute', $transformedType->name);
+    assertEquals(
+        "'a' | 'b'",
+        $transformedType->transformed,
+    );
+});
 
-        $this->collector->getTransformedType($reflection);
-    }
+it('will collect attribute overwritten transformers', function () {
+    $reflection = new ReflectionClass(WithTypeScriptTransformerAttribute::class);
 
-    /** @test */
-    public function it_will_collect_classes_with_attributes()
-    {
-        $reflection = new ReflectionClass(WithTypeScriptAttribute::class);
+    $transformedType = $this->collector->getTransformedType($reflection);
 
-        $transformedType = $this->collector->getTransformedType($reflection);
+    assertNotNull($transformedType);
+    assertEquals('WithTypeScriptTransformerAttribute', $transformedType->name);
+    assertEquals(
+        '{'.PHP_EOL.'an_int: number;'.PHP_EOL.'}',
+        $transformedType->transformed,
+    );
+});
 
-        $this->assertNotNull($transformedType);
-        $this->assertEquals('WithTypeScriptAttribute', $transformedType->name);
-        $this->assertEquals(
-            "'a' | 'b'",
-            $transformedType->transformed,
-        );
-    }
+it('will collect classes with already transformed attributes', function () {
+    $reflection = new ReflectionClass(WithAlreadyTransformedAttributeAttribute::class);
 
-    /** @test */
-    public function it_will_collect_attribute_overwritten_transformers()
-    {
-        $reflection = new ReflectionClass(WithTypeScriptTransformerAttribute::class);
+    $transformedType = $this->collector->getTransformedType($reflection);
 
-        $transformedType = $this->collector->getTransformedType($reflection);
+    assertNotNull($transformedType);
+    assertEquals(
+        '{an_int:number;a_bool:boolean;}',
+        $transformedType->transformed,
+    );
+});
 
-        $this->assertNotNull($transformedType);
-        $this->assertEquals('WithTypeScriptTransformerAttribute', $transformedType->name);
-        $this->assertEquals(
-            '{'.PHP_EOL.'an_int: number;'.PHP_EOL.'}',
-            $transformedType->transformed,
-        );
-    }
+it('can inline collected classes with annotations', function () {
+    $reflection = new ReflectionClass(WithTypeScriptInlineAttribute::class);
 
-    /** @test */
-    public function it_will_collect_classes_with_already_transformed_attributes()
-    {
-        $reflection = new ReflectionClass(WithAlreadyTransformedAttributeAttribute::class);
+    $transformedType = $this->collector->getTransformedType($reflection);
 
-        $transformedType = $this->collector->getTransformedType($reflection);
+    assertNotNull($transformedType);
+    assertTrue($transformedType->isInline);
+});
 
-        $this->assertNotNull($transformedType);
-        $this->assertEquals(
-            '{an_int:number;a_bool:boolean;}',
-            $transformedType->transformed,
-        );
-    }
+it('can inline collected classes with attributes', function () {
+    /**
+     * @typescript
+     * @typescript-inline
+     */
+    $class = new class('a') extends Enum {
+        const A = 'a';
+    };
 
-    /** @test */
-    public function it_can_inline_collected_classes_with_annotations()
-    {
-        $reflection = new ReflectionClass(WithTypeScriptInlineAttribute::class);
+    $transformedType = $this->collector->getTransformedType(new ReflectionClass($class));
 
-        $transformedType = $this->collector->getTransformedType($reflection);
+    assertNotNull($transformedType);
+    assertTrue($transformedType->isInline);
+});
 
-        $this->assertNotNull($transformedType);
-        $this->assertTrue($transformedType->isInline);
-    }
+it('will will throw an exception with non existing transformers', function () {
+    $this->expectException(InvalidTransformerGiven::class);
+    $this->expectDeprecationMessageMatches("/does not exist!/");
 
-    /** @test */
-    public function it_can_inline_collected_classes_with_attributes()
-    {
-        /**
-         * @typescript
-         * @typescript-inline
-         */
-        $class = new class('a') extends Enum {
-            const A = 'a';
-        };
+    /**
+     * @typescript DtoTransformed
+     * @typescript-transformer FAKE
+     */
+    $class = new class('a') extends Enum {
+        const A = 'a';
 
-        $transformedType = $this->collector->getTransformedType(new ReflectionClass($class));
+        public int $an_integer;
+    };
 
-        $this->assertNotNull($transformedType);
-        $this->assertTrue($transformedType->isInline);
-    }
+    $this->collector->getTransformedType(new ReflectionClass($class));
+});
 
-    /** @test */
-    public function it_will_will_throw_an_exception_with_non_existing_transformers()
-    {
-        $this->expectException(InvalidTransformerGiven::class);
-        $this->expectDeprecationMessageMatches("/does not exist!/");
+it('will will throw an exception with class that does not implement transformer', function () {
+    $this->expectException(InvalidTransformerGiven::class);
+    $this->expectDeprecationMessageMatches("/does not implement the Transformer interface!/");
 
-        /**
-         * @typescript DtoTransformed
-         * @typescript-transformer FAKE
-         */
-        $class = new class('a') extends Enum {
-            const A = 'a';
+    /**
+     * @typescript-transformer \Spatie\TypeScriptTransformer\Structures\TransformedType
+     */
+    $class = new class {
+    };
 
-            public int $an_integer;
-        };
-
-        $this->collector->getTransformedType(new ReflectionClass($class));
-    }
-
-    /** @test */
-    public function it_will_will_throw_an_exception_with_class_that_does_not_implement_transformer()
-    {
-        $this->expectException(InvalidTransformerGiven::class);
-        $this->expectDeprecationMessageMatches("/does not implement the Transformer interface!/");
-
-        /**
-         * @typescript-transformer \Spatie\TypeScriptTransformer\Structures\TransformedType
-         */
-        $class = new class {
-        };
-
-        $this->collector->getTransformedType(new ReflectionClass($class));
-    }
-}
+    $this->collector->getTransformedType(new ReflectionClass($class));
+});
