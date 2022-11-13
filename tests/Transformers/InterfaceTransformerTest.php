@@ -1,50 +1,37 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Transformers;
-
-use DateTime;
-use DateTimeInterface;
-use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeInterface;
 use Spatie\TypeScriptTransformer\Transformers\InterfaceTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertNull;
+use function Spatie\Snapshots\assertMatchesTextSnapshot;
 
-class InterfaceTransformerTest extends TestCase
-{
-    use MatchesSnapshots;
+it('will only convert interfaces', function () {
+    $transformer = new InterfaceTransformer(
+        TypeScriptTransformerConfig::create()
+    );
 
-    /** @test */
-    public function it_will_only_convert_interfaces(): void
-    {
-        $transformer = new InterfaceTransformer(
-            TypeScriptTransformerConfig::create()
-        );
+    assertNotNull($transformer->transform(
+        new ReflectionClass(DateTimeInterface::class),
+        'State',
+    ));
 
-        $this->assertNotNull($transformer->transform(
-            new ReflectionClass(DateTimeInterface::class),
-            'State',
-        ));
+    assertNull($transformer->transform(
+        new ReflectionClass(DateTime::class),
+        'State',
+    ));
+});
 
-        $this->assertNull($transformer->transform(
-            new ReflectionClass(DateTime::class),
-            'State',
-        ));
-    }
+it('will replace methods', function () {
+    $transformer = new InterfaceTransformer(
+        TypeScriptTransformerConfig::create()
+    );
 
-    /** @test */
-    public function it_will_replace_methods(): void
-    {
-        $transformer = new InterfaceTransformer(
-            TypeScriptTransformerConfig::create()
-        );
+    $type = $transformer->transform(
+        new ReflectionClass(FakeInterface::class),
+        'State',
+    );
 
-        $type = $transformer->transform(
-            new ReflectionClass(FakeInterface::class),
-            'State',
-        );
-
-        $this->assertMatchesTextSnapshot($type->transformed);
-    }
-}
+    assertMatchesTextSnapshot($type->transformed);
+});
