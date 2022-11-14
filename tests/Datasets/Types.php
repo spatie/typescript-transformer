@@ -21,7 +21,7 @@ dataset('types', [
 
     // Null
     ['?string', 'string | null'],
-    ['?string[]', 'Array<string> | null'],
+    ['?string[]', 'Array<string | null>'],
 
     // Objects
     [Enum::class, '{%' . Enum::class . '%}'],
