@@ -2,6 +2,11 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.12 - 2022-11-18
+
+- add support for optional attributes (#30)
+- refactor tests to Pest (#39)
+
 ## 2.1.11 - 2022-09-28
 
 - fix: Support Collection with array-key key type (#38)
