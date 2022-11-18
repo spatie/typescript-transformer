@@ -1,11 +1,11 @@
 <?php
 
-use Spatie\TypeScriptTransformer\ClassReader;
-use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertStringContainsString;
 use function PHPUnit\Framework\assertTrue;
+use Spatie\TypeScriptTransformer\ClassReader;
+use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 
 beforeEach(function () {
     $this->reader = new ClassReader();

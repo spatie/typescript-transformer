@@ -1,10 +1,10 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInTypeAction;
 use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
-use function PHPUnit\Framework\assertEquals;
 
 beforeEach(function () {
     $this->collection = TypesCollection::create();

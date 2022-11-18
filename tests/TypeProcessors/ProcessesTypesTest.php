@@ -3,8 +3,8 @@
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Integer;
-use Spatie\TypeScriptTransformer\TypeProcessors\ProcessesTypes;
 use function PHPUnit\Framework\assertEquals;
+use Spatie\TypeScriptTransformer\TypeProcessors\ProcessesTypes;
 
 function assertProcessed(
     Type | string | null $expectedType,

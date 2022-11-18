@@ -1,12 +1,12 @@
 <?php
 
+use function PHPUnit\Framework\assertCount;
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertNull;
 use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
-use function PHPUnit\Framework\assertCount;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNull;
 
 it('can add a null namespace', function () {
     $structure = TypesCollection::create();

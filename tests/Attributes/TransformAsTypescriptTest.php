@@ -1,11 +1,11 @@
 <?php
 
 use phpDocumentor\Reflection\Type;
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertInstanceOf;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Types\StructType;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertInstanceOf;
 
 it('can create the attribute from string', function () {
     $attribute = new TypeScriptType('string|int');

@@ -1,12 +1,12 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ResolveClassesInPhpFileAction;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeClass;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeInterface;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Finder\SomeTrait;
 use Symfony\Component\Finder\SplFileInfo;
-use function PHPUnit\Framework\assertEquals;
 
 beforeEach(function () {
     $this->action = new ResolveClassesInPhpFileAction();

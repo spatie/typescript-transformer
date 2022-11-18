@@ -2,13 +2,13 @@
 
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\String_;
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-use function PHPUnit\Framework\assertEquals;
 
 it('can create transformers', function () {
     $config = TypeScriptTransformerConfig::create()->transformers([

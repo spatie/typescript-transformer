@@ -1,8 +1,8 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\TypeReflectors\PropertyTypeReflector;
-use function PHPUnit\Framework\assertEquals;
 
 it('can reflect from reflection', function () {
     $class = new class {

@@ -1,34 +1,34 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\TypeReflectors\MethodReturnTypeReflector;
-use function PHPUnit\Framework\assertEquals;
 
 it('can reflect from reflection', function () {
     $class = new class {
         public function m1(): int
         {
-        return 42;
+            return 42;
         }
 
         public function m2(): ?int
         {
-        return 42;
+            return 42;
         }
 
         public function m3(): int | float
         {
-        return 42;
+            return 42;
         }
 
         public function m4(): int | float | null
         {
-        return 42;
+            return 42;
         }
 
         public function m5()
         {
-        return 42;
+            return 42;
         }
     };
 
@@ -63,36 +63,36 @@ it('can reflect from docblock', function () {
         /** @return int */
         public function m1()
         {
-        return 42;
+            return 42;
         }
 
         /** @return ?int */
         public function m2()
         {
-        return 42;
+            return 42;
         }
 
         /** @return int|float */
         public function m3()
         {
-        return 42;
+            return 42;
         }
 
         /** @return int|float|null */
         public function m4()
         {
-        return 42;
+            return 42;
         }
 
         public function m5()
         {
-        return 42;
+            return 42;
         }
 
         /** @return array<array-key, string> */
         public function m6()
         {
-        return [];
+            return [];
         }
     };
 
@@ -132,7 +132,7 @@ it('can reflect from attribute', function () {
         #[LiteralTypeScriptType('Integer')]
         public function m1()
         {
-        return 42;
+            return 42;
         }
     };
 

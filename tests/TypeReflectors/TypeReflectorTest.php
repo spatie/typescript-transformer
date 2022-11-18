@@ -1,5 +1,6 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Annotations\FakeAnnotationsClass;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
@@ -7,7 +8,6 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionType;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionUnionType;
 use Spatie\TypeScriptTransformer\TypeReflectors\PropertyTypeReflector;
-use function PHPUnit\Framework\assertEquals;
 
 it('can resolve types from docblocks', function (string $input, string $outputType) {
     $reflector = new PropertyTypeReflector(
@@ -84,8 +84,8 @@ it('can nullify types based upon reflection', function (string $docbloc, string 
 it('can use an union type with reflection', function () {
     $reflection = FakeReflectionProperty::create()->withType(
         FakeReflectionUnionType::create()->withType(
-        FakeReflectionType::create()->withType('int')->withAllowsNull(),
-        FakeReflectionType::create()->withType('float'),
+            FakeReflectionType::create()->withType('int')->withAllowsNull(),
+            FakeReflectionType::create()->withType('float'),
         )
     );
 

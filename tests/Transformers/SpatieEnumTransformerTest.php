@@ -1,13 +1,13 @@
 <?php
 
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\SpatieEnum;
-use Spatie\TypeScriptTransformer\Transformers\SpatieEnumTransformer;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertNull;
 use function PHPUnit\Framework\assertTrue;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\SpatieEnum;
+use Spatie\TypeScriptTransformer\Transformers\SpatieEnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 it('will only convert enums', function () {
     $transformer = new SpatieEnumTransformer(

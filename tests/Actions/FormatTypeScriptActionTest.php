@@ -1,11 +1,11 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
+use function Spatie\Snapshots\assertMatchesFileSnapshot;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-use function PHPUnit\Framework\assertEquals;
-use function Spatie\Snapshots\assertMatchesFileSnapshot;
 
 beforeEach(function () {
     $this->temporaryDirectory = (new TemporaryDirectory())->create();

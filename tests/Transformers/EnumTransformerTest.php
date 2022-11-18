@@ -3,17 +3,17 @@
 namespace Spatie\TypeScriptTransformer\Tests\Transformers;
 
 use DateTime;
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertFalse;
+use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertNull;
+use function PHPUnit\Framework\assertTrue;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\IntBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use UnitEnum;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertFalse;
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertNull;
-use function PHPUnit\Framework\assertTrue;
 
 beforeEach(function () {
     if (\PHP_VERSION_ID < 80100) {

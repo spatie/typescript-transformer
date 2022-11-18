@@ -1,11 +1,11 @@
 <?php
 
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeInterface;
-use Spatie\TypeScriptTransformer\Transformers\InterfaceTransformer;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertNull;
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
+use Spatie\TypeScriptTransformer\Tests\Fakes\FakeInterface;
+use Spatie\TypeScriptTransformer\Transformers\InterfaceTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 it('will only convert interfaces', function () {
     $transformer = new InterfaceTransformer(

@@ -1,9 +1,9 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
-use function PHPUnit\Framework\assertEquals;
 
 it('can replace missing symbols', function () {
     $action = new ReplaceSymbolsInCollectionAction();

@@ -2,6 +2,7 @@
 
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Array_;
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\DtoCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\NullableDtoCollection;
@@ -10,7 +11,6 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Collections\UntypedDtoCollect
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
-use function PHPUnit\Framework\assertEquals;
 
 beforeEach(function () {
     $this->typeResolver = new TypeResolver();

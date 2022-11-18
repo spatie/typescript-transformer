@@ -1,9 +1,9 @@
 <?php
 
 use phpDocumentor\Reflection\Type;
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionClass;
 use Spatie\TypeScriptTransformer\TypeReflectors\ClassTypeReflector;
-use function PHPUnit\Framework\assertEquals;
 
 it('can correctly reflect classes', function (
     FakeReflectionClass | ReflectionClass $reflection,

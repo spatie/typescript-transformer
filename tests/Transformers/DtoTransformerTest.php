@@ -2,6 +2,9 @@
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\String_;
+use function PHPUnit\Framework\assertEquals;
+use function Spatie\Snapshots\assertMatchesSnapshot;
+use function Spatie\Snapshots\assertMatchesTextSnapshot;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
@@ -14,9 +17,6 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDto;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-use function PHPUnit\Framework\assertEquals;
-use function Spatie\Snapshots\assertMatchesSnapshot;
-use function Spatie\Snapshots\assertMatchesTextSnapshot;
 
 beforeEach(function () {
     $config = TypeScriptTransformerConfig::create()
@@ -49,17 +49,17 @@ it('a type processor can remove properties', function () {
     $transformer = new class($config) extends DtoTransformer {
         protected function typeProcessors(): array
         {
-        $onlyStringPropertiesProcessor = new class implements TypeProcessor {
-            public function process(
-            Type $type,
-            ReflectionProperty | ReflectionParameter | ReflectionMethod $reflection,
-            MissingSymbolsCollection $missingSymbolsCollection
-            ): ?Type {
-            return $type instanceof String_ ? $type : null;
-            }
-        };
+            $onlyStringPropertiesProcessor = new class implements TypeProcessor {
+                public function process(
+                    Type $type,
+                    ReflectionProperty | ReflectionParameter | ReflectionMethod $reflection,
+                    MissingSymbolsCollection $missingSymbolsCollection
+                ): ?Type {
+                    return $type instanceof String_ ? $type : null;
+                }
+            };
 
-        return [$onlyStringPropertiesProcessor];
+            return [$onlyStringPropertiesProcessor];
         }
     };
 

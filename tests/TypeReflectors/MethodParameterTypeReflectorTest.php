@@ -1,17 +1,17 @@
 <?php
 
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\TypeReflectors\MethodParameterTypeReflector;
-use function PHPUnit\Framework\assertEquals;
 
 it('can reflect from reflection', function () {
     $class = new class {
         public function method(
-        int $int,
-        ?int $nullable_int,
-        int | float $union,
-        null | int | float $nullable_union,
-        $without_type
+            int $int,
+            ?int $nullable_int,
+            int | float $union,
+            null | int | float $nullable_union,
+            $without_type
         ) {
         }
     };
@@ -55,12 +55,12 @@ it('can reflect from docblock', function () {
          * @param $without_type
          */
         public function method(
-        $int,
-        $nullable_int,
-        $union,
-        $nullable_union,
-        $array,
-        $without_type
+            $int,
+            $nullable_int,
+            $union,
+            $nullable_union,
+            $array,
+            $without_type
         ) {
         }
     };
@@ -102,7 +102,7 @@ it('cannot reflect from attribute', function () {
     $class = new class {
         #[LiteralTypeScriptType('int')]
         public function method(
-        $int,
+            $int,
         ) {
         }
     };

@@ -7,10 +7,10 @@ use phpDocumentor\Reflection\Types\Float_;
 use phpDocumentor\Reflection\Types\Integer;
 use phpDocumentor\Reflection\Types\Object_;
 use phpDocumentor\Reflection\Types\String_;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
-use Spatie\TypeScriptTransformer\Types\StructType;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertInstanceOf;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
+use Spatie\TypeScriptTransformer\Types\StructType;
 
 it('can create the type from array', function () {
     $struct = StructType::fromArray([
