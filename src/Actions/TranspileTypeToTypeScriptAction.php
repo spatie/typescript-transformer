@@ -30,11 +30,9 @@ class TranspileTypeToTypeScriptAction
 
     private ?string $currentClass;
 
-    private bool $nullablesAreOptional;
-
     public function __construct(
         MissingSymbolsCollection $missingSymbolsCollection,
-        ?string $currentClass = null,
+        ?string $currentClass = null
     ) {
         $this->missingSymbolsCollection = $missingSymbolsCollection;
         $this->currentClass = $currentClass;
@@ -64,7 +62,7 @@ class TranspileTypeToTypeScriptAction
     private function resolveCompoundType(Compound $compound): string
     {
         $transformed = array_map(
-            fn (Type $type) => $this->execute($type),
+            fn(Type $type) => $this->execute($type),
             iterator_to_array($compound->getIterator())
         );
 
