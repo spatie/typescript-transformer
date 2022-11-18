@@ -64,7 +64,7 @@ trait TransformsTypes
     ): string {
         $transpiler = new TranspileTypeToTypeScriptAction(
             $missingSymbolsCollection,
-            $currentClass
+            $currentClass,
         );
 
         return $transpiler->execute($type);

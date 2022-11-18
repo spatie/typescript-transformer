@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 
 use ReflectionClass;
 use ReflectionProperty;
+use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
@@ -52,9 +53,13 @@ class DtoTransformer implements Transformer
         ReflectionClass $class,
         MissingSymbolsCollection $missingSymbols
     ): string {
+        $isOptional = ! empty($class->getAttributes(Optional::class));
+
         return array_reduce(
             $this->resolveProperties($class),
-            function (string $carry, ReflectionProperty $property) use ($missingSymbols) {
+            function (string $carry, ReflectionProperty $property) use ($isOptional, $missingSymbols) {
+                $isOptional = $isOptional || ! empty($property->getAttributes(Optional::class));
+
                 $transformed = $this->reflectionToTypeScript(
                     $property,
                     $missingSymbols,
@@ -65,7 +70,9 @@ class DtoTransformer implements Transformer
                     return $carry;
                 }
 
-                return "{$carry}{$property->getName()}: {$transformed};" . PHP_EOL;
+                return $isOptional
+                    ? "{$carry}{$property->getName()}?: {$transformed};" . PHP_EOL
+                    : "{$carry}{$property->getName()}: {$transformed};" . PHP_EOL;
             },
             ''
         );

@@ -202,3 +202,53 @@ class Dto
 Whenever a property has a docblock, that docblock will be used to type the property. The 'real' PHP type will be omitted.
 
 If the property is nullable and has a docblock that isn't nullable, then the package will make the TypeScript type nullable.
+
+## Optional types
+
+You can make certain properties of a DTO optional in TypeScript as such:
+
+```php
+class DataObject extends Data
+{
+    public function __construct(
+        #[Optional]
+        public int $id,
+        public string $name,
+    )
+    {
+    }
+}
+```
+
+This will be transformed into:
+
+```tsx
+{
+    id? : number;
+    name : string;
+}
+```
+
+You can also transform all properties in a class to optional, by adding the attribute to the class:
+
+```php
+#[Optional]
+class DataObject extends Data
+{
+    public function __construct(
+        public int $id,
+        public string $name,
+    )
+    {
+    }
+}
+```
+
+Now all properties will be optional:
+
+```tsx
+{
+    id? : number;
+    name? : string;
+}
+```

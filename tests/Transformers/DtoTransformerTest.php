@@ -6,6 +6,7 @@ use function PHPUnit\Framework\assertEquals;
 use function Spatie\Snapshots\assertMatchesSnapshot;
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
+use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
@@ -93,6 +94,36 @@ it('will take transform as typescript attributes into account', function () {
 
     $type = $this->transformer->transform(
         new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('transforms properties to optional ones when using optional attribute', function () {
+    $class = new class {
+        #[Optional]
+        public string $string;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('transforms all properties of a class with optional attribute to optional', function () {
+    #[Optional]
+    class DummyOptionalDto
+    {
+        public string $string;
+        public int $int;
+    }
+
+    $type = $this->transformer->transform(
+        new ReflectionClass(DummyOptionalDto::class),
         'Typed'
     );
 
