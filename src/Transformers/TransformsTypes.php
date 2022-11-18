@@ -7,6 +7,7 @@ use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
+use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
@@ -64,7 +65,7 @@ trait TransformsTypes
     ): string {
         $transpiler = new TranspileTypeToTypeScriptAction(
             $missingSymbolsCollection,
-            $currentClass
+            $currentClass,
         );
 
         return $transpiler->execute($type);

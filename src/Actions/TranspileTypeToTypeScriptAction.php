@@ -30,9 +30,11 @@ class TranspileTypeToTypeScriptAction
 
     private ?string $currentClass;
 
+    private bool $nullablesAreOptional;
+
     public function __construct(
         MissingSymbolsCollection $missingSymbolsCollection,
-        ?string $currentClass = null
+        ?string $currentClass = null,
     ) {
         $this->missingSymbolsCollection = $missingSymbolsCollection;
         $this->currentClass = $currentClass;
