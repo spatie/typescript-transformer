@@ -62,7 +62,7 @@ class TranspileTypeToTypeScriptAction
     private function resolveCompoundType(Compound $compound): string
     {
         $transformed = array_map(
-            fn(Type $type) => $this->execute($type),
+            fn (Type $type) => $this->execute($type),
             iterator_to_array($compound->getIterator())
         );
 
