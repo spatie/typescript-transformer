@@ -100,7 +100,7 @@ it('will take transform as typescript attributes into account', function () {
     assertMatchesSnapshot($type->transformed);
 });
 
-it('transforms properties to optional ones when using optional attribute', function(){
+it('transforms properties to optional ones when using optional attribute', function () {
     $class = new class {
         #[Optional]
         public string $string;
@@ -114,9 +114,10 @@ it('transforms properties to optional ones when using optional attribute', funct
     assertMatchesSnapshot($type->transformed);
 });
 
-it('transforms all properties of a class with optional attribute to optional', function(){
+it('transforms all properties of a class with optional attribute to optional', function () {
     #[Optional]
-    class DummyOptionalDto{
+    class DummyOptionalDto
+    {
         public string $string;
         public int $int;
     }

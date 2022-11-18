@@ -1,10 +1,8 @@
 <?php
 
 use phpDocumentor\Reflection\TypeResolver;
-use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Self_;
 use phpDocumentor\Reflection\Types\Static_;
-use phpDocumentor\Reflection\Types\String_;
 use phpDocumentor\Reflection\Types\This;
 use function PHPUnit\Framework\assertContains;
 use function PHPUnit\Framework\assertEquals;
