@@ -1,71 +1,53 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Actions;
-
-use PHPUnit\Framework\TestCase;
-use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use function PHPUnit\Framework\assertEquals;
+use function Spatie\Snapshots\assertMatchesFileSnapshot;
 
-class FormatTypeScriptActionTest extends TestCase
-{
-    use MatchesSnapshots;
+beforeEach(function () {
+    $this->temporaryDirectory = (new TemporaryDirectory())->create();
 
-    private TemporaryDirectory $temporaryDirectory;
+    $this->outputFile = $this->temporaryDirectory->path('types.d.ts');
+});
 
-    private string $outputFile;
+it('can format an generated file', function () {
+    $formatter = new class implements Formatter {
+        public function format(string $file): void
+        {
+            file_put_contents($file, 'formatted');
+        }
+    };
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $action = new FormatTypeScriptAction(
+        TypeScriptTransformerConfig::create()
+        ->formatter($formatter::class)
+        ->outputFile($this->outputFile)
+    );
 
-        $this->temporaryDirectory = (new TemporaryDirectory())->create();
+    file_put_contents(
+        $this->outputFile,
+        "export type Enum='yes'|'no';export type OtherDto={name:string}"
+    );
 
-        $this->outputFile = $this->temporaryDirectory->path('types.d.ts');
-    }
+    $action->execute();
 
-    /** @test */
-    public function it_can_format_an_generated_file()
-    {
-        $formatter = new class implements Formatter {
-            public function format(string $file): void
-            {
-                file_put_contents($file, 'formatted');
-            }
-        };
+    assertEquals('formatted', file_get_contents($this->outputFile));
+});
 
-        $action = new FormatTypeScriptAction(
-            TypeScriptTransformerConfig::create()
-                ->formatter($formatter::class)
-                ->outputFile($this->outputFile)
-        );
+it('can disable formatting', function () {
+    $action = new FormatTypeScriptAction(
+        TypeScriptTransformerConfig::create()->outputFile($this->outputFile)
+    );
 
-        file_put_contents(
-            $this->outputFile,
-            "export type Enum='yes'|'no';export type OtherDto={name:string}"
-        );
+    file_put_contents(
+        $this->outputFile,
+        "export type Enum='yes'|'no';export type OtherDto={name:string}"
+    );
 
-        $action->execute();
+    $action->execute();
 
-        $this->assertEquals('formatted', file_get_contents($this->outputFile));
-    }
-
-    /** @test */
-    public function it_can_disable_formatting()
-    {
-        $action = new FormatTypeScriptAction(
-            TypeScriptTransformerConfig::create()->outputFile($this->outputFile)
-        );
-
-        file_put_contents(
-            $this->outputFile,
-            "export type Enum='yes'|'no';export type OtherDto={name:string}"
-        );
-
-        $action->execute();
-
-        $this->assertMatchesFileSnapshot($this->outputFile);
-    }
-}
+    assertMatchesFileSnapshot($this->outputFile);
+});

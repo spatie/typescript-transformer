@@ -1,16 +1,7 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Transformers;
-
-use DateTime;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\String_;
-use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionParameter;
-use ReflectionProperty;
-use Spatie\Snapshots\MatchesSnapshots;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
@@ -23,100 +14,87 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDto;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use function PHPUnit\Framework\assertEquals;
+use function Spatie\Snapshots\assertMatchesSnapshot;
+use function Spatie\Snapshots\assertMatchesTextSnapshot;
 
-class DtoTransformerTest extends TestCase
-{
-    use MatchesSnapshots;
+beforeEach(function () {
+    $config = TypeScriptTransformerConfig::create()
+        ->defaultTypeReplacements([
+        DateTime::class => 'string',
+        ]);
 
-    private DtoTransformer $transformer;
+    $this->transformer = new DtoTransformer($config);
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('will replace types', function () {
+    $type = $this->transformer->transform(
+        new ReflectionClass(Dto::class),
+        'Typed'
+    );
 
-        $config = TypeScriptTransformerConfig::create()
-            ->defaultTypeReplacements([
-                DateTime::class => 'string',
-            ]);
+    assertMatchesTextSnapshot($type->transformed);
+    assertEquals([
+        Enum::class,
+        RegularEnum::class,
+        OtherDto::class,
+        DtoWithChildren::class,
+        YetAnotherDto::class,
+    ], $type->missingSymbols->all());
+});
 
-        $this->transformer = new DtoTransformer($config);
-    }
+it('a type processor can remove properties', function () {
+    $config = TypeScriptTransformerConfig::create();
 
-    /** @test */
-    public function it_will_replace_types()
-    {
-        $type = $this->transformer->transform(
-            new ReflectionClass(Dto::class),
-            'Typed'
-        );
-
-        $this->assertMatchesTextSnapshot($type->transformed);
-        $this->assertEquals([
-            Enum::class,
-            RegularEnum::class,
-            OtherDto::class,
-            DtoWithChildren::class,
-            YetAnotherDto::class,
-        ], $type->missingSymbols->all());
-    }
-
-    /** @test */
-    public function a_type_processor_can_remove_properties()
-    {
-        $config = TypeScriptTransformerConfig::create();
-
-        $transformer = new class($config) extends DtoTransformer {
-            protected function typeProcessors(): array
-            {
-                $onlyStringPropertiesProcessor = new class implements TypeProcessor {
-                    public function process(
-                        Type $type,
-                        ReflectionProperty | ReflectionParameter | ReflectionMethod $reflection,
-                        MissingSymbolsCollection $missingSymbolsCollection
-                    ): ?Type {
-                        return $type instanceof String_ ? $type : null;
-                    }
-                };
-
-                return [$onlyStringPropertiesProcessor];
+    $transformer = new class($config) extends DtoTransformer {
+        protected function typeProcessors(): array
+        {
+        $onlyStringPropertiesProcessor = new class implements TypeProcessor {
+            public function process(
+            Type $type,
+            ReflectionProperty | ReflectionParameter | ReflectionMethod $reflection,
+            MissingSymbolsCollection $missingSymbolsCollection
+            ): ?Type {
+            return $type instanceof String_ ? $type : null;
             }
         };
 
-        $type = $transformer->transform(
-            new ReflectionClass(Dto::class),
-            'Typed'
-        );
+        return [$onlyStringPropertiesProcessor];
+        }
+    };
 
-        $this->assertMatchesTextSnapshot($type->transformed);
-    }
+    $type = $transformer->transform(
+        new ReflectionClass(Dto::class),
+        'Typed'
+    );
 
-    /** @test */
-    public function it_will_take_transform_as_typescript_attributes_into_account()
-    {
-        $class = new class {
-            #[TypeScriptType('int')]
-            public $int;
+    assertMatchesTextSnapshot($type->transformed);
+});
 
-            #[TypeScriptType('int|bool')]
-            public int $overwritable;
+it('will take transform as typescript attributes into account', function () {
+    $class = new class {
+        #[TypeScriptType('int')]
+        public $int;
 
-            #[TypeScriptType(['an_int' => 'int', 'a_bool' => 'bool'])]
-            public $object;
+        #[TypeScriptType('int|bool')]
+        public int $overwritable;
 
-            #[LiteralTypeScriptType('never')]
-            public $pure_typescript;
+        #[TypeScriptType(['an_int' => 'int', 'a_bool' => 'bool'])]
+        public $object;
 
-            #[LiteralTypeScriptType(['an_any' => 'any', 'a_never' => 'never'])]
-            public $pure_typescript_object;
+        #[LiteralTypeScriptType('never')]
+        public $pure_typescript;
 
-            public int $regular_type;
-        };
+        #[LiteralTypeScriptType(['an_any' => 'any', 'a_never' => 'never'])]
+        public $pure_typescript_object;
 
-        $type = $this->transformer->transform(
-            new ReflectionClass($class),
-            'Typed'
-        );
+        public int $regular_type;
+    };
 
-        $this->assertMatchesSnapshot($type->transformed);
-    }
-}
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});

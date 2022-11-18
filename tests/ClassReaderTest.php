@@ -1,96 +1,78 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests;
-
-use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Spatie\TypeScriptTransformer\ClassReader;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertFalse;
+use function PHPUnit\Framework\assertStringContainsString;
+use function PHPUnit\Framework\assertTrue;
 
-class ClassReaderTest extends TestCase
-{
-    private ClassReader $reader;
+beforeEach(function () {
+    $this->reader = new ClassReader();
+});
 
-    public function setUp(): void
-    {
-        parent::setUp();
+it('non transformable case', function () {
+    $fake = new class {
+    };
 
-        $this->reader = new ClassReader();
-    }
+    ['transformable' => $transformable] = $this->reader->forClass(
+        new ReflectionClass($fake)
+    );
 
-    /** @test */
-    public function non_transformable_case(): void
-    {
-        $fake = new class {
-        };
+    assertFalse($transformable);
+});
 
-        ['transformable' => $transformable] = $this->reader->forClass(
-            new ReflectionClass($fake)
-        );
+it('default case', function () {
+    /**
+     * @typescript
+     */
+    $fake = new class {
+    };
 
-        $this->assertFalse($transformable);
-    }
+    ['name' => $name] = $this->reader->forClass(
+        new ReflectionClass($fake)
+    );
 
-    /** @test */
-    public function default_case(): void
-    {
-        /**
-         * @typescript
-         */
-        $fake = new class {
-        };
+    assertStringContainsString('class@anonymous', $name);
+});
 
-        ['name' => $name] = $this->reader->forClass(
-            new ReflectionClass($fake)
-        );
+it('default file case', function () {
+    /**
+     * @typescript OtherEnum
+     */
+    $fake = new class {
+    };
 
-        $this->assertStringContainsString('class@anonymous', $name);
-    }
+    ['name' => $name] = $this->reader->forClass(
+        new ReflectionClass($fake)
+    );
 
-    /** @test */
-    public function default_file_case(): void
-    {
-        /**
-         * @typescript OtherEnum
-         */
-        $fake = new class {
-        };
+    assertEquals('OtherEnum', $name);
+});
 
-        ['name' => $name] = $this->reader->forClass(
-            new ReflectionClass($fake)
-        );
+it('will resolve the transformer', function () {
+    /**
+     * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer
+     */
+    $fake = new class {
+    };
 
-        $this->assertEquals('OtherEnum', $name);
-    }
+    assertEquals('\\' . MyclabsEnumTransformer::class, $this->reader->forClass(
+        new ReflectionClass($fake)
+    )['transformer']);
+});
 
-    /** @test */
-    public function it_will_resolve_the_transformer()
-    {
-        /**
-         * @typescript-transformer \Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer
-         */
-        $fake = new class {
-        };
+it('inline case', function () {
+    /**
+     * @typescript
+     * @typescript-inline
+     */
+    $fake = new class {
+    };
 
-        $this->assertEquals('\\' . MyclabsEnumTransformer::class, $this->reader->forClass(
-            new ReflectionClass($fake)
-        )['transformer']);
-    }
+    ['inline' => $inline] = $this->reader->forClass(
+        new ReflectionClass($fake)
+    );
 
-    /** @test */
-    public function inline_case(): void
-    {
-        /**
-         * @typescript
-         * @typescript-inline
-         */
-        $fake = new class {
-        };
-
-        ['inline' => $inline] = $this->reader->forClass(
-            new ReflectionClass($fake)
-        );
-
-        $this->assertTrue($inline);
-    }
-}
+    assertTrue($inline);
+});

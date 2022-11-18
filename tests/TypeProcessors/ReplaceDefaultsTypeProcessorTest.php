@@ -1,70 +1,51 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\TypeProcessors;
-
-use DateTime;
 use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\String_;
-use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Dto;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionProperty;
 use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
+use function PHPUnit\Framework\assertEquals;
 
-class ReplaceDefaultsTypeProcessorTest extends TestCase
-{
-    private ReplaceDefaultsTypeProcessor $processor;
+beforeEach(function () {
+    $this->typeResolver = new TypeResolver();
 
-    private TypeResolver $typeResolver;
+    $this->processor = new ReplaceDefaultsTypeProcessor([
+        DateTime::class => new String_(),
+        Dto::class => new TypeScriptType('array'),
+    ]);
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('can replace types', function () {
+    $type = $this->processor->process(
+        $this->typeResolver->resolve(Dto::class),
+        FakeReflectionProperty::create(),
+        new MissingSymbolsCollection()
+    );
 
-        $this->typeResolver = new TypeResolver();
+    assertEquals(new TypeScriptType('array'), $type);
+});
 
-        $this->processor = new ReplaceDefaultsTypeProcessor([
-            DateTime::class => new String_(),
-            Dto::class => new TypeScriptType('array'),
-        ]);
-    }
+it('can replace types as nullable', function () {
+    $type = $this->processor->process(
+        $this->typeResolver->resolve('?' . DateTime::class),
+        FakeReflectionProperty::create(),
+        new MissingSymbolsCollection()
+    );
 
-    /** @test */
-    public function it_can_replace_types()
-    {
-        $type = $this->processor->process(
-            $this->typeResolver->resolve(Dto::class),
-            FakeReflectionProperty::create(),
-            new MissingSymbolsCollection()
-        );
+    assertEquals(new Nullable(new String_()), $type);
+});
 
-        $this->assertEquals(new TypeScriptType('array'), $type);
-    }
+it('can replace types in arrays', function () {
+    $type = $this->processor->process(
+        $this->typeResolver->resolve(DateTime::class . '[]'),
+        FakeReflectionProperty::create(),
+        new MissingSymbolsCollection()
+    );
 
-    /** @test */
-    public function it_can_replace_types_as_nullable()
-    {
-        $type = $this->processor->process(
-            $this->typeResolver->resolve('?' . DateTime::class),
-            FakeReflectionProperty::create(),
-            new MissingSymbolsCollection()
-        );
-
-        $this->assertEquals(new Nullable(new String_()), $type);
-    }
-
-    /** @test */
-    public function it_can_replace_types_in_arrays()
-    {
-        $type = $this->processor->process(
-            $this->typeResolver->resolve(DateTime::class . '[]'),
-            FakeReflectionProperty::create(),
-            new MissingSymbolsCollection()
-        );
-
-        $this->assertEquals(new Array_(new String_()), $type);
-    }
-}
+    assertEquals(new Array_(new String_()), $type);
+});

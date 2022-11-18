@@ -1,9 +1,5 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Actions;
-
-use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\NoAutoDiscoverTypesPathsDefined;
@@ -22,127 +18,109 @@ use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
+use function PHPUnit\Framework\assertArrayHasKey;
+use function PHPUnit\Framework\assertCount;
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertTrue;
 
-class ResolveTypesCollectionActionTest extends TestCase
-{
-    private ResolveTypesCollectionAction $action;
+beforeEach(function () {
+    $this->action = new ResolveTypesCollectionAction(
+        new Finder(),
+        TypeScriptTransformerConfig::create()
+            ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
+            ->transformers([MyclabsEnumTransformer::class])
+            ->collectors([DefaultCollector::class])
+            ->outputFile('types.d.ts')
+    );
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('will construct the type collection correctly', function () {
+    $typesCollection = $this->action->execute();
 
-        $this->action = new ResolveTypesCollectionAction(
-            new Finder(),
-            TypeScriptTransformerConfig::create()
-                ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
-                ->transformers([MyclabsEnumTransformer::class])
-                ->collectors([DefaultCollector::class])
-                ->outputFile('types.d.ts')
-        );
-    }
+    assertCount(3, $typesCollection);
+});
 
-    /** @test */
-    public function it_will_construct_the_type_collection_correctly()
-    {
-        $typesCollection = $this->action->execute();
+it('will check if auto discover types paths are defined', function () {
+    $this->expectException(NoAutoDiscoverTypesPathsDefined::class);
 
-        $this->assertCount(3, $typesCollection);
-    }
+    $action = new ResolveTypesCollectionAction(
+        new Finder(),
+        TypeScriptTransformerConfig::create()
+    );
 
-    /** @test */
-    public function it_will_check_if_auto_discover_types_paths_are_defined()
-    {
-        $this->expectException(NoAutoDiscoverTypesPathsDefined::class);
+    $action->execute();
+});
 
-        $action = new ResolveTypesCollectionAction(
-            new Finder(),
-            TypeScriptTransformerConfig::create()
-        );
+it('parses a typescript enum correctly', function () {
+    $type = $this->action->execute()[TypeScriptEnum::class];
 
-        $action->execute();
-    }
+    assertEquals(new ReflectionClass(new TypeScriptEnum('js')), $type->reflection);
+    assertEquals('TypeScriptEnum', $type->name);
+    assertEquals("'js'", $type->transformed);
+    assertTrue($type->missingSymbols->isEmpty());
+});
 
-    /** @test */
-    public function it_parses_a_typescript_enum_correctly()
-    {
-        $type = $this->action->execute()[TypeScriptEnum::class];
+it('parses a typescript enum with name correctly', function () {
+    $type = $this->action->execute()[TypeScriptEnumWithName::class];
 
-        $this->assertEquals(new ReflectionClass(new TypeScriptEnum('js')), $type->reflection);
-        $this->assertEquals('TypeScriptEnum', $type->name);
-        $this->assertEquals("'js'", $type->transformed);
-        $this->assertTrue($type->missingSymbols->isEmpty());
-    }
+    assertEquals(new ReflectionClass(new TypeScriptEnumWithName('js')), $type->reflection);
+    assertEquals('EnumWithName', $type->name);
+    assertEquals("'js'", $type->transformed);
+    assertTrue($type->missingSymbols->isEmpty());
+});
 
-    /** @test */
-    public function it_parses_a_typescript_enum_with_name_correctly()
-    {
-        $type = $this->action->execute()[TypeScriptEnumWithName::class];
+it('parses a typescript enum with custom transformer correctly', function () {
+    $type = $this->action->execute()[TypeScriptEnumWithCustomTransformer::class];
 
-        $this->assertEquals(new ReflectionClass(new TypeScriptEnumWithName('js')), $type->reflection);
-        $this->assertEquals('EnumWithName', $type->name);
-        $this->assertEquals("'js'", $type->transformed);
-        $this->assertTrue($type->missingSymbols->isEmpty());
-    }
+    assertEquals(new ReflectionClass(new TypeScriptEnumWithCustomTransformer('js')), $type->reflection);
+    assertEquals('TypeScriptEnumWithCustomTransformer', $type->name);
+    assertEquals("fake", $type->transformed);
+    assertTrue($type->missingSymbols->isEmpty());
+});
 
-    /** @test */
-    public function it_parses_a_typescript_enum_with_custom_transformer_correctly()
-    {
-        $type = $this->action->execute()[TypeScriptEnumWithCustomTransformer::class];
+it('can parse multiple directories', function () {
+    $this->action = new ResolveTypesCollectionAction(
+        new Finder(),
+        TypeScriptTransformerConfig::create()
+        ->autoDiscoverTypes(
+            __DIR__ . '/../FakeClasses/Enum/',
+            __DIR__ . '/../FakeClasses/Integration/'
+        )
+        ->transformers([MyclabsEnumTransformer::class, DtoTransformer::class])
+        ->collectors([DefaultCollector::class])
+        ->outputFile('types.d.ts')
+    );
 
-        $this->assertEquals(new ReflectionClass(new TypeScriptEnumWithCustomTransformer('js')), $type->reflection);
-        $this->assertEquals('TypeScriptEnumWithCustomTransformer', $type->name);
-        $this->assertEquals("fake", $type->transformed);
-        $this->assertTrue($type->missingSymbols->isEmpty());
-    }
+    $types = $this->action->execute();
 
-    /** @test */
-    public function it_can_parse_multiple_directories()
-    {
-        $this->action = new ResolveTypesCollectionAction(
-            new Finder(),
-            TypeScriptTransformerConfig::create()
-                ->autoDiscoverTypes(
-                    __DIR__ . '/../FakeClasses/Enum/',
-                    __DIR__ . '/../FakeClasses/Integration/'
-                )
-                ->transformers([MyclabsEnumTransformer::class, DtoTransformer::class])
-                ->collectors([DefaultCollector::class])
-                ->outputFile('types.d.ts')
-        );
+    assertCount(9, $types);
 
-        $types = $this->action->execute();
+    assertArrayHasKey(TypeScriptEnum::class, $types);
+    assertArrayHasKey(TypeScriptEnumWithCustomTransformer::class, $types);
+    assertArrayHasKey(TypeScriptEnumWithName::class, $types);
 
-        $this->assertCount(9, $types);
+    assertArrayHasKey(Dto::class, $types);
+    assertArrayHasKey(DtoWithChildren::class, $types);
+    assertArrayHasKey(Enum::class, $types);
+    assertArrayHasKey(OtherDto::class, $types);
+    assertArrayHasKey(OtherDtoCollection::class, $types);
+    assertArrayHasKey(YetAnotherDto::class, $types);
+});
 
-        $this->assertArrayHasKey(TypeScriptEnum::class, $types);
-        $this->assertArrayHasKey(TypeScriptEnumWithCustomTransformer::class, $types);
-        $this->assertArrayHasKey(TypeScriptEnumWithName::class, $types);
+it('can add an collector for types', function () {
+    $this->action = new ResolveTypesCollectionAction(
+        new Finder(),
+        TypeScriptTransformerConfig::create()
+        ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
+        ->collectors([FakeTypeScriptCollector::class])
+        ->outputFile('types.d.ts')
+    );
 
-        $this->assertArrayHasKey(Dto::class, $types);
-        $this->assertArrayHasKey(DtoWithChildren::class, $types);
-        $this->assertArrayHasKey(Enum::class, $types);
-        $this->assertArrayHasKey(OtherDto::class, $types);
-        $this->assertArrayHasKey(OtherDtoCollection::class, $types);
-        $this->assertArrayHasKey(YetAnotherDto::class, $types);
-    }
+    $types = $this->action->execute();
 
-    /** @test */
-    public function it_can_add_an_collector_for_types()
-    {
-        $this->action = new ResolveTypesCollectionAction(
-            new Finder(),
-            TypeScriptTransformerConfig::create()
-                ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
-                ->collectors([FakeTypeScriptCollector::class])
-                ->outputFile('types.d.ts')
-        );
-
-        $types = $this->action->execute();
-
-        $this->assertCount(4, $types);
-        $this->assertArrayHasKey(RegularEnum::class, $types);
-        $this->assertArrayHasKey(TypeScriptEnum::class, $types);
-        $this->assertArrayHasKey(TypeScriptEnumWithCustomTransformer::class, $types);
-        $this->assertArrayHasKey(TypeScriptEnumWithName::class, $types);
-    }
-}
+    assertCount(4, $types);
+    assertArrayHasKey(RegularEnum::class, $types);
+    assertArrayHasKey(TypeScriptEnum::class, $types);
+    assertArrayHasKey(TypeScriptEnumWithCustomTransformer::class, $types);
+    assertArrayHasKey(TypeScriptEnumWithName::class, $types);
+});

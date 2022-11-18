@@ -1,139 +1,111 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Structures;
-
-use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
+use function PHPUnit\Framework\assertCount;
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertNull;
 
-class TypesCollectionTest extends TestCase
-{
-    /** @test */
-    public function it_can_add_a_null_namespace()
-    {
-        $structure = TypesCollection::create();
+it('can add a null namespace', function () {
+    $structure = TypesCollection::create();
 
-        $structure[] = $fake = FakeTransformedType::fake('Enum')->withoutNamespace();
+    $structure[] = $fake = FakeTransformedType::fake('Enum')->withoutNamespace();
 
-        $this->assertCount(1, $structure);
-        $this->assertEquals([
-            'Enum' => $fake,
-        ], iterator_to_array($structure));
-    }
+    assertCount(1, $structure);
+    assertEquals([
+        'Enum' => $fake,
+    ], iterator_to_array($structure));
+});
 
-    /** @test */
-    public function it_can_add_types_in_a_multi_layered_namespaces()
-    {
-        $structure = TypesCollection::create();
+it('can add types in a multi layered namespaces', function () {
+    $structure = TypesCollection::create();
 
-        $structure[] = $fakeC = FakeTransformedType::fake('Enum')->withNamespace('a\b\c');
-        $structure[] = $fakeB = FakeTransformedType::fake('Enum')->withNamespace('a\b');
-        $structure[] = $fakeA = FakeTransformedType::fake('Enum')->withNamespace('a');
-        $structure[] = $fake = FakeTransformedType::fake('Enum')->withoutNamespace();
+    $structure[] = $fakeC = FakeTransformedType::fake('Enum')->withNamespace('a\b\c');
+    $structure[] = $fakeB = FakeTransformedType::fake('Enum')->withNamespace('a\b');
+    $structure[] = $fakeA = FakeTransformedType::fake('Enum')->withNamespace('a');
+    $structure[] = $fake = FakeTransformedType::fake('Enum')->withoutNamespace();
 
-        $this->assertCount(4, $structure);
-        $this->assertEquals([
-            'Enum' => $fake,
-            'a\Enum' => $fakeA,
-            'a\b\Enum' => $fakeB,
-            'a\b\c\Enum' => $fakeC,
-        ], iterator_to_array($structure));
-    }
+    assertCount(4, $structure);
+    assertEquals([
+        'Enum' => $fake,
+        'a\Enum' => $fakeA,
+        'a\b\Enum' => $fakeB,
+        'a\b\c\Enum' => $fakeC,
+    ], iterator_to_array($structure));
+});
 
-    /** @test */
-    public function it_can_add_multiple_types_to_one_namespace()
-    {
-        $structure = TypesCollection::create();
+it('can add multiple types to one namespace', function () {
+    $structure = TypesCollection::create();
 
-        $structure[] = $fakeA = FakeTransformedType::fake('EnumA')->withNamespace('test');
-        $structure[] = $fakeB = FakeTransformedType::fake('EnumB')->withNamespace('test');
+    $structure[] = $fakeA = FakeTransformedType::fake('EnumA')->withNamespace('test');
+    $structure[] = $fakeB = FakeTransformedType::fake('EnumB')->withNamespace('test');
 
-        $this->assertCount(2, $structure);
-        $this->assertEquals([
-            'test\EnumA' => $fakeA,
-            'test\EnumB' => $fakeB,
-        ], iterator_to_array($structure));
-    }
+    assertCount(2, $structure);
+    assertEquals([
+        'test\EnumA' => $fakeA,
+        'test\EnumB' => $fakeB,
+    ], iterator_to_array($structure));
+});
 
-    /** @test */
-    public function it_can_add_a_real_type()
-    {
-        $reflection = new ReflectionClass(TypeScriptEnum::class);
+it('can add a real type', function () {
+    $reflection = new ReflectionClass(TypeScriptEnum::class);
 
-        $structure = TypesCollection::create();
+    $structure = TypesCollection::create();
 
-        $structure[] = $fake = FakeTransformedType::fake('TypeScriptEnum')->withReflection($reflection);
+    $structure[] = $fake = FakeTransformedType::fake('TypeScriptEnum')->withReflection($reflection);
 
-        $this->assertCount(1, $structure);
-        $this->assertEquals([
-            TypeScriptEnum::class => $fake,
-        ], iterator_to_array($structure));
-    }
+    assertCount(1, $structure);
+    assertEquals([
+        TypeScriptEnum::class => $fake,
+    ], iterator_to_array($structure));
+});
 
-    /** @test */
-    public function it_cannot_have_a_namespace_and_type_with_the_same_name()
-    {
-        $this->expectException(SymbolAlreadyExists::class);
+it('cannot have a namespace and type with the same name', function () {
+    $collection = TypesCollection::create();
 
-        $collection = TypesCollection::create();
+    $collection[] = $fakeA = FakeTransformedType::fake('Enum')->withNamespace('Enum');
+    $collection[] = $fakeB = FakeTransformedType::fake('Enum')->withoutNamespace();
+})->throws(SymbolAlreadyExists::class);
 
-        $collection[] = $fakeA = FakeTransformedType::fake('Enum')->withNamespace('Enum');
-        $collection[] = $fakeB = FakeTransformedType::fake('Enum')->withoutNamespace();
-    }
+it('cannot have a namespace and type with the same name reversed', function () {
+    $collection = TypesCollection::create();
 
-    /** @test */
-    public function it_cannot_have_a_namespace_and_type_with_the_same_name_reversed()
-    {
-        $this->expectException(SymbolAlreadyExists::class);
+    $collection[] = $fakeB = FakeTransformedType::fake('Enum')->withoutNamespace();
+    $collection[] = $fakeA = FakeTransformedType::fake('Enum')->withNamespace('Enum');
+})->throws(SymbolAlreadyExists::class);
 
-        $collection = TypesCollection::create();
+it('can get a type', function () {
+    $collection = TypesCollection::create();
 
-        $collection[] = $fakeB = FakeTransformedType::fake('Enum')->withoutNamespace();
-        $collection[] = $fakeA = FakeTransformedType::fake('Enum')->withNamespace('Enum');
-    }
+    $collection[] = $fake = FakeTransformedType::fake('Enum')->withNamespace('a\b\c');
 
-    /** @test */
-    public function it_can_get_a_type()
-    {
-        $collection = TypesCollection::create();
+    assertEquals($fake, $collection['a\b\c\Enum']);
+});
 
-        $collection[] = $fake = FakeTransformedType::fake('Enum')->withNamespace('a\b\c');
+it('can get a type in the root namespace', function () {
+    $collection = TypesCollection::create();
 
-        $this->assertEquals($fake, $collection['a\b\c\Enum']);
-    }
+    $collection[] = $fake = FakeTransformedType::fake('Enum')->withoutNamespace();
 
-    /** @test */
-    public function it_can_get_a_type_in_the_root_namespace()
-    {
-        $collection = TypesCollection::create();
+    assertEquals($fake, $collection['Enum']);
+});
 
-        $collection[] = $fake = FakeTransformedType::fake('Enum')->withoutNamespace();
+it('when searching a non existing type null is returned', function () {
+    $collection = TypesCollection::create();
 
-        $this->assertEquals($fake, $collection['Enum']);
-    }
+    assertNull($collection['Enum']);
+    assertNull($collection['a\b\Enum']);
+    assertNull($collection['a\b\Enum']);
+});
 
-    /** @test */
-    public function when_searching_a_non_existing_type_null_is_returned()
-    {
-        $collection = TypesCollection::create();
+it('can add inline types without structure checking', function () {
+    $collection = TypesCollection::create();
 
-        $this->assertNull($collection['Enum']);
-        $this->assertNull($collection['a\b\Enum']);
-        $this->assertNull($collection['a\b\Enum']);
-    }
+    $collection[] = $fakeA = FakeTransformedType::fake('Enum')->withoutNamespace()->isInline();
+    $collection[] = $fakeB = FakeTransformedType::fake('Enum')->withNamespace('Enum');
 
-    /** @test */
-    public function it_can_add_inline_types_without_structure_checking()
-    {
-        $collection = TypesCollection::create();
-
-        $collection[] = $fakeA = FakeTransformedType::fake('Enum')->withoutNamespace()->isInline();
-        $collection[] = $fakeB = FakeTransformedType::fake('Enum')->withNamespace('Enum');
-
-        $this->assertEquals($fakeA, $collection['Enum']);
-        $this->assertEquals($fakeB, $collection['Enum\Enum']);
-    }
-}
+    assertEquals($fakeA, $collection['Enum']);
+    assertEquals($fakeB, $collection['Enum\Enum']);
+});
