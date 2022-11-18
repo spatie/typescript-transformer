@@ -162,9 +162,4 @@ abstract class TypeReflector
 
         return new Nullable($type);
     }
-
-    private function createType(
-        ReflectionType $reflectionType,
-    ): Type {
-    }
 }
