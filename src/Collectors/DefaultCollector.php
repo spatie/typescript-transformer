@@ -37,7 +37,7 @@ class DefaultCollector extends Collector
 
     protected function isTransformable(ClassTypeReflector $reflector): bool
     {
-        $transformers = array_map(get_class(...), $this->config->getTransformers());
+        $transformers = array_map('get_class', $this->config->getTransformers());
 
         if (\in_array(EnumTransformer::class, $transformers, true)) {
             return $reflector->getReflectionClass()->implementsInterface(BackedEnum::class);
