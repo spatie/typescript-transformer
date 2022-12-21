@@ -57,7 +57,7 @@ it('will collect backed enums', function () {
         "'foo' | 'bar'",
         $transformedType->transformed,
     );
-});
+})->skip(version_compare(PHP_VERSION, '8.1', '<'), 'Enums are a PHP 8.1+ feature.');
 
 it('will collect annotated classes', function () {
     /** @typescript */
