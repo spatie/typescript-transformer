@@ -12,6 +12,7 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptAttr
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptInlineAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptTransformerAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -33,6 +34,29 @@ it('will not collect non annotated classes', function () {
     );
 
     assertNull($this->collector->getTransformedType($reflection));
+});
+
+it('will collect backed enums', function () {
+    $collector = new DefaultCollector(
+        TypeScriptTransformerConfig::create()->transformers([
+            EnumTransformer::class,
+        ])
+    );
+    
+    enum TestEnum: string
+    {
+        case Foo = 'foo';
+        case Bar = 'bar';
+    };
+
+    $reflection = new ReflectionClass(TestEnum::class);
+    $transformedType = $collector->getTransformedType($reflection);
+
+    assertNotNull($transformedType);
+    assertEquals(
+        "'foo' | 'bar'",
+        $transformedType->transformed,
+    );
 });
 
 it('will collect annotated classes', function () {
