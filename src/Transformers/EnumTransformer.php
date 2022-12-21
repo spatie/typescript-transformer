@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionEnum;
 use ReflectionEnumBackedCase;
+use ReflectionEnumUnitCase;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -26,10 +27,6 @@ class EnumTransformer implements Transformer
         }
 
         $enum = (new ReflectionEnum($class->getName()));
-
-        if (! $enum->isBacked()) {
-            return null;
-        }
 
         return $this->config->shouldTransformToNativeEnums()
             ? $this->toEnum($enum, $name)
@@ -54,7 +51,7 @@ class EnumTransformer implements Transformer
     protected function toType(ReflectionEnum $enum, string $name): TransformedType
     {
         $options = array_map(
-            fn (ReflectionEnumBackedCase $case) => $this->toEnumValue($case),
+            fn (ReflectionEnumUnitCase $case) => $this->toEnumValue($case),
             $enum->getCases(),
         );
 
@@ -65,10 +62,12 @@ class EnumTransformer implements Transformer
         );
     }
 
-    protected function toEnumValue(ReflectionEnumBackedCase $case): string
+    protected function toEnumValue(ReflectionEnumUnitCase $case): string
     {
-        $value = $case->getBackingValue();
+        $value = $case instanceof ReflectionEnumBackedCase
+            ? $case->getBackingValue()
+            : $case->name;
 
-        return is_string($value) ? "'{$value}'" : "{$value}";
+        return \is_string($value) ? "'{$value}'" : "{$value}";
     }
 }

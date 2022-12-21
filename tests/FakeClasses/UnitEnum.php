@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\Tests\FakeClasses;
 /**
  * @typescript
  */
-enum Enum
+enum UnitEnum
 {
     case JS;
     case PHP;

@@ -11,9 +11,9 @@ use function PHPUnit\Framework\assertTrue;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\IntBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\UnitEnum;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-use UnitEnum;
 
 beforeEach(function () {
     if (\PHP_VERSION_ID < 80100) {
@@ -37,7 +37,7 @@ it('will only convert enums', function () {
     ));
 });
 
-it('does not transform a unit enum', function () {
+it('transforms a unit enum', function () {
     $transformer = new EnumTransformer(
         TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
     );
@@ -47,7 +47,7 @@ it('does not transform a unit enum', function () {
         'Enum'
     );
 
-    assertNull($type);
+    assertEquals("'JS' | 'PHP'", $type->transformed);
 });
 
 it('can transform a backed enum into enum', function () {
