@@ -1,12 +1,12 @@
 <?php
 
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotNull;
 use Spatie\TypeScriptTransformer\Collectors\EnumCollector;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\BackedEnumWithoutAnnotation;
-
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\BackedEnumWithoutAnnotation;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertNotNull;
 
 it('collects backed enums', function () {
     $collector = new EnumCollector(
