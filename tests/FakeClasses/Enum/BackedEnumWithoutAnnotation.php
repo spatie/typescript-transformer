@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\FakeClasses;
+namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum;
 
 enum BackedEnumWithoutAnnotation: string
 {

@@ -2,14 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\Collectors;
 
-use BackedEnum;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
-use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeReflectors\ClassTypeReflector;
 
@@ -19,7 +17,7 @@ class DefaultCollector extends Collector
     {
         $reflector = ClassTypeReflector::create($class);
 
-        if (! $this->isTransformable($reflector)) {
+        if (! $reflector->isTransformable()) {
             return null;
         }
 
@@ -35,17 +33,6 @@ class DefaultCollector extends Collector
         return $transformedType;
     }
 
-    protected function isTransformable(ClassTypeReflector $reflector): bool
-    {
-        $transformers = array_map('get_class', $this->config->getTransformers());
-
-        if (\in_array(EnumTransformer::class, $transformers, true)) {
-            return $reflector->getReflectionClass()->implementsInterface(BackedEnum::class);
-        }
-
-        return $reflector->isTransformable();
-    }
-
     protected function resolveAlreadyTransformedType(ClassTypeReflector $reflector): TransformedType
     {
         $missingSymbols = new MissingSymbolsCollection();
@@ -53,7 +40,7 @@ class DefaultCollector extends Collector
 
         $transpiler = new TranspileTypeToTypeScriptAction(
             $missingSymbols,
-            $name,
+            $name
         );
 
         return TransformedType::create(

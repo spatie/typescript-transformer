@@ -37,23 +37,6 @@ it('will not collect non annotated classes', function () {
     assertNull($this->collector->getTransformedType($reflection));
 });
 
-it('will collect backed enums', function () {
-    $collector = new DefaultCollector(
-        TypeScriptTransformerConfig::create()->transformers([
-            EnumTransformer::class,
-        ])
-    );
-    
-    $reflection = new ReflectionClass(BackedEnumWithoutAnnotation::class);
-    $transformedType = $collector->getTransformedType($reflection);
-
-    assertNotNull($transformedType);
-    assertEquals(
-        "'foo' | 'bar'",
-        $transformedType->transformed,
-    );
-})->skip(version_compare(PHP_VERSION, '8.1', '<'), 'Enums are a PHP 8.1+ feature.');
-
 it('will collect annotated classes', function () {
     /** @typescript */
     $class = new class('a') extends Enum {
