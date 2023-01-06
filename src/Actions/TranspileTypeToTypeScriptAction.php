@@ -66,7 +66,7 @@ class TranspileTypeToTypeScriptAction
             iterator_to_array($compound->getIterator())
         );
 
-        return join(' | ', $transformed);
+        return join(' | ', array_unique($transformed));
     }
 
     private function resolveListType(AbstractList $list): string
