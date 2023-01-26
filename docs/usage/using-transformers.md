@@ -61,4 +61,4 @@ enum Language {'JS' = 'JS', 'PHP' = 'PHP'};
 
 ## Writing your own transformers
 
-We've added a whole section in the docs about [writing transformers](docs/typescript-transformer/v2/transformers/getting-started).
+We've added a whole section in the docs about [writing transformers](../transformers/getting-started).
