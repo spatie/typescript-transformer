@@ -34,6 +34,9 @@ class Dto extends DataTransferObject
     /** @var int|string */
     public $mixed;
 
+    /** @var int|float */
+    public $number;
+
     /** @var int[] */
     public $documented_array;
 
