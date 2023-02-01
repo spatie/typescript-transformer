@@ -40,7 +40,7 @@ class DefaultCollector extends Collector
 
         $transpiler = new TranspileTypeToTypeScriptAction(
             $missingSymbols,
-            $name,
+            $name
         );
 
         return TransformedType::create(
