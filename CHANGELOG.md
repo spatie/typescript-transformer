@@ -2,6 +2,11 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.13 - 2023-02-01
+
+- Add EnumCollector (#42)
+- Ensure transformed types are unique (#44)
+
 ## 2.1.12 - 2022-11-18
 
 - add support for optional attributes (#30)
