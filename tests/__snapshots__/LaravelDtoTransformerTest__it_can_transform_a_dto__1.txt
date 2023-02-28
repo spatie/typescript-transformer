@@ -1,0 +1,6 @@
+{
+other_dto_array: Array<{%Spatie\TypeScriptTransformer\Tests\FakeClasses\LaravelDto\LaravelOtherDto%}>;
+non_typed_laravel_collection: Array<any>;
+other_dto_laravel_collection: Array<{%Spatie\TypeScriptTransformer\Tests\FakeClasses\LaravelDto\LaravelOtherDto%}>;
+other_dto_laravel_eloquent_collection: Array<{%Spatie\TypeScriptTransformer\Tests\FakeClasses\LaravelDto\LaravelOtherDto%}>;
+}

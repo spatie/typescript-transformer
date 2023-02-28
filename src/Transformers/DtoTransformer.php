@@ -98,7 +98,6 @@ class DtoTransformer implements Transformer
             new ReplaceDefaultsTypeProcessor(
                 $this->config->getDefaultTypeReplacements()
             ),
-            new DtoCollectionTypeProcessor(),
         ];
     }
 

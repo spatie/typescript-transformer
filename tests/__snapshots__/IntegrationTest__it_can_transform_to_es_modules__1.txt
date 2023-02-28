@@ -18,7 +18,6 @@ enum: Enum;
 non_typescripted_type: any;
 other_dto: OtherDto;
 other_dto_array: Array<OtherDto>;
-other_dto_collection: Array<OtherDto>;
 dto_with_children: DtoWithChildren;
 another_namespace_dto: YetAnotherDto;
 nullable_string: string | number | null;
@@ -35,8 +34,6 @@ other_dto_array: Array<OtherDto>;
 export type Enum = 'yes' | 'no';
 export type OtherDto = {
 name: string;
-};
-export type OtherDtoCollection = {
 };
 export type YetAnotherDto = {
 name: string;

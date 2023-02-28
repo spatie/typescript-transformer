@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
 
 /** @typescript */
-class Dto extends DataTransferObject
+class Dto
 {
     public string $string;
 
@@ -54,8 +54,6 @@ class Dto extends DataTransferObject
 
     /** @var \Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDto[] */
     public array $other_dto_array;
-
-    public OtherDtoCollection $other_dto_collection;
 
     public DtoWithChildren $dto_with_children;
 

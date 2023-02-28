@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration;
 use Spatie\DataTransferObject\DataTransferObject;
 
 /** @typescript */
-class DtoWithChildren extends DataTransferObject
+class DtoWithChildren
 {
     public string $name;
 

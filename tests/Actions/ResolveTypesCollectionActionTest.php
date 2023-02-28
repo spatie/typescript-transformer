@@ -93,7 +93,7 @@ it('can parse multiple directories', function () {
 
     $types = $this->action->execute();
 
-    assertCount(9, $types);
+    assertCount(8, $types);
 
     assertArrayHasKey(TypeScriptEnum::class, $types);
     assertArrayHasKey(TypeScriptEnumWithCustomTransformer::class, $types);
@@ -103,7 +103,6 @@ it('can parse multiple directories', function () {
     assertArrayHasKey(DtoWithChildren::class, $types);
     assertArrayHasKey(Enum::class, $types);
     assertArrayHasKey(OtherDto::class, $types);
-    assertArrayHasKey(OtherDtoCollection::class, $types);
     assertArrayHasKey(YetAnotherDto::class, $types);
 });
 

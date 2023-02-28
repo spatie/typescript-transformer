@@ -1,3 +1,11 @@
+# Upgrading to v3
+
+## For Laravel users
+- The `laravel-typescript-transformer` package was merged with the `typescrypt-transformer` package use that one in your `composer.json` file
+- Update namespaces from `Spatie\LaravelTypeScriptTransformer` to `Spatie\TypeScriptTransformer` in `typescript-transformer.php` and throughout your project
+- The config file was renamed from `typescript-transformer.php` to `typescript.php`
+  
+
 # Upgrading to v2
 
 - The package is now PHP 8 only

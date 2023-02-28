@@ -1,3 +1,31 @@
+declare namespace Spatie.TypeScriptTransformer.Tests.FakeClasses {
+export type IntBackedEnum = {
+name: string;
+value: number;
+};
+export type SpatieEnum = 'draft' | 'published' | 'archived';
+export type StringBackedEnum = {
+name: string;
+value: string;
+};
+}
+declare namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Attributes {
+export type WithAlreadyTransformedAttributeAttribute = {an_int:number;a_bool:boolean;};
+export type WithTypeScriptAttribute = {
+};
+export type YoloClass = {
+};
+export type WithTypeScriptTransformerAttribute = {
+an_int: number;
+};
+}
+declare namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Enum {
+export type TypeScriptEnumWithCustomTransformer = fake;
+export type TypeScriptEnum = {
+};
+export type EnumWithName = {
+};
+}
 declare namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration {
 export type Dto = {
 string: string;
@@ -32,7 +60,8 @@ name: string;
 other_dto: Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto;
 other_dto_array: Array<Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.OtherDto>;
 };
-export type Enum = 'yes' | 'no';
+export type Enum = {
+};
 export type OtherDto = {
 name: string;
 };
@@ -41,4 +70,7 @@ declare namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration.Lev
 export type YetAnotherDto = {
 name: string;
 };
+}
+declare namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.States {
+export type State = 'child' | 'other_child';
 }

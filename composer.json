@@ -19,19 +19,23 @@
         "php": "^8.0",
         "nikic/php-parser": "^4.13",
         "phpdocumentor/type-resolver": "^1.6.2",
-        "symfony/process": "^5.2|^6.0"
+        "symfony/process": "^5.2|^6.0",
+        "spatie/laravel-package-tools": "^1.12",
+        "illuminate/console": "^8.83|^9.30|^10.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.18",
+        "mockery/mockery": "^1.4",
+        "nesbot/carbon": "^2.63",
         "larapack/dd": "^1.1",
         "myclabs/php-enum": "^1.7",
         "pestphp/pest": "^1.22",
         "phpunit/phpunit": "^9.0",
-        "spatie/data-transfer-object": "^2.0",
-        "spatie/enum": "^3.0",
         "spatie/pest-plugin-snapshots": "^1.1",
         "spatie/temporary-directory": "^1.2|^2.0",
-        "vimeo/psalm": "^4.2"
+        "vimeo/psalm": "^4.2",
+        "spatie/enum": "^3.0",
+        "spatie/laravel-model-states": "^1.6|^2.0",
+        "orchestra/testbench": "^6.0|^7.0|^8.0"
     },
     "autoload": {
         "psr-4": {
