@@ -31,8 +31,6 @@ class TypeScriptTransformer
 
         (new PersistTypesCollectionAction($this->config))->execute($typesCollection);
 
-        (new FormatTypeScriptAction($this->config))->execute();
-
         return $typesCollection;
     }
 }

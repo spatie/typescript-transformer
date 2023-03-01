@@ -30,7 +30,6 @@ beforeEach(function () {
             ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
             ->transformers([MyclabsEnumTransformer::class])
             ->collectors([DefaultCollector::class])
-            ->outputFile('types.d.ts')
     );
 });
 
@@ -88,7 +87,6 @@ it('can parse multiple directories', function () {
         )
         ->transformers([MyclabsEnumTransformer::class, DtoTransformer::class])
         ->collectors([DefaultCollector::class])
-        ->outputFile('types.d.ts')
     );
 
     $types = $this->action->execute();
@@ -112,7 +110,6 @@ it('can add an collector for types', function () {
         TypeScriptTransformerConfig::create()
         ->autoDiscoverTypes(__DIR__ . '/../FakeClasses/Enum')
         ->collectors([FakeTypeScriptCollector::class])
-        ->outputFile('types.d.ts')
     );
 
     $types = $this->action->execute();

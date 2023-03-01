@@ -7,6 +7,8 @@ use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
+use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
+use Spatie\TypeScriptTransformer\FileSplitters\FileSplitter;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
@@ -19,8 +21,6 @@ class TypeScriptTransformerConfig
 
     private array $collectors = [DefaultCollector::class];
 
-    private string $outputFile = 'types.d.ts';
-
     private array $defaultTypeReplacements = [];
 
     private string $writer = TypeDefinitionWriter::class;
@@ -28,6 +28,14 @@ class TypeScriptTransformerConfig
     private ?string $formatter = null;
 
     private bool $transformToNativeEnums = false;
+
+    private string $outputPath;
+
+    private string $splitter = SingleFileSplitter::class;
+
+    private array $splitterConfig = [
+        'filename' => 'types.d.ts',
+    ];
 
     public static function create(): self
     {
@@ -62,9 +70,17 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function outputFile(string $defaultFile): self
+    public function outputPath(string $outputPath): self
     {
-        $this->outputFile = $defaultFile;
+        $this->outputPath = $outputPath;
+
+        return $this;
+    }
+
+    public function splitter(string $splitter, array $config): self
+    {
+        $this->splitter = $splitter;
+        $this->splitterConfig = $config;
 
         return $this;
     }
@@ -99,7 +115,7 @@ class TypeScriptTransformerConfig
     public function getTransformers(): array
     {
         return array_map(
-            fn (string $transformer) => $this->buildTransformer($transformer),
+            fn(string $transformer) => $this->buildTransformer($transformer),
             $this->transformers
         );
     }
@@ -116,16 +132,17 @@ class TypeScriptTransformerConfig
         return new $this->writer;
     }
 
-    public function getOutputFile(): string
+    public function getOutputPath(): string
     {
-        return $this->outputFile;
+        return rtrim($this->outputPath, '/').'/';
     }
+
 
     /** @return \Spatie\TypeScriptTransformer\Collectors\Collector[] */
     public function getCollectors(): array
     {
         return array_map(
-            fn (string $collector) => new $collector($this),
+            fn(string $collector) => new $collector($this),
             $this->collectors
         );
     }
@@ -156,6 +173,11 @@ class TypeScriptTransformerConfig
         }
 
         return new $this->formatter;
+    }
+
+    public function getFileSplitter(): FileSplitter
+    {
+        return new $this->splitter($this->splitterConfig);
     }
 
     public function shouldTransformToNativeEnums(): bool

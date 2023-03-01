@@ -34,8 +34,12 @@ class TypeScriptTransformerServiceProvider extends PackageServiceProvider
                 ->collectors(config('typescript.collectors'))
                 ->transformers(config('typescript.transformers'))
                 ->defaultTypeReplacements(config('typescript.default_type_replacements'))
+                ->splitter(
+                    config('typescript.file_splitter.class'),
+                    config('typescript.file_splitter.options'),
+                )
                 ->writer(config('typescript.writer'))
-                ->outputFile(config('typescript.output_file'))
+                ->outputPath(config('typescript.output_path'))
                 ->writer(config('typescript.writer', TypeDefinitionWriter::class))
                 ->formatter(config('typescript.formatter'))
                 ->transformToNativeEnums(config('typescript.transform_to_native_enums', false))

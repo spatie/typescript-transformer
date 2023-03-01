@@ -9,7 +9,7 @@ return [
      */
 
     'auto_discover_types' => [
-        app_path()
+        app_path(),
     ],
 
     /*
@@ -47,10 +47,17 @@ return [
     ],
 
     /*
-     * The package will write the generated TypeScript to this file.
+     * The package will write the generated TypeScript to this path.
      */
 
-    'output_file' => resource_path('types/generated.d.ts'),
+    'output_path' => resource_path('types'),
+
+    'file_splitter' => [
+        'class' => \Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter::class,
+        'options' => [
+            'filename' => 'types.d.ts',
+        ],
+    ],
 
     /*
      * When the package is writing types to the output file, a writer is used to

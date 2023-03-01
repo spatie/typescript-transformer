@@ -17,7 +17,7 @@ class LaravelTypescriptTransformerCommand extends Command
     protected $signature = 'typescript:transform
                             {--force : Force the operation to run when in production}
                             {--path= : Specify a path with classes to transform}
-                            {--output= : Use another file to output}
+                            {--output= : Use another path to output}
                             {--format : Use Prettier to format the output}';
 
     protected $description = 'Map PHP structures to TypeScript';
@@ -31,8 +31,8 @@ class LaravelTypescriptTransformerCommand extends Command
             $config->autoDiscoverTypes($inputPath);
         }
 
-        if ($outputFile = $this->resolveOutputFile()) {
-            $config->outputFile($outputFile);
+        if ($outputPath = $this->resolveOutputPath()) {
+            $config->outputPath($outputPath);
         }
 
         if ($this->option('format')) {
@@ -78,7 +78,7 @@ class LaravelTypescriptTransformerCommand extends Command
         return app_path($path);
     }
 
-    private function resolveOutputFile(): ?string
+    private function resolveOutputPath(): ?string
     {
         $path = $this->option('output');
 
@@ -86,7 +86,7 @@ class LaravelTypescriptTransformerCommand extends Command
             return null;
         }
 
-        return resource_path($path);
+        return $path;
     }
 
     private function ensureConfiguredCorrectly()

@@ -13,7 +13,7 @@ class FormatTypeScriptAction
         $this->config = $config;
     }
 
-    public function execute(): void
+    public function execute(string $file): void
     {
         $formatter = $this->config->getFormatter();
 
@@ -21,6 +21,6 @@ class FormatTypeScriptAction
             return;
         }
 
-        $formatter->format($this->config->getOutputFile());
+        $formatter->format($file);
     }
 }

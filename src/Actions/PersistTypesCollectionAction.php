@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
+use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -16,8 +17,6 @@ class PersistTypesCollectionAction
 
     public function execute(TypesCollection $collection): void
     {
-        $this->ensureOutputFileExists();
-
         $writer = $this->config->getWriter();
 
         (new ReplaceSymbolsInCollectionAction())->execute(
@@ -25,16 +24,24 @@ class PersistTypesCollectionAction
             $writer->replacesSymbolsWithFullyQualifiedIdentifiers()
         );
 
-        file_put_contents(
-            $this->config->getOutputFile(),
-            $writer->format($collection)
-        );
+        $splitter = $this->config->getFileSplitter();
+
+        foreach ($splitter->split($this->config->getOutputPath(), $collection) as $split) {
+            $this->ensureOutputFileExists($split->path);
+
+            file_put_contents(
+                $split->path,
+                $writer->format($split->types)
+            );
+
+            (new FormatTypeScriptAction($this->config))->execute($split->path);
+        }
     }
 
-    protected function ensureOutputFileExists(): void
+    protected function ensureOutputFileExists(string $path): void
     {
-        if (! file_exists(pathinfo($this->config->getOutputFile(), PATHINFO_DIRNAME))) {
-            mkdir(pathinfo($this->config->getOutputFile(), PATHINFO_DIRNAME), 0755, true);
+        if (! file_exists(pathinfo($path, PATHINFO_DIRNAME))) {
+            mkdir(pathinfo($path, PATHINFO_DIRNAME), 0755, true);
         }
     }
 }

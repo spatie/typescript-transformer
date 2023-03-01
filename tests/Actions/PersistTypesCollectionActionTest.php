@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
 use function Spatie\Snapshots\assertMatchesFileSnapshot;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
@@ -13,9 +14,9 @@ beforeEach(function () {
 
     $this->action = new PersistTypesCollectionAction(
         TypeScriptTransformerConfig::create()
-        ->autoDiscoverTypes(__DIR__ . '/../FakeClasses')
-        ->transformers([MyclabsEnumTransformer::class])
-        ->outputFile($this->temporaryDirectory->path('types.d.ts'))
+            ->autoDiscoverTypes(__DIR__ . '/../FakeClasses')
+            ->transformers([MyclabsEnumTransformer::class])
+            ->outputPath(($this->temporaryDirectory->path()))
     );
 });
 

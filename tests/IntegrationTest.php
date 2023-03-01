@@ -29,8 +29,7 @@ it('works', function () {
     $temporaryDirectory = (new TemporaryDirectory())->create();
 
     $transformer = new TypeScriptTransformer(
-        getTransformerConfig()
-        ->outputFile($temporaryDirectory->path('types.d.ts'))
+        getTransformerConfig()->outputPath($temporaryDirectory->path())
     );
 
     $transformer->transform();
@@ -45,13 +44,13 @@ it('can transform to es modules', function () {
 
     $transformer = new TypeScriptTransformer(
         getTransformerConfig()
-        ->writer(ModuleWriter::class)
-        ->outputFile($temporaryDirectory->path('types.ts'))
+            ->writer(ModuleWriter::class)
+            ->outputPath($temporaryDirectory->path())
     );
 
     $transformer->transform();
 
-    $transformed = file_get_contents($temporaryDirectory->path('types.ts'));
+    $transformed = file_get_contents($temporaryDirectory->path('types.d.ts'));
 
     assertMatchesSnapshot($transformed);
 });
