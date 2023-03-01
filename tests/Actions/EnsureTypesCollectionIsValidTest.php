@@ -6,6 +6,7 @@ use ReflectionClass;
 use Spatie\TypeScriptTransformer\Actions\EnsureTypesCollectionIsValid;
 use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedTypeFactory;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
 use function PHPUnit\Framework\assertCount;
@@ -14,8 +15,10 @@ use function PHPUnit\Framework\assertEquals;
 it('cannot have a namespace and type with the same name', function () {
     $collection = TypesCollection::create();
 
-    $collection->add(FakeTransformedType::fake('Enum')->withNamespace('Enum'));
-    $collection->add(FakeTransformedType::fake('Enum')->withoutNamespace());
+    $collection->add(TransformedTypeFactory::create('Enum\Enum')->build());
+    $collection->add(TransformedTypeFactory::create('Enum')->build());
+
+    ray($collection);
 
     (new EnsureTypesCollectionIsValid())->execute($collection);
 })->throws(SymbolAlreadyExists::class);
@@ -23,8 +26,8 @@ it('cannot have a namespace and type with the same name', function () {
 it('cannot have a namespace and type with the same name reversed', function () {
     $collection = TypesCollection::create();
 
-    $collection->add(FakeTransformedType::fake('Enum')->withoutNamespace());
-    $collection->add(FakeTransformedType::fake('Enum')->withNamespace('Enum'));
+    $collection->add(TransformedTypeFactory::create('Enum')->build());
+    $collection->add(TransformedTypeFactory::create('Enum\Enum')->build());
 
     (new EnsureTypesCollectionIsValid())->execute($collection);
 })->throws(SymbolAlreadyExists::class);
@@ -32,7 +35,7 @@ it('cannot have a namespace and type with the same name reversed', function () {
 it('can add a null namespace', function () {
     $structure = TypesCollection::create();
 
-    $structure->add($fake = FakeTransformedType::fake('Enum')->withoutNamespace());
+    $structure->add($fake = TransformedTypeFactory::create('Enum')->build());
 
     (new EnsureTypesCollectionIsValid())->execute($structure);
 
@@ -45,10 +48,10 @@ it('can add a null namespace', function () {
 it('can add types in a multi layered namespaces', function () {
     $structure = TypesCollection::create();
 
-    $structure->add($fakeC = FakeTransformedType::fake('Enum')->withNamespace('a\b\c'));
-    $structure->add($fakeB = FakeTransformedType::fake('Enum')->withNamespace('a\b'));
-    $structure->add($fakeA = FakeTransformedType::fake('Enum')->withNamespace('a'));
-    $structure->add($fake = FakeTransformedType::fake('Enum')->withoutNamespace());
+    $structure->add($fakeC = TransformedTypeFactory::create('a\b\c\Enum')->build());
+    $structure->add($fakeB = TransformedTypeFactory::create('a\b\Enum')->build());
+    $structure->add($fakeA = TransformedTypeFactory::create('a\Enum')->build());
+    $structure->add($fake = TransformedTypeFactory::create('Enum')->build());
 
     (new EnsureTypesCollectionIsValid())->execute($structure);
 
@@ -64,8 +67,8 @@ it('can add types in a multi layered namespaces', function () {
 it('can add multiple types to one namespace', function () {
     $structure = TypesCollection::create();
 
-    $structure->add($fakeA = FakeTransformedType::fake('EnumA')->withNamespace('test'));
-    $structure->add($fakeB = FakeTransformedType::fake('EnumB')->withNamespace('test'));
+    $structure->add($fakeA = TransformedTypeFactory::create('test\EnumA')->build());
+    $structure->add($fakeB = TransformedTypeFactory::create('test\EnumB')->build());
 
     (new EnsureTypesCollectionIsValid())->execute($structure);
 
@@ -81,7 +84,7 @@ it('can add a real type', function () {
 
     $structure = TypesCollection::create();
 
-    $structure->add($fake = FakeTransformedType::fake('TypeScriptEnum')->withReflection($reflection));
+    $structure->add($fake = TransformedTypeFactory::create('TypeScriptEnum')->withReflection($reflection)->build());
 
     (new EnsureTypesCollectionIsValid())->execute($structure);
 
@@ -94,8 +97,8 @@ it('can add a real type', function () {
 it('can add inline types without structure checking', function () {
     $collection = TypesCollection::create();
 
-    $collection->add($fakeA = FakeTransformedType::fake('Enum')->withoutNamespace()->isInline());
-    $collection->add($fakeB = FakeTransformedType::fake('Enum')->withNamespace('Enum'));
+    $collection->add($fakeA = TransformedTypeFactory::create('Enum')->isInline()->build());
+    $collection->add($fakeB = TransformedTypeFactory::create('Enum\Enum')->isInline()->build());
 
     (new EnsureTypesCollectionIsValid())->execute($collection);
 

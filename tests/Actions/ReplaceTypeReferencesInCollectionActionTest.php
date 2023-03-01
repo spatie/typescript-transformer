@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedTypeFactory;
 use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ReplaceTypeReferencesInCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
@@ -10,13 +11,11 @@ it('can replace missing symbols', function () {
 
     $collection = TypesCollection::create();
 
-    $collection->add(FakeTransformedType::fake('Enum')->withNamespace('enums'));
-    $collection->add(FakeTransformedType::fake('Dto')
+    $collection->add(TransformedTypeFactory::create('enums\Enum')->build());
+    $collection->add(TransformedTypeFactory::create('Dto')
         ->withTransformed('{enum: {%enums\Enum%}, non-existing: {%non-existing%}}')
-        ->withTypeReferences([
-            'enum' => 'enums\Enum',
-            'non-existing' => 'non-existing',
-        ])
+        ->withTypeReferences('enums\Enum', 'non-existing')
+        ->build()
     );
 
     $collection = $action->execute($collection);
@@ -29,14 +28,12 @@ it('can replace missing symbols without fully qualified names', function () {
 
     $collection = TypesCollection::create();
 
-    $collection->add(FakeTransformedType::fake('Enum')->withNamespace('enums'));
+    $collection->add(TransformedTypeFactory::create('enums\Enum')->build());
     $collection->add(
-        FakeTransformedType::fake('Dto')
+        TransformedTypeFactory::create('Dto')
             ->withTransformed('{enum: {%enums\Enum%}, non-existing: {%non-existing%}}')
-            ->withTypeReferences([
-                'enum' => 'enums\Enum',
-                'non-existing' => 'non-existing',
-            ])
+            ->withTypeReferences('enums\Enum', 'non-existing')
+            ->build()
     );
 
     $collection = $action->execute($collection, false);

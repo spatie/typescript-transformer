@@ -35,13 +35,15 @@ class TypeReferencesCollection implements Countable, IteratorAggregate
         return array_key_exists($reference, $this->references);
     }
 
-    public function add(string $fqcn): TypeReference
+    public function add(string|TypeReference $fqcn): TypeReference
     {
-        $fqcn = ltrim($fqcn, '\\');
+        $reference = $fqcn instanceof TypeReference
+            ? $fqcn
+            : TypeReference::fromFqcn($fqcn);
+
+        $fqcn = $reference->getFqcn();
 
         if (! $this->has($fqcn)) {
-            $reference = TypeReference::fromFqcn($fqcn);
-
             $this->references[$fqcn] = $reference;
         }
 

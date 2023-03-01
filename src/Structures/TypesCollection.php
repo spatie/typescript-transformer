@@ -15,8 +15,6 @@ class TypesCollection implements Countable, IteratorAggregate
 {
     protected array $types = [];
 
-    protected array $structure = [];
-
     public static function create(): self
     {
         return new self();

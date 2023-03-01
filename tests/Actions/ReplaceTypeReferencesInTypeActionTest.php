@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedTypeFactory;
 use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ReplaceTypeReferencesInTypeAction;
 use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
@@ -13,19 +14,22 @@ beforeEach(function () {
 });
 
 it('can replace symbols', function () {
-    $typeC = FakeTransformedType::fake('C')
+    $typeC = TransformedTypeFactory::create('C')
         ->isInline()
-        ->withTransformed('This is type C');
+        ->withTransformed('This is type C')
+        ->build();
 
-    $typeB = FakeTransformedType::fake('B')
+    $typeB = TransformedTypeFactory::create('B')
         ->isInline()
-        ->withTypeReferences(['C' => 'C'])
-        ->withTransformed('Depends on type C: {%C%}');
+        ->withTypeReferences('C')
+        ->withTransformed('Depends on type C: {%C%}')
+        ->build();
 
-    $typeA = FakeTransformedType::fake('A')
+    $typeA = TransformedTypeFactory::create('A')
         ->isInline()
-        ->withTypeReferences(['B' => 'B'])
-        ->withTransformed("Depends on type B: {%B%}");
+        ->withTypeReferences('B')
+        ->withTransformed("Depends on type B: {%B%}")
+        ->build();
 
     $this->collection->add($typeA);
     $this->collection->add($typeB);
@@ -41,15 +45,17 @@ it('can replace symbols', function () {
 it('will throw an exception when doing circular dependencies', function () {
     $this->expectException(CircularDependencyChain::class);
 
-    $typeA = FakeTransformedType::fake('A')
+    $typeA = TransformedTypeFactory::create('A')
         ->isInline()
-        ->withTypeReferences(['B' => 'B'])
-        ->withTransformed("Depends on type B: {%B%}");
+        ->withTypeReferences('B')
+        ->withTransformed("Depends on type B: {%B%}")
+        ->build();
 
-    $typeB = FakeTransformedType::fake('B')
+    $typeB = TransformedTypeFactory::create('B')
         ->isInline()
-        ->withTypeReferences(['A' => 'A'])
-        ->withTransformed('Depends on type A: {%A%}');
+        ->withTypeReferences('A')
+        ->withTransformed('Depends on type A: {%A%}')
+        ->build();
 
     $this->collection->add($typeA);
     $this->collection->add($typeB);
@@ -58,13 +64,15 @@ it('will throw an exception when doing circular dependencies', function () {
 });
 
 it('can replace non inline types circular', function () {
-    $typeB = FakeTransformedType::fake('B')
-        ->withTypeReferences(['A' => 'A'])
-        ->withTransformed('Links to A: {%A%}');
+    $typeB = TransformedTypeFactory::create('B')
+        ->withTypeReferences('A')
+        ->withTransformed('Links to A: {%A%}')
+        ->build();
 
-    $typeA = FakeTransformedType::fake('A')
-        ->withTypeReferences(['B' => 'B'])
-        ->withTransformed('Links to B: {%B%}');
+    $typeA = TransformedTypeFactory::create('A')
+        ->withTypeReferences('B')
+        ->withTransformed('Links to B: {%B%}')
+        ->build();
 
     $this->collection->add($typeA);
     $this->collection->add($typeB);
@@ -77,19 +85,22 @@ it('can replace non inline types circular', function () {
 });
 
 it('can inline multiple dependencies', function () {
-    $typeC = FakeTransformedType::fake('C')
+    $typeC = TransformedTypeFactory::create('C')
         ->isInline()
-        ->withTransformed('This is type C');
+        ->withTransformed('This is type C')
+        ->build();
 
-    $typeB = FakeTransformedType::fake('B')
+    $typeB = TransformedTypeFactory::create('B')
         ->isInline()
-        ->withTypeReferences(['C' => 'C'])
-        ->withTransformed('Depends on type C: {%C%}');
+        ->withTypeReferences('C')
+        ->withTransformed('Depends on type C: {%C%}')
+        ->build();
 
-    $typeA = FakeTransformedType::fake('A')
+    $typeA = TransformedTypeFactory::create('A')
         ->isInline()
-        ->withTypeReferences(['B' => 'B', 'C' => 'C'])
-        ->withTransformed('Depends on type B: {%B%} | depends on type C: {%C%}');
+        ->withTypeReferences('B', 'C')
+        ->withTransformed('Depends on type B: {%B%} | depends on type C: {%C%}')
+        ->build();
 
     $this->collection->add($typeA);
     $this->collection->add($typeB);

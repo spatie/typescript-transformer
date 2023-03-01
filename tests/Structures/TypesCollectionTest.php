@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedTypeFactory;
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNull;
@@ -11,7 +12,7 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
 it('can get a type', function () {
     $collection = TypesCollection::create();
 
-    $collection->add($fake = FakeTransformedType::fake('Enum')->withNamespace('a\b\c'));
+    $collection->add($fake = TransformedTypeFactory::create('a\b\c\Enum')->build());
 
     assertEquals($fake, $collection->get('a\b\c\Enum'));
 });
@@ -19,7 +20,7 @@ it('can get a type', function () {
 it('can get a type in the root namespace', function () {
     $collection = TypesCollection::create();
 
-    $collection->add($fake = FakeTransformedType::fake('Enum')->withoutNamespace());
+    $collection->add($fake = TransformedTypeFactory::create('Enum')->build());
 
     assertEquals($fake, $collection->get('Enum'));
 });
@@ -35,8 +36,8 @@ it('when searching a non existing type null is returned', function () {
 it('can count types', function () {
     $collection = TypesCollection::create();
 
-    $collection->add(FakeTransformedType::fake('EnumA')->withoutNamespace());
-    $collection->add(FakeTransformedType::fake('EnumB')->withoutNamespace());
+    $collection->add(TransformedTypeFactory::create('EnumA')->build());
+    $collection->add(TransformedTypeFactory::create('EnumB')->build());
 
     expect($collection)->toHaveCount(2);
 });
@@ -44,8 +45,8 @@ it('can count types', function () {
 it('can iterate over types', function () {
     $collection = TypesCollection::create();
 
-    $collection->add($fakeA = FakeTransformedType::fake('EnumA')->withoutNamespace());
-    $collection->add($fakeB = FakeTransformedType::fake('EnumB')->withoutNamespace());
+    $collection->add($fakeA = TransformedTypeFactory::create('EnumA')->build());
+    $collection->add($fakeB = TransformedTypeFactory::create('EnumB')->build());
 
     $types = [];
 

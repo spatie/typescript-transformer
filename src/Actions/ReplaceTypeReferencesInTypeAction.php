@@ -40,11 +40,12 @@ class ReplaceTypeReferencesInTypeAction
         TypeReference $typeReference,
         TransformedType $type,
         array $chain
-    ): TransformedType
-    {
+    ): TransformedType {
         $found = $this->collection->get(
             $typeReference->getFqcn()
         );
+
+        $typeReference->referencedType = $found;
 
         if ($found === null) {
             $type->replaceTypeReference($typeReference, 'any');

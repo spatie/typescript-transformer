@@ -2,9 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\FileSplitters;
 
+use Spatie\TypeScriptTransformer\Actions\ResolveRelativePathAction;
 use Spatie\TypeScriptTransformer\Structures\SplitTypesCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TypeImport;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use function PHPUnit\Framework\isEmpty;
 
 class NamespaceFileSplitter implements FileSplitter
 {
@@ -12,13 +15,15 @@ class NamespaceFileSplitter implements FileSplitter
 
     protected string $filename;
 
-    protected bool $splitPerType;
+    protected ResolveRelativePathAction $resolveRelativePathAction;
 
-    public function __construct(array $options)
-    {
+    public function __construct(
+        array $options
+    ) {
         $this->extension = $options['extension'] ?? 'd.ts';
         $this->filename = $options['filename'] ?? 'types';
-        $this->splitPerType = $options['splitPerType'] ?? false;
+
+        $this->resolveRelativePathAction = new ResolveRelativePathAction();
     }
 
     public function split(string $outputPath, TypesCollection $typesCollection): array
@@ -27,7 +32,9 @@ class NamespaceFileSplitter implements FileSplitter
         $splits = [];
 
         foreach ($typesCollection as $type) {
-            $partialPath = implode('/', $type->getNamespaceSegments());
+            $namespaceSegments = $type->getNamespaceSegments();
+
+            $partialPath = implode('/', $namespaceSegments);
 
             $path = "{$outputPath}/{$partialPath}/{$this->filename}.{$this->extension}";
 
@@ -40,7 +47,7 @@ class NamespaceFileSplitter implements FileSplitter
             }
 
             $splits[$path]->types->add($type);
-            $splits[$path]->addImport(...$this->typeToImports($type));
+            $splits[$path]->addImport(...$this->typeToImports($namespaceSegments, $type));
         }
 
         foreach ($splits as $split) {
@@ -51,10 +58,29 @@ class NamespaceFileSplitter implements FileSplitter
     }
 
     protected function typeToImports(
+        array $currentNamespaceSegments,
         TransformedType $type
     ): array {
-        ray($type->typeReferences);
+        $imports = [];
 
-        return [];
+        foreach ($type->typeReferences as $typeReference) {
+            if ($typeReference->referencedType === null) {
+                continue; // Type was not transformed to TypeScript
+            }
+
+            $path = $this->resolveRelativePathAction->execute($currentNamespaceSegments, $typeReference->namespaceSegments);
+
+            if ($path === null) {
+                continue; // Same file
+            }
+
+            $imports[] = new TypeImport(
+                "{$path}/{$this->filename}",
+                [$typeReference->name]
+            );
+        }
+
+        return $imports;
     }
+
 }

@@ -6,6 +6,8 @@ use ReflectionClass;
 
 class TransformedType
 {
+    public TypeReference $referencing;
+
     public static function create(
         ReflectionClass $class,
         string $name,
@@ -49,6 +51,7 @@ class TransformedType
         public string $keyword = 'type',
         public bool $trailingSemicolon = true,
     ) {
+        $this->referencing = TypeReference::fromFqcn($this->reflection->getName());
     }
 
     public function getNamespaceSegments(): array
@@ -57,13 +60,7 @@ class TransformedType
             return [];
         }
 
-        $namespace = $this->reflection->getNamespaceName();
-
-        if (empty($namespace)) {
-            return [];
-        }
-
-        return explode('\\', $namespace);
+        return $this->referencing->namespaceSegments;
     }
 
     public function getTypeScriptName($fullyQualified = true): string
@@ -72,12 +69,7 @@ class TransformedType
             return $this->name ?? '';
         }
 
-        $segments = array_merge(
-            $this->getNamespaceSegments(),
-            [$this->name]
-        );
-
-        return implode('.', $segments);
+        return $this->referencing->getTypeScriptFqcn();
     }
 
     public function replaceTypeReference(TypeReference $typeReference, string $replacement): void

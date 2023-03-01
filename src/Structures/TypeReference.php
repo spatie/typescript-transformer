@@ -17,6 +17,7 @@ class TypeReference
     public function __construct(
         public string $name,
         public array $namespaceSegments,
+        public ?TransformedType $referencedType = null,
     ) {
     }
 
@@ -32,5 +33,10 @@ class TypeReference
         }
 
         return implode('\\', $this->namespaceSegments) . "\\{$this->name}";
+    }
+
+    public function getTypeScriptFqcn(): string
+    {
+        return implode('.', [...$this->namespaceSegments, $this->name]);
     }
 }

@@ -3,6 +3,8 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
+use Spatie\TypeScriptTransformer\Structures\SplitTypesCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeImport;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -29,10 +31,19 @@ class PersistTypesCollectionAction
         foreach ($splitter->split($this->config->getOutputPath(), $collection) as $split) {
             $this->ensureOutputFileExists($split->path);
 
-            file_put_contents(
-                $split->path,
-                $writer->format($split->types)
-            );
+            $imports = $this->resolveImports($split);
+
+            $types = $writer->format($split->types);
+
+            $contents = $imports === null
+                ? $types
+                : $imports . PHP_EOL . $types;
+
+            if (empty($contents)) {
+                continue;
+            }
+
+            file_put_contents($split->path, $contents);
 
             (new FormatTypeScriptAction($this->config))->execute($split->path);
         }
@@ -43,5 +54,18 @@ class PersistTypesCollectionAction
         if (! file_exists(pathinfo($path, PATHINFO_DIRNAME))) {
             mkdir(pathinfo($path, PATHINFO_DIRNAME), 0755, true);
         }
+    }
+
+    private function resolveImports(SplitTypesCollection $split): ?string
+    {
+        if (empty($split->imports)) {
+            return null;
+        }
+
+        return array_reduce(
+            $split->imports,
+            fn(string $carry, TypeImport $import) => "{$carry}{$import->toString()}" . PHP_EOL,
+            ''
+        );
     }
 }

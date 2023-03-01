@@ -20,9 +20,9 @@ an_int: number;
 };
 }
 declare namespace Spatie.TypeScriptTransformer.Tests.FakeClasses.Enum {
-export type TypeScriptEnumWithCustomTransformer = fake;
 export type TypeScriptEnum = {
 };
+export type TypeScriptEnumWithCustomTransformer = fake;
 export type EnumWithName = {
 };
 }
