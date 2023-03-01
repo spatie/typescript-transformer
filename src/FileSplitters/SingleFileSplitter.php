@@ -10,15 +10,18 @@ use Spatie\TypeScriptTransformer\Structures\TypesCollection;
  */
 class SingleFileSplitter implements FileSplitter
 {
-    public function __construct(private array $options)
+    protected string $filename;
+
+    public function __construct(array $options)
     {
+        $this->filename = ltrim($options['filename'] ?? 'types.d.ts', '/');
     }
 
     public function split(string $outputPath, TypesCollection $typesCollection): array
     {
         return [
             new SplitTypesCollection(
-                $outputPath . ltrim($this->options['filename'], '/'),
+                "{$outputPath}/{$this->filename}",
                 $typesCollection,
                 []
             ),

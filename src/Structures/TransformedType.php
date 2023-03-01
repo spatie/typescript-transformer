@@ -6,56 +6,49 @@ use ReflectionClass;
 
 class TransformedType
 {
-    public ReflectionClass $reflection;
-
-    public ?string $name = null;
-
-    public string $transformed;
-
-    public MissingSymbolsCollection $missingSymbols;
-
-    public bool $isInline;
-
-    public string $keyword;
-
-    public bool $trailingSemicolon;
-
     public static function create(
         ReflectionClass $class,
         string $name,
         string $transformed,
-        ?MissingSymbolsCollection $missingSymbols = null,
+        ?TypeReferencesCollection $typeReferences = null,
         bool $inline = false,
         string $keyword = 'type',
         bool $trailingSemicolon = true,
     ): self {
-        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $keyword, $trailingSemicolon);
+        return new self(
+            reflection: $class,
+            name: $name,
+            transformed: $transformed,
+            typeReferences: $typeReferences ?? new TypeReferencesCollection(),
+            isInline: $inline,
+            keyword: $keyword,
+            trailingSemicolon: $trailingSemicolon
+        );
     }
 
     public static function createInline(
         ReflectionClass $class,
         string $transformed,
-        ?MissingSymbolsCollection $missingSymbols = null
+        ?TypeReferencesCollection $typeReferences = null
     ): self {
-        return new self($class, null, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), true);
+        return new self(
+            reflection: $class,
+            name: null,
+            transformed: $transformed,
+            typeReferences: $typeReferences ?? new TypeReferencesCollection(),
+            isInline: true
+        );
     }
 
     public function __construct(
-        ReflectionClass $class,
-        ?string $name,
-        string $transformed,
-        MissingSymbolsCollection $missingSymbols,
-        bool $isInline,
-        string $keyword = 'type',
-        bool $trailingSemicolon = true,
+        public ReflectionClass $reflection,
+        public ?string $name,
+        public string $transformed,
+        public TypeReferencesCollection $typeReferences,
+        public bool $isInline,
+        public string $keyword = 'type',
+        public bool $trailingSemicolon = true,
     ) {
-        $this->reflection = $class;
-        $this->name = $name;
-        $this->transformed = $transformed;
-        $this->missingSymbols = $missingSymbols;
-        $this->isInline = $isInline;
-        $this->keyword = $keyword;
-        $this->trailingSemicolon = $trailingSemicolon;
     }
 
     public function getNamespaceSegments(): array
@@ -87,12 +80,12 @@ class TransformedType
         return implode('.', $segments);
     }
 
-    public function replaceSymbol(string $class, string $replacement): void
+    public function replaceTypeReference(TypeReference $typeReference, string $replacement): void
     {
-        $this->missingSymbols->remove($class);
+        $this->typeReferences->remove($typeReference);
 
         $this->transformed = str_replace(
-            "{%{$class}%}",
+            $typeReference->replaceSymbol(),
             $replacement,
             $this->transformed
         );

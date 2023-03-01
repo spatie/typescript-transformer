@@ -1,5 +1,6 @@
 <?php
 
+use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertNotNull;
@@ -36,7 +37,7 @@ it('can transform an enum into a type', function () {
     );
 
     assertEquals("'draft' | 'published' | 'archived'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
     assertFalse($type->isInline);
     assertEquals('type', $type->keyword);
 });
@@ -52,7 +53,7 @@ it('can transform an enum into an enum', function () {
     );
 
     assertEquals("'draft' = 'Draft', 'published' = 'Published', 'archived' = 'Archived'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
     assertFalse($type->isInline);
     assertEquals('enum', $type->keyword);
 });

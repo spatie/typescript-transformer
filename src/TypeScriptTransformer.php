@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer;
 
+use Spatie\TypeScriptTransformer\Actions\EnsureTypesCollectionIsValid;
 use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
 use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
@@ -28,6 +29,8 @@ class TypeScriptTransformer
             new Finder(),
             $this->config,
         ))->execute();
+
+        (new EnsureTypesCollectionIsValid())->execute($typesCollection);
 
         (new PersistTypesCollectionAction($this->config))->execute($typesCollection);
 

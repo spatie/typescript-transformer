@@ -7,6 +7,7 @@ use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -28,19 +29,19 @@ class DtoTransformer implements Transformer
             return null;
         }
 
-        $missingSymbols = new MissingSymbolsCollection();
+        $typeReferences = new TypeReferencesCollection();
 
         $type = join([
-            $this->transformProperties($class, $missingSymbols),
-            $this->transformMethods($class, $missingSymbols),
-            $this->transformExtra($class, $missingSymbols),
+            $this->transformProperties($class, $typeReferences),
+            $this->transformMethods($class, $typeReferences),
+            $this->transformExtra($class, $typeReferences),
         ]);
 
         return TransformedType::create(
             $class,
             $name,
             "{" . PHP_EOL . $type . "}",
-            $missingSymbols
+            $typeReferences
         );
     }
 
@@ -51,18 +52,18 @@ class DtoTransformer implements Transformer
 
     protected function transformProperties(
         ReflectionClass $class,
-        MissingSymbolsCollection $missingSymbols
+        TypeReferencesCollection $typeReferences
     ): string {
         $isOptional = ! empty($class->getAttributes(Optional::class));
 
         return array_reduce(
             $this->resolveProperties($class),
-            function (string $carry, ReflectionProperty $property) use ($isOptional, $missingSymbols) {
+            function (string $carry, ReflectionProperty $property) use ($isOptional, $typeReferences) {
                 $isOptional = $isOptional || ! empty($property->getAttributes(Optional::class));
 
                 $transformed = $this->reflectionToTypeScript(
                     $property,
-                    $missingSymbols,
+                    $typeReferences,
                     ...$this->typeProcessors()
                 );
 
@@ -80,14 +81,14 @@ class DtoTransformer implements Transformer
 
     protected function transformMethods(
         ReflectionClass $class,
-        MissingSymbolsCollection $missingSymbols
+        TypeReferencesCollection $typeReferences
     ): string {
         return '';
     }
 
     protected function transformExtra(
         ReflectionClass $class,
-        MissingSymbolsCollection $missingSymbols
+        TypeReferencesCollection $typeReferences
     ): string {
         return '';
     }

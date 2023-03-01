@@ -8,6 +8,7 @@ use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
 
@@ -15,12 +16,12 @@ trait TransformsTypes
 {
     protected function reflectionToTypeScript(
         ReflectionMethod | ReflectionProperty | ReflectionParameter $reflection,
-        MissingSymbolsCollection $missingSymbolsCollection,
+        TypeReferencesCollection $typeReferences,
         TypeProcessor ...$typeProcessors
     ): ?string {
         $type = $this->reflectionToType(
             $reflection,
-            $missingSymbolsCollection,
+            $typeReferences,
             ...$typeProcessors
         );
 
@@ -30,14 +31,14 @@ trait TransformsTypes
 
         return $this->typeToTypeScript(
             $type,
-            $missingSymbolsCollection,
+            $typeReferences,
             $reflection->getDeclaringClass()?->getName()
         );
     }
 
     protected function reflectionToType(
         ReflectionMethod | ReflectionProperty | ReflectionParameter $reflection,
-        MissingSymbolsCollection $missingSymbolsCollection,
+        TypeReferencesCollection $typeReferences,
         TypeProcessor ...$typeProcessors
     ): ?Type {
         $type = TypeReflector::new($reflection)->reflect();
@@ -46,7 +47,7 @@ trait TransformsTypes
             $type = $processor->process(
                 $type,
                 $reflection,
-                $missingSymbolsCollection
+                $typeReferences
             );
 
             if ($type === null) {
@@ -59,11 +60,11 @@ trait TransformsTypes
 
     protected function typeToTypeScript(
         Type $type,
-        MissingSymbolsCollection $missingSymbolsCollection,
+        TypeReferencesCollection $typeReferences,
         ?string $currentClass = null,
     ): string {
         $transpiler = new TranspileTypeToTypeScriptAction(
-            $missingSymbolsCollection,
+            $typeReferences,
             $currentClass,
         );
 

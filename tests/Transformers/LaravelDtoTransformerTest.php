@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\LaravelDto\LaravelDto;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\LaravelDto\LaravelOtherDto;
 use Spatie\TypeScriptTransformer\Transformers\LaravelDtoTransformer;
@@ -18,8 +19,6 @@ it('can transform a dto', function () {
     );
 
     expect($type->transformed)->toMatchSnapshot();
-    expect([
-        LaravelOtherDto::class,
-    ])->toEqual($type->missingSymbols->all());
+    expect($type->typeReferences->has(LaravelOtherDto::class))->toBeTrue();
     expect($type->isInline)->toBeFalse();
 });

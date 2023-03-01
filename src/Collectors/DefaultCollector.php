@@ -8,6 +8,7 @@ use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeReflectors\ClassTypeReflector;
 
@@ -35,11 +36,11 @@ class DefaultCollector extends Collector
 
     protected function resolveAlreadyTransformedType(ClassTypeReflector $reflector): TransformedType
     {
-        $missingSymbols = new MissingSymbolsCollection();
+        $typeReferences = new TypeReferencesCollection();
         $name = $reflector->getName();
 
         $transpiler = new TranspileTypeToTypeScriptAction(
-            $missingSymbols,
+            $typeReferences,
             $name
         );
 
@@ -47,7 +48,7 @@ class DefaultCollector extends Collector
             $reflector->getReflectionClass(),
             $reflector->getName(),
             $transpiler->execute($reflector->getType()),
-            $missingSymbols
+            $typeReferences
         );
     }
 

@@ -23,9 +23,9 @@ beforeEach(function () {
 it('will persist the types', function () {
     $collection = TypesCollection::create();
 
-    $collection[] = FakeTransformedType::fake('Enum')->withoutNamespace();
-    $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test');
-    $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test\test');
+    $collection->add(FakeTransformedType::fake('Enum')->withoutNamespace());
+    $collection->add(FakeTransformedType::fake('Enum')->withNamespace('test'));
+    $collection->add(FakeTransformedType::fake('Enum')->withNamespace('test\test'));
 
     $this->action->execute($collection);
 
@@ -35,10 +35,10 @@ it('will persist the types', function () {
 it('can persist multiple types in one namespace', function () {
     $collection = TypesCollection::create();
 
-    $collection[] = FakeTransformedType::fake('Enum')->withTransformed('transformed Enum')->withoutNamespace();
-    $collection[] = FakeTransformedType::fake('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace();
-    $collection[] = FakeTransformedType::fake('Enum')->withTransformed('transformed test\Enum')->withNamespace('test');
-    $collection[] = FakeTransformedType::fake('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test');
+    $collection->add(FakeTransformedType::fake('Enum')->withTransformed('transformed Enum')->withoutNamespace());
+    $collection->add(FakeTransformedType::fake('OtherEnum')->withTransformed('transformed OtherEnum')->withoutNamespace());
+    $collection->add(FakeTransformedType::fake('Enum')->withTransformed('transformed test\Enum')->withNamespace('test'));
+    $collection->add(FakeTransformedType::fake('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test'));
 
     $this->action->execute($collection);
 
@@ -48,11 +48,11 @@ it('can persist multiple types in one namespace', function () {
 it('can re save the file', function () {
     $collection = TypesCollection::create();
 
-    $collection[] = FakeTransformedType::fake('Enum')->withoutNamespace();
+    $collection->add(FakeTransformedType::fake('Enum')->withoutNamespace());
 
     $this->action->execute($collection);
 
-    $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test');
+    $collection->add(FakeTransformedType::fake('Enum')->withNamespace('test'));
 
     $this->action->execute($collection);
 

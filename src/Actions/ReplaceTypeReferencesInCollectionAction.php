@@ -4,14 +4,14 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
-class ReplaceSymbolsInCollectionAction
+class ReplaceTypeReferencesInCollectionAction
 {
     public function execute(TypesCollection $collection, $withFullyQualifiedNames = true): TypesCollection
     {
-        $replaceSymbolsInTypeAction = new ReplaceSymbolsInTypeAction($collection, $withFullyQualifiedNames);
+        $replaceTypeReferencesInTypeAction = new ReplaceTypeReferencesInTypeAction($collection, $withFullyQualifiedNames);
 
         foreach ($collection as $type) {
-            $type->transformed = $replaceSymbolsInTypeAction->execute($type);
+            $type->transformed = $replaceTypeReferencesInTypeAction->execute($type);
         }
 
         return $collection;

@@ -21,21 +21,16 @@ use phpDocumentor\Reflection\Types\String_;
 use phpDocumentor\Reflection\Types\This;
 use phpDocumentor\Reflection\Types\Void_;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\Types\StructType;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 
 class TranspileTypeToTypeScriptAction
 {
-    private MissingSymbolsCollection $missingSymbolsCollection;
-
-    private ?string $currentClass;
-
     public function __construct(
-        MissingSymbolsCollection $missingSymbolsCollection,
-        ?string $currentClass = null
+        protected TypeReferencesCollection $typeReferences,
+        protected ?string $currentClass = null
     ) {
-        $this->missingSymbolsCollection = $missingSymbolsCollection;
-        $this->currentClass = $currentClass;
     }
 
     public function execute(Type $type): string
@@ -89,9 +84,11 @@ class TranspileTypeToTypeScriptAction
             return 'object';
         }
 
-        return $this->missingSymbolsCollection->add(
+        $typeReference =  $this->typeReferences->add(
             (string) $object->getFqsen()
         );
+
+        return $typeReference->replaceSymbol();
     }
 
     private function resolveStructType(StructType $type): string
@@ -111,7 +108,9 @@ class TranspileTypeToTypeScriptAction
             return 'any';
         }
 
-        return $this->missingSymbolsCollection->add($this->currentClass);
+        $typeReference = $this->typeReferences->add($this->currentClass);
+
+        return $typeReference->replaceSymbol();
     }
 
     private function isTypeScriptArray(Type $keyType): bool

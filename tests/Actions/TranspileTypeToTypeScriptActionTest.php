@@ -4,8 +4,10 @@ use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Self_;
 use phpDocumentor\Reflection\Types\Static_;
 use phpDocumentor\Reflection\Types\This;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use function PHPUnit\Framework\assertContains;
 use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertTrue;
 use function Spatie\Snapshots\assertMatchesSnapshot;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
@@ -13,12 +15,12 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Types\StructType;
 
 beforeEach(function () {
-    $this->missingSymbols = new MissingSymbolsCollection();
+    $this->typeReferences = new TypeReferencesCollection();
 
     $this->typeResolver = new TypeResolver();
 
     $this->action = new TranspileTypeToTypeScriptAction(
-        $this->missingSymbols,
+        $this->typeReferences,
         'fake_class'
     );
 });
@@ -32,7 +34,7 @@ it('can resolve types', function (string $input, string $output) {
 })->with('types');
 
 it('can resolve self referencing types without current class', function () {
-    $action = new TranspileTypeToTypeScriptAction($this->missingSymbols);
+    $action = new TranspileTypeToTypeScriptAction($this->typeReferences);
 
     assertEquals('any', $action->execute(new Self_()));
     assertEquals('any', $action->execute(new Static_()));
@@ -53,6 +55,6 @@ it('can resolve a struct type', function () {
     ]));
 
     assertMatchesSnapshot($transformed);
-    assertContains(RegularEnum::class, $this->missingSymbols->all());
-    assertContains('fake_class', $this->missingSymbols->all());
+    assertTrue($this->typeReferences->has(RegularEnum::class));
+    assertTrue($this->typeReferences->has('fake_class'));
 });

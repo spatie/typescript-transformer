@@ -46,7 +46,7 @@ class ResolveTypesCollectionAction
                 continue;
             }
 
-            $collection[] = $transformedType;
+            $collection->add($transformedType);
         }
 
         return $collection;

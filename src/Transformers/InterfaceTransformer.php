@@ -2,10 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
+use Psalm\Type;
 use ReflectionClass;
 use ReflectionMethod;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 
 class InterfaceTransformer extends DtoTransformer implements Transformer
 {
@@ -24,17 +26,17 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
 
     protected function transformMethods(
         ReflectionClass $class,
-        MissingSymbolsCollection $missingSymbols
+        TypeReferencesCollection $typeReferences
     ): string {
         return array_reduce(
             $class->getMethods(ReflectionMethod::IS_PUBLIC),
-            function (string $carry, ReflectionMethod $method) use ($missingSymbols) {
+            function (string $carry, ReflectionMethod $method) use ($typeReferences) {
                 $transformedParameters = \array_reduce(
                     $method->getParameters(),
-                    function (string $parameterCarry, \ReflectionParameter $parameter) use ($missingSymbols) {
+                    function (string $parameterCarry, \ReflectionParameter $parameter) use ($typeReferences) {
                         $type = $this->reflectionToTypeScript(
                             $parameter,
-                            $missingSymbols,
+                            $typeReferences,
                             ...$this->typeProcessors()
                         );
 
@@ -52,7 +54,7 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
                 if ($method->hasReturnType()) {
                     $returnType = $this->reflectionToTypeScript(
                         $method,
-                        $missingSymbols,
+                        $typeReferences,
                         ...$this->typeProcessors()
                     );
                 }
@@ -65,7 +67,7 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
 
     protected function transformProperties(
         ReflectionClass $class,
-        MissingSymbolsCollection $missingSymbols
+        TypeReferencesCollection $typeReferences
     ): string {
         return '';
     }

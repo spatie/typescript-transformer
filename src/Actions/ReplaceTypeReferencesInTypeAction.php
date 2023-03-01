@@ -4,9 +4,10 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
-class ReplaceSymbolsInTypeAction
+class ReplaceTypeReferencesInTypeAction
 {
     protected TypesCollection $collection;
 
@@ -26,25 +27,33 @@ class ReplaceSymbolsInTypeAction
             throw CircularDependencyChain::create($chain);
         }
 
-        foreach ($type->missingSymbols->all() as $missingSymbol) {
-            $this->collection[$type] = $this->replaceSymbol($missingSymbol, $type, $chain);
+        foreach ($type->typeReferences as $typeReference) {
+            $this->collection->add(
+                $this->replaceSymbol($typeReference, $type, $chain)
+            );
         }
 
         return $type->transformed;
     }
 
-    protected function replaceSymbol(string $missingSymbol, TransformedType $type, array $chain): TransformedType
+    protected function replaceSymbol(
+        TypeReference $typeReference,
+        TransformedType $type,
+        array $chain
+    ): TransformedType
     {
-        $found = $this->collection[$missingSymbol];
+        $found = $this->collection->get(
+            $typeReference->getFqcn()
+        );
 
         if ($found === null) {
-            $type->replaceSymbol($missingSymbol, 'any');
+            $type->replaceTypeReference($typeReference, 'any');
 
             return $type;
         }
 
         if (! $found->isInline) {
-            $type->replaceSymbol($missingSymbol, $found->getTypeScriptName($this->withFullyQualifiedNames));
+            $type->replaceTypeReference($typeReference, $found->getTypeScriptName($this->withFullyQualifiedNames));
 
             return $type;
         }
@@ -54,7 +63,7 @@ class ReplaceSymbolsInTypeAction
             array_merge($chain, [$type->getTypeScriptName()])
         );
 
-        $type->replaceSymbol($missingSymbol, $transformed);
+        $type->replaceTypeReference($typeReference, $transformed);
 
         return $type;
     }

@@ -14,6 +14,7 @@ use ReflectionParameter;
 use ReflectionProperty;
 use ReflectionUnionType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 
 class LaravelCollectionTypeProcessor implements TypeProcessor
@@ -21,7 +22,7 @@ class LaravelCollectionTypeProcessor implements TypeProcessor
     public function process(
         Type $type,
         ReflectionProperty|ReflectionParameter|ReflectionMethod $reflection,
-        MissingSymbolsCollection $missingSymbolsCollection
+        TypeReferencesCollection $typeReferences
     ): Type {
         if (! $this->hasLaravelCollection($reflection)) {
             return $type;

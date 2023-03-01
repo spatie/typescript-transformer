@@ -8,6 +8,7 @@ use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 
 class ReplaceDefaultsTypeProcessor implements TypeProcessor
 {
@@ -24,7 +25,7 @@ class ReplaceDefaultsTypeProcessor implements TypeProcessor
     public function process(
         Type $type,
         ReflectionProperty | ReflectionParameter | ReflectionMethod $reflection,
-        MissingSymbolsCollection $missingSymbolsCollection
+        TypeReferencesCollection $typeReferences
     ): ?Type {
         return $this->walk($type, function (Type $type) {
             if (! $type instanceof Object_) {

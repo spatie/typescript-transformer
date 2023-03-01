@@ -2,6 +2,7 @@
 
 use function PHPUnit\Framework\assertArrayHasKey;
 use function PHPUnit\Framework\assertCount;
+use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertTrue;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
@@ -51,30 +52,30 @@ it('will check if auto discover types paths are defined', function () {
 });
 
 it('parses a typescript enum correctly', function () {
-    $type = $this->action->execute()[TypeScriptEnum::class];
+    $type = $this->action->execute()->get(TypeScriptEnum::class);
 
     assertEquals(new ReflectionClass(new TypeScriptEnum('js')), $type->reflection);
     assertEquals('TypeScriptEnum', $type->name);
     assertEquals("'js'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
 });
 
 it('parses a typescript enum with name correctly', function () {
-    $type = $this->action->execute()[TypeScriptEnumWithName::class];
+    $type = $this->action->execute()->get(TypeScriptEnumWithName::class);
 
     assertEquals(new ReflectionClass(new TypeScriptEnumWithName('js')), $type->reflection);
     assertEquals('EnumWithName', $type->name);
     assertEquals("'js'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
 });
 
 it('parses a typescript enum with custom transformer correctly', function () {
-    $type = $this->action->execute()[TypeScriptEnumWithCustomTransformer::class];
+    $type = $this->action->execute()->get(TypeScriptEnumWithCustomTransformer::class);
 
     assertEquals(new ReflectionClass(new TypeScriptEnumWithCustomTransformer('js')), $type->reflection);
     assertEquals('TypeScriptEnumWithCustomTransformer', $type->name);
     assertEquals("fake", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
 });
 
 it('can parse multiple directories', function () {
@@ -89,7 +90,7 @@ it('can parse multiple directories', function () {
         ->collectors([DefaultCollector::class])
     );
 
-    $types = $this->action->execute();
+    $types = iterator_to_array($this->action->execute());
 
     assertCount(8, $types);
 
@@ -112,7 +113,7 @@ it('can add an collector for types', function () {
         ->collectors([FakeTypeScriptCollector::class])
     );
 
-    $types = $this->action->execute();
+    $types = iterator_to_array($this->action->execute());
 
     assertCount(4, $types);
     assertArrayHasKey(RegularEnum::class, $types);

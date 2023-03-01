@@ -32,7 +32,7 @@ it('will register the config correctly', function () {
 
     expect($config->getAutoDiscoverTypesPaths())->toEqual(['fake-searching-path']);
     expect($config->getTransformers())->toEqual([new SpatieStateTransformer()]);
-    expect($config->getOutputPath())->toEqual(__DIR__.'/');
+    expect($config->getOutputPath())->toEqual(__DIR__);
     expect($config->getDefaultTypeReplacements())->toEqual([
         DateTime::class => 'string'
     ]);

@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Tests\Transformers;
 
 use DateTime;
+use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertNotNull;
@@ -61,7 +62,7 @@ it('can transform a backed enum into enum', function () {
     );
 
     assertEquals("'JS' = 'js', 'PHP' = 'php'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
     assertFalse($type->isInline);
     assertEquals('enum', $type->keyword);
 });
@@ -77,7 +78,7 @@ it('can transform a backed enum into a union', function () {
     );
 
     assertEquals("'js' | 'php'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
     assertFalse($type->isInline);
     assertEquals('type', $type->keyword);
 });
@@ -93,7 +94,7 @@ it('can transform a backed enum with integers into an enm', function () {
     );
 
     assertEquals("'JS' = 1, 'PHP' = 2", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
     assertFalse($type->isInline);
     assertEquals('enum', $type->keyword);
 });
@@ -109,7 +110,7 @@ it('can transform a backed enum with integers into a union', function () {
     );
 
     assertEquals("1 | 2", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
     assertFalse($type->isInline);
     assertEquals('type', $type->keyword);
 });

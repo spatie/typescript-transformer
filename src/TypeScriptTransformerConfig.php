@@ -134,7 +134,7 @@ class TypeScriptTransformerConfig
 
     public function getOutputPath(): string
     {
-        return rtrim($this->outputPath, '/').'/';
+        return rtrim($this->outputPath, '/');
     }
 
 

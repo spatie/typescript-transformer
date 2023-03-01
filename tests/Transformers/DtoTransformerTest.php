@@ -2,6 +2,7 @@
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\String_;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use function PHPUnit\Framework\assertEquals;
 use function Spatie\Snapshots\assertMatchesSnapshot;
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
@@ -35,13 +36,11 @@ it('will replace types', function () {
     );
 
     assertMatchesTextSnapshot($type->transformed);
-    assertEquals([
-        Enum::class,
-        RegularEnum::class,
-        OtherDto::class,
-        DtoWithChildren::class,
-        YetAnotherDto::class,
-    ], $type->missingSymbols->all());
+    expect($type->typeReferences->has(Enum::class))->toBeTrue();
+    expect($type->typeReferences->has(RegularEnum::class))->toBeTrue();
+    expect($type->typeReferences->has(OtherDto::class))->toBeTrue();
+    expect($type->typeReferences->has(DtoWithChildren::class))->toBeTrue();
+    expect($type->typeReferences->has(YetAnotherDto::class))->toBeTrue();
 });
 
 it('a type processor can remove properties', function () {
@@ -54,7 +53,7 @@ it('a type processor can remove properties', function () {
                 public function process(
                     Type $type,
                     ReflectionProperty | ReflectionParameter | ReflectionMethod $reflection,
-                    MissingSymbolsCollection $missingSymbolsCollection
+                    TypeReferencesCollection $typeReferences
                 ): ?Type {
                     return $type instanceof String_ ? $type : null;
                 }

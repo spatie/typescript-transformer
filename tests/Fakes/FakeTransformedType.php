@@ -6,15 +6,16 @@ use Exception;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 
 class FakeTransformedType extends TransformedType
 {
-    public static function create(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false, string $keyword = 'type', bool $trailingSemicolon = true): TransformedType
+    public static function create(ReflectionClass $class, string $name, string $transformed, ?TypeReferencesCollection $typeReferences = null, bool $inline = false, string $keyword = 'type', bool $trailingSemicolon = true): TransformedType
     {
         throw new Exception("Fake type");
     }
 
-    public static function createInline(ReflectionClass $class, string $transformed, ?MissingSymbolsCollection $missingSymbols = null): TransformedType
+    public static function createInline(ReflectionClass $class, string $transformed, ?TypeReferencesCollection $typeReferences = null): TransformedType
     {
         throw new Exception("Fake type");
     }
@@ -27,7 +28,7 @@ class FakeTransformedType extends TransformedType
             FakeReflectionClass::create()->withName($name),
             $name,
             'fake-transformed',
-            new MissingSymbolsCollection(),
+            new TypeReferencesCollection(),
             false
         );
     }
@@ -60,10 +61,10 @@ class FakeTransformedType extends TransformedType
         return $this;
     }
 
-    public function withMissingSymbols(array $missingSymbols): self
+    public function withTypeReferences(array $typeReferences): self
     {
-        foreach ($missingSymbols as $missingSymbol) {
-            $this->missingSymbols->add($missingSymbol);
+        foreach ($typeReferences as $typeReference) {
+            $this->typeReferences->add($typeReference);
         }
 
         return $this;

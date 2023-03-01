@@ -1,6 +1,7 @@
 <?php
 
 use MyCLabs\Enum\Enum;
+use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertNull;
@@ -38,7 +39,7 @@ it('can transform an enum into a type', function () {
     $type = $transformer->transform(new ReflectionClass($enum), 'Enum');
 
     assertEquals("'view' | 'edit'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
     assertEquals('type', $type->keyword);
 });
 
@@ -55,6 +56,6 @@ it('can transform an enum into an enum', function () {
     $type = $transformer->transform(new ReflectionClass($enum), 'Enum');
 
     assertEquals("'VIEW' = 'view', 'EDIT' = 'edit'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
+    assertEmpty($type->typeReferences);
     assertEquals('enum', $type->keyword);
 });

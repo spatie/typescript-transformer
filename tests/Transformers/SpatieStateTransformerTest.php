@@ -32,6 +32,6 @@ it('can transform an state', function () {
     );
 
     expect($type->transformed)->toEqual("'child' | 'other_child'");
-    expect($type->missingSymbols->isEmpty())->toBeTrue();
+    expect($type->typeReferences)->toBeEmpty();
     expect($type->isInline)->toBeFalse();
 });

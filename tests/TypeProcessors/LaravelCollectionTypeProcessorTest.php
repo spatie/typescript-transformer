@@ -4,6 +4,7 @@ use Illuminate\Support\Collection;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\TypeProcessors\LaravelCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
 
@@ -14,7 +15,7 @@ function processType(object $class, string $property): Type
     return test()->processor->process(
         TypeReflector::new($reflection)->reflectFromDocblock(),
         $reflection,
-        new MissingSymbolsCollection()
+        new TypeReferencesCollection()
     );
 }
 
