@@ -5,13 +5,13 @@ use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Integer;
 use phpDocumentor\Reflection\Types\Object_;
 use phpDocumentor\Reflection\Types\String_;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\BackedEnumWithoutAnnotation;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
-use Spatie\TypeScriptTransformer\Types\RecordType;
-use Spatie\TypeScriptTransformer\Types\StructType;
-
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertInstanceOf;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\BackedEnumWithoutAnnotation;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
+
+use Spatie\TypeScriptTransformer\Types\RecordType;
+use Spatie\TypeScriptTransformer\Types\StructType;
 
 it('creates a scalar key and an object value', function () {
     $record = new RecordType('string', RegularEnum::class);
