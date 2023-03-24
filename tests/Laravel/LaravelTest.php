@@ -17,28 +17,30 @@ beforeEach(function () {
 
 it('will register the config correctly', function () {
     config()->set('typescript.auto_discover_types', 'fake-searching-path');
-    config()->set('typescript.transformers', [SpatieStateTransformer::class]);
+    config()->set('typescript.transformers', [
+        SpatieStateTransformer::class => []
+    ]);
     config()->set('typescript.output_path', __DIR__);
     config()->set('typescript.default_type_replacements', [
         DateTime::class => 'string'
     ]);
     config()->set('typescript.writer', ModuleWriter::class);
     config()->set('typescript.formatter', EslintFormatter::class);
-    config()->set('typescript.transform_to_native_enums', true);
     config()->set('typescript.file_splitter.class', SingleFileSplitter::class);
     config()->set('typescript.file_splitter.options', ['filename' => 'index.d.ts']);
 
     $config = resolve(TypeScriptTransformerConfig::class);
 
     expect($config->getAutoDiscoverTypesPaths())->toEqual(['fake-searching-path']);
-    expect($config->getTransformers())->toEqual([new SpatieStateTransformer()]);
+    expect($config->getTransformers())->toEqual([new SpatieStateTransformer(
+        $config
+    )]);
     expect($config->getOutputPath())->toEqual(__DIR__);
     expect($config->getDefaultTypeReplacements())->toEqual([
         DateTime::class => 'string'
     ]);
     expect($config->getWriter())->toBeInstanceOf(ModuleWriter::class);
     expect($config->getFormatter())->toBeInstanceOf(EslintFormatter::class);
-    expect($config->shouldTransformToNativeEnums())->toBeTrue();
     expect($config->getFileSplitter())->toEqual(new SingleFileSplitter(['filename' => 'index.d.ts']));
 });
 

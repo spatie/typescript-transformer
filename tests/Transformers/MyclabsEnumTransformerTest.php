@@ -1,61 +1,52 @@
 <?php
 
-use MyCLabs\Enum\Enum;
-use function PHPUnit\Framework\assertEmpty;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertNull;
-use function PHPUnit\Framework\assertTrue;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\MyclabsEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\SpatieEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\ChildState;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\State;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
+use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use function PHPUnit\Framework\assertFalse;
+use function PHPUnit\Framework\assertTrue;
 
-it('will check if an enum can be transformed', function () {
+it('will only convert enums', function () {
     $transformer = new MyclabsEnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
+        TypeScriptTransformerConfig::create()->transformer(MyclabsEnumTransformer::class, [])
     );
 
-    $enum = new class('view') extends Enum {
-        private const VIEW = 'view';
-        private const EDIT = 'edit';
-    };
+    assertTrue($transformer->canTransform(
+        new ReflectionClass(MyclabsEnum::class),
+    ));
 
-    $noEnum = new class {
-    };
-
-    assertNotNull($transformer->transform(new ReflectionClass($enum), 'Enum'));
-    assertNull($transformer->transform(new ReflectionClass($noEnum), 'Enum'));
+    assertFalse($transformer->canTransform(
+        new ReflectionClass(DateTime::class),
+    ));
 });
 
-it('can transform an enum into a type', function () {
+it('can transform a myclabs enum into an enum', function () {
     $transformer = new MyclabsEnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
+        TypeScriptTransformerConfig::create()->transformer(MyclabsEnumTransformer::class, ['as_native_enum' => true])
     );
 
-    $enum = new class('view') extends Enum {
-        private const VIEW = 'view';
-        private const EDIT = 'edit';
-    };
+    $type = $transformer->transform(new ReflectionClass(MyclabsEnum::class));
 
-    $type = $transformer->transform(new ReflectionClass($enum), 'Enum');
-
-    assertEquals("'view' | 'edit'", $type->transformed);
-    assertEmpty($type->typeReferences);
-    assertEquals('type', $type->keyword);
+    expect($type)
+        ->inline->toBeFalse()
+        ->typeReferences->toBeEmpty()
+        ->toString()->toBe("enum MyclabsEnum {VIEW = 'view', EDIT = 'edit'}");
 });
 
-it('can transform an enum into an enum', function () {
+it('can transform a myclabs enum into a union type', function () {
     $transformer = new MyclabsEnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
+        TypeScriptTransformerConfig::create()->transformer(MyclabsEnumTransformer::class, ['as_native_enum' => false])
     );
 
-    $enum = new class('view') extends Enum {
-        private const VIEW = 'view';
-        private const EDIT = 'edit';
-    };
+    $type = $transformer->transform(new ReflectionClass(MyclabsEnum::class));
 
-    $type = $transformer->transform(new ReflectionClass($enum), 'Enum');
-
-    assertEquals("'VIEW' = 'view', 'EDIT' = 'edit'", $type->transformed);
-    assertEmpty($type->typeReferences);
-    assertEquals('enum', $type->keyword);
+    expect($type)
+        ->inline->toBeFalse()
+        ->typeReferences->toBeEmpty()
+        ->toString()->toBe("type MyclabsEnum = 'view' | 'edit';");
 });

@@ -3,12 +3,14 @@
 namespace Spatie\TypeScriptTransformer\Tests\Factories;
 
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionClass;
 
-class TransformedTypeFactory
+class TransformedFactory
 {
     public static function create(?string $name = null): self
     {
@@ -19,32 +21,24 @@ class TransformedTypeFactory
      * @param array<string|TypeReference> $typeReferences
      */
     protected function __construct(
-        protected TypeReference $referencing,
+        protected TypeReference $name,
         protected string $transformed = 'fake-transformed',
-        protected ?ReflectionClass $reflection = null,
         protected array $typeReferences = [],
         protected bool $isInline = false,
     ) {
     }
 
-    public function build(): TransformedType
+    public function build(): Transformed
     {
-        $reflection = FakeReflectionClass::create()->withName($this->referencing->name);
-
-        if (! empty($this->referencing->namespaceSegments)) {
-            $reflection->withNamespace(implode('\\', $this->referencing->namespaceSegments));
-        }
-
         $typeReferences = new TypeReferencesCollection();
 
         foreach ($this->typeReferences as $typeReference) {
             $typeReferences->add($typeReference);
         }
 
-        return new TransformedType(
-            $this->reflection ?? $reflection,
-            $this->referencing->name,
-            $this->transformed,
+        return new Transformed(
+            $this->name,
+            new TypeScriptRaw($this->transformed),
             $typeReferences,
             $this->isInline,
         );
@@ -55,15 +49,6 @@ class TransformedTypeFactory
         $clone = clone $this;
 
         $clone->transformed = $transformed;
-
-        return $clone;
-    }
-
-    public function withReflection(ReflectionClass $reflection): self
-    {
-        $clone = clone $this;
-
-        $clone->reflection = $reflection;
 
         return $clone;
     }

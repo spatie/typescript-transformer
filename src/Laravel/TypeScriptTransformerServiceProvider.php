@@ -42,7 +42,6 @@ class TypeScriptTransformerServiceProvider extends PackageServiceProvider
                 ->outputPath(config('typescript.output_path'))
                 ->writer(config('typescript.writer', TypeDefinitionWriter::class))
                 ->formatter(config('typescript.formatter'))
-                ->transformToNativeEnums(config('typescript.transform_to_native_enums', false))
         );
     }
 }

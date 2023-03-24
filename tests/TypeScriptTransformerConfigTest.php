@@ -11,19 +11,11 @@ use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 it('can create transformers', function () {
-    $config = TypeScriptTransformerConfig::create()->transformers([
-        MyclabsEnumTransformer::class,
-    ]);
+    $config = TypeScriptTransformerConfig::create()->transformer(
+        MyclabsEnumTransformer::class, ['as_native_enum' => false]
+    );
 
     assertEquals([new MyclabsEnumTransformer($config)], $config->getTransformers());
-});
-
-it('can create transformers with constructor', function () {
-    $config = TypeScriptTransformerConfig::create()->transformers([
-        DtoTransformer::class,
-    ]);
-
-    assertEquals([new DtoTransformer($config)], $config->getTransformers());
 });
 
 it('will check if a class property replacement class exists', function () {

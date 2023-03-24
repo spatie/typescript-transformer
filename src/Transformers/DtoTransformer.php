@@ -6,8 +6,15 @@ use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\TransformedTypeAlias;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptObject;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptSingleType;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -16,51 +23,48 @@ class DtoTransformer implements Transformer
 {
     use TransformsTypes;
 
-    protected TypeScriptTransformerConfig $config;
-
-    public function __construct(TypeScriptTransformerConfig $config)
-    {
-        $this->config = $config;
+    public function __construct(
+        protected TypeScriptTransformerConfig $config,
+    ) {
     }
 
-    public function transform(ReflectionClass $class, string $name): ?TransformedType
-    {
-        if (! $this->canTransform($class)) {
-            return null;
-        }
-
-        $typeReferences = new TypeReferencesCollection();
-
-        $type = join([
-            $this->transformProperties($class, $typeReferences),
-            $this->transformMethods($class, $typeReferences),
-            $this->transformExtra($class, $typeReferences),
-        ]);
-
-        return TransformedType::create(
-            $class,
-            $name,
-            "{" . PHP_EOL . $type . "}",
-            $typeReferences
-        );
-    }
-
-    protected function canTransform(ReflectionClass $class): bool
+    public function canTransform(ReflectionClass $class): bool
     {
         return true;
+    }
+
+    public function transform(ReflectionClass $class, ?string $name = null): Transformed
+    {
+        $typeReferences = new TypeReferencesCollection();
+
+        $properties = [
+            ...$this->transformProperties($class, $typeReferences),
+            ...$this->transformMethods($class, $typeReferences),
+            ...$this->transformExtra($class, $typeReferences),
+        ];
+
+        $named = TypeReference::fromFqcn($class->name, $name);
+
+        $structure = new TypeScriptAlias(
+            $named->getTypeScriptName(),
+            new TypeScriptObject($properties),
+        );
+
+        return new Transformed(
+            name: $named,
+            structure: $structure,
+            typeReferences: $typeReferences
+        );
     }
 
     protected function transformProperties(
         ReflectionClass $class,
         TypeReferencesCollection $typeReferences
-    ): string {
+    ): array {
         $isOptional = ! empty($class->getAttributes(Optional::class));
 
-        return array_reduce(
-            $this->resolveProperties($class),
-            function (string $carry, ReflectionProperty $property) use ($isOptional, $typeReferences) {
-                $isOptional = $isOptional || ! empty($property->getAttributes(Optional::class));
-
+        return collect($this->resolveProperties($class))
+            ->map(function (ReflectionProperty $property) use ($isOptional, $typeReferences) {
                 $transformed = $this->reflectionToTypeScript(
                     $property,
                     $typeReferences,
@@ -68,29 +72,34 @@ class DtoTransformer implements Transformer
                 );
 
                 if ($transformed === null) {
-                    return $carry;
+                    return null;
                 }
 
-                return $isOptional
-                    ? "{$carry}{$property->getName()}?: {$transformed};" . PHP_EOL
-                    : "{$carry}{$property->getName()}: {$transformed};" . PHP_EOL;
-            },
-            ''
-        );
+                $isOptional = $isOptional || ! empty($property->getAttributes(Optional::class));
+
+                return new TypeScriptProperty(
+                    $property->getName(),
+                    new TypeScriptSingleType($transformed),
+                    $isOptional
+                );
+            })
+            ->filter()
+            ->values()
+            ->all();
     }
 
     protected function transformMethods(
         ReflectionClass $class,
         TypeReferencesCollection $typeReferences
-    ): string {
-        return '';
+    ): array {
+        return [];
     }
 
     protected function transformExtra(
         ReflectionClass $class,
         TypeReferencesCollection $typeReferences
-    ): string {
-        return '';
+    ): array {
+        return [];
     }
 
     protected function typeProcessors(): array
@@ -106,7 +115,7 @@ class DtoTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn (ReflectionProperty $property) => ! $property->isStatic()
+            fn(ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);

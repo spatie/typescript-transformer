@@ -1,6 +1,6 @@
 <?php
 
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedTypeFactory;
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ReplaceTypeReferencesInCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
@@ -11,8 +11,8 @@ it('can replace missing symbols', function () {
 
     $collection = TypesCollection::create();
 
-    $collection->add(TransformedTypeFactory::create('enums\Enum')->build());
-    $collection->add(TransformedTypeFactory::create('Dto')
+    $collection->add(TransformedFactory::create('enums\Enum')->build());
+    $collection->add(TransformedFactory::create('Dto')
         ->withTransformed('{enum: {%enums\Enum%}, non-existing: {%non-existing%}}')
         ->withTypeReferences('enums\Enum', 'non-existing')
         ->build()
@@ -20,7 +20,7 @@ it('can replace missing symbols', function () {
 
     $collection = $action->execute($collection);
 
-    assertEquals('{enum: enums.Enum, non-existing: any}', $collection->get('Dto')->transformed);
+    assertEquals('{enum: enums.Enum, non-existing: any}', $collection->get('Dto')->toString());
 });
 
 it('can replace missing symbols without fully qualified names', function () {
@@ -28,9 +28,9 @@ it('can replace missing symbols without fully qualified names', function () {
 
     $collection = TypesCollection::create();
 
-    $collection->add(TransformedTypeFactory::create('enums\Enum')->build());
+    $collection->add(TransformedFactory::create('enums\Enum')->build());
     $collection->add(
-        TransformedTypeFactory::create('Dto')
+        TransformedFactory::create('Dto')
             ->withTransformed('{enum: {%enums\Enum%}, non-existing: {%non-existing%}}')
             ->withTypeReferences('enums\Enum', 'non-existing')
             ->build()
@@ -38,5 +38,5 @@ it('can replace missing symbols without fully qualified names', function () {
 
     $collection = $action->execute($collection, false);
 
-    assertEquals('{enum: Enum, non-existing: any}', $collection->get('Dto')->transformed);
+    assertEquals('{enum: Enum, non-existing: any}', $collection->get('Dto')->toString());
 });

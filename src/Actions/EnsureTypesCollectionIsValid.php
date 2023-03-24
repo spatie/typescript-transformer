@@ -3,7 +3,8 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
 class EnsureTypesCollectionIsValid
@@ -13,7 +14,7 @@ class EnsureTypesCollectionIsValid
         $structure = [];
 
         foreach ($typesCollection as $type) {
-            if ($type->isInline) {
+            if ($type->inline) {
                 continue;
             }
 
@@ -22,10 +23,10 @@ class EnsureTypesCollectionIsValid
     }
 
     protected function ensureTypeCanBeAdded(
-        TransformedType $type,
+        Transformed $type,
         array &$structure,
     ): void {
-        $namespace = array_reduce($type->getNamespaceSegments(), function (array $checkedSegments, string $segment) use (&$structure) {
+        $namespace = array_reduce($type->name->namespaceSegments, function (array $checkedSegments, string $segment) use (&$structure) {
             $segments = array_merge($checkedSegments, [$segment]);
 
             $namespace = join('.', $segments);
@@ -47,18 +48,18 @@ class EnsureTypesCollectionIsValid
             return $segments;
         }, []);
 
-        $namespacedType = join('.', array_merge($namespace, [$type->name]));
+        $namespacedType = join('.', array_merge($namespace, [$type->name->name]));
 
         if (array_key_exists($namespacedType, $structure)) {
             throw SymbolAlreadyExists::whenAddingType(
-                $type->reflection->getName(),
+                $type->name->getFqcn(),
                 $structure[$namespacedType]
             );
         }
 
         $structure[$namespacedType] = [
             'kind' => 'type',
-            'value' => $type->reflection->getName(),
+            'value' => $type->name->getFqcn(),
         ];
     }
 }

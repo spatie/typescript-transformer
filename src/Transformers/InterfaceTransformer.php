@@ -5,70 +5,102 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use Psalm\Type;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionParameter;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptInterface;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptMethod;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptObject;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptParameter;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptSingleType;
 
 class InterfaceTransformer extends DtoTransformer implements Transformer
 {
-    public function transform(ReflectionClass $class, string $name): ?TransformedType
+    public function canTransform(ReflectionClass $class): bool
     {
-        if (! $class->isInterface()) {
-            return null;
-        }
+        return $class->isInterface();
+    }
 
-        $transformedType = parent::transform($class, $name);
-        $transformedType->keyword = 'interface';
-        $transformedType->trailingSemicolon = false;
+    public function transform(ReflectionClass $class, ?string $name = null): Transformed
+    {
+        $typeReferences = new TypeReferencesCollection();
 
-        return $transformedType;
+        $items = [
+            ...$this->transformProperties($class, $typeReferences),
+            ...$this->transformMethods($class, $typeReferences),
+            ...$this->transformExtra($class, $typeReferences),
+        ];
+
+        $named = TypeReference::fromFqcn($class->name, $name);
+
+        $structure = new TypeScriptInterface(
+            $named->getTypeScriptName(),
+            array_values(array_filter(
+                $items,
+                fn(mixed $item) => $item instanceof TypeScriptProperty,
+            )),
+            array_values(array_filter(
+                $items,
+                fn(mixed $item) => $item instanceof TypeScriptMethod,
+            ))
+        );
+
+        return new Transformed(
+            name: $named,
+            structure: $structure,
+            typeReferences: $typeReferences
+        );
     }
 
     protected function transformMethods(
         ReflectionClass $class,
         TypeReferencesCollection $typeReferences
-    ): string {
-        return array_reduce(
-            $class->getMethods(ReflectionMethod::IS_PUBLIC),
-            function (string $carry, ReflectionMethod $method) use ($typeReferences) {
-                $transformedParameters = \array_reduce(
-                    $method->getParameters(),
-                    function (string $parameterCarry, \ReflectionParameter $parameter) use ($typeReferences) {
+    ): array {
+        return collect($class->getMethods(ReflectionMethod::IS_PUBLIC))
+            ->map(function (ReflectionMethod $method) use ($typeReferences) {
+                $parameters = collect($method->getParameters())
+                    ->map(function (ReflectionParameter $parameter) use ($typeReferences) {
                         $type = $this->reflectionToTypeScript(
                             $parameter,
                             $typeReferences,
                             ...$this->typeProcessors()
                         );
 
-                        $output = '';
-                        if ($parameterCarry !== '') {
-                            $output .= ', ';
+                        if ($type === null) {
+                            return null;
                         }
 
-                        return "{$parameterCarry}{$output}{$parameter->getName()}: {$type}";
-                    },
-                    ''
-                );
+                        return new TypeScriptParameter(
+                            $parameter->name,
+                            new TypeScriptSingleType($type),
+                            $parameter->isOptional()
+                        );
+                    })
+                    ->filter()
+                    ->values()
+                    ->all();
 
-                $returnType = 'any';
-                if ($method->hasReturnType()) {
-                    $returnType = $this->reflectionToTypeScript(
+                $returnType = $method->hasReturnType()
+                    ? $this->reflectionToTypeScript(
                         $method,
                         $typeReferences,
                         ...$this->typeProcessors()
-                    );
-                }
+                    )
+                    : 'any';
 
-                return "{$carry}{$method->getName()}({$transformedParameters}): {$returnType};" . PHP_EOL;
-            },
-            ''
-        );
-    }
-
-    protected function transformProperties(
-        ReflectionClass $class,
-        TypeReferencesCollection $typeReferences
-    ): string {
-        return '';
+                return new TypeScriptMethod(
+                    $method->name,
+                    $parameters,
+                    new TypeScriptSingleType($returnType)
+                );
+            })
+            ->filter()
+            ->values()
+            ->all();
     }
 }

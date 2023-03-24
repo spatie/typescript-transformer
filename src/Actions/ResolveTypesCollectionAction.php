@@ -5,28 +5,29 @@ namespace Spatie\TypeScriptTransformer\Actions;
 use Exception;
 use Generator;
 use ReflectionClass;
+use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Exceptions\NoAutoDiscoverTypesPathsDefined;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\Structures\TypeReference;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptRaw;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
+use Spatie\TypeScriptTransformer\TypeReflectors\ClassTypeReflector;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
 class ResolveTypesCollectionAction
 {
-    protected Finder $finder;
+    protected ResolveTransformedAction $resolveTransformedAction;
 
-    /** @var \Spatie\TypeScriptTransformer\Collectors\Collector[] */
-    protected array $collectors;
-
-    protected TypeScriptTransformerConfig $config;
-
-    public function __construct(Finder $finder, TypeScriptTransformerConfig $config)
-    {
-        $this->finder = $finder;
-
-        $this->config = $config;
-
-        $this->collectors = $config->getCollectors();
+    public function __construct(
+        protected Finder $finder,
+        protected TypeScriptTransformerConfig $config
+    ) {
+        $this->resolveTransformedAction = new ResolveTransformedAction($this->config);
     }
 
     public function execute(): TypesCollection
@@ -40,7 +41,7 @@ class ResolveTypesCollectionAction
         }
 
         foreach ($this->resolveIterator($paths) as $class) {
-            $transformedType = $this->resolveTransformedType($class);
+            $transformedType = $this->resolveTransformedAction->execute($class);
 
             if ($transformedType === null) {
                 continue;
@@ -55,7 +56,7 @@ class ResolveTypesCollectionAction
     protected function resolveIterator(array $paths): Generator
     {
         $paths = array_map(
-            fn (string $path) => is_dir($path) ? $path : dirname($path),
+            fn(string $path) => is_dir($path) ? $path : dirname($path),
             $paths
         );
 
@@ -69,18 +70,5 @@ class ResolveTypesCollectionAction
             } catch (Exception $exception) {
             }
         }
-    }
-
-    protected function resolveTransformedType(ReflectionClass $class): ?TransformedType
-    {
-        foreach ($this->collectors as $collector) {
-            $transformedType = $collector->getTransformedType($class);
-
-            if ($transformedType !== null) {
-                return $transformedType;
-            }
-        }
-
-        return null;
     }
 }

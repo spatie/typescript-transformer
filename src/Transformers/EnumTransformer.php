@@ -2,73 +2,66 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
+use BackedEnum;
+use Illuminate\Support\Collection;
+use MyCLabs\Enum\Enum as MyclabsEnum;
 use ReflectionClass;
 use ReflectionEnum;
 use ReflectionEnumBackedCase;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\Enum\Enum as SpatieEnum;
+use Spatie\ModelStates\State;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\Structures\Transformed\TransformedCustom;
+use Spatie\TypeScriptTransformer\Structures\Transformed\TransformedEnum;
+use Spatie\TypeScriptTransformer\Structures\Transformed\TransformedUnion;
+use Spatie\TypeScriptTransformer\Structures\TypeReference;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptEnum;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptUnionType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class EnumTransformer implements Transformer
+abstract class EnumTransformer implements Transformer
 {
-    public function __construct(protected TypeScriptTransformerConfig $config)
-    {
+    protected bool $asNativeEnum;
+
+    public function __construct(
+        TypeScriptTransformerConfig $config
+    ) {
+        $options = $config->getTransformerOptions(static::class);
+
+        $this->asNativeEnum = $options['as_native_enum'] ?? false;
     }
 
-    public function transform(ReflectionClass $class, string $name): ?TransformedType
+    abstract protected function getOptions(ReflectionClass $class): Collection;
+
+    public function transform(ReflectionClass $class, ?string $name = null): Transformed
     {
-        // If we're not on PHP >= 8.1, we don't support native enums.
-        if (! method_exists($class, 'isEnum')) {
-            return null;
-        }
+        $options = $this->getOptions($class);
 
-        if (! $class->isEnum()) {
-            return null;
-        }
+        $reference = TypeReference::fromFqcn($class->getName(), $name);
 
-        $enum = (new ReflectionEnum($class->getName()));
+        $structure = $this->asNativeEnum
+            ? $this->resolveEnumStructure($reference->getTypeScriptName(), $options)
+            : new TypeScriptAlias($reference->getTypeScriptName(), $this->resolveUnionStructure($options));
 
-        if (! $enum->isBacked()) {
-            return null;
-        }
-
-        return $this->config->shouldTransformToNativeEnums()
-            ? $this->toEnum($enum, $name)
-            : $this->toType($enum, $name);
-    }
-
-    protected function toEnum(ReflectionEnum $enum, string $name): TransformedType
-    {
-        $options = array_map(
-            fn (ReflectionEnumBackedCase $case) => "'{$case->getName()}' = {$this->toEnumValue($case)}",
-            $enum->getCases()
-        );
-
-        return TransformedType::create(
-            $enum,
-            $name,
-            implode(', ', $options),
-            keyword: 'enum'
+        return new Transformed(
+            $reference,
+            $structure,
         );
     }
 
-    protected function toType(ReflectionEnum $enum, string $name): TransformedType
+    protected function resolveEnumStructure(string $name, Collection $options): TypeScriptEnum
     {
-        $options = array_map(
-            fn (ReflectionEnumBackedCase $case) => $this->toEnumValue($case),
-            $enum->getCases(),
-        );
-
-        return TransformedType::create(
-            $enum,
-            $name,
-            implode(' | ', $options)
-        );
+        return new TypeScriptEnum($name, $options->all());
     }
 
-    protected function toEnumValue(ReflectionEnumBackedCase $case): string
+    protected function resolveUnionStructure(Collection $options): TypeScriptUnionType
     {
-        $value = $case->getBackingValue();
-
-        return is_string($value) ? "'{$value}'" : "{$value}";
+        return new TypeScriptUnionType(
+            $options->map(fn(mixed $value) => is_string($value) ? "'{$value}'" : $value)
+                ->values()
+                ->all()
+        );
     }
 }

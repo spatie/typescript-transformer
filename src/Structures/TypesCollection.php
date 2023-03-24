@@ -7,9 +7,10 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 
 /**
- * @implements IteratorAggregate<\Spatie\TypeScriptTransformer\Structures\TransformedType>
+ * @implements IteratorAggregate<\Spatie\TypeScriptTransformer\Structures\Transformed\Transformed>
  */
 class TypesCollection implements Countable, IteratorAggregate
 {
@@ -20,12 +21,12 @@ class TypesCollection implements Countable, IteratorAggregate
         return new self();
     }
 
-    public function add(TransformedType $type): void
+    public function add(Transformed $type): void
     {
-        $class ??= $type->reflection->getName();
+        $class ??= $type->name->getFqcn();
 
-        $class = $class instanceof TransformedType
-            ? $class->reflection->getName()
+        $class = $class instanceof Transformed
+            ? $class->name->getFqcn()
             : $class;
 
         $this->types[$class] = $type;
@@ -36,7 +37,7 @@ class TypesCollection implements Countable, IteratorAggregate
         return array_key_exists($class, $this->types);
     }
 
-    public function get(string $class): ?TransformedType
+    public function get(string $class): ?Transformed
     {
         return $this->types[$class] ?? null;
     }

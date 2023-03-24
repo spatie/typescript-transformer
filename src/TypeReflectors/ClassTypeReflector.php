@@ -65,13 +65,6 @@ class ClassTypeReflector
 
     private function reflect(): void
     {
-        [
-            'transformable' => $this->transformable,
-            'name' => $this->name,
-            'transformer' => $this->transformerClass,
-            'inline' => $this->inline,
-        ] = (new ClassReader())->forClass($this->class);
-
         $attributes = $this->class->getAttributes();
 
         $this->reflectName($attributes)

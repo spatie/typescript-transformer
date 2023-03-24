@@ -11,7 +11,7 @@ class ReplaceTypeReferencesInCollectionAction
         $replaceTypeReferencesInTypeAction = new ReplaceTypeReferencesInTypeAction($collection, $withFullyQualifiedNames);
 
         foreach ($collection as $type) {
-            $type->transformed = $replaceTypeReferencesInTypeAction->execute($type);
+            $replaceTypeReferencesInTypeAction->execute($type);
         }
 
         return $collection;

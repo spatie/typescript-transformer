@@ -1,7 +1,7 @@
 <?php
 
 use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedTypeFactory;
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use function Spatie\Snapshots\assertMatchesFileSnapshot;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
@@ -24,9 +24,9 @@ beforeEach(function () {
 it('will persist the types', function () {
     $collection = TypesCollection::create();
 
-    $collection->add(TransformedTypeFactory::create('Enum')->build());
-    $collection->add(TransformedTypeFactory::create('test\Enum')->build());
-    $collection->add(TransformedTypeFactory::create('test\test\Enum')->build());
+    $collection->add(TransformedFactory::create('Enum')->build());
+    $collection->add(TransformedFactory::create('test\Enum')->build());
+    $collection->add(TransformedFactory::create('test\test\Enum')->build());
 
     $this->action->execute($collection);
 
@@ -36,10 +36,10 @@ it('will persist the types', function () {
 it('can persist multiple types in one namespace', function () {
     $collection = TypesCollection::create();
 
-    $collection->add(TransformedTypeFactory::create('Enum')->withTransformed('transformed Enum')->build());
-    $collection->add(TransformedTypeFactory::create('OtherEnum')->withTransformed('transformed OtherEnum')->build());
-    $collection->add(TransformedTypeFactory::create('test\Enum')->withTransformed('transformed test\Enum')->build());
-    $collection->add(TransformedTypeFactory::create('test\OtherEnum')->withTransformed('transformed test\OtherEnum')->build());
+    $collection->add(TransformedFactory::create('Enum')->withTransformed('transformed Enum')->build());
+    $collection->add(TransformedFactory::create('OtherEnum')->withTransformed('transformed OtherEnum')->build());
+    $collection->add(TransformedFactory::create('test\Enum')->withTransformed('transformed test\Enum')->build());
+    $collection->add(TransformedFactory::create('test\OtherEnum')->withTransformed('transformed test\OtherEnum')->build());
 
     $this->action->execute($collection);
 
@@ -49,11 +49,11 @@ it('can persist multiple types in one namespace', function () {
 it('can re save the file', function () {
     $collection = TypesCollection::create();
 
-    $collection->add(TransformedTypeFactory::create('Enum')->build());
+    $collection->add(TransformedFactory::create('Enum')->build());
 
     $this->action->execute($collection);
 
-    $collection->add(TransformedTypeFactory::create('test\Enum')->build());
+    $collection->add(TransformedFactory::create('test\Enum')->build());
 
     $this->action->execute($collection);
 

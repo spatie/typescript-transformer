@@ -14,7 +14,7 @@ dataset('reflection_classes', function () {
         'reflection' => $reflection = FakeReflectionClass::create(),
         'transformable' => false,
         'inline' => false,
-        'name' => $reflection->getName(),
+        'name' => null,
         'transformer' => null,
         'type' => null,
     ];
@@ -23,7 +23,7 @@ dataset('reflection_classes', function () {
         'reflection' => $reflection = FakeReflectionClass::create()->withDocComment('/** @typescript */'),
         'transformable' => true,
         'inline' => false,
-        'name' => $reflection->getName(),
+        'name' => null,
         'transformer' => null,
         'type' => null,
     ];
@@ -41,7 +41,7 @@ dataset('reflection_classes', function () {
         'reflection' => $reflection = FakeReflectionClass::create()->withDocComment('/** @typescript @typescript-transformer FakeTransformer */'),
         'transformable' => true,
         'inline' => false,
-        'name' => $reflection->getName(),
+        'name' => null,
         'transformer' => 'FakeTransformer',
         'type' => null,
     ];
@@ -50,7 +50,7 @@ dataset('reflection_classes', function () {
         'reflection' => $reflection = FakeReflectionClass::create()->withDocComment('/** @typescript @typescript-inline */'),
         'transformable' => true,
         'inline' => true,
-        'name' => $reflection->getName(),
+        'name' => null,
         'transformer' => null,
         'type' => null,
     ];
@@ -59,7 +59,7 @@ dataset('reflection_classes', function () {
         'reflection' => new ReflectionClass(WithTypeScriptAttribute::class),
         'transformable' => true,
         'inline' => false,
-        'name' => 'WithTypeScriptAttribute',
+        'name' => null,
         'transformer' => null,
         'type' => null,
     ];
@@ -77,7 +77,7 @@ dataset('reflection_classes', function () {
         'reflection' => new ReflectionClass(WithTypeScriptInlineAttribute::class),
         'transformable' => true,
         'inline' => true,
-        'name' => 'WithTypeScriptInlineAttribute',
+        'name' => null,
         'transformer' => null,
         'type' => null,
     ];
@@ -86,7 +86,7 @@ dataset('reflection_classes', function () {
         'reflection' => new ReflectionClass(WithTypeScriptTransformerAttribute::class),
         'transformable' => true,
         'inline' => false,
-        'name' => 'WithTypeScriptTransformerAttribute',
+        'name' => null,
         'transformer' => DtoTransformer::class,
         'type' => null,
     ];
@@ -95,7 +95,7 @@ dataset('reflection_classes', function () {
         'reflection' => new ReflectionClass(WithAlreadyTransformedAttributeAttribute::class),
         'transformable' => true,
         'inline' => false,
-        'name' => 'WithAlreadyTransformedAttributeAttribute',
+        'name' => null,
         'transformer' => null,
         'type' => StructType::fromArray(['an_int' => 'int', 'a_bool' => 'bool']),
     ];

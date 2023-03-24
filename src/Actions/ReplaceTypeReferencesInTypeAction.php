@@ -3,26 +3,23 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
 class ReplaceTypeReferencesInTypeAction
 {
-    protected TypesCollection $collection;
-
-    protected bool $withFullyQualifiedNames;
-
-    public function __construct(TypesCollection $collection, $withFullyQualifiedNames = true)
-    {
-        $this->collection = $collection;
-        $this->withFullyQualifiedNames = $withFullyQualifiedNames;
+    public function __construct(
+        protected TypesCollection $collection,
+        protected bool $withFullyQualifiedNames = true
+    ) {
     }
 
-    public function execute(TransformedType $type, array $chain = []): string
+    public function execute(Transformed $type, array $chain = []): void
     {
-        if (in_array($type->getTypeScriptName(), $chain)) {
-            $chain = array_merge($chain, [$type->getTypeScriptName()]);
+        if (in_array($type->name->getTypeScriptName(), $chain)) {
+            $chain = array_merge($chain, [$type->name->getTypeScriptName()]);
 
             throw CircularDependencyChain::create($chain);
         }
@@ -32,20 +29,18 @@ class ReplaceTypeReferencesInTypeAction
                 $this->replaceSymbol($typeReference, $type, $chain)
             );
         }
-
-        return $type->transformed;
     }
 
     protected function replaceSymbol(
         TypeReference $typeReference,
-        TransformedType $type,
+        Transformed $type,
         array $chain
-    ): TransformedType {
+    ): Transformed {
         $found = $this->collection->get(
             $typeReference->getFqcn()
         );
 
-        $typeReference->referencedType = $found;
+        $typeReference->referenced = $found;
 
         if ($found === null) {
             $type->replaceTypeReference($typeReference, 'any');
@@ -53,18 +48,23 @@ class ReplaceTypeReferencesInTypeAction
             return $type;
         }
 
-        if (! $found->isInline) {
-            $type->replaceTypeReference($typeReference, $found->getTypeScriptName($this->withFullyQualifiedNames));
+        if (! $found->inline) {
+            $type->replaceTypeReference(
+                $typeReference,
+                $this->withFullyQualifiedNames
+                    ? $found->name->getTypeScriptFqcn()
+                    : $found->name->name,
+            );
 
             return $type;
         }
 
-        $transformed = $this->execute(
+        $this->execute(
             $found,
-            array_merge($chain, [$type->getTypeScriptName()])
+            array_merge($chain, [$type->name->getTypeScriptName()])
         );
 
-        $type->replaceTypeReference($typeReference, $transformed);
+        $type->replaceTypeReference($typeReference, $found->toString());
 
         return $type;
     }

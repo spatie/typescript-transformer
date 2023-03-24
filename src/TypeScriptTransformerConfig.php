@@ -2,9 +2,9 @@
 
 namespace Spatie\TypeScriptTransformer;
 
+use Illuminate\Support\Collection;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
-use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
@@ -18,8 +18,6 @@ class TypeScriptTransformerConfig
     private array $autoDiscoverTypesPaths = [];
 
     private array $transformers = [];
-
-    private array $collectors = [DefaultCollector::class];
 
     private array $defaultTypeReplacements = [];
 
@@ -49,16 +47,23 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function transformers(array $transformers): self
+    public function transformer(string $class, array $options = [], ?bool $auto = null): self
     {
-        $this->transformers = $transformers;
+        if ($auto !== null) {
+            $options['auto'] = $auto;
+        }
+
+        $this->transformers[$class] = $options;
 
         return $this;
     }
 
-    public function collectors(array $collectors)
+    public function transformers(array $transformers): self
     {
-        $this->collectors = array_merge($collectors, [DefaultCollector::class]);
+        $this->transformers = array_merge(
+            $this->transformers,
+            $transformers
+        );
 
         return $this;
     }
@@ -99,25 +104,29 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
-    public function transformToNativeEnums(bool $transformToNativeEnums = true): self
-    {
-        $this->transformToNativeEnums = $transformToNativeEnums;
-
-        return $this;
-    }
-
     public function getAutoDiscoverTypesPaths(): array
     {
         return $this->autoDiscoverTypesPaths;
     }
 
     /**@return \Spatie\TypeScriptTransformer\Transformers\Transformer[] */
-    public function getTransformers(): array
+    public function getTransformers(bool $onlyAuto = false): array
     {
-        return array_map(
-            fn(string $transformer) => $this->buildTransformer($transformer),
-            $this->transformers
-        );
+        return collect($this->transformers)
+            ->when(
+                $onlyAuto,
+                fn(Collection $transformers) => $transformers->filter(
+                    fn(array $options) => array_key_exists('auto', $options) && $options['auto'] === true
+                )
+            )
+            ->map(fn(array $options, string $class) => $this->buildTransformer($class))
+            ->values()
+            ->all();
+    }
+
+    public function getTransformerOptions(string $class): array
+    {
+        return $this->transformers[$class];
     }
 
     public function buildTransformer(string $transformer): Transformer
@@ -135,16 +144,6 @@ class TypeScriptTransformerConfig
     public function getOutputPath(): string
     {
         return rtrim($this->outputPath, '/');
-    }
-
-
-    /** @return \Spatie\TypeScriptTransformer\Collectors\Collector[] */
-    public function getCollectors(): array
-    {
-        return array_map(
-            fn(string $collector) => new $collector($this),
-            $this->collectors
-        );
     }
 
     public function getDefaultTypeReplacements(): array

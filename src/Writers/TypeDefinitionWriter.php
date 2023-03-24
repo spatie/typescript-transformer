@@ -3,7 +3,8 @@
 namespace Spatie\TypeScriptTransformer\Writers;
 
 use Spatie\TypeScriptTransformer\Actions\ReplaceTypeReferencesInCollectionAction;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
 class TypeDefinitionWriter implements Writer
@@ -22,7 +23,7 @@ class TypeDefinitionWriter implements Writer
             $output .= "declare namespace {$namespace} {".PHP_EOL;
 
             $output .= join(PHP_EOL, array_map(
-                fn (TransformedType $type) => "export {$type->toString()}",
+                fn (Transformed $type) => "export {$type->toString()}",
                 $types
             ));
 
@@ -31,7 +32,7 @@ class TypeDefinitionWriter implements Writer
         }
 
         $output .= join(PHP_EOL, array_map(
-            fn (TransformedType $type) => "export {$type->toString()}",
+            fn (Transformed $type) => "export {$type->toString()}",
             $rootTypes
         ));
 
@@ -49,11 +50,11 @@ class TypeDefinitionWriter implements Writer
         $rootTypes = [];
 
         foreach ($collection as $type) {
-            if ($type->isInline) {
+            if ($type->inline) {
                 continue;
             }
 
-            $namespace = str_replace('\\', '.', $type->reflection->getNamespaceName());
+            $namespace = str_replace('\\', '.', $type->name->getFqcn());
 
             if (empty($namespace)) {
                 $rootTypes[] = $type;

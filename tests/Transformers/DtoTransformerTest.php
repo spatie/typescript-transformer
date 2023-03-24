@@ -35,7 +35,7 @@ it('will replace types', function () {
         'Typed'
     );
 
-    assertMatchesTextSnapshot($type->transformed);
+    assertMatchesTextSnapshot($type->toString());
     expect($type->typeReferences->has(Enum::class))->toBeTrue();
     expect($type->typeReferences->has(RegularEnum::class))->toBeTrue();
     expect($type->typeReferences->has(OtherDto::class))->toBeTrue();
@@ -68,7 +68,7 @@ it('a type processor can remove properties', function () {
         'Typed'
     );
 
-    assertMatchesTextSnapshot($type->transformed);
+    assertMatchesTextSnapshot($type->toString());
 });
 
 it('will take transform as typescript attributes into account', function () {
@@ -96,7 +96,7 @@ it('will take transform as typescript attributes into account', function () {
         'Typed'
     );
 
-    assertMatchesSnapshot($type->transformed);
+    assertMatchesSnapshot($type->toString());
 });
 
 it('transforms properties to optional ones when using optional attribute', function () {
@@ -110,7 +110,7 @@ it('transforms properties to optional ones when using optional attribute', funct
         'Typed'
     );
 
-    assertMatchesSnapshot($type->transformed);
+    assertMatchesSnapshot($type->toString());
 });
 
 it('transforms all properties of a class with optional attribute to optional', function () {
@@ -126,5 +126,5 @@ it('transforms all properties of a class with optional attribute to optional', f
         'Typed'
     );
 
-    assertMatchesSnapshot($type->transformed);
+    assertMatchesSnapshot($type->toString());
 });

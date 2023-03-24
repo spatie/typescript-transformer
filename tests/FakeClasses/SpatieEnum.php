@@ -5,19 +5,19 @@ namespace Spatie\TypeScriptTransformer\Tests\FakeClasses;
 use Spatie\Enum\Enum as BaseEnum;
 
 /**
- * @method static self draft()
- * @method static self published()
- * @method static self archived()
+ * @method static self Draft()
+ * @method static self Published()
+ * @method static self Archived()
  * @typescript
  */
 class SpatieEnum extends BaseEnum
 {
-    protected static function labels(): array
+    protected static function values(): array
     {
         return [
-            'draft' => 'Draft',
-            'published' => 'Published',
-            'archived' => 'Archived',
+            'Draft' => 'draft',
+            'Published' => 'published',
+            'Archived' => 'archived',
         ];
     }
 }

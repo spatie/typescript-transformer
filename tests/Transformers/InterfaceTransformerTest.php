@@ -1,7 +1,9 @@
 <?php
 
+use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertNull;
+use function PHPUnit\Framework\assertTrue;
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeInterface;
 use Spatie\TypeScriptTransformer\Transformers\InterfaceTransformer;
@@ -12,14 +14,12 @@ it('will only convert interfaces', function () {
         TypeScriptTransformerConfig::create()
     );
 
-    assertNotNull($transformer->transform(
+    assertTrue($transformer->canTransform(
         new ReflectionClass(DateTimeInterface::class),
-        'State',
     ));
 
-    assertNull($transformer->transform(
+    assertFalse($transformer->canTransform(
         new ReflectionClass(DateTime::class),
-        'State',
     ));
 });
 
@@ -33,5 +33,5 @@ it('will replace methods', function () {
         'State',
     );
 
-    assertMatchesTextSnapshot($type->transformed);
+    assertMatchesTextSnapshot($type->toString());
 });

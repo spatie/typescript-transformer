@@ -18,7 +18,7 @@ it('can transform a dto', function () {
         'FakeDto'
     );
 
-    expect($type->transformed)->toMatchSnapshot();
+    expect($type->toString())->toMatchSnapshot();
     expect($type->typeReferences->has(LaravelOtherDto::class))->toBeTrue();
     expect($type->isInline)->toBeFalse();
 });

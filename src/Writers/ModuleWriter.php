@@ -2,7 +2,8 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
 class ModuleWriter implements Writer
@@ -14,12 +15,12 @@ class ModuleWriter implements Writer
         /** @var \ArrayIterator $iterator */
         $iterator = $collection->getIterator();
 
-        $iterator->uasort(function (TransformedType $a, TransformedType $b) {
-            return strcmp($a->name, $b->name);
+        $iterator->uasort(function (Transformed $a, Transformed $b) {
+            return strcmp($a->name->getTypeScriptName(), $b->name->getTypeScriptName());
         });
 
         foreach ($iterator as $type) {
-            if ($type->isInline) {
+            if ($type->inline) {
                 continue;
             }
 

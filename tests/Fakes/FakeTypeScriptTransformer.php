@@ -4,8 +4,11 @@ namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedTypeFactory;
+use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
+use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\Structures\TypeReference;
+use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptRaw;
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
 class FakeTypeScriptTransformer implements Transformer
@@ -22,11 +25,11 @@ class FakeTypeScriptTransformer implements Transformer
         return $class->isSubclassOf(Enum::class);
     }
 
-    public function transform(ReflectionClass $class, string $name): TransformedType
+    public function transform(ReflectionClass $class, ?string $name = null): Transformed
     {
-        return TransformedTypeFactory::create($name)
-            ->withReflection($class)
-            ->withTransformed($this->transformed)
-            ->build();
+        return new Transformed(
+            TypeReference::fromFqcn($class->name, $name),
+            new TypeScriptRaw($this->transformed)
+        );
     }
 }

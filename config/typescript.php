@@ -28,9 +28,13 @@ return [
      */
 
     'transformers' => [
-        Spatie\TypeScriptTransformer\Transformers\SpatieStateTransformer::class,
-        Spatie\TypeScriptTransformer\Transformers\SpatieEnumTransformer::class,
-        Spatie\TypeScriptTransformer\Transformers\LaravelDtoTransformer::class,
+        Spatie\TypeScriptTransformer\Transformers\NativeEnumTransformer::class => [
+            'auto' => true,
+            'as_native_enum' => false,
+        ],
+        Spatie\TypeScriptTransformer\Transformers\LaravelDtoTransformer::class => [
+            'as_native_enum' => false,
+        ]
     ],
 
     /*

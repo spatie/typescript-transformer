@@ -1,59 +1,57 @@
 <?php
 
-use function PHPUnit\Framework\assertEmpty;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertFalse;
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertNull;
-use function PHPUnit\Framework\assertTrue;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\MyclabsEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\SpatieEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\ChildState;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\State;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
+use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
+use Spatie\TypeScriptTransformer\Transformers\NativeEnumTransformer;
 use Spatie\TypeScriptTransformer\Transformers\SpatieEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use function PHPUnit\Framework\assertFalse;
+use function PHPUnit\Framework\assertTrue;
 
 it('will only convert enums', function () {
     $transformer = new SpatieEnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
+        TypeScriptTransformerConfig::create()->transformer(SpatieEnumTransformer::class, [])
     );
 
-    assertNotNull($transformer->transform(
+    assertTrue($transformer->canTransform(
         new ReflectionClass(SpatieEnum::class),
-        'State',
     ));
 
-    assertNull($transformer->transform(
+    assertFalse($transformer->canTransform(
         new ReflectionClass(DateTime::class),
-        'State',
     ));
 });
 
-it('can transform an enum into a type', function () {
+it('can transform a Spatie enum into an enum', function () {
     $transformer = new SpatieEnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
+        TypeScriptTransformerConfig::create()->transformer(SpatieEnumTransformer::class, ['as_native_enum' => true])
     );
 
     $type = $transformer->transform(
         new ReflectionClass(SpatieEnum::class),
-        'FakeEnum'
     );
 
-    assertEquals("'draft' | 'published' | 'archived'", $type->transformed);
-    assertEmpty($type->typeReferences);
-    assertFalse($type->isInline);
-    assertEquals('type', $type->keyword);
+    expect($type)
+        ->inline->toBeFalse()
+        ->typeReferences->toBeEmpty()
+        ->toString()->toBe("enum SpatieEnum {Draft = 'draft', Published = 'published', Archived = 'archived'}");
 });
 
-it('can transform an enum into an enum', function () {
+it('can transform a Spatie enum into a union type', function () {
     $transformer = new SpatieEnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
+        TypeScriptTransformerConfig::create()->transformer(SpatieEnumTransformer::class, ['as_native_enum' => false])
     );
 
     $type = $transformer->transform(
         new ReflectionClass(SpatieEnum::class),
-        'FakeEnum'
     );
 
-    assertEquals("'draft' = 'Draft', 'published' = 'Published', 'archived' = 'Archived'", $type->transformed);
-    assertEmpty($type->typeReferences);
-    assertFalse($type->isInline);
-    assertEquals('enum', $type->keyword);
+    expect($type)
+        ->inline->toBeFalse()
+        ->typeReferences->toBeEmpty()
+        ->toString()->toBe("type SpatieEnum = 'draft' | 'published' | 'archived';");
 });

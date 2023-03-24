@@ -16,13 +16,8 @@ function getTransformerConfig(): TypeScriptTransformerConfig
         ->defaultTypeReplacements([
             DateTime::class => 'string',
         ])
-        ->transformers([
-            MyclabsEnumTransformer::class,
-            DtoTransformer::class,
-        ])
-        ->collectors([
-            DefaultCollector::class,
-        ]);
+        ->transformer(MyclabsEnumTransformer::class)
+        ->transformer(DtoTransformer::class);
 }
 
 it('works', function () {
