@@ -6,9 +6,9 @@ use Illuminate\Support\Collection;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\TypeResolver;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidDefaultTypeReplacer;
-use Spatie\TypeScriptTransformer\Formatters\Formatter;
-use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
 use Spatie\TypeScriptTransformer\FileSplitters\FileSplitter;
+use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
+use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
@@ -115,11 +115,11 @@ class TypeScriptTransformerConfig
         return collect($this->transformers)
             ->when(
                 $onlyAuto,
-                fn(Collection $transformers) => $transformers->filter(
-                    fn(array $options) => array_key_exists('auto', $options) && $options['auto'] === true
+                fn (Collection $transformers) => $transformers->filter(
+                    fn (array $options) => array_key_exists('auto', $options) && $options['auto'] === true
                 )
             )
-            ->map(fn(array $options, string $class) => $this->buildTransformer($class))
+            ->map(fn (array $options, string $class) => $this->buildTransformer($class))
             ->values()
             ->all();
     }

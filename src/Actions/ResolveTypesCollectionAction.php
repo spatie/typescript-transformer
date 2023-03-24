@@ -5,17 +5,8 @@ namespace Spatie\TypeScriptTransformer\Actions;
 use Exception;
 use Generator;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Exceptions\NoAutoDiscoverTypesPathsDefined;
-use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
-use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
-use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\Structures\TypeReference;
-use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
-use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptRaw;
-use Spatie\TypeScriptTransformer\Transformers\Transformer;
-use Spatie\TypeScriptTransformer\TypeReflectors\ClassTypeReflector;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
@@ -56,7 +47,7 @@ class ResolveTypesCollectionAction
     protected function resolveIterator(array $paths): Generator
     {
         $paths = array_map(
-            fn(string $path) => is_dir($path) ? $path : dirname($path),
+            fn (string $path) => is_dir($path) ? $path : dirname($path),
             $paths
         );
 

@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
 use Spatie\TypeScriptTransformer\Structures\SplitTypesCollection;
 use Spatie\TypeScriptTransformer\Structures\TypeImport;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
@@ -64,7 +63,7 @@ class PersistTypesCollectionAction
 
         return array_reduce(
             $split->imports,
-            fn(string $carry, TypeImport $import) => "{$carry}{$import->toString()}" . PHP_EOL,
+            fn (string $carry, TypeImport $import) => "{$carry}{$import->toString()}" . PHP_EOL,
             ''
         );
     }

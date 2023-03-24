@@ -1,10 +1,9 @@
 <?php
 
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ReplaceTypeReferencesInCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 
 it('can replace missing symbols', function () {
     $action = new ReplaceTypeReferencesInCollectionAction();
@@ -12,7 +11,8 @@ it('can replace missing symbols', function () {
     $collection = TypesCollection::create();
 
     $collection->add(TransformedFactory::create('enums\Enum')->build());
-    $collection->add(TransformedFactory::create('Dto')
+    $collection->add(
+        TransformedFactory::create('Dto')
         ->withTransformed('{enum: {%enums\Enum%}, non-existing: {%non-existing%}}')
         ->withTypeReferences('enums\Enum', 'non-existing')
         ->build()

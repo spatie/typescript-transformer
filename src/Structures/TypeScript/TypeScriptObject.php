@@ -2,8 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Structures\TypeScript;
 
-use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
-
 class TypeScriptObject implements TypeScriptStructure
 {
     /**
@@ -18,7 +16,7 @@ class TypeScriptObject implements TypeScriptStructure
     {
         $properties = array_reduce(
             $this->properties,
-            fn(string $carry, TypeScriptProperty $property) => $carry . $property . PHP_EOL,
+            fn (string $carry, TypeScriptProperty $property) => $carry . $property . PHP_EOL,
             empty($this->properties) ? '' : PHP_EOL
         );
 

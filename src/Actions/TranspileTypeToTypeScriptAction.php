@@ -20,7 +20,6 @@ use phpDocumentor\Reflection\Types\Static_;
 use phpDocumentor\Reflection\Types\String_;
 use phpDocumentor\Reflection\Types\This;
 use phpDocumentor\Reflection\Types\Void_;
-use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\Types\StructType;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
@@ -84,7 +83,7 @@ class TranspileTypeToTypeScriptAction
             return 'object';
         }
 
-        $typeReference =  $this->typeReferences->add(
+        $typeReference = $this->typeReferences->add(
             (string) $object->getFqsen()
         );
 

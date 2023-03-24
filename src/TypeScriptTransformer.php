@@ -3,7 +3,6 @@
 namespace Spatie\TypeScriptTransformer;
 
 use Spatie\TypeScriptTransformer\Actions\EnsureTypesCollectionIsValid;
-use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
 use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;

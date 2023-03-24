@@ -15,7 +15,7 @@ class SpatieEnumTransformer extends EnumTransformer
 
     protected function getOptions(ReflectionClass $class): Collection
     {
-        return collect($class->getName()::cases())->mapWithKeys(fn(SpatieEnum $case) => [
+        return collect($class->getName()::cases())->mapWithKeys(fn (SpatieEnum $case) => [
             $case->label => $case->value,
         ]);
     }

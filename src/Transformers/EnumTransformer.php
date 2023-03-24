@@ -2,19 +2,9 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use BackedEnum;
 use Illuminate\Support\Collection;
-use MyCLabs\Enum\Enum as MyclabsEnum;
 use ReflectionClass;
-use ReflectionEnum;
-use ReflectionEnumBackedCase;
-use Spatie\Enum\Enum as SpatieEnum;
-use Spatie\ModelStates\State;
-use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
 use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\Structures\Transformed\TransformedCustom;
-use Spatie\TypeScriptTransformer\Structures\Transformed\TransformedEnum;
-use Spatie\TypeScriptTransformer\Structures\Transformed\TransformedUnion;
 use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptEnum;
@@ -59,7 +49,7 @@ abstract class EnumTransformer implements Transformer
     protected function resolveUnionStructure(Collection $options): TypeScriptUnionType
     {
         return new TypeScriptUnionType(
-            $options->map(fn(mixed $value) => is_string($value) ? "'{$value}'" : $value)
+            $options->map(fn (mixed $value) => is_string($value) ? "'{$value}'" : $value)
                 ->values()
                 ->all()
         );

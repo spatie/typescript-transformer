@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 use Spatie\TypeScriptTransformer\Formatters\PrettierFormatter;
-use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
 use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -54,7 +53,7 @@ class LaravelTypescriptTransformerCommand extends Command
 
         $this->table(
             ['PHP class', 'TypeScript entity'],
-            collect($collection)->map(fn(Transformed $type, string $class) => [
+            collect($collection)->map(fn (Transformed $type, string $class) => [
                 $class, $type->name->getTypeScriptName(),
             ])
         );

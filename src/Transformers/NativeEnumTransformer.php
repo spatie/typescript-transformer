@@ -19,7 +19,7 @@ class NativeEnumTransformer extends EnumTransformer
     {
         $enum = (new ReflectionEnum($class->getName()));
 
-        return collect($enum->getCases())->mapWithKeys(fn(ReflectionEnumBackedCase $case) => [
+        return collect($enum->getCases())->mapWithKeys(fn (ReflectionEnumBackedCase $case) => [
             $case->getName() => $case->getBackingValue(),
         ]);
     }

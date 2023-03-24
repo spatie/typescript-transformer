@@ -2,13 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Factories;
 
-use ReflectionClass;
-use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
 use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptRaw;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeReflectionClass;
 
 class TransformedFactory
 {

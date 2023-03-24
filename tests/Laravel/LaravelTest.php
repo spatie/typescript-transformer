@@ -1,9 +1,8 @@
 <?php
 
 use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
-use Spatie\TypeScriptTransformer\Formatters\EslintFormatter;
 use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
+use Spatie\TypeScriptTransformer\Formatters\EslintFormatter;
 use Spatie\TypeScriptTransformer\Tests\Laravel\LaravelTestCase;
 use Spatie\TypeScriptTransformer\Transformers\SpatieStateTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -18,11 +17,11 @@ beforeEach(function () {
 it('will register the config correctly', function () {
     config()->set('typescript.auto_discover_types', 'fake-searching-path');
     config()->set('typescript.transformers', [
-        SpatieStateTransformer::class => []
+        SpatieStateTransformer::class => [],
     ]);
     config()->set('typescript.output_path', __DIR__);
     config()->set('typescript.default_type_replacements', [
-        DateTime::class => 'string'
+        DateTime::class => 'string',
     ]);
     config()->set('typescript.writer', ModuleWriter::class);
     config()->set('typescript.formatter', EslintFormatter::class);
@@ -37,7 +36,7 @@ it('will register the config correctly', function () {
     )]);
     expect($config->getOutputPath())->toEqual(__DIR__);
     expect($config->getDefaultTypeReplacements())->toEqual([
-        DateTime::class => 'string'
+        DateTime::class => 'string',
     ]);
     expect($config->getWriter())->toBeInstanceOf(ModuleWriter::class);
     expect($config->getFormatter())->toBeInstanceOf(EslintFormatter::class);

@@ -3,7 +3,7 @@
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\Structures\TypeReference;
 
-it('can create a type reference from fqcn', function (){
+it('can create a type reference from fqcn', function () {
     $typeReference = TypeReference::fromFqcn(TypeScriptTransformer::class);
 
     expect($typeReference)
@@ -11,11 +11,11 @@ it('can create a type reference from fqcn', function (){
         ->namespaceSegments->toBe([
             'Spatie',
             'TypeScriptTransformer',
-            'Attributes'
+            'Attributes',
         ]);
 });
 
-it('can create a type reference from small fqcn', function (){
+it('can create a type reference from small fqcn', function () {
     $typeReference = TypeReference::fromFqcn(DateTime::class);
 
     expect($typeReference)
@@ -23,7 +23,7 @@ it('can create a type reference from small fqcn', function (){
         ->namespaceSegments->toBe([]);
 });
 
-it('can get a replace symbol from a type reference', function (){
+it('can get a replace symbol from a type reference', function () {
     $typeReference = TypeReference::fromFqcn(TypeScriptTransformer::class);
 
     expect($typeReference->replaceSymbol())->toBe(
@@ -31,7 +31,7 @@ it('can get a replace symbol from a type reference', function (){
     );
 });
 
-it('can get the fqcn from a type reference', function (){
+it('can get the fqcn from a type reference', function () {
     $typeReference = TypeReference::fromFqcn(TypeScriptTransformer::class);
 
     expect($typeReference->getFqcn())->toBe(

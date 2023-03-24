@@ -1,16 +1,11 @@
 <?php
 
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\MyclabsEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\SpatieEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\ChildState;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\State;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
-use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
-use Spatie\TypeScriptTransformer\Transformers\SpatieEnumTransformer;
-use Spatie\TypeScriptTransformer\Transformers\SpatieStateTransformer;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\ChildState;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\State;
+use Spatie\TypeScriptTransformer\Transformers\SpatieStateTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 it('will only convert enums', function () {
     $transformer = new SpatieStateTransformer(
@@ -44,4 +39,3 @@ it('can transform an state as union', function () {
         ->typeReferences->toBeEmpty()
         ->toString()->toBe("type State = 'child' | 'other_child';");
 });
-

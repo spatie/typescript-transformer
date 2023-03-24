@@ -3,7 +3,6 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
-use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
 use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 

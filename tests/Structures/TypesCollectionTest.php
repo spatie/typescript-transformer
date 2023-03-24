@@ -1,13 +1,9 @@
 <?php
 
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNull;
-use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 
 it('can get a type', function () {
     $collection = TypesCollection::create();
@@ -50,7 +46,7 @@ it('can iterate over types', function () {
 
     $types = [];
 
-    foreach ($collection as $type){
+    foreach ($collection as $type) {
         $types[] = $type;
     }
 

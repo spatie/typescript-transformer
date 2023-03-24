@@ -13,9 +13,7 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
 use ReflectionUnionType;
-use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
-use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 
 class LaravelCollectionTypeProcessor implements TypeProcessor
 {

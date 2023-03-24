@@ -2,15 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
-use ReflectionClass;
+use function PHPUnit\Framework\assertCount;
+use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\EnsureTypesCollectionIsValid;
 use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\TypeScriptEnum;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
-use function PHPUnit\Framework\assertCount;
-use function PHPUnit\Framework\assertEquals;
 
 it('cannot have a namespace and type with the same name', function () {
     $collection = TypesCollection::create();
@@ -90,4 +87,3 @@ it('can add inline types without structure checking', function () {
     assertEquals($fakeA, $collection->get('Enum'));
     assertEquals($fakeB, $collection->get('Enum\Enum'));
 });
-

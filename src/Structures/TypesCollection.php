@@ -2,11 +2,9 @@
 
 namespace Spatie\TypeScriptTransformer\Structures;
 
-use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
 use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 
 /**

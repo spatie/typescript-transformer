@@ -1,12 +1,10 @@
 <?php
 
-use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use function Spatie\Snapshots\assertMatchesFileSnapshot;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 

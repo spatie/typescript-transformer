@@ -1,8 +1,6 @@
 <?php
 
 use function PHPUnit\Framework\assertFalse;
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertNull;
 use function PHPUnit\Framework\assertTrue;
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeInterface;

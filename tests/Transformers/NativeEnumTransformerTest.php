@@ -1,18 +1,12 @@
 <?php
 
 
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\IntBackedEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\MyclabsEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\SpatieEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\ChildState;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\States\State;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
-use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
-use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
-use Spatie\TypeScriptTransformer\Transformers\NativeEnumTransformer;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\IntBackedEnum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
+use Spatie\TypeScriptTransformer\Transformers\NativeEnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 it('will only convert enums', function () {
     $transformer = new NativeEnumTransformer(

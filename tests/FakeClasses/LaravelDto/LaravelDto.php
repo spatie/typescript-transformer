@@ -4,8 +4,6 @@ namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\LaravelDto;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
-use Spatie\DataTransferObject\DataTransferObject;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDtoCollection;
 
 class LaravelDto
 {

@@ -1,6 +1,5 @@
 <?php
 
-use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\LaravelDto\LaravelDto;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\LaravelDto\LaravelOtherDto;
 use Spatie\TypeScriptTransformer\Transformers\LaravelDtoTransformer;

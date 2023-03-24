@@ -20,8 +20,8 @@ class SpatieStateTransformer extends EnumTransformer
     protected function getOptions(ReflectionClass $class): Collection
     {
         return collect($class->getName()::all())
-            ->filter(fn(string $case) => $case !== $class->getName())
-            ->mapWithKeys(fn(string $case) => [
+            ->filter(fn (string $case) => $case !== $class->getName())
+            ->mapWithKeys(fn (string $case) => [
                 $case::getMorphClass() => $case::getMorphClass(),
             ]);
     }

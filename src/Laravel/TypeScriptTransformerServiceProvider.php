@@ -21,7 +21,8 @@ class TypeScriptTransformerServiceProvider extends PackageServiceProvider
     public function registeringPackage(): void
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/typescript.php', 'typescript'
+            __DIR__.'/../../config/typescript.php',
+            'typescript'
         );
     }
 

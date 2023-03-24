@@ -1,7 +1,8 @@
 <?php
 
+use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertTrue;
 use Spatie\TypeScriptTransformer\Actions\ResolveTransformedAction;
-use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Exceptions\InvalidTransformerGiven;
 use Spatie\TypeScriptTransformer\Exceptions\TransformerNotFound;
 use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
@@ -11,14 +12,10 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptAttr
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptInlineAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Attributes\WithTypeScriptTransformerAttribute;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\Transformers\NativeEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertNull;
-use function PHPUnit\Framework\assertTrue;
 
 it('will not collect non annotated classes', function () {
     $class = new class('a') extends Enum {
@@ -97,7 +94,8 @@ it('will read overwritten transformers', function () {
         ->name->toEqual(TypeReference::fromFqcn($class::class, 'DtoTransformed'))
         ->typeReferences->toBeEmpty()
         ->inline->toBeFalse()
-        ->toString()->toEqual(<<<TS
+        ->toString()->toEqual(
+            <<<TS
 type DtoTransformed = {
 an_integer: number;
 };
@@ -146,7 +144,8 @@ it('will collect attribute overwritten transformers', function () {
         ->name->toEqual(TypeReference::fromFqcn(WithTypeScriptTransformerAttribute::class))
         ->typeReferences->toBeEmpty()
         ->inline->toBeFalse()
-        ->toString()->toEqual(<<<TS
+        ->toString()->toEqual(
+            <<<TS
 type WithTypeScriptTransformerAttribute = {
 an_int: number;
 };

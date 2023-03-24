@@ -6,7 +6,6 @@ use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypeScriptTransformer\FileSplitters\SingleFileSplitter;
 use Spatie\TypeScriptTransformer\Structures\SplitTypesCollection;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
-use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\Transformers\NativeEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;

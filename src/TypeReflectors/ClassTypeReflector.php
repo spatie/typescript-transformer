@@ -9,7 +9,6 @@ use Spatie\TypeScriptTransformer\Attributes\InlineTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformer;
-use Spatie\TypeScriptTransformer\ClassReader;
 
 class ClassTypeReflector
 {

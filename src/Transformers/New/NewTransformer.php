@@ -11,8 +11,7 @@ abstract class NewTransformer
         array $annotations,
         ?string $alias = null,
         bool $inline = false
-    ): ?Transformed
-    {
+    ): ?Transformed {
         return $this->tryTransformation($reflection, $annotations);
     }
 

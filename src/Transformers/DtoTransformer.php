@@ -5,17 +5,13 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
-use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
-use Spatie\TypeScriptTransformer\Structures\Transformed\TransformedTypeAlias;
+use Spatie\TypeScriptTransformer\Structures\TypeReference;
+use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptObject;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\Structures\TypeReference;
-use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptSingleType;
-use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -115,7 +111,7 @@ class DtoTransformer implements Transformer
     {
         $properties = array_filter(
             $class->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn(ReflectionProperty $property) => ! $property->isStatic()
+            fn (ReflectionProperty $property) => ! $property->isStatic()
         );
 
         return array_values($properties);

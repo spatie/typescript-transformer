@@ -4,11 +4,9 @@ namespace Spatie\TypeScriptTransformer\FileSplitters;
 
 use Spatie\TypeScriptTransformer\Actions\ResolveRelativePathAction;
 use Spatie\TypeScriptTransformer\Structures\SplitTypesCollection;
-use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
 use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Structures\TypeImport;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
-use function PHPUnit\Framework\isEmpty;
 
 class NamespaceFileSplitter implements FileSplitter
 {
@@ -83,5 +81,4 @@ class NamespaceFileSplitter implements FileSplitter
 
         return $imports;
     }
-
 }

@@ -15,7 +15,7 @@ class MyclabsEnumTransformer extends EnumTransformer
 
     protected function getOptions(ReflectionClass $class): Collection
     {
-        return collect($class->getName()::values())->mapWithKeys(fn(MyclabsEnum $case) => [
+        return collect($class->getName()::values())->mapWithKeys(fn (MyclabsEnum $case) => [
             $case->getKey() => $case->getValue(),
         ]);
     }

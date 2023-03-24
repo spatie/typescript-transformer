@@ -3,7 +3,6 @@
 namespace Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration;
 
 use DateTime;
-use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
 

@@ -13,8 +13,8 @@ class TypeScriptEnum implements TypeScriptStructure
     public function __toString()
     {
         $options = collect($this->options)
-            ->map(fn(mixed $value) => is_string($value) ? "'{$value}'" : $value)
-            ->map(fn(mixed $value, $key) => "{$key} = {$value}")
+            ->map(fn (mixed $value) => is_string($value) ? "'{$value}'" : $value)
+            ->map(fn (mixed $value, $key) => "{$key} = {$value}")
             ->values()
             ->implode(', ');
 

@@ -2,19 +2,14 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use Psalm\Type;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionParameter;
-use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypeScriptTransformer\Structures\OldTransformedType;
 use Spatie\TypeScriptTransformer\Structures\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Structures\TypeReference;
 use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
-use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptInterface;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptMethod;
-use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptObject;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptParameter;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\Structures\TypeScript\TypeScriptSingleType;
@@ -42,11 +37,11 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
             $named->getTypeScriptName(),
             array_values(array_filter(
                 $items,
-                fn(mixed $item) => $item instanceof TypeScriptProperty,
+                fn (mixed $item) => $item instanceof TypeScriptProperty,
             )),
             array_values(array_filter(
                 $items,
-                fn(mixed $item) => $item instanceof TypeScriptMethod,
+                fn (mixed $item) => $item instanceof TypeScriptMethod,
             ))
         );
 

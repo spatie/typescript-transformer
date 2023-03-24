@@ -2,7 +2,6 @@
 
 use function Spatie\Snapshots\assertMatchesSnapshot;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\Transformers\MyclabsEnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;

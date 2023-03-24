@@ -24,4 +24,3 @@ abstract class LaravelTestCase extends Orchestra
         ]);
     }
 }
-

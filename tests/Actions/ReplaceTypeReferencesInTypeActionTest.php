@@ -1,11 +1,10 @@
 <?php
 
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ReplaceTypeReferencesInTypeAction;
 use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
+use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 
 beforeEach(function () {
     $this->collection = TypesCollection::create();

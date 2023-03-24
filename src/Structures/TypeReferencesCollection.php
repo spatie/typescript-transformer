@@ -5,7 +5,6 @@ namespace Spatie\TypeScriptTransformer\Structures;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Traversable;
 
 /**
  * @implements IteratorAggregate<\Spatie\TypeScriptTransformer\Structures\TypeReference>

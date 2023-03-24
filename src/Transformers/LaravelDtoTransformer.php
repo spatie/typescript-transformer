@@ -3,7 +3,6 @@
 namespace Spatie\TypeScriptTransformer\Transformers;
 
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer as BaseDtoTransformer;
-use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeProcessors\LaravelCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 

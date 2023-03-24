@@ -2,8 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Structures\TypeScript;
 
-use Spatie\TypeScriptTransformer\Structures\TypeReferencesCollection;
-
 class TypeScriptInterface implements TypeScriptStructure
 {
     /**
@@ -23,7 +21,7 @@ class TypeScriptInterface implements TypeScriptStructure
 
         $items = array_reduce(
             $combined,
-            fn(string $carry, TypeScriptProperty|TypeScriptMethod $item) => $carry . $item . PHP_EOL,
+            fn (string $carry, TypeScriptProperty|TypeScriptMethod $item) => $carry . $item . PHP_EOL,
             empty($combined) ? '' : PHP_EOL
         );
 
