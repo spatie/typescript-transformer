@@ -175,7 +175,7 @@ it('can inline collected classes with attributes', function () {
 
 it('will will throw an exception with non existing transformers', function () {
     $this->expectException(InvalidTransformerGiven::class);
-    $this->expectDeprecationMessageMatches("/does not exist!/");
+    $this->expectExceptionMessage("does not exist!");
 
     /**
      * @typescript DtoTransformed
@@ -192,7 +192,7 @@ it('will will throw an exception with non existing transformers', function () {
 
 it('will will throw an exception with class that does not implement transformer', function () {
     $this->expectException(InvalidTransformerGiven::class);
-    $this->expectDeprecationMessageMatches("/does not implement the Transformer interface!/");
+    $this->expectExceptionMessage("does not implement the Transformer interface!");
 
     /**
      * @typescript-transformer \Spatie\TypeScriptTransformer\Structures\TransformedType
