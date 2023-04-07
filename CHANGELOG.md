@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.1.14 - 2023-04-07
+
+- add support for record types (#51)
+
 ## 2.1.13 - 2023-02-01
 
 - Add EnumCollector (#42)
