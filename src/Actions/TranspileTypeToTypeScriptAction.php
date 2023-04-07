@@ -21,6 +21,7 @@ use phpDocumentor\Reflection\Types\String_;
 use phpDocumentor\Reflection\Types\This;
 use phpDocumentor\Reflection\Types\Void_;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Types\RecordType;
 use Spatie\TypeScriptTransformer\Types\StructType;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 
@@ -46,6 +47,7 @@ class TranspileTypeToTypeScriptAction
             $type instanceof Nullable => $this->resolveNullableType($type),
             $type instanceof Object_ => $this->resolveObjectType($type),
             $type instanceof StructType => $this->resolveStructType($type),
+            $type instanceof RecordType => $this->resolveRecordType($type),
             $type instanceof TypeScriptType => (string) $type,
             $type instanceof Boolean => 'boolean',
             $type instanceof Float_, $type instanceof Integer => 'number',
@@ -103,6 +105,11 @@ class TranspileTypeToTypeScriptAction
         }
 
         return "{$transformed}}";
+    }
+
+    private function resolveRecordType(RecordType $type): string
+    {
+        return "Record<{$this->execute($type->getKeyType())}, {$this->execute($type->getValueType())}>";
     }
 
     private function resolveSelfReferenceType(): string

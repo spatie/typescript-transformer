@@ -219,6 +219,52 @@ export type UserRepository = {
 
 As you can see, the package is smart enough to convert `Language::class` to an inline enum we defined earlier.
 
+## Generating `Record` types
+
+If you need to generate a `Record<K, V>` type, you may use the `RecordTypeScriptType` attribute:
+
+```php
+use Spatie\TypeScriptTransformer\Attributes\RecordTypeScriptType;
+
+class FleetData extends Data
+{
+    public function __construct(
+        #[RecordTypeScriptType(AircraftType::class, AircraftData::class)]
+        public readonly array $fleet,
+    ) {
+    }
+}
+```
+
+This will generate a `Record` type with a key type of `AircraftType::class` and a value type of `AircraftData::class`:
+
+```ts
+export type FleetData = {
+  fleet: Record<App.Enums.AircraftType, App.Data.AircraftData>
+}
+```
+
+Additionally, if you need the value type to be an array of the specified type, you may set the third parameter of `RecordTypeScriptType` to `true`:
+
+```php
+class FleetData extends Data
+{
+    public function __construct(
+        #[RecordTypeScriptType(AircraftType::class, AircraftData::class, array: true)]
+        public readonly array $fleet,
+    ) {
+    }
+}
+```
+
+This will generate the following interface:
+
+```ts
+export type FleetData = {
+  fleet: Record<App.Enums.AircraftType, Array<App.Data.AircraftData>>
+}
+```
+
 ## Selecting a transformer
 
 Want to define a specific transformer for the file? You can use the following annotation:
