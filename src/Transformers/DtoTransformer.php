@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 
 use ReflectionClass;
 use ReflectionProperty;
+use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
@@ -58,6 +59,12 @@ class DtoTransformer implements Transformer
         return array_reduce(
             $this->resolveProperties($class),
             function (string $carry, ReflectionProperty $property) use ($isOptional, $missingSymbols) {
+                $isHidden = ! empty($property->getAttributes(Hidden::class));
+
+                if ($isHidden) {
+                    return $carry;
+                }
+
                 $isOptional = $isOptional || ! empty($property->getAttributes(Optional::class));
 
                 $transformed = $this->reflectionToTypeScript(
