@@ -252,3 +252,28 @@ Now all properties will be optional:
     name? : string;
 }
 ```
+
+## Hidden types
+
+You can make certain properties of a DTO hidden in TypeScript as such:
+
+```php
+class DataObject extends Data
+{
+    public function __construct(
+        public int $id,
+        #[Hidden]
+        public string $hidden,
+    )
+    {
+    }
+}
+```
+
+This will be transformed into:
+
+```tsx
+{
+    id : number;
+}
+```
