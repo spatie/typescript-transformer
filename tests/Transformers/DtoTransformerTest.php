@@ -6,6 +6,7 @@ use function PHPUnit\Framework\assertEquals;
 use function Spatie\Snapshots\assertMatchesSnapshot;
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
+use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
@@ -124,6 +125,22 @@ it('transforms all properties of a class with optional attribute to optional', f
 
     $type = $this->transformer->transform(
         new ReflectionClass(DummyOptionalDto::class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+
+it('transforms properties to hidden ones when using hidden attribute', function () {
+    $class = new class () {
+        public string $visible;
+        #[Hidden]
+        public string $hidden;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
         'Typed'
     );
 
