@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.2.0 - 2023-06-02
+
+- Add support for hidden properties (#54)
+
 ## 2.1.14 - 2023-04-07
 
 - add support for record types (#51)
