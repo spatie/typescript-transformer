@@ -6,6 +6,7 @@ use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use Spatie\TypeScriptTransformer\Exceptions\FuzzySearchFailed;
 use Spatie\TypeScriptTransformer\Exceptions\SymbolAlreadyExists;
 
 class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
@@ -63,6 +64,20 @@ class TypesCollection implements ArrayAccess, Countable, IteratorAggregate
     public function count(): int
     {
         return count($this->types);
+    }
+
+    public function getTypeByShortName(string $shortName): ?TransformedType
+    {
+        $types = array_filter($this->types, function (TransformedType $type) use($shortName) {
+            return $type->name === $shortName;
+        });
+        if(count($types) > 1) {
+            throw new FuzzySearchFailed($shortName);
+        }else if (count($types) === 1) {
+            return array_pop($types);
+        }else {
+            return null;
+        }
     }
 
     protected function ensureTypeCanBeAdded(TransformedType $type): void

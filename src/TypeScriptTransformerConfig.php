@@ -29,6 +29,8 @@ class TypeScriptTransformerConfig
 
     private bool $transformToNativeEnums = false;
 
+    private bool $fuzzyTypeSearch = false;
+
     public static function create(): self
     {
         return new self();
@@ -90,6 +92,13 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
+    public function fuzzyTypeSearch(bool $fuzzySearch = false): self
+    {
+        $this->fuzzyTypeSearch = $fuzzySearch;
+
+        return $this;
+    }
+
     public function getAutoDiscoverTypesPaths(): array
     {
         return $this->autoDiscoverTypesPaths;
@@ -113,7 +122,9 @@ class TypeScriptTransformerConfig
 
     public function getWriter(): Writer
     {
-        return new $this->writer;
+        return method_exists($this->writer, '__construct')
+            ? new $this->writer($this)
+            : new $this->writer;
     }
 
     public function getOutputFile(): string
@@ -161,5 +172,10 @@ class TypeScriptTransformerConfig
     public function shouldTransformToNativeEnums(): bool
     {
         return $this->transformToNativeEnums;
+    }
+
+    public function fuzzyTypeSearchEnabled(): bool
+    {
+        return $this->fuzzyTypeSearch;
     }
 }

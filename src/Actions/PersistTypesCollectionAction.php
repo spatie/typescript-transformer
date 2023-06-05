@@ -20,7 +20,7 @@ class PersistTypesCollectionAction
 
         $writer = $this->config->getWriter();
 
-        (new ReplaceSymbolsInCollectionAction())->execute(
+        (new ReplaceSymbolsInCollectionAction($this->config))->execute(
             $collection,
             $writer->replacesSymbolsWithFullyQualifiedIdentifiers()
         );

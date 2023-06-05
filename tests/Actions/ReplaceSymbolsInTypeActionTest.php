@@ -1,15 +1,18 @@
 <?php
 
-use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInTypeAction;
 use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
+use Spatie\TypeScriptTransformer\Exceptions\FuzzySearchFailed;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use function PHPUnit\Framework\assertEquals;
 
 beforeEach(function () {
     $this->collection = TypesCollection::create();
 
-    $this->action = new ReplaceSymbolsInTypeAction($this->collection);
+    $this->action = new ReplaceSymbolsInTypeAction(TypeScriptTransformerConfig::create()
+        ->fuzzyTypeSearch(true), $this->collection);
 });
 
 it('can replace symbols', function () {
@@ -101,4 +104,60 @@ it('can inline multiple dependencies', function () {
         'Depends on type B: Depends on type C: This is type C | depends on type C: This is type C',
         $transformed
     );
+});
+
+it("searches for short name if fqn isn't found", function () {
+    $typeB = FakeTransformedType::fake('B')
+        ->withNamespace('app\namespace\path')
+        ->withTransformed('This is type B');
+
+    $typeA = FakeTransformedType::fake('A')
+        ->withMissingSymbols(['B' => 'B'])
+        ->withTransformed('Depends on type B: {%B%}');
+
+    $this->collection[] = $typeA;
+    $this->collection[] = $typeB;
+
+    $transformed = $this->action->execute($typeA);
+
+    assertEquals('Depends on type B: app.namespace.path.B', $transformed);
+});
+
+it('will throw an exception when short name can not be resolved', function () {
+    $this->expectException(FuzzySearchFailed::class);
+
+    $typeB = FakeTransformedType::fake('B')
+        ->withNamespace('app\namespace\path')
+        ->withTransformed('This is type B');
+
+    $otherTypeB = FakeTransformedType::fake('B')
+        ->withNamespace('app\namespace')
+        ->withTransformed('This is another type B');
+
+    $typeA = FakeTransformedType::fake('A')
+        ->withMissingSymbols(['B' => 'B'])
+        ->withTransformed('Depends on type B: {%B%}');
+
+    $this->collection[] = $typeA;
+    $this->collection[] = $typeB;
+    $this->collection[] = $otherTypeB;
+
+    $this->action->execute($typeA);
+});
+
+it('will default to any if no specific type can be found ', function () {
+    $typeB = FakeTransformedType::fake('B')
+        ->withNamespace('app\namespace\path')
+        ->withTransformed('This is type B');
+
+    $typeA = FakeTransformedType::fake('A')
+        ->withMissingSymbols(['C' => 'C'])
+        ->withTransformed('Depends on type B: {%C%}');
+
+    $this->collection[] = $typeA;
+    $this->collection[] = $typeB;
+
+    $transformed = $this->action->execute($typeA);
+
+    assertEquals('Depends on type B: any', $transformed);
 });

@@ -1,12 +1,13 @@
 <?php
 
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use function PHPUnit\Framework\assertEquals;
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\FakeTransformedType;
 
 it('can replace missing symbols', function () {
-    $action = new ReplaceSymbolsInCollectionAction();
+    $action = new ReplaceSymbolsInCollectionAction(TypeScriptTransformerConfig::create());
 
     $collection = TypesCollection::create();
 
@@ -24,7 +25,7 @@ it('can replace missing symbols', function () {
 });
 
 it('can replace missing symbols without fully qualified names', function () {
-    $action = new ReplaceSymbolsInCollectionAction();
+    $action = new ReplaceSymbolsInCollectionAction(TypeScriptTransformerConfig::create());
 
     $collection = TypesCollection::create();
 

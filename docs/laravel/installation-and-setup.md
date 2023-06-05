@@ -96,5 +96,14 @@ return [
      */
     
     'transform_to_native_enums' => false,
+    
+    /*
+     * When set to true, the package will search for types by short name 
+     * when it doesn't find a type by FQN. 
+     * 
+     * This is useful when using the PhpDocTransformer, 
+     * since it doesn't know the FQN of the type (when 'use' statements are used).
+     */
+     'fuzzy_search' => false,
 ];
 ```
