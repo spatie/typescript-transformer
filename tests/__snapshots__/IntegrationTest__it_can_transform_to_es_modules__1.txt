@@ -15,7 +15,7 @@ documented_array: Array<number>;
 mixed_with_array: number | string | Array<number | string>;
 array_with_null: Array<number | null>;
 enum: Enum;
-non_typescripted_type: {[key: string]: unknown};
+non_typescripted_type: { [key: string]: unknown };
 other_dto: OtherDto;
 other_dto_array: Array<OtherDto>;
 other_dto_collection: Array<OtherDto>;

@@ -34,9 +34,9 @@ it('can resolve types', function (string $input, string $output) {
 it('can resolve self referencing types without current class', function () {
     $action = new TranspileTypeToTypeScriptAction($this->missingSymbols);
 
-    assertEquals('{[key: string]: unknown}', $action->execute(new Self_()));
-    assertEquals('{[key: string]: unknown}', $action->execute(new Static_()));
-    assertEquals('{[key: string]: unknown}', $action->execute(new This()));
+    assertEquals('{ [key: string]: unknown }', $action->execute(new Self_()));
+    assertEquals('{ [key: string]: unknown }', $action->execute(new Static_()));
+    assertEquals('{ [key: string]: unknown }', $action->execute(new This()));
 });
 
 it('can resolve a struct type', function () {

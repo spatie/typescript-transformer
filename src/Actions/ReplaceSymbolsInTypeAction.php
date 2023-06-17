@@ -38,7 +38,7 @@ class ReplaceSymbolsInTypeAction
         $found = $this->collection[$missingSymbol];
 
         if ($found === null) {
-            $type->replaceSymbol($missingSymbol, '{[key: string]: unknown}');
+            $type->replaceSymbol($missingSymbol, '{ [key: string]: unknown }');
 
             return $type;
         }

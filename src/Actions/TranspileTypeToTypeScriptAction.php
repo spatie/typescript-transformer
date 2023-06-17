@@ -115,7 +115,7 @@ class TranspileTypeToTypeScriptAction
     private function resolveSelfReferenceType(): string
     {
         if ($this->currentClass === null) {
-            return '{[key: string]: unknown}';
+            return '{ [key: string]: unknown }';
         }
 
         return $this->missingSymbolsCollection->add($this->currentClass);
