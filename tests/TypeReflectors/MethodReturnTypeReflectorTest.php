@@ -53,7 +53,7 @@ it('can reflect from reflection', function () {
     );
 
     assertEquals(
-        'any',
+        'unknown',
         (string) MethodReturnTypeReflector::create(new ReflectionMethod($class, 'm5'))->reflect()
     );
 });
@@ -117,7 +117,7 @@ it('can reflect from docblock', function () {
     );
 
     assertEquals(
-        'any',
+        'unknown',
         (string) MethodReturnTypeReflector::create(new ReflectionMethod($class, 'm5'))->reflect()
     );
 

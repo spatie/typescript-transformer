@@ -39,7 +39,7 @@ it('can reflect from reflection', function () {
     );
 
     assertEquals(
-        'any',
+        'unknown',
         (string) MethodParameterTypeReflector::create($parameters[4])->reflect()
     );
 });
@@ -93,7 +93,7 @@ it('can reflect from docblock', function () {
     );
 
     assertEquals(
-        'any',
+        'unknown',
         (string) MethodParameterTypeReflector::create($parameters[5])->reflect()
     );
 });
@@ -110,7 +110,7 @@ it('cannot reflect from attribute', function () {
     $parameters = (new ReflectionMethod($class, 'method'))->getParameters();
 
     assertEquals(
-        'any',
+        'unknown',
         (string) MethodParameterTypeReflector::create($parameters[0])->reflect()
     );
 });

@@ -6,8 +6,8 @@ int: number;
 boolean: boolean;
 float: number;
 object: object;
-array: Array<any>;
-none: any;
+array: Array<unknown>;
+none: unknown;
 documented_string: string;
 mixed: number | string;
 number: number;
@@ -25,5 +25,5 @@ nullable_string: string | number | null;
 reflection_replaced_default_type: string;
 docblock_replaced_default_type: string;
 array_replaced_default_type: Array<string>;
-array_as_object: { [key: string]: any };
+array_as_object: { [key: string]: unknown };
 }

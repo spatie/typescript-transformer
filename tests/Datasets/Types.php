@@ -36,7 +36,7 @@ dataset('types', [
     ['class-string<' . Enum::class . '>', 'string'],
     ['null', 'null'],
     ['object', 'object'],
-    ['array', 'Array<any>'],
+    ['array', 'Array<unknown>'],
 
     // references
     ['self', '{%fake_class%}'],
@@ -47,7 +47,7 @@ dataset('types', [
     ['scalar', 'string|number|boolean'],
 
     // Mixed
-    ['mixed', 'any'],
+    ['mixed', 'unknown'],
 
     // Collections
     ['Collection<int>', 'Array<number>'],

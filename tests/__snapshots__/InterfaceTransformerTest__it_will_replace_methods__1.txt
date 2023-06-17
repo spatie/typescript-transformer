@@ -1,4 +1,4 @@
 {
-testFunction(input: string, output: Array<any>): number;
+testFunction(input: string, output: Array<unknown>): number;
 anotherTestFunction(): boolean;
 }

@@ -34,7 +34,7 @@ it('can reflect from reflection', function () {
     );
 
     assertEquals(
-        'any',
+        'unknown',
         (string) PropertyTypeReflector::create(new ReflectionProperty($class, 'p5'))->reflect()
     );
 });
@@ -80,7 +80,7 @@ it('can reflect from docblock', function () {
     );
 
     assertEquals(
-        'any',
+        'unknown',
         (string) PropertyTypeReflector::create(new ReflectionProperty($class, 'p5'))->reflect()
     );
 

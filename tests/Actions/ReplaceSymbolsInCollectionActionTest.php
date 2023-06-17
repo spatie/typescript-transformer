@@ -20,7 +20,7 @@ it('can replace missing symbols', function () {
 
     $collection = $action->execute($collection);
 
-    assertEquals('{enum: enums.Enum, non-existing: any}', $collection['Dto']->transformed);
+    assertEquals('{enum: enums.Enum, non-existing: {[key: string]: unknown}}', $collection['Dto']->transformed);
 });
 
 it('can replace missing symbols without fully qualified names', function () {
@@ -38,5 +38,5 @@ it('can replace missing symbols without fully qualified names', function () {
 
     $collection = $action->execute($collection, false);
 
-    assertEquals('{enum: Enum, non-existing: any}', $collection['Dto']->transformed);
+    assertEquals('{enum: Enum, non-existing: {[key: string]: unknown}}', $collection['Dto']->transformed);
 });

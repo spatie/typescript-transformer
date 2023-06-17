@@ -61,7 +61,7 @@ it('will process a dto collection without type', function () {
         new MissingSymbolsCollection()
     );
 
-    assertEquals(new Array_(new TypeScriptType('any')), $type);
+    assertEquals(new Array_(new TypeScriptType('unknown')), $type);
 });
 
 it('will pass non dto collections', function () {

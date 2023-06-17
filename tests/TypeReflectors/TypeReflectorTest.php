@@ -22,7 +22,7 @@ it('will handle no docblock', function () {
         FakeReflectionProperty::create()
     );
 
-    assertEquals('any', (string) $reflector->reflect());
+    assertEquals('unknown', (string) $reflector->reflect());
 });
 
 it('can handle another non var docblock', function () {
@@ -30,7 +30,7 @@ it('can handle another non var docblock', function () {
         FakeReflectionProperty::create()->withDocComment('@method bla')
     );
 
-    assertEquals('any', (string) $reflector->reflect());
+    assertEquals('unknown', (string) $reflector->reflect());
 });
 
 it('can handle an incorrect docblock', function () {

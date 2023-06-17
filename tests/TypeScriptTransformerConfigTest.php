@@ -49,11 +49,11 @@ it('can use a php type in a class property replacer', function () {
 
 it('can use a typescript type in a class property replacer', function () {
     $config = TypeScriptTransformerConfig::create()->defaultTypeReplacements([
-        Dto::class => new TypeScriptType('any'),
+        Dto::class => new TypeScriptType('unknown'),
     ]);
 
     assertEquals(
-        [Dto::class => new TypeScriptType('any')],
+        [Dto::class => new TypeScriptType('unknown')],
         $config->getDefaultTypeReplacements()
     );
 });
