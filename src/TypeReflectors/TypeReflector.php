@@ -60,7 +60,7 @@ abstract class TypeReflector
             return $type;
         }
 
-        return new TypeScriptType('any');
+        return new TypeScriptType('unknown');
     }
 
     public function reflectionFromAttribute(): ?Type

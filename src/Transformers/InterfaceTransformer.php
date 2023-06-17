@@ -48,7 +48,7 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
                     ''
                 );
 
-                $returnType = 'any';
+                $returnType = 'unknown';
                 if ($method->hasReturnType()) {
                     $returnType = $this->reflectionToTypeScript(
                         $method,

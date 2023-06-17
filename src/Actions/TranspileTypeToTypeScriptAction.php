@@ -55,7 +55,7 @@ class TranspileTypeToTypeScriptAction
             $type instanceof Null_ => 'null',
             $type instanceof Self_, $type instanceof Static_, $type instanceof This => $this->resolveSelfReferenceType(),
             $type instanceof Scalar => 'string|number|boolean',
-            $type instanceof Mixed_ => 'any',
+            $type instanceof Mixed_ => 'unknown',
             $type instanceof Void_ => 'void',
             default => throw new Exception("Could not transform type: {$type}")
         };
@@ -115,7 +115,7 @@ class TranspileTypeToTypeScriptAction
     private function resolveSelfReferenceType(): string
     {
         if ($this->currentClass === null) {
-            return 'any';
+            return '{[key: string]: unknown}';
         }
 
         return $this->missingSymbolsCollection->add($this->currentClass);
