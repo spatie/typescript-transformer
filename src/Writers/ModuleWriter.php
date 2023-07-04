@@ -7,6 +7,7 @@ use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\Location;
+use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\Support\WrittenFile;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptImport;
@@ -29,10 +30,10 @@ class ModuleWriter implements Writer
         $this->resolveRelativePathAction = new ResolveRelativePathAction();
     }
 
-    public function output(array $transformedTypes, ReferenceMap $referenceMap): array
+    public function output(TransformedCollection $collection, ReferenceMap $referenceMap): array
     {
         $locations = $this->transformedPerLocationAction->execute(
-            $transformedTypes
+            $collection
         );
 
         $writtenFiles = [];

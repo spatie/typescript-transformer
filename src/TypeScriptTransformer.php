@@ -25,7 +25,7 @@ class TypeScriptTransformer
 
     }
 
-    public function execute(): TypeScriptTransformerLog
+    public function execute(bool $watch = false): TypeScriptTransformerLog
     {
         // Parallelize
         // - discovering types
@@ -34,15 +34,16 @@ class TypeScriptTransformer
         // Cant't do parallel
         // - replace type references
 
+        // watch -> only reload when the config changes (difficult, maybe skip for now)
         $discovered = $this->discoverTypesAction->execute();
 
-        $transformed = $this->transformTypesAction->execute($discovered);
+        $transformedCollection = $this->transformTypesAction->execute($discovered);
 
-        $transformed = $this->appendDefaultTypesAction->execute($transformed);
+        $this->appendDefaultTypesAction->execute($transformedCollection);
 
-        $referenceMap = $this->connectReferencesAction->execute($transformed);
+        $referenceMap = $this->connectReferencesAction->execute($transformedCollection);
 
-        $writtenFiles = $this->writeTypesAction->execute($transformed, $referenceMap);
+        $writtenFiles = $this->writeTypesAction->execute($transformedCollection, $referenceMap);
 
         $this->formatFilesAction->execute($writtenFiles);
 

@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Laravel;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\TypeScriptTransformer\Laravel\Commands\TransformTypeScriptCommand;
+use Spatie\TypeScriptTransformer\Laravel\Commands\WatchTypeScriptCommand;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -14,6 +15,7 @@ class TypeScriptTransformerServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('typescript-transformer')
+            ->hasCommand(WatchTypeScriptCommand::class)
             ->hasCommand(TransformTypeScriptCommand::class);
     }
 

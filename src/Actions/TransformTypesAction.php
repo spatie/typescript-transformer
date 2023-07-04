@@ -2,65 +2,36 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use ReflectionClass;
-use ReflectionException;
-use Spatie\TypeScriptTransformer\Support\TransformationContext;
+use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
-use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TransformTypesAction
 {
+    protected TransformTypeAction $transformTypeAction;
+
     public function __construct(
         protected TypeScriptTransformerConfig $config,
-        public TypeScriptTransformerLog $log,
+        protected TypeScriptTransformerLog $log,
     ) {
+        $this->transformTypeAction = new TransformTypeAction($config, $log);
     }
 
     /**
-     * @param  array<string>  $types
-     * @return array<Transformed>
+     * @param array<string> $types
      */
-    public function execute(array $types): array
+    public function execute(array $types): TransformedCollection
     {
-        $transformedTypes = [];
+        $collection = new TransformedCollection();
 
         foreach ($types as $type) {
-            try {
-                $reflection = new ReflectionClass($type);
-            } catch (ReflectionException) {
-                // TODO: maybe add some kind of log?
+            $transformed = $this->transformTypeAction->execute($type);
 
-                continue;
-            }
-
-            foreach ($this->config->transformers as $transformer) {
-                $transformed = $transformer->transform(
-                    $reflection,
-                    $this->createTransformationContext($reflection),
-                );
-
-                if ($transformed instanceof Transformed) {
-                    $transformedTypes[] = $transformed;
-
-                    break;
-                }
+            if ($transformed) {
+                $collection->add($transformed);
             }
         }
 
-        return $transformedTypes;
-    }
-
-    protected function createTransformationContext(
-        ReflectionClass $reflection
-    ): TransformationContext {
-        $name = $reflection->getShortName();
-
-        $nameSpaceSegments = explode('\\', $reflection->getNamespaceName());
-
-        return new TransformationContext(
-            $name,
-            $nameSpaceSegments,
-        );
+        return $collection;
     }
 }

@@ -3,28 +3,28 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Support\Location;
+use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class SplitTransformedPerLocationAction
 {
     /**
-     * @param  array<Transformed>  $transformedTypes
      * @return array<Location>
      */
-    public function execute(array $transformedTypes): array
+    public function execute(TransformedCollection $collection): array
     {
         $split = [];
 
-        foreach ($transformedTypes as $transformedType) {
-            $splitKey = count($transformedType->location) > 0
-                ? implode('.', $transformedType->location)
+        foreach ($collection as $transformed) {
+            $splitKey = count($transformed->location) > 0
+                ? implode('.', $transformed->location)
                 : '';
 
             if (! array_key_exists($splitKey, $split)) {
-                $split[$splitKey] = new Location($transformedType->location, []);
+                $split[$splitKey] = new Location($transformed->location, []);
             }
 
-            $split[$splitKey]->transformed[] = $transformedType;
+            $split[$splitKey]->transformed[] = $transformed;
         }
 
         ksort($split);

@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Writers;
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\References\Reference;
+use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\Support\WrittenFile;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
@@ -20,10 +21,10 @@ class NamespaceWriter implements Writer
         $this->splitTransformedPerLocationAction = new SplitTransformedPerLocationAction();
     }
 
-    public function output(array $transformedTypes, ReferenceMap $referenceMap): array
+    public function output(TransformedCollection $collection, ReferenceMap $referenceMap): array
     {
         $split = $this->splitTransformedPerLocationAction->execute(
-            $transformedTypes
+            $collection
         );
 
         $output = '';
@@ -62,7 +63,7 @@ class NamespaceWriter implements Writer
         return [
             new WrittenFile(
                 $this->filename,
-                $transformedTypes,
+                [],
             ),
         ];
     }
