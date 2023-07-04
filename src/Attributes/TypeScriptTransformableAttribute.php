@@ -2,9 +2,9 @@
 
 namespace Spatie\TypeScriptTransformer\Attributes;
 
-use phpDocumentor\Reflection\Type;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 
 interface TypeScriptTransformableAttribute
 {
-    public function getType(): Type;
+    public function getType(): TypeScriptNode;
 }

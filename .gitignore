@@ -1,8 +1,13 @@
+.idea
+.php_cs
+.php_cs.cache
+.phpunit.result.cache
 build
 composer.lock
-vendor
 coverage
-.phpunit.result.cache
-.idea
-.php_cs.cache
+docs
+phpunit.xml
+psalm.xml
+vendor
 .php-cs-fixer.cache
+

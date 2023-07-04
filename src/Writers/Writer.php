@@ -2,11 +2,15 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
-use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Support\WrittenFile;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 interface Writer
 {
-    public function format(TypesCollection $collection): string;
-
-    public function replacesSymbolsWithFullyQualifiedIdentifiers(): bool;
+    /** @return array<WrittenFile> */
+    public function output(
+        array $transformedTypes,
+        ReferenceMap $referenceMap,
+    ): array;
 }

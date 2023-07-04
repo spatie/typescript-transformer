@@ -1,6 +1,6 @@
 {
     "name": "spatie/typescript-transformer",
-    "description": "Transform your PHP structures to TypeScript types",
+    "description": "This is my package typescript-transformer",
     "keywords": [
         "spatie",
         "typescript-transformer"
@@ -11,48 +11,58 @@
         {
             "name": "Ruben Van Assche",
             "email": "ruben@spatie.be",
-            "homepage": "https://spatie.be",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.0",
-        "nikic/php-parser": "^4.13",
-        "phpdocumentor/type-resolver": "^1.6.2",
-        "symfony/process": "^5.2|^6.0"
+        "php": "^8.2",
+        "illuminate/contracts": "^10.0",
+        "spatie/laravel-package-tools": "^1.14.0",
+        "phpstan/phpdoc-parser": "^1.13",
+        "spatie/php-structure-discoverer": "^1.1"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.18",
-        "larapack/dd": "^1.1",
-        "myclabs/php-enum": "^1.7",
-        "pestphp/pest": "^1.22",
-        "phpunit/phpunit": "^9.0",
-        "spatie/data-transfer-object": "^2.0",
-        "spatie/enum": "^3.0",
-        "spatie/pest-plugin-snapshots": "^1.1",
-        "spatie/temporary-directory": "^1.2|^2.0",
-        "vimeo/psalm": "^4.2"
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^7.9",
+        "nunomaduro/larastan": "^2.0.1",
+        "orchestra/testbench": "^8.0",
+        "pestphp/pest": "^2.0",
+        "pestphp/pest-plugin-arch": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "spatie/laravel-ray": "^1.26"
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\TypeScriptTransformer\\": "src"
+            "Spatie\\TypeScriptTransformer\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\TypeScriptTransformer\\Tests\\": "tests"
+            "Spatie\\TypeScriptTransformer\\Tests\\": "tests/"
         }
     },
     "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
-        "psalm": "./vendor/bin/psalm -c psalm.xml",
-        "format": "./vendor/bin/php-cs-fixer fix --allow-risky=yes"
+        "format": "vendor/bin/pint"
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Spatie\\TypeScriptTransformer\\Laravel\\TypeScriptTransformerServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",
