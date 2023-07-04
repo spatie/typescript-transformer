@@ -6,7 +6,6 @@ use Spatie\TypeScriptTransformer\Actions\AppendDefaultTypesAction;
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
-use Spatie\TypeScriptTransformer\Actions\ReplaceTypeReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteTypesAction;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;

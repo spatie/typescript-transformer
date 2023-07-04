@@ -8,8 +8,7 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 class SplitTransformedPerLocationAction
 {
     /**
-     * @param  array<Transformed> $transformedTypes
-     *
+     * @param  array<Transformed>  $transformedTypes
      * @return array<Location>
      */
     public function execute(array $transformedTypes): array

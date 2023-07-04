@@ -113,10 +113,10 @@ it('can transpile php types', function (
     ];
 
     // @todo figure out this one
-//    yield [
-//        'static',
-//        new TypeReference(new ClassStringReference(PhpTypesStub::class)),
-//    ];
+    //    yield [
+    //        'static',
+    //        new TypeReference(new ClassStringReference(PhpTypesStub::class)),
+    //    ];
 
     yield [
         'parent',

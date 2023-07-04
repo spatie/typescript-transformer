@@ -19,7 +19,6 @@ class TransformTypesAction
 
     /**
      * @param  array<string>  $types
-     *
      * @return array<Transformed>
      */
     public function execute(array $types): array

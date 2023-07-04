@@ -12,8 +12,7 @@ class DiscoverTypesAction
     public function __construct(
         public TypeScriptTransformerConfig $config,
         public TypeScriptTransformerLog $log,
-    )
-    {
+    ) {
     }
 
     /** @return array<string> */

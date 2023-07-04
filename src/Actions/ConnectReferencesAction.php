@@ -18,7 +18,7 @@ class ConnectReferencesAction
     }
 
     /**
-     * @param array<Transformed> $transformed
+     * @param  array<Transformed>  $transformed
      */
     public function execute(array $transformed): ReferenceMap
     {

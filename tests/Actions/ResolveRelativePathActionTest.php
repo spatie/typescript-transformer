@@ -1,6 +1,5 @@
 <?php
 
-
 use Spatie\TypeScriptTransformer\Actions\ResolveRelativePathAction;
 
 it('will return the correct path', function (array $current, array $requested, ?string $expected) {

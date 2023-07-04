@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class TypeScriptObject implements TypeScriptNode, TypeScriptNodeWithChildren
 {
     /**
-     * @param array<TypeScriptProperty> $properties
+     * @param  array<TypeScriptProperty>  $properties
      */
     public function __construct(
         public array $properties

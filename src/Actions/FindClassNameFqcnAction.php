@@ -26,7 +26,7 @@ class FindClassNameFqcnAction
 
         $guessedFqcn = "{$reflectionClass->getNamespaceName()}\\{$className}";
 
-        if(class_exists($guessedFqcn)){
+        if (class_exists($guessedFqcn)) {
             return $this->cleanupClassname($guessedFqcn);
         }
 
@@ -46,8 +46,7 @@ class FindClassNameFqcnAction
 
     protected function cleanupClassname(
         string $classname
-    ):string
-    {
+    ): string {
         return ltrim($classname, '\\');
     }
 }

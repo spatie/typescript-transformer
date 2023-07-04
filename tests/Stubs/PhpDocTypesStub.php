@@ -13,19 +13,19 @@ class PhpDocTypesStub extends stdClass
     /** @var bool */
     public $bool;
 
-    /** @var boolean */
+    /** @var bool */
     public $boolean;
 
     /** @var int */
     public $int;
 
-    /** @var integer */
+    /** @var int */
     public $integer;
 
     /** @var float */
     public $float;
 
-    /** @var double */
+    /** @var float */
     public $double;
 
     /** @var mixed */

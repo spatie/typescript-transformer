@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class TypeScriptMethod implements TypeScriptNode, TypeScriptNodeWithChildren
 {
     /**
-     * @param array<TypeScriptParameter> $parameters
+     * @param  array<TypeScriptParameter>  $parameters
      */
     public function __construct(
         public string $name,

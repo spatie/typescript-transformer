@@ -50,7 +50,7 @@ class ModuleWriter implements Writer
     ): WrittenFile {
         $imports = $this->resolveImports($location, $referenceMap);
 
-        $path = "{$this->path}/".implode('/', $location->segments)."/";
+        $path = "{$this->path}/".implode('/', $location->segments).'/';
 
         $output = '';
 

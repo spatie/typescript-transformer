@@ -4,14 +4,13 @@ namespace Spatie\TypeScriptTransformer\Transformed;
 
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\Support\Import;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 
 class Transformed
 {
     /**
-     * @param array<string> $location
-     * @param array<Reference> $references
+     * @param  array<string>  $location
+     * @param  array<Reference>  $references
      */
     public function __construct(
         public TypeScriptNode $typeScriptNode,

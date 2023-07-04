@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class TypeScriptGeneric implements TypeScriptNode, TypeScriptNodeWithChildren
 {
     /**
-     * @param array<TypeScriptNode> $genericTypes
+     * @param  array<TypeScriptNode>  $genericTypes
      */
     public function __construct(
         public TypeScriptNode $type,

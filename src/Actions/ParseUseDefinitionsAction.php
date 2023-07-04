@@ -20,7 +20,6 @@ class ParseUseDefinitionsAction
         string $filename,
     ): UsageCollection {
         /** @todo refactor this to the structure discoverer package, it is copied from there */
-
         try {
             $contents = file_get_contents($filename);
 

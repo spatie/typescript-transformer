@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Writers;
 
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\Support\WrittenFile;
-use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 interface Writer
 {

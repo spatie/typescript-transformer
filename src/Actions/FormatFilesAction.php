@@ -11,8 +11,7 @@ class FormatFilesAction
     public function __construct(
         public TypeScriptTransformerConfig $config,
         public TypeScriptTransformerLog $log,
-    )
-    {
+    ) {
     }
 
     /**

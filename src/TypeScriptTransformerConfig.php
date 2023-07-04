@@ -11,7 +11,7 @@ readonly class TypeScriptTransformerConfig
     /**
      * @param  array<string>  $directories
      * @param  array<Transformer>  $transformers
-     * @param  array<class-string<DefaultTypesProvider>> $defaultTypeProviders
+     * @param  array<class-string<DefaultTypesProvider>>  $defaultTypeProviders
      */
     public function __construct(
         public array $directories,

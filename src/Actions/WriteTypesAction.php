@@ -19,8 +19,7 @@ class WriteTypesAction
     public function execute(
         array $transformed,
         ReferenceMap $referenceMap
-    ): array
-    {
+    ): array {
         return $this->config->writer->output($transformed, $referenceMap);
     }
 }

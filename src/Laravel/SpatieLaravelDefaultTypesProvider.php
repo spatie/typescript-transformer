@@ -22,14 +22,14 @@ class SpatieLaravelDefaultTypesProvider implements DefaultTypesProvider
         if (class_exists(\Spatie\LaravelOptions\Options::class)) {
             $types[] = new Transformed(
                 new TypeScriptExport(new TypeScriptAlias(
-                        new TypeScriptIdentifier('Options'),
-                        new TypeScriptArray(
-                            new TypeScriptObject([
-                                new TypeScriptProperty('label', new TypeScriptString()),
-                                new TypeScriptProperty('value', new TypeScriptString()),
-                            ]),
-                        )
+                    new TypeScriptIdentifier('Options'),
+                    new TypeScriptArray(
+                        new TypeScriptObject([
+                            new TypeScriptProperty('label', new TypeScriptString()),
+                            new TypeScriptProperty('value', new TypeScriptString()),
+                        ]),
                     )
+                )
                 ),
                 new ClassStringReference(\Spatie\LaravelOptions\Options::class),
                 'Options',

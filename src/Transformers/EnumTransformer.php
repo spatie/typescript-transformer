@@ -9,11 +9,11 @@ use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptEnum;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptLiteral;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 use UnitEnum;
 

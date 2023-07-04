@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class TypeScriptUnion implements TypeScriptNode, TypeScriptNodeWithChildren
 {
     /**
-     * @param array<TypeScriptNode> $types
+     * @param  array<TypeScriptNode>  $types
      */
     public function __construct(
         public array $types,

@@ -7,9 +7,8 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class TypeScriptInterface implements TypeScriptNode, TypeScriptNodeWithChildren
 {
     /**
-     * @param string $name
-     * @param array<TypeScriptProperty> $properties
-     * @param array<TypeScriptMethod> $methods
+     * @param  array<TypeScriptProperty>  $properties
+     * @param  array<TypeScriptMethod>  $methods
      */
     public function __construct(
         public string $name,

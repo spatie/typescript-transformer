@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 
 use ReflectionClass;
 use ReflectionProperty;
-use Spatie\TypeScriptTransformer\Actions\FindClassNameFqcnAction;
 use Spatie\TypeScriptTransformer\Actions\ParseUseDefinitionsAction;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptTypeAction;
 use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptTypeAction;

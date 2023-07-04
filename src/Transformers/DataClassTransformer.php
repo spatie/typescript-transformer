@@ -4,8 +4,6 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 
 use ReflectionClass;
 use ReflectionProperty;
-use Spatie\StructureDiscoverer\Collections\UsageCollection;
-use Spatie\TypeScriptTransformer\Actions\FindClassNameFqcnAction;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;

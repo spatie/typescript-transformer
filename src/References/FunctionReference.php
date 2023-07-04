@@ -6,8 +6,7 @@ class FunctionReference implements Reference
 {
     public function __construct(
         public string $name,
-    )
-    {
+    ) {
     }
 
     public function getKey(): string

@@ -16,8 +16,7 @@ class AppendDefaultTypesAction
     }
 
     /**
-     * @param array<Transformed> $transformed
-     *
+     * @param  array<Transformed>  $transformed
      * @return array<Transformed>
      */
     public function execute(array $transformed): array

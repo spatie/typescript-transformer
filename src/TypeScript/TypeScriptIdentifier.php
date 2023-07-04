@@ -8,8 +8,7 @@ class TypeScriptIdentifier implements TypeScriptNode
 {
     public function __construct(
         public string $name,
-    )
-    {
+    ) {
     }
 
     public function write(WritingContext $context): string
