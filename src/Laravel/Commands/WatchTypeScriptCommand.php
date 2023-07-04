@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Laravel\Commands;
 
 use Illuminate\Console\Command;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-use Spatie\Watcher\Watch;
 
 class WatchTypeScriptCommand extends Command
 {
@@ -15,7 +14,6 @@ class WatchTypeScriptCommand extends Command
     public function handle(
         TypeScriptTransformerConfig $config,
     ): int {
-
 
         $this->comment('Watching for changes...');
 

@@ -18,7 +18,7 @@ class TransformTypeAction
     }
 
     /**
-     * @param class-string $type
+     * @param  class-string  $type
      */
     public function execute(string $type): ?Transformed
     {

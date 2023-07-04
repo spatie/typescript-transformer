@@ -13,7 +13,7 @@ use Traversable;
 class TransformedCollection implements IteratorAggregate
 {
     /**
-     * @param array<Transformed> $items
+     * @param  array<Transformed>  $items
      */
     public function __construct(
         protected array $items = [],

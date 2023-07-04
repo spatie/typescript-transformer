@@ -18,7 +18,7 @@ class TransformTypesAction
     }
 
     /**
-     * @param array<string> $types
+     * @param  array<string>  $types
      */
     public function execute(array $types): TransformedCollection
     {
