@@ -8,6 +8,7 @@ use Spatie\TypeScriptTransformer\Actions\ParseUseDefinitionsAction;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptTypeAction;
 use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptTypeAction;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
+use Spatie\TypeScriptTransformer\Attributes\TypeScriptTypeAttributeContract;
 use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
@@ -38,6 +39,30 @@ abstract class ClassTransformer implements Transformer
             return Untransformable::create();
         }
 
+
+        return new Transformed(
+            new TypeScriptExport(
+                new TypeScriptAlias(
+                    new TypeScriptIdentifier($context->name),
+                    $this->getTypeScriptNode($reflectionClass)
+                )
+            ),
+            new ReflectionClassReference($reflectionClass),
+            $context->name,
+            true,
+            $context->nameSpaceSegments,
+        );
+    }
+
+    abstract public function shouldTransform(ReflectionClass $reflection): bool;
+
+    protected function getTypeScriptNode(
+        ReflectionClass $reflectionClass
+    ): TypeScriptNode {
+        if ($resolvedAttributeType = $this->resolveTypeByAttribute($reflectionClass)) {
+            return $resolvedAttributeType;
+        }
+
         $classAnnotations = $this->docTypeResolver->class($reflectionClass)?->properties ?? [];
 
         $constructorAnnotations = $reflectionClass->hasMethod('__construct')
@@ -55,16 +80,26 @@ abstract class ClassTransformer implements Transformer
             );
         }
 
-        return new Transformed(
-            new TypeScriptExport(new TypeScriptAlias(new TypeScriptIdentifier($context->name), new TypeScriptObject($properties))),
-            new ReflectionClassReference($reflectionClass),
-            $context->name,
-            true,
-            $context->nameSpaceSegments,
-        );
+        return new TypeScriptObject($properties);
     }
 
-    abstract public function shouldTransform(ReflectionClass $reflection): bool;
+    protected function resolveTypeByAttribute(
+        ReflectionClass $reflectionClass,
+        ?ReflectionProperty $property = null,
+    ): ?TypeScriptNode {
+        $subject = $property ?? $reflectionClass;
+
+        foreach ($subject->getAttributes() as $attribute) {
+            if (is_a($attribute->getName(), TypeScriptTypeAttributeContract::class, true)) {
+                /** @var TypeScriptTypeAttributeContract $attributeInstance */
+                $attributeInstance = $attribute->newInstance();
+
+                return $attributeInstance->getType($reflectionClass);
+            }
+        }
+
+        return null;
+    }
 
     protected function getProperties(ReflectionClass $reflection): array
     {
@@ -103,6 +138,10 @@ abstract class ClassTransformer implements Transformer
         ReflectionProperty $reflectionProperty,
         ?ParsedNameAndType $annotation,
     ): TypeScriptNode {
+        if ($resolvedAttributeType = $this->resolveTypeByAttribute($reflectionClass, $reflectionProperty)) {
+            return $resolvedAttributeType;
+        }
+
         if ($annotation) {
             return $this->transpilePhpStanTypeToTypeScriptTypeAction->execute(
                 $annotation->type,

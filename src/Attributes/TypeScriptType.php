@@ -3,13 +3,17 @@
 namespace Spatie\TypeScriptTransformer\Attributes;
 
 use Attribute;
-use phpDocumentor\Reflection\Type;
-use phpDocumentor\Reflection\TypeResolver;
+use ReflectionClass;
+use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptTypeAction;
 use Spatie\TypeScriptTransformer\Exceptions\UnableToTransformUsingAttribute;
+use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 use Spatie\TypeScriptTransformer\Types\StructType;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 
 #[Attribute]
-class TypeScriptType implements TypeScriptTransformableAttribute
+class TypeScriptType implements TypeScriptTypeAttributeContract
 {
     private array|string $type;
 
@@ -18,17 +22,22 @@ class TypeScriptType implements TypeScriptTransformableAttribute
         $this->type = $type;
     }
 
-    public function getType(): Type
+    public function getType(ReflectionClass $class): TypeScriptNode
     {
+        $docResolver = new DocTypeResolver();
+        $transpiler = new TranspilePhpStanTypeToTypeScriptTypeAction();
+
         if (is_string($this->type)) {
-            return (new TypeResolver())->resolve($this->type);
+            return $transpiler->execute($docResolver->type($this->type), $class);
         }
 
-        /** @psalm-suppress RedundantCondition  */
-        if (is_array($this->type)) {
-            return StructType::fromArray($this->type);
-        }
+        $properties = collect($this->type)
+            ->map(fn (string $type, string $name) => new TypeScriptProperty(
+                $name,
+                $transpiler->execute($docResolver->type($type), $class)
+            ))
+            ->all();
 
-        throw UnableToTransformUsingAttribute::create($this->type);
+        return new TypeScriptObject($properties);
     }
 }
