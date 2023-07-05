@@ -2,6 +2,10 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.2.1 - 2023-07-05
+
+- Add support for pseudo types
+
 ## 2.2.0 - 2023-06-02
 
 - Add support for hidden properties (#54)
