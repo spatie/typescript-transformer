@@ -39,7 +39,6 @@ abstract class ClassTransformer implements Transformer
             return Untransformable::create();
         }
 
-
         return new Transformed(
             new TypeScriptExport(
                 new TypeScriptAlias(

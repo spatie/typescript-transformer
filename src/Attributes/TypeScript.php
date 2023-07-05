@@ -8,7 +8,7 @@ use Attribute;
 class TypeScript
 {
     /**
-     * @param array<string>|null $location
+     * @param  array<string>|null  $location
      */
     public function __construct(
         public ?string $name = null,

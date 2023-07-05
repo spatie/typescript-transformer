@@ -4,8 +4,6 @@ namespace Spatie\TypeScriptTransformer\Attributes;
 
 use Attribute;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Types\StructType;
-use Spatie\TypeScriptTransformer\Types\TypeScriptType;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
