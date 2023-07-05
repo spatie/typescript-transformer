@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Exception;
+use phpDocumentor\Reflection\PseudoType;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\AbstractList;
 use phpDocumentor\Reflection\Types\Boolean;
@@ -57,6 +58,7 @@ class TranspileTypeToTypeScriptAction
             $type instanceof Scalar => 'string|number|boolean',
             $type instanceof Mixed_ => 'any',
             $type instanceof Void_ => 'void',
+            $type instanceof PseudoType => $this->execute($type->underlyingType()),
             default => throw new Exception("Could not transform type: {$type}")
         };
     }
