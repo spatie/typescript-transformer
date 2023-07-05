@@ -57,7 +57,7 @@ it('can resolve a struct type', function () {
     assertContains('fake_class', $this->missingSymbols->all());
 });
 
-it('can resolve pseudo types', function (){
+it('can resolve pseudo types', function () {
     $transformed = $this->action->execute($this->typeResolver->resolve('array-key'));
 
     expect($transformed)->toBe('string | number');
