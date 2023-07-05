@@ -1,55 +1,10 @@
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
-
-# Transform PHP types to TypeScript
+# This is my package typescript-transformer
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
-[![Tests](https://github.com/spatie/typescript-transformer/workflows/run-tests/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3Arun-tests)
-[![Styling](https://github.com/spatie/typescript-transformer/workflows/Check%20&%20fix%20styling/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3A%22Check+%26+fix+styling%22)
-[![Psalm](https://github.com/spatie/typescript-transformer/workflows/Psalm/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3APsalm)
+[![Tests](https://img.shields.io/github/actions/workflow/status/spatie/typescript-transformer/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/spatie/typescript-transformer/actions/workflows/run-tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
 
-This package allows you to convert PHP classes to TypeScript. 
-
-This class...
-
-```php
-/** @typescript */
-class User
-{
-    public int $id;
-    public string $name;
-    public ?string $address;
-}
-```
-
-... will be converted to this TypeScript type:
-
-```ts
-export type User = {
-    id: number;
-    name: string;
-    address: string | null;
-}
-```
-
-Here's another example.
-
-```php
-class Languages extends Enum
-{
-    const TYPESCRIPT = 'typescript';
-    const PHP = 'php';
-}
-```
-
-The `Languages` enum will be converted to:
-
-```tsx
-export type Languages = 'typescript' | 'php';
-```
-
-You can find the full documentation [here](https://docs.spatie.be/typescript-transformer/v2/introduction/).
+This is where your description should go. Try and limit it to a paragraph or two. Consider adding a small example.
 
 ## Support us
 
@@ -61,15 +16,22 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 ## Installation
 
-You can install this package via composer:
+You can install the package via composer:
 
 ```bash
 composer require spatie/typescript-transformer
 ```
 
+## Usage
+
+```php
+$skeleton = new Spatie\TypescriptTransformer();
+echo $skeleton->echoPhrase('Hello, Spatie!');
+```
+
 ## Testing
 
-``` bash
+```bash
 composer test
 ```
 
@@ -81,9 +43,9 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
 
-## Security
+## Security Vulnerabilities
 
-If you've found a bug regarding security please mail [security@spatie.be](mailto:security@spatie.be) instead of using the issue tracker.
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 

@@ -2,37 +2,51 @@
 
 namespace Spatie\TypeScriptTransformer;
 
-use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
-use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
-use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
-use Spatie\TypeScriptTransformer\Structures\TypesCollection;
-use Symfony\Component\Finder\Finder;
+use Spatie\TypeScriptTransformer\Actions\AppendDefaultTypesAction;
+use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
+use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
+use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
+use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
+use Spatie\TypeScriptTransformer\Actions\WriteTypesAction;
+use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 
 class TypeScriptTransformer
 {
-    protected TypeScriptTransformerConfig $config;
+    public function __construct(
+        protected TypeScriptTransformerConfig $config,
+        protected TypeScriptTransformerLog $log,
+        protected DiscoverTypesAction $discoverTypesAction,
+        protected TransformTypesAction $transformTypesAction,
+        protected AppendDefaultTypesAction $appendDefaultTypesAction,
+        protected ConnectReferencesAction $connectReferencesAction,
+        protected WriteTypesAction $writeTypesAction,
+        protected FormatFilesAction $formatFilesAction,
+    ) {
 
-    public static function create(TypeScriptTransformerConfig $config): self
-    {
-        return new self($config);
     }
 
-    public function __construct(TypeScriptTransformerConfig $config)
+    public function execute(bool $watch = false): TypeScriptTransformerLog
     {
-        $this->config = $config;
-    }
+        // Parallelize
+        // - discovering types
+        // - transforming types
 
-    public function transform(): TypesCollection
-    {
-        $typesCollection = (new ResolveTypesCollectionAction(
-            new Finder(),
-            $this->config,
-        ))->execute();
+        // Cant't do parallel
+        // - replace type references
 
-        (new PersistTypesCollectionAction($this->config))->execute($typesCollection);
+        // watch -> only reload when the config changes (difficult, maybe skip for now)
+        $discovered = $this->discoverTypesAction->execute();
 
-        (new FormatTypeScriptAction($this->config))->execute();
+        $transformedCollection = $this->transformTypesAction->execute($discovered);
 
-        return $typesCollection;
+        $this->appendDefaultTypesAction->execute($transformedCollection);
+
+        $referenceMap = $this->connectReferencesAction->execute($transformedCollection);
+
+        $writtenFiles = $this->writeTypesAction->execute($transformedCollection, $referenceMap);
+
+        $this->formatFilesAction->execute($writtenFiles);
+
+        return $this->log;
     }
 }

@@ -1,4 +1,0 @@
-{
-testFunction(input: string, output: Array<any>): number;
-anotherTestFunction(): boolean;
-}
