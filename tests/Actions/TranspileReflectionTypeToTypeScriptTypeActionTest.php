@@ -130,7 +130,7 @@ it('can transpile php types', function (
 
     yield [
         'array',
-        new TypeScriptArray(null),
+        new TypeScriptArray([]),
     ];
 
     yield [

@@ -11,7 +11,7 @@ class TypeScriptInterface implements TypeScriptNode, TypeScriptNodeWithChildren
      * @param  array<TypeScriptMethod>  $methods
      */
     public function __construct(
-        public string $name,
+        public TypeScriptIdentifier $name,
         public array $properties,
         public array $methods,
     ) {
@@ -27,7 +27,7 @@ class TypeScriptInterface implements TypeScriptNode, TypeScriptNodeWithChildren
             empty($combined) ? '' : PHP_EOL
         );
 
-        return "interface {$this->name} {{$items}}";
+        return "interface {$this->name->write($context)} {{$items}}";
     }
 
     public function children(): array

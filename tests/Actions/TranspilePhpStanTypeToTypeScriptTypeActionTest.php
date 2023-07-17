@@ -170,12 +170,15 @@ it('can transpile PHPStan doc types', function (
 
     yield [
         'array',
-        new TypeScriptArray(null),
+        new TypeScriptArray([]),
     ];
 
     yield [
         'arrayGeneric',
-        new TypeScriptArray(new TypeScriptString()),
+        new TypeScriptGeneric(
+            new TypeScriptIdentifier('Array'),
+            [new TypeScriptString()]
+        ),
     ];
 
     yield [
@@ -191,7 +194,7 @@ it('can transpile PHPStan doc types', function (
 
     yield [
         'typeArray',
-        new TypeScriptArray(new TypeScriptString()),
+        new TypeScriptGeneric(new TypeScriptIdentifier('Array'), [new TypeScriptString()]),
     ];
 
     yield [
@@ -200,7 +203,7 @@ it('can transpile PHPStan doc types', function (
             new TypeScriptIdentifier('Record'),
             [
                 new TypeScriptNumber(),
-                new TypeScriptArray(new TypeScriptString()),
+                new TypeScriptGeneric(new TypeScriptIdentifier('Array'), [new TypeScriptString()]),
             ]
         ),
     ];

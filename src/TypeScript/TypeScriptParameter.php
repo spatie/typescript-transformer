@@ -9,7 +9,7 @@ class TypeScriptParameter implements TypeScriptNode, TypeScriptNodeWithChildren
     public function __construct(
         public string $name,
         public TypeScriptNode $type,
-        public bool $isOptional,
+        public bool $isOptional = false,
     ) {
     }
 

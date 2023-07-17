@@ -6,20 +6,26 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 
 class TypeScriptArray implements TypeScriptNode, TypeScriptNodeWithChildren
 {
+    /**
+     * @param TypeScriptNode[] $types
+     */
     public function __construct(
-        public ?TypeScriptNode $type
+        public array $types
     ) {
     }
 
     public function write(WritingContext $context): string
     {
-        return $this->type
-            ? "Array<{$this->type->write($context)}>"
-            : 'Array';
+        $types = implode(', ', array_map(
+            fn(TypeScriptNode $type) => $type->write($context),
+            $this->types
+        ));
+
+        return "[$types]";
     }
 
     public function children(): array
     {
-        return $this->type ? [$this->type] : [];
+        return $this->types;
     }
 }

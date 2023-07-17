@@ -13,6 +13,6 @@ class TypeScriptIdentifier implements TypeScriptNode
 
     public function write(WritingContext $context): string
     {
-        return $this->name;
+        return (str_contains($this->name, '.') || str_contains($this->name, '\\')) ? "'{$this->name}'" : $this->name;
     }
 }

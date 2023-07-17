@@ -79,7 +79,7 @@ class TranspileReflectionTypeToTypeScriptTypeAction
         }
 
         if ($type->getName() === 'array') {
-            return new TypeScriptArray(null);
+            return new TypeScriptArray([]);
         }
 
         if ($type->getName() === 'null') {

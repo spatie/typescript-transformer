@@ -82,7 +82,7 @@ class TranspilePhpStanTypeToTypeScriptTypeAction
         }
 
         if ($node->name === 'array') {
-            return new TypeScriptArray(null);
+            return new TypeScriptArray([]);
         }
 
         if ($node->name === 'callable') {
@@ -121,8 +121,9 @@ class TranspilePhpStanTypeToTypeScriptTypeAction
         ArrayTypeNode $node,
         ?ReflectionClass $reflectionClass
     ): TypeScriptNode {
-        return new TypeScriptArray(
-            $this->execute($node->type, $reflectionClass)
+        return new TypeScriptGeneric(
+            new TypeScriptIdentifier('Array'),
+            [$this->execute($node->type, $reflectionClass)]
         );
     }
 
@@ -183,17 +184,12 @@ class TranspilePhpStanTypeToTypeScriptTypeAction
         GenericTypeNode $node,
         ?ReflectionClass $reflectionClass
     ): TypeScriptNode {
-        $type = $this->execute($node->type, $reflectionClass);
-
-        if ($type instanceof TypeScriptString) {
-            return $type; // class-string<something> case
-        }
-
-        if ($type instanceof TypeScriptArray) {
+        if ($node->type->name === 'array') {
             return match (count($node->genericTypes)) {
-                0 => $type,
-                1 => new TypeScriptArray(
-                    $this->execute($node->genericTypes[0], $reflectionClass)
+                0 => new TypeScriptArray([]),
+                1 => new TypeScriptGeneric(
+                    new TypeScriptIdentifier('Array'),
+                    [$this->execute($node->genericTypes[0], $reflectionClass)]
                 ),
                 2 => new TypeScriptGeneric(
                     new TypeScriptIdentifier('Record'),
@@ -204,6 +200,12 @@ class TranspilePhpStanTypeToTypeScriptTypeAction
                 ),
                 default => throw new Exception('Invalid number of generic types for array'),
             };
+        }
+
+        $type = $this->execute($node->type, $reflectionClass);
+
+        if ($type instanceof TypeScriptString) {
+            return $type; // class-string<something> case
         }
 
         return new TypeScriptGeneric(

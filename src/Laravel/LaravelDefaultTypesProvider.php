@@ -11,7 +11,6 @@ use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptArray;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptBoolean;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
@@ -47,8 +46,9 @@ class LaravelDefaultTypesProvider implements DefaultTypesProvider
                         new TypeScriptIdentifier('Collection'),
                         [new TypeScriptIdentifier('T')],
                     ),
-                    new TypeScriptArray(
-                        new TypeScriptIdentifier('T'),
+                    new TypeScriptGeneric(
+                        new TypeScriptIdentifier('Array'),
+                        [new TypeScriptIdentifier('T')],
                     ),
                 )
             ),
@@ -68,8 +68,9 @@ class LaravelDefaultTypesProvider implements DefaultTypesProvider
                         new TypeScriptIdentifier('Collection'),
                         [new TypeScriptIdentifier('T')],
                     ),
-                    new TypeScriptArray(
-                        new TypeScriptIdentifier('T'),
+                    new TypeScriptGeneric(
+                        new TypeScriptIdentifier('Array'),
+                        [new TypeScriptIdentifier('T')],
                     ),
                 )
             ),
@@ -90,7 +91,10 @@ class LaravelDefaultTypesProvider implements DefaultTypesProvider
                         [new TypeScriptIdentifier('T')],
                     ),
                     new TypeScriptObject([
-                        new TypeScriptProperty('data', new TypeScriptArray(new TypeScriptIdentifier('T'))),
+                        new TypeScriptProperty('data', new TypeScriptGeneric(
+                            new TypeScriptIdentifier('Array'),
+                            [new TypeScriptIdentifier('T')],
+                        ),),
                         new TypeScriptProperty('links', new TypeScriptObject([
                             new TypeScriptProperty('url', new TypeScriptUnion([
                                 new TypeScriptIdentifier('string'),
