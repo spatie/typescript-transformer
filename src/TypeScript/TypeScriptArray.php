@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class TypeScriptArray implements TypeScriptNode, TypeScriptNodeWithChildren
 {
     /**
-     * @param TypeScriptNode[] $types
+     * @param  TypeScriptNode[]  $types
      */
     public function __construct(
         public array $types
@@ -17,7 +17,7 @@ class TypeScriptArray implements TypeScriptNode, TypeScriptNodeWithChildren
     public function write(WritingContext $context): string
     {
         $types = implode(', ', array_map(
-            fn(TypeScriptNode $type) => $type->write($context),
+            fn (TypeScriptNode $type) => $type->write($context),
             $this->types
         ));
 

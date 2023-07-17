@@ -9,7 +9,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 class RouteController implements RouterStructure
 {
     /**
-     * @param array<string, RouteControllerAction> $actions
+     * @param  array<string, RouteControllerAction>  $actions
      */
     public function __construct(
         public array $actions,

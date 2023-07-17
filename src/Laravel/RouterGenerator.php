@@ -20,7 +20,6 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGenericTypeVariable;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIndexedAccess;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptInterface;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptOperator;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptParameter;
@@ -121,7 +120,7 @@ class RouterGenerator implements DefaultTypesProvider
                     new TypeScriptParameter('params', new TypeScriptIdentifier('TParams'), isOptional: true),
                 ],
                 new TypeScriptString(),
-                new TypeScriptRaw("let routes = JSON.parse('".json_encode($controllers->toJsObject(), flags: JSON_UNESCAPED_SLASHES). "')")
+                new TypeScriptRaw("let routes = JSON.parse('".json_encode($controllers->toJsObject(), flags: JSON_UNESCAPED_SLASHES)."')")
             ),
             null,
             'route',

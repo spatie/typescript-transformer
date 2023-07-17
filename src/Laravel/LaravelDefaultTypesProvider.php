@@ -94,7 +94,7 @@ class LaravelDefaultTypesProvider implements DefaultTypesProvider
                         new TypeScriptProperty('data', new TypeScriptGeneric(
                             new TypeScriptIdentifier('Array'),
                             [new TypeScriptIdentifier('T')],
-                        ),),
+                        ), ),
                         new TypeScriptProperty('links', new TypeScriptObject([
                             new TypeScriptProperty('url', new TypeScriptUnion([
                                 new TypeScriptIdentifier('string'),

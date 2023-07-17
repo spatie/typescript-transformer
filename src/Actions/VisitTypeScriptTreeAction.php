@@ -11,7 +11,7 @@ class VisitTypeScriptTreeAction
     public function execute(
         TypeScriptNode $typeScriptNode,
         Closure $walker,
-        ?array $allowedNodes = null
+        array $allowedNodes = null
     ): void {
         // TODO: would be cool to replace nodes, remove them etc
         // Problem: nodes are sometimes structured in different properties which makes this complicated

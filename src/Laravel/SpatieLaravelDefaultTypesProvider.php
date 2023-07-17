@@ -22,29 +22,29 @@ class SpatieLaravelDefaultTypesProvider implements DefaultTypesProvider
         if (class_exists(\Spatie\LaravelOptions\Options::class)) {
             $types[] = new Transformed(
                 new TypeScriptExport(new TypeScriptAlias(
-                        new TypeScriptGeneric(
-                            new TypeScriptIdentifier('Options'),
-                            [
-                                new TypeScriptGenericTypeVariable(
-                                    new TypeScriptIdentifier('TValue'),
-                                    default: new TypeScriptIdentifier('string'),
-                                ),
-                                new TypeScriptGenericTypeVariable(
-                                    new TypeScriptIdentifier('TLabel'),
-                                    default: new TypeScriptIdentifier('string'),
-                                ),
-                            ]
-                        ),
-                        new TypeScriptGeneric(
-                            new TypeScriptIdentifier('Array'),
-                            [
-                                new TypeScriptObject([
-                                    new TypeScriptProperty('value', new TypeScriptGenericTypeVariable(new TypeScriptIdentifier('TValue'))),
-                                    new TypeScriptProperty('label', new TypeScriptGenericTypeVariable(new TypeScriptIdentifier('TLabel'))),
-                                ]),
-                            ],
-                        )
+                    new TypeScriptGeneric(
+                        new TypeScriptIdentifier('Options'),
+                        [
+                            new TypeScriptGenericTypeVariable(
+                                new TypeScriptIdentifier('TValue'),
+                                default: new TypeScriptIdentifier('string'),
+                            ),
+                            new TypeScriptGenericTypeVariable(
+                                new TypeScriptIdentifier('TLabel'),
+                                default: new TypeScriptIdentifier('string'),
+                            ),
+                        ]
+                    ),
+                    new TypeScriptGeneric(
+                        new TypeScriptIdentifier('Array'),
+                        [
+                            new TypeScriptObject([
+                                new TypeScriptProperty('value', new TypeScriptGenericTypeVariable(new TypeScriptIdentifier('TValue'))),
+                                new TypeScriptProperty('label', new TypeScriptGenericTypeVariable(new TypeScriptIdentifier('TLabel'))),
+                            ]),
+                        ],
                     )
+                )
                 ),
                 new ClassStringReference(\Spatie\LaravelOptions\Options::class),
                 'Options',

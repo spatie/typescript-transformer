@@ -9,7 +9,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 class RouteControllerCollection implements RouterStructure
 {
     /**
-     * @param array<string, RouteController|InvokableRouteController> $controllers
+     * @param  array<string, RouteController|InvokableRouteController>  $controllers
      */
     public function __construct(
         public array $controllers
