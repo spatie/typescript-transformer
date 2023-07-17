@@ -93,7 +93,7 @@ class RouterGenerator implements DefaultTypesProvider
         $transformedAction = new Transformed(
             new TypeScriptFunctionDefinition(
                 new TypeScriptGeneric(
-                    new TypeScriptIdentifier('route'),
+                    new TypeScriptIdentifier('action'),
                     [
                         new TypeScriptGenericTypeVariable(
                             new TypeScriptIdentifier('TController'),
@@ -123,7 +123,7 @@ class RouterGenerator implements DefaultTypesProvider
                 new TypeScriptRaw("let routes = JSON.parse('".json_encode($controllers->toJsObject(), flags: JSON_UNESCAPED_SLASHES)."')")
             ),
             null,
-            'route',
+            'action',
             true,
             [],
         );
