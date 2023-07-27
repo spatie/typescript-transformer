@@ -26,6 +26,12 @@ class TypeScriptOperator implements TypeScriptNode, TypeScriptNodeWithChildren
         return new self('typeof', $type);
     }
 
+    public static function keyof(
+        TypeScriptNode $type,
+    ): self {
+        return new self('keyof', $type);
+    }
+
     public static function instanceof(
         TypeScriptNode $instance,
         TypeScriptNode $class,
@@ -49,7 +55,7 @@ class TypeScriptOperator implements TypeScriptNode, TypeScriptNodeWithChildren
     public function write(WritingContext $context): string
     {
         if ($this->left === null) {
-            return "{$this->operator}{$this->right->write($context)}";
+            return "{$this->operator} {$this->right->write($context)}";
         }
 
         return "{$this->left->write($context)} {$this->operator} {$this->right->write($context)}";

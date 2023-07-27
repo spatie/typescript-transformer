@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 
-readonly class RouteParameter implements RouterStructure
+class RouteParameter implements RouterStructure
 {
     public function __construct(
         public string $name,

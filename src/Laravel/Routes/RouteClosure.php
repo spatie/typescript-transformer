@@ -2,15 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel\Routes;
 
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptRaw;
-
-class RouteInvokableController implements RouterStructure
+class RouteClosure implements RouterStructure
 {
     /**
-     * @param  array<string>  $methods
+     * @param array<string> $methods
      */
     public function __construct(
         public RouteParameterCollection $parameters,

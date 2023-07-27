@@ -17,9 +17,10 @@ class AppendDefaultTypesAction
 
     public function execute(TransformedCollection $collection): void
     {
-        foreach ($this->config->defaultTypeProviders as $defaultTypeProviderClass) {
-            /** @var DefaultTypesProvider $defaultTypeProvider */
-            $defaultTypeProvider = new $defaultTypeProviderClass;
+        foreach ($this->config->defaultTypeProviders as $defaultTypeProvider) {
+            $defaultTypeProvider = $defaultTypeProvider instanceof DefaultTypesProvider
+                ? $defaultTypeProvider
+                : new $defaultTypeProvider;
 
             $collection->add(...$defaultTypeProvider->provide());
         }

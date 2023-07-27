@@ -30,9 +30,7 @@ class PhpTypesStub extends stdClass
 
     public Collection&Arrayable $intersection;
 
-    public (Collection&Arrayable)
-
-|null $bnf;
+    public (Collection&Arrayable)|null $bnf;
 
     public self $self;
 

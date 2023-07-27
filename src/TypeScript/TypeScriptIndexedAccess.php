@@ -10,7 +10,7 @@ class TypeScriptIndexedAccess implements TypeScriptNode, TypeScriptNodeWithChild
      * @param  array<TypeScriptNode>  $segments
      */
     public function __construct(
-        public TypeScriptIdentifier $node,
+        public TypeScriptIdentifier|TypeReference $node,
         public array $segments,
     ) {
     }

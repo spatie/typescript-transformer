@@ -4,25 +4,51 @@ namespace Spatie\TypeScriptTransformer\Laravel\Actions;
 
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
-use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
+use Illuminate\Support\Str;
+use Spatie\TypeScriptTransformer\Laravel\Routes\RouteClosure;
+use Spatie\TypeScriptTransformer\Laravel\Routes\RouteCollection;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerAction;
-use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerCollection;
+use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
 
 class ResolveLaravelRoutControllerCollectionsAction
 {
-    public function execute(): RouteControllerCollection
-    {
+    public function execute(
+        ?string $defaultNamespace,
+        bool $includeRouteClosures,
+    ): RouteCollection {
         /** @var array<string, RouteController> $controllers */
         $controllers = [];
+        /** @var array<RouteClosure> $closures */
+        $closures = [];
 
         foreach (app(Router::class)->getRoutes()->getRoutes() as $route) {
             $controllerClass = $route->getControllerClass();
 
-            if ($controllerClass === null) {
+            if ($controllerClass === null && ! $includeRouteClosures) {
                 continue;
+            }
+
+            if ($controllerClass === null) {
+                $name = "Closure({$route->uri})";
+
+                $closures[$name] = new RouteClosure(
+                    $this->resolveRouteParameters($route),
+                    $route->methods,
+                    $this->resolveUrl($route),
+                );
+
+                continue;
+            }
+
+            if ($defaultNamespace !== null) {
+                $controllerClass = Str::of($controllerClass)
+                    ->trim('\\')
+                    ->replace($defaultNamespace, '')
+                    ->trim('\\')
+                    ->toString();
             }
 
             $controllerClass = str_replace('\\', '.', $controllerClass);
@@ -49,7 +75,7 @@ class ResolveLaravelRoutControllerCollectionsAction
             );
         }
 
-        return new RouteControllerCollection($controllers);
+        return new RouteCollection($controllers, $closures);
     }
 
     protected function resolveRouteParameters(

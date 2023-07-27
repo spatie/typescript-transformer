@@ -21,7 +21,9 @@ class VisitTypeScriptTreeAction
         }
 
         if ($typeScriptNode instanceof TypeScriptNodeWithChildren) {
-            foreach ($typeScriptNode->children() as $child) {
+            $children = array_values(array_filter($typeScriptNode->children()));
+
+            foreach ($children as $child) {
                 $this->execute($child, $walker, $allowedNodes);
             }
         }

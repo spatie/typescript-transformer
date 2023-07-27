@@ -2,14 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel\Routes;
 
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-
-readonly class RouteController implements RouterStructure
+class RouteController implements RouterStructure
 {
     /**
-     * @param  array<string, RouteControllerAction>  $actions
+     * @param array<string, RouteControllerAction> $actions
      */
     public function __construct(
         public array $actions,
@@ -19,11 +15,7 @@ readonly class RouteController implements RouterStructure
     public function toJsObject(): array
     {
         return [
-            'actions' => collect($this->actions)->map(function (RouteControllerAction $action, string $name) {
-                return [
-                    $name => $action->toJsObject(),
-                ];
-            })->all(),
+            'actions' => collect($this->actions)->map(fn (RouteControllerAction $action, string $name) => $action->toJsObject())->all(),
         ];
     }
 }

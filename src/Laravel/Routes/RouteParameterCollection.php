@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel\Routes;
 
-readonly class RouteParameterCollection implements RouterStructure
+class RouteParameterCollection implements RouterStructure
 {
     /**
      * @param array<RouteParameter> $parameters

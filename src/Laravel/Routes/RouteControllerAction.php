@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel\Routes;
 
-readonly class RouteControllerAction implements RouterStructure
+class RouteControllerAction implements RouterStructure
 {
     /**
      * @param array<string> $methods
