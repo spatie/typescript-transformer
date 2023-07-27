@@ -21,7 +21,6 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGenericTypeVariable;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIndexedAccess;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptLiteral;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
