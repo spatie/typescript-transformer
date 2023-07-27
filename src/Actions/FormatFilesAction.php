@@ -15,10 +15,16 @@ class FormatFilesAction
     }
 
     /**
-     * @param  array<WrittenFile>  $writtenFiles
+     * @param array<WrittenFile> $writtenFiles
      */
     public function execute(array $writtenFiles): void
     {
+        if ($this->config->formatter === null) {
+            return;
+        }
 
+        foreach ($writtenFiles as $writtenFile) {
+            $this->config->formatter->format($writtenFile->path);
+        }
     }
 }

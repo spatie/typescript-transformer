@@ -2,13 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel;
 
-use Illuminate\Routing\Route;
-use Illuminate\Routing\Router;
 use Spatie\TypeScriptTransformer\DefaultTypeProviders\DefaultTypesProvider;
-use Spatie\TypeScriptTransformer\Laravel\Routes\InvokableRouteController;
+use Spatie\TypeScriptTransformer\Laravel\Actions\ResolveLaravelRoutControllerCollectionsAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerCollection;
+use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
@@ -20,17 +19,20 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGenericTypeVariable;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIndexedAccess;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptLiteral;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptOperator;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptParameter;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 
 // @todo implement the method, probably using a RawTypeScriptNode, creating individual notes for each JS construct is probably a bit far fetched
 // @todo make sure we support __invoke routes without action
 // @todo add support for nullable parameters, these should be inferred
-// @todo a syntax like route(['Controller', 'action'], {params}), route(['Controller', 'action'], param), route(InvokeableController) would be even cooler but maybe too complicated at the moment
 
 /**
  *     function route<
@@ -41,16 +43,21 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
  *
  * }
  */
-class RouterGenerator implements DefaultTypesProvider
+class LaravelActionDefaultTypesProvider implements DefaultTypesProvider
 {
+    public function __construct(
+        protected ResolveLaravelRoutControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRoutControllerCollectionsAction()
+    ) {
+    }
+
     public function provide(): array
     {
-        $controllers = $this->resolveRoutes();
+        $controllers = $this->resolveLaravelRoutControllerCollectionsAction->execute();
 
         $transformedRoutes = new Transformed(
             new TypeScriptAlias(
                 new TypeScriptIdentifier('Routes'),
-                $controllers->toTypeScriptNode(),
+                $this->parseRouteControllerCollection($controllers),
             ),
             null,
             'Routes',
@@ -131,60 +138,59 @@ class RouterGenerator implements DefaultTypesProvider
         return [$transformedRoutes, $actionParam, $transformedAction];
     }
 
-    private function resolveRoutes(): RouteControllerCollection
+    protected function parseRouteControllerCollection(RouteControllerCollection $collection): TypeScriptNode
     {
-        /** @var array<string, RouteController> $controllers */
-        $controllers = [];
-
-        foreach (app(Router::class)->getRoutes()->getRoutes() as $route) {
-            $controllerClass = $route->getControllerClass();
-
-            if ($controllerClass === null) {
-                continue;
-            }
-
-            $controllerClass = str_replace('\\', '.', $controllerClass);
-
-            if ($route->getActionMethod() === $route->getControllerClass()) {
-                $controllers[$controllerClass] = new InvokableRouteController(
-                    $this->resolveRouteParameters($route),
-                    $route->methods,
-                    $this->resolveUrl($route),
-                );
-
-                continue;
-            }
-
-            if (! array_key_exists($controllerClass, $controllers)) {
-                $controllers[$controllerClass] = new RouteController([]);
-            }
-
-            $controllers[$controllerClass]->actions[$route->getActionMethod()] = new RouteControllerAction(
-                $route->getActionMethod(),
-                $this->resolveRouteParameters($route),
-                $route->methods,
-                $this->resolveUrl($route),
+        return new TypeScriptObject(collect($collection->controllers)->map(function (RouteController|RouteInvokableController $controller, string $name) {
+            return new TypeScriptProperty(
+                $name,
+                $controller instanceof RouteInvokableController
+                    ? $this->parseInvokableController($controller)
+                    : $this->parseController($controller),
             );
-        }
-
-        return new RouteControllerCollection($controllers);
+        })->all());
     }
 
-    protected function resolveRouteParameters(
-        Route $route
-    ): RouteParameterCollection {
-        preg_match_all('/\{(.*?)\}/', $route->getDomain().$route->uri, $matches);
-
-        $parameters = array_map(fn (string $match) => new RouteParameter(
-            trim($match, '?'),
-            str_ends_with($match, '?')
-        ), $matches[1]);
-
-        return new RouteParameterCollection($parameters);
-    }
-
-    protected function resolveUrl(Route $route): string
+    protected function parseController(RouteController $controller): TypeScriptNode
     {
-        return str_replace('?}', '}', $route->getDomain().$route->uri);
+        return new TypeScriptObject([
+            new TypeScriptProperty('actions', new TypeScriptObject(collect($controller->actions)->map(function (RouteControllerAction $action, string $name) {
+                return new TypeScriptProperty(
+                    $name,
+                    $this->parseControllerAction($action)
+                );
+            })->all())),
+        ]);
+    }
+
+    protected function parseControllerAction(RouteControllerAction $action): TypeScriptNode
+    {
+        return new TypeScriptObject([
+            new TypeScriptProperty('name', new TypeScriptLiteral($action->name)),
+            new TypeScriptProperty('parameters', $this->parseRouteParameterCollection($action->parameters)),
+        ]);
+    }
+
+    protected function parseInvokableController(RouteInvokableController $controller): TypeScriptNode
+    {
+        return new TypeScriptObject([
+            new TypeScriptProperty('invokable', new TypeScriptRaw('true')),
+            new TypeScriptProperty('parameters', $this->parseRouteParameterCollection($controller->parameters)),
+        ]);
+    }
+
+    protected function parseRouteParameterCollection(RouteParameterCollection $collection): TypeScriptNode
+    {
+        return new TypeScriptObject(array_map(function (RouteParameter $parameter) {
+            return $this->parseRouteParameter($parameter);
+        }, $collection->parameters));
+    }
+
+    protected function parseRouteParameter(RouteParameter $parameter): TypeScriptNode
+    {
+        return new TypeScriptProperty(
+            $parameter->name,
+            new TypeScriptUnion([new TypeScriptString(), new TypeScriptNumber()]),
+            isOptional: $parameter->optional,
+        );
     }
 }

@@ -75,7 +75,7 @@ class ModuleWriter implements Writer
 
         file_put_contents("{$path}/{$this->filename}.{$this->extension}", $output);
 
-        return new WrittenFile($path, $location->transformed);
+        return new WrittenFile($path);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer;
 
 use Spatie\TypeScriptTransformer\DefaultTypeProviders\DefaultTypesProvider;
+use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
@@ -18,6 +19,7 @@ readonly class TypeScriptTransformerConfig
         public array $transformers,
         public array $defaultTypeProviders,
         public Writer $writer,
+        public ?Formatter $formatter
     ) {
     }
 }

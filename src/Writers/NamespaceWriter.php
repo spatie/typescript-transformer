@@ -61,10 +61,7 @@ class NamespaceWriter implements Writer
         );
 
         return [
-            new WrittenFile(
-                $this->filename,
-                [],
-            ),
+            new WrittenFile($this->filename),
         ];
     }
 

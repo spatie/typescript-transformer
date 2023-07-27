@@ -6,7 +6,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 
-class RouteController implements RouterStructure
+readonly class RouteController implements RouterStructure
 {
     /**
      * @param  array<string, RouteControllerAction>  $actions
@@ -14,18 +14,6 @@ class RouteController implements RouterStructure
     public function __construct(
         public array $actions,
     ) {
-    }
-
-    public function toTypeScriptNode(): TypeScriptNode
-    {
-        return new TypeScriptObject([
-            new TypeScriptProperty('actions', new TypeScriptObject(collect($this->actions)->map(function (RouteControllerAction $controller, string $name) {
-                return new TypeScriptProperty(
-                    $name,
-                    $controller->toTypeScriptNode(),
-                );
-            })->all())),
-        ]);
     }
 
     public function toJsObject(): array
