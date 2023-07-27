@@ -11,14 +11,7 @@ class RouteClosure implements RouterStructure
         public RouteParameterCollection $parameters,
         public array $methods,
         public string $url,
+        public ?string $name,
     ) {
-    }
-
-    public function toJsObject(): array
-    {
-        return [
-            'url' => $this->url,
-            'methods' => array_values($this->methods),
-        ];
     }
 }

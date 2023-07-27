@@ -32,7 +32,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 
-class LaravelActionDefaultTypesProvider implements DefaultTypesProvider
+class LaravelRouteActionDefaultTypesProvider implements DefaultTypesProvider
 {
     public function __construct(
         protected ResolveLaravelRoutControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRoutControllerCollectionsAction(),
@@ -43,18 +43,18 @@ class LaravelActionDefaultTypesProvider implements DefaultTypesProvider
 
     public function provide(): array
     {
-        $controllers = $this->resolveLaravelRoutControllerCollectionsAction->execute(
+        $routeCollection = $this->resolveLaravelRoutControllerCollectionsAction->execute(
             $this->defaultNamespace,
             includeRouteClosures: false,
         );
 
         $transformedRoutes = new Transformed(
             new TypeScriptAlias(
-                new TypeScriptIdentifier('RoutesList'),
-                $this->parseRouteControllerCollection($controllers),
+                new TypeScriptIdentifier('ActionRoutesList'),
+                $this->parseRouteCollection($routeCollection),
             ),
             $routesListReference = new CustomReference('laravel_route_actions', 'routes_list'),
-            'RoutesList',
+            'ActionRoutesList',
             true,
             $this->location,
         );
@@ -122,7 +122,7 @@ class LaravelActionDefaultTypesProvider implements DefaultTypesProvider
             $this->location,
         );
 
-        $jsonEncodedRoutes = json_encode($controllers->toJsObject(), flags: JSON_UNESCAPED_SLASHES);
+        $jsonEncodedRoutes = $this->routeCollectionToJson($routeCollection);
         $baseUrl = url('/');
 
         $transformedAction = new Transformed(
@@ -174,8 +174,8 @@ let routes = JSON.parse('$jsonEncodedRoutes');
 let baseUrl = '$baseUrl';
 
 let found = typeof action === 'string'
-    ? routes.controllers[action]
-    : routes.controllers[action[0]]['actions'][action[1]];
+    ? routes[action]
+    : routes[action[0]]['actions'][action[1]];
 
 let url = baseUrl + '/' + found.url;
 
@@ -188,7 +188,6 @@ if(parameters) {
 return url;
 TS
                 )
-                //                new TypeScriptRaw("let routes = JSON.parse('".json_encode($controllers->toJsObject(), flags: JSON_UNESCAPED_SLASHES)."')")
             ),
             new CustomReference('laravel_route_actions', 'action_function'),
             'action',
@@ -199,7 +198,7 @@ TS
         return [$transformedRoutes, $actionController, $actionParameters, $transformedAction];
     }
 
-    protected function parseRouteControllerCollection(RouteCollection $collection): TypeScriptNode
+    protected function parseRouteCollection(RouteCollection $collection): TypeScriptNode
     {
         return new TypeScriptObject(collect($collection->controllers)->map(function (RouteController|RouteInvokableController $controller, string $name) {
             return new TypeScriptProperty(
@@ -226,7 +225,6 @@ TS
     protected function parseControllerAction(RouteControllerAction $action): TypeScriptNode
     {
         return new TypeScriptObject([
-            new TypeScriptProperty('name', new TypeScriptLiteral($action->name)),
             new TypeScriptProperty('parameters', $this->parseRouteParameterCollection($action->parameters)),
         ]);
     }
@@ -253,5 +251,23 @@ TS
             new TypeScriptUnion([new TypeScriptString(), new TypeScriptNumber()]),
             isOptional: $parameter->optional,
         );
+    }
+
+    protected function routeCollectionToJson(RouteCollection $collection): string
+    {
+        return collect($collection->controllers)
+            ->map(fn (RouteController|RouteInvokableController $controller) => $controller instanceof RouteInvokableController
+                ? [
+                    'url' => $controller->url,
+                    'methods' => array_values($controller->methods),
+                ]
+                : [
+                    'actions' => collect($controller->actions)->map(fn (RouteControllerAction $action) => [
+                        'url' => $action->url,
+                        'methods' => array_values($action->methods),
+                    ]),
+                ]
+            )
+            ->toJson(JSON_UNESCAPED_SLASHES);
     }
 }

@@ -11,9 +11,4 @@ class RouteParameterCollection implements RouterStructure
         public array $parameters,
     ) {
     }
-
-    public function toJsObject(): array
-    {
-        return [];
-    }
 }

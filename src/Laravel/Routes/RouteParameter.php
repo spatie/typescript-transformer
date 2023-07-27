@@ -9,9 +9,4 @@ class RouteParameter implements RouterStructure
         public bool $optional,
     ) {
     }
-
-    public function toJsObject(): array
-    {
-        return [];
-    }
 }

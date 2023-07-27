@@ -11,11 +11,4 @@ class RouteController implements RouterStructure
         public array $actions,
     ) {
     }
-
-    public function toJsObject(): array
-    {
-        return [
-            'actions' => collect($this->actions)->map(fn (RouteControllerAction $action, string $name) => $action->toJsObject())->all(),
-        ];
-    }
 }

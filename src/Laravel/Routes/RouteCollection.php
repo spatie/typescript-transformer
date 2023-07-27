@@ -13,12 +13,4 @@ class RouteCollection implements RouterStructure
         public array $closures,
     ) {
     }
-
-    public function toJsObject(): array
-    {
-        return [
-            'controllers' => collect($this->controllers)->map(fn (RouteController|RouteInvokableController $controller) => $controller->toJsObject())->all(),
-            'closures' => collect($this->closures)->map(fn (RouteClosure $closure) => $closure->toJsObject())->all(),
-        ];
-    }
 }

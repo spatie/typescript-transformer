@@ -38,6 +38,7 @@ class ResolveLaravelRoutControllerCollectionsAction
                     $this->resolveRouteParameters($route),
                     $route->methods,
                     $this->resolveUrl($route),
+                    $route->getName(),
                 );
 
                 continue;
@@ -58,6 +59,7 @@ class ResolveLaravelRoutControllerCollectionsAction
                     $this->resolveRouteParameters($route),
                     $route->methods,
                     $this->resolveUrl($route),
+                    $route->getName(),
                 );
 
                 continue;
@@ -68,10 +70,10 @@ class ResolveLaravelRoutControllerCollectionsAction
             }
 
             $controllers[$controllerClass]->actions[$route->getActionMethod()] = new RouteControllerAction(
-                $route->getActionMethod(),
                 $this->resolveRouteParameters($route),
                 $route->methods,
                 $this->resolveUrl($route),
+                $route->getName(),
             );
         }
 

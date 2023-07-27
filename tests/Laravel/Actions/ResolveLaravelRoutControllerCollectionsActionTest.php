@@ -168,6 +168,32 @@ it('can resolve all possible routes', function (Closure $route, Closure $expecta
             expect($routes->closures['Closure(simple/{id?})']->parameters->parameters[0]->optional)->toBeTrue();
         },
     ];
+    yield 'named routes' => [
+        function (Router $router) {
+            $router->get('simple', fn () => 'simple')->name('simple');
+            $router->get('invokable', InvokableController::class)->name('invokable');
+            $router->resource('resource', ResourceController::class);
+
+        },
+        function (RouteCollection $routes) {
+            expect($routes->controllers)->toHaveCount(2);
+            expect($routes->closures)->toHaveCount(1);
+
+            expect($routes->closures['Closure(simple)']->name)->toBe('simple');
+
+            expect($routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController']->name)->toBe('invokable');
+
+            $resourceController = $routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController'];
+
+            expect($resourceController->actions['index']->name)->toBe('resource.index');
+            expect($resourceController->actions['show']->name)->toBe('resource.show');
+            expect($resourceController->actions['create']->name)->toBe('resource.create');
+            expect($resourceController->actions['update']->name)->toBe('resource.update');
+            expect($resourceController->actions['store']->name)->toBe('resource.store');
+            expect($resourceController->actions['edit']->name)->toBe('resource.edit');
+            expect($resourceController->actions['destroy']->name)->toBe('resource.destroy');
+        },
+    ];
 });
 
 it('can omit certain parts of a specified namespace', function () {
