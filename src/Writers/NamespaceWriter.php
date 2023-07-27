@@ -32,7 +32,7 @@ class NamespaceWriter implements Writer
         $writingContext = new WritingContext(function (Reference $reference) use ($referenceMap) {
             $transformable = $referenceMap->get($reference);
 
-            if(empty($transformable->location)){
+            if (empty($transformable->location)) {
                 return $transformable->name;
             }
 

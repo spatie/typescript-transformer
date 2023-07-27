@@ -2,11 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel\Routes;
 
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptRaw;
-
 class RouteInvokableController implements RouterStructure
 {
     /**

@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\Laravel\Routes;
 class RouteControllerAction implements RouterStructure
 {
     /**
-     * @param array<string> $methods
+     * @param  array<string>  $methods
      */
     public function __construct(
         public string $name,

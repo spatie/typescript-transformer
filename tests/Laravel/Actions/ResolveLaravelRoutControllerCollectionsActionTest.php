@@ -14,7 +14,6 @@ use Symfony\Component\HttpKernel\Controller\ErrorController;
 
 uses(LaravelTestCase::class)->in(__DIR__.'/../');
 
-
 it('can resolve all possible routes', function (Closure $route, Closure $expectations) {
     $route(app(Router::class));
 
@@ -171,7 +170,7 @@ it('can resolve all possible routes', function (Closure $route, Closure $expecta
     ];
 });
 
-it('can omit certain parts of a specified namespace', function (){
+it('can omit certain parts of a specified namespace', function () {
     app(Router::class)->get('error', ErrorController::class);
     app(Router::class)->get('invokable', InvokableController::class);
 
@@ -179,6 +178,6 @@ it('can omit certain parts of a specified namespace', function (){
 
     expect($routes->controllers)->toHaveCount(2)->toHaveKeys([
         'Symfony.Component.HttpKernel.Controller.ErrorController',
-        'InvokableController'
+        'InvokableController',
     ]);
 });

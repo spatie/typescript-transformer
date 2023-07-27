@@ -15,7 +15,7 @@ class FormatFilesAction
     }
 
     /**
-     * @param array<WrittenFile> $writtenFiles
+     * @param  array<WrittenFile>  $writtenFiles
      */
     public function execute(array $writtenFiles): void
     {

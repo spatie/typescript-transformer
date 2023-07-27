@@ -187,8 +187,8 @@ if(parameters) {
 
 return url;
 TS
-)
-//                new TypeScriptRaw("let routes = JSON.parse('".json_encode($controllers->toJsObject(), flags: JSON_UNESCAPED_SLASHES)."')")
+                )
+                //                new TypeScriptRaw("let routes = JSON.parse('".json_encode($controllers->toJsObject(), flags: JSON_UNESCAPED_SLASHES)."')")
             ),
             new CustomReference('laravel_route_actions', 'action_function'),
             'action',
