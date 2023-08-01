@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use ReflectionProperty;
@@ -27,7 +28,10 @@ class ReplaceLaravelCollectionByArrayClassPropertyProcessor implements ClassProp
         $this->visitor = Visitor::create()->before(function (TypeScriptGeneric $generic) {
             $isCollection = $generic->type instanceof TypeReference
                 && $generic->type->reference instanceof ClassStringReference
-                && is_a($generic->type->reference->classString, Collection::class, true);
+                && in_array($generic->type->reference->classString, [
+                    Collection::class,
+                    EloquentCollection::class,
+                ]);
 
             if (! $isCollection) {
                 return;
