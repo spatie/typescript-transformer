@@ -2,12 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use Spatie\TypeScriptTransformer\DefaultTypeProviders\DefaultTypesProvider;
+use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class AppendDefaultTypesAction
+class ProvideTypesAction
 {
     public function __construct(
         protected TypeScriptTransformerConfig $config,
@@ -17,12 +17,16 @@ class AppendDefaultTypesAction
 
     public function execute(TransformedCollection $collection): void
     {
-        foreach ($this->config->defaultTypeProviders as $defaultTypeProvider) {
-            $defaultTypeProvider = $defaultTypeProvider instanceof DefaultTypesProvider
+        foreach ($this->config->typeProviders as $defaultTypeProvider) {
+            $defaultTypeProvider = $defaultTypeProvider instanceof TypesProvider
                 ? $defaultTypeProvider
                 : new $defaultTypeProvider;
 
-            $collection->add(...$defaultTypeProvider->provide());
+            $defaultTypeProvider->provide(
+                $this->config,
+                $this->log,
+                $collection
+            );
         }
     }
 }

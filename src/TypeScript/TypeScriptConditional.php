@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptConditional implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptConditional implements TypeScriptNode, TypeScriptVisitableNode
 {
     public function __construct(
         public TypeScriptNode $condition,
@@ -18,8 +19,8 @@ class TypeScriptConditional implements TypeScriptNode, TypeScriptNodeWithChildre
         return "{$this->condition->write($context)} ? {$this->ifTrue->write($context)} : {$this->ifFalse->write($context)}";
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return [$this->condition, $this->ifTrue, $this->ifFalse];
+        return VisitorProfile::create()->single('condition', 'ifTrue', 'ifFalse');
     }
 }

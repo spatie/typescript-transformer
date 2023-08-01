@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptGeneric implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptGeneric implements TypeScriptNode, TypeScriptVisitableNode
 {
     /**
      * @param  array<TypeScriptNode>  $genericTypes
@@ -25,11 +26,8 @@ class TypeScriptGeneric implements TypeScriptNode, TypeScriptNodeWithChildren
         return "{$this->type->write($context)}<{$generics}>";
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return [
-            $this->type,
-            ...$this->genericTypes,
-        ];
+        return VisitorProfile::create()->single('type')->iterable('genericTypes');
     }
 }

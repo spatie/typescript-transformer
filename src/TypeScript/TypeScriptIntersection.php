@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptIntersection implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptIntersection implements TypeScriptNode, TypeScriptVisitableNode
 {
     /**
      * @param  array<TypeScriptNode>  $types
@@ -22,8 +23,8 @@ class TypeScriptIntersection implements TypeScriptNode, TypeScriptNodeWithChildr
         ));
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return $this->types;
+        return VisitorProfile::create()->iterable('types');
     }
 }

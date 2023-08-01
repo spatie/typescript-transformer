@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
+use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Actions\ParseUseDefinitionsAction;
@@ -13,7 +14,7 @@ use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
-use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedNameAndType;
+use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
@@ -48,12 +49,17 @@ abstract class ClassTransformer implements Transformer
             ),
             new ReflectionClassReference($reflectionClass),
             $context->name,
-            true,
             $context->nameSpaceSegments,
         );
     }
 
-    abstract public function shouldTransform(ReflectionClass $reflection): bool;
+    abstract protected function shouldTransform(ReflectionClass $reflection): bool;
+
+    /** @return array<ClassPropertyProcessor> */
+    protected function classPropertyProcessors(): array
+    {
+        return [];
+    }
 
     protected function getTypeScriptNode(
         ReflectionClass $reflectionClass
@@ -71,12 +77,26 @@ abstract class ClassTransformer implements Transformer
         $properties = [];
 
         foreach ($this->getProperties($reflectionClass) as $reflectionProperty) {
-            $properties[] = $this->createProperty(
+            $annotation = $classAnnotations[$reflectionProperty->getName()]
+                ?? $constructorAnnotations[$reflectionProperty->getName()]
+                ?? $this->docTypeResolver->property($reflectionProperty)
+                ?? null;
+
+            $property = $this->createProperty(
                 $reflectionClass,
                 $reflectionProperty,
-                $classAnnotations,
-                $constructorAnnotations,
+                $annotation?->type
             );
+
+            $property = $this->runClassPropertyProcessors(
+                $reflectionProperty,
+                $annotation?->type,
+                $property
+            );
+
+            if ($property !== null) {
+                $properties[] = $property;
+            }
         }
 
         return new TypeScriptObject($properties);
@@ -111,17 +131,12 @@ abstract class ClassTransformer implements Transformer
     protected function createProperty(
         ReflectionClass $reflectionClass,
         ReflectionProperty $reflectionProperty,
-        array $classAnnotations,
-        array $constructorAnnotations,
+        ?TypeNode $annotation,
     ): TypeScriptProperty {
-        $propertyAnnotation = $this->docTypeResolver->property($reflectionProperty);
-
         $type = $this->resolveTypeForProperty(
             $reflectionClass,
             $reflectionProperty,
-            $classAnnotations[$reflectionProperty->getName()]
-            ?? $constructorAnnotations[$reflectionProperty->getName()]
-            ?? $propertyAnnotation,
+            $annotation
         );
 
         return new TypeScriptProperty(
@@ -135,7 +150,7 @@ abstract class ClassTransformer implements Transformer
     protected function resolveTypeForProperty(
         ReflectionClass $reflectionClass,
         ReflectionProperty $reflectionProperty,
-        ?ParsedNameAndType $annotation,
+        ?TypeNode $annotation,
     ): TypeScriptNode {
         if ($resolvedAttributeType = $this->resolveTypeByAttribute($reflectionClass, $reflectionProperty)) {
             return $resolvedAttributeType;
@@ -143,7 +158,7 @@ abstract class ClassTransformer implements Transformer
 
         if ($annotation) {
             return $this->transpilePhpStanTypeToTypeScriptTypeAction->execute(
-                $annotation->type,
+                $annotation,
                 $reflectionClass,
             );
         }
@@ -172,5 +187,23 @@ abstract class ClassTransformer implements Transformer
         TypeScriptNode $type,
     ): bool {
         return $reflectionProperty->isReadOnly() || $reflectionClass->isReadOnly();
+    }
+
+    protected function runClassPropertyProcessors(
+        ReflectionProperty $reflectionProperty,
+        ?TypeNode $annotation,
+        TypeScriptProperty $property,
+    ): ?TypeScriptProperty {
+        $processors = $this->classPropertyProcessors();
+
+        foreach ($processors as $processor) {
+            $property = $processor->execute($reflectionProperty, $annotation, $property);
+
+            if ($property === null) {
+                return null;
+            }
+        }
+
+        return $property;
     }
 }

@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptArray implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptArray implements TypeScriptNode, TypeScriptVisitableNode
 {
     /**
      * @param  TypeScriptNode[]  $types
@@ -24,8 +25,8 @@ class TypeScriptArray implements TypeScriptNode, TypeScriptNodeWithChildren
         return "[$types]";
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return $this->types;
+        return VisitorProfile::create()->iterable('types');
     }
 }

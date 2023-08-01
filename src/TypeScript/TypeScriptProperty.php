@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptProperty implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptProperty implements TypeScriptNode, TypeScriptVisitableNode
 {
     public TypeScriptIdentifier|TypeScriptIndexSignature $name;
 
@@ -28,5 +29,10 @@ class TypeScriptProperty implements TypeScriptNode, TypeScriptNodeWithChildren
     public function children(): array
     {
         return [$this->name, $this->type];
+    }
+
+    public function visitorProfile(): VisitorProfile
+    {
+        return VisitorProfile::create()->single('name', 'type');
     }
 }

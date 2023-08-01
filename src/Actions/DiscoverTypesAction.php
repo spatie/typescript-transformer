@@ -9,18 +9,16 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class DiscoverTypesAction
 {
-    public function __construct(
-        public TypeScriptTransformerConfig $config,
-        public TypeScriptTransformerLog $log,
-    ) {
-    }
-
-    /** @return array<string> */
-    public function execute(): array
-    {
+    /**
+     * @param array<string> $directories
+     * @return array<class-string>
+     */
+    public function execute(
+        array $directories = [],
+    ): array {
         // Idea / TODO : make it possible for other packages to hook in to find types in other directories, like their vendor dir
 
-        return Discover::in(...$this->config->directories)
+        return Discover::in(...$directories)
             ->types(
                 DiscoveredStructureType::ClassDefinition,
                 DiscoveredStructureType::Enum,

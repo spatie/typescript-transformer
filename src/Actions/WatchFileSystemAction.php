@@ -16,7 +16,7 @@ class WatchFileSystemAction
     public function execute(
         TransformedCollection $transformedCollection,
     ) {
-        Watch::paths($this->config->directories)
+        Watch::paths($this->config->directoriesToWatch)
             ->onAnyChange(function (string $type, string $path) {
                 echo $type.'|'.$path;
             })

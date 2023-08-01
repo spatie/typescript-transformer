@@ -5,8 +5,11 @@ namespace Spatie\TypeScriptTransformer\Actions;
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Visitor\Visitor;
+use Spatie\TypeScriptTransformer\Visitor\VisitTypeScriptTreeAction;
 
 class ConnectReferencesAction
 {
@@ -27,25 +30,30 @@ class ConnectReferencesAction
             }
         }
 
+        $visitor = Visitor::create()->before(function (TypeReference $typeReference, array $metadata) use ($referenceMap, &$references) {
+            $reference = $typeReference->reference;
+
+            if (! $referenceMap->has($reference)) {
+                /** @var Transformed $transformed */
+                $transformed = $metadata['transformed'];
+
+                $this->log->warning("Tried replacing reference to `{$reference->humanFriendlyName()}` in `{$transformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
+
+                return;
+            }
+
+            $references[] = $reference;
+            $typeReference->connect($referenceMap->get($reference));
+        }, [TypeReference::class]);
+
         foreach ($collection as $transformed) {
             $references = [];
 
-            $this->visitTypeScriptTreeAction->execute(
-                $transformed->typeScriptNode,
-                function (TypeReference $typeReference) use ($referenceMap, &$references, $transformed) {
-                    $reference = $typeReference->reference;
+            $metadata = [
+                'transformed' => $transformed,
+            ];
 
-                    if (! $referenceMap->has($reference)) {
-                        $this->log->warning("Tried replacing reference to `{$reference->humanFriendlyName()}` in `{$transformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
-
-                        return;
-                    }
-
-                    $references[] = $reference;
-                    $typeReference->connect($referenceMap->get($reference));
-                },
-                [TypeReference::class]
-            );
+            $visitor->execute($transformed->typeScriptNode, $metadata);
 
             $transformed->references = $references;
         }

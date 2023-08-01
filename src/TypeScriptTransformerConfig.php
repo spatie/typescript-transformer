@@ -2,24 +2,22 @@
 
 namespace Spatie\TypeScriptTransformer;
 
-use Spatie\TypeScriptTransformer\DefaultTypeProviders\DefaultTypesProvider;
+use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
-readonly class TypeScriptTransformerConfig
+class TypeScriptTransformerConfig
 {
+    public array $directoriesToWatch = [];
+
     /**
-     * @param  array<string>  $directories
-     * @param  array<Transformer>  $transformers
-     * @param  array<class-string<DefaultTypesProvider>|DefaultTypesProvider>  $defaultTypeProviders
+     * @param  array<class-string<TypesProvider>|TypesProvider>  $typeProviders
      */
     public function __construct(
-        public array $directories,
-        public array $transformers,
-        public array $defaultTypeProviders,
-        public Writer $writer,
-        public ?Formatter $formatter
+        readonly public array $typeProviders,
+        readonly public Writer $writer,
+        readonly public ?Formatter $formatter
     ) {
     }
 }

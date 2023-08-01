@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptOperator implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptOperator implements TypeScriptNode, TypeScriptVisitableNode
 {
     public function __construct(
         public string $operator,
@@ -61,8 +62,8 @@ class TypeScriptOperator implements TypeScriptNode, TypeScriptNodeWithChildren
         return "{$this->left->write($context)} {$this->operator} {$this->right->write($context)}";
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return [$this->left, $this->right];
+        return VisitorProfile::create()->single('left', 'right');
     }
 }

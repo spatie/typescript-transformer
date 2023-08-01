@@ -40,7 +40,6 @@ class EnumTransformer implements Transformer
                 : $this->transformAsUnion($context->name, $cases),
             new ReflectionClassReference($reflectionClass),
             $context->name,
-            true,
             $context->nameSpaceSegments,
         );
     }

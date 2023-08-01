@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel;
 
-use Spatie\TypeScriptTransformer\DefaultTypeProviders\DefaultTypesProvider;
+use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\Laravel\Actions\ResolveLaravelRoutControllerCollectionsAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteClosure;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteCollection;
@@ -12,6 +12,8 @@ use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
 use Spatie\TypeScriptTransformer\References\CustomReference;
+use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
@@ -29,8 +31,9 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class LaravelNamedRouteDefaultTypesProvider implements DefaultTypesProvider
+class LaravelNamedRouteTypesProvider implements TypesProvider
 {
     public function __construct(
         protected ResolveLaravelRoutControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRoutControllerCollectionsAction(),
@@ -38,7 +41,7 @@ class LaravelNamedRouteDefaultTypesProvider implements DefaultTypesProvider
     ) {
     }
 
-    public function provide(): array
+    public function provide(TypeScriptTransformerConfig $config, TypeScriptTransformerLog $log, TransformedCollection $types): void
     {
         $routeCollection = $this->resolveLaravelRoutControllerCollectionsAction->execute(
             null,
@@ -52,7 +55,6 @@ class LaravelNamedRouteDefaultTypesProvider implements DefaultTypesProvider
             ),
             $routesListReference = new CustomReference('laravel_named_routes', 'routes_list'),
             'NamedRouteList',
-            true,
             $this->location,
         );
 
@@ -101,11 +103,10 @@ TS
             ),
             new CustomReference('laravel_named_routes', 'route_function'),
             'route',
-            true,
             $this->location,
         );
 
-        return [$transformedRoutes, $transformedRoute];
+        $types->add($transformedRoutes, $transformedRoute);
     }
 
     protected function parseRouteCollection(RouteCollection $collection): TypeScriptNode

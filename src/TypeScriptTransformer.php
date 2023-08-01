@@ -2,12 +2,13 @@
 
 namespace Spatie\TypeScriptTransformer;
 
-use Spatie\TypeScriptTransformer\Actions\AppendDefaultTypesAction;
+use Spatie\TypeScriptTransformer\Actions\ProvideTypesAction;
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteTypesAction;
+use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 
 class TypeScriptTransformer
@@ -16,8 +17,7 @@ class TypeScriptTransformer
         protected TypeScriptTransformerConfig $config,
         protected TypeScriptTransformerLog $log,
         protected DiscoverTypesAction $discoverTypesAction,
-        protected TransformTypesAction $transformTypesAction,
-        protected AppendDefaultTypesAction $appendDefaultTypesAction,
+        protected ProvideTypesAction $appendDefaultTypesAction,
         protected ConnectReferencesAction $connectReferencesAction,
         protected WriteTypesAction $writeTypesAction,
         protected FormatFilesAction $formatFilesAction,
@@ -35,9 +35,16 @@ class TypeScriptTransformer
         // - replace type references
 
         // watch -> only reload when the config changes (difficult, maybe skip for now)
-        $discovered = $this->discoverTypesAction->execute();
 
-        $transformedCollection = $this->transformTypesAction->execute($discovered);
+        /**
+         * Notes after knowledge sharing
+         * - Split Laravel part again?
+         * - Make it possible to hijack the PHPStan types, or some way to rename a Laravel Collection to an array? Would be easier
+         * - When generating routes where we have the full namespace, prepend with ., check Laravel Echo for this
+         * - Prettier can run on complete directories, so formatting single files is maybe not required
+
+         */
+        $transformedCollection = new TransformedCollection();
 
         $this->appendDefaultTypesAction->execute($transformedCollection);
 

@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptMethod implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptMethod implements TypeScriptNode, TypeScriptVisitableNode
 {
     /**
      * @param  array<TypeScriptParameter>  $parameters
@@ -26,8 +27,8 @@ class TypeScriptMethod implements TypeScriptNode, TypeScriptNodeWithChildren
         return "{$this->name}({$parameters}): {$this->returnType->write($context)};";
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return [$this->returnType, ...$this->parameters];
+        return VisitorProfile::create()->iterable('parameters')->single('returnType');
     }
 }

@@ -6,8 +6,10 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginator
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Spatie\TypeScriptTransformer\DefaultTypeProviders\DefaultTypesProvider;
+use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
+use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
@@ -21,20 +23,21 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class LaravelDefaultTypesProvider implements DefaultTypesProvider
+class LaravelTypesProvider implements TypesProvider
 {
-    public function provide(): array
+    public function provide(TypeScriptTransformerConfig $config, TypeScriptTransformerLog $log, TransformedCollection $types): void
     {
         /** @todo We should only keep these types if they are referenced otherwise they arent't required to be transformed */
         /** @todo writing types in phpdoc syntax would be a lot easier here */
 
-        return [
+        $types->add(
             $this->collection(),
             $this->eloquentCollection(),
             $this->lengthAwarePaginator(),
             $this->lengthAwarePaginatorInterface(),
-        ];
+        );
     }
 
     protected function collection(): Transformed
@@ -54,7 +57,6 @@ class LaravelDefaultTypesProvider implements DefaultTypesProvider
             ),
             new ClassStringReference(Collection::class),
             'Collection',
-            true,
             ['Illuminate', 'Support'],
         );
     }
@@ -76,7 +78,6 @@ class LaravelDefaultTypesProvider implements DefaultTypesProvider
             ),
             new ClassStringReference(EloquentCollection::class),
             'Collection',
-            true,
             ['Illuminate', 'Database', 'Eloquent', 'Collection'],
         );
     }
@@ -94,7 +95,7 @@ class LaravelDefaultTypesProvider implements DefaultTypesProvider
                         new TypeScriptProperty('data', new TypeScriptGeneric(
                             new TypeScriptIdentifier('Array'),
                             [new TypeScriptIdentifier('T')],
-                        ), ),
+                        ),),
                         new TypeScriptProperty('links', new TypeScriptObject([
                             new TypeScriptProperty('url', new TypeScriptUnion([
                                 new TypeScriptIdentifier('string'),
@@ -133,7 +134,6 @@ class LaravelDefaultTypesProvider implements DefaultTypesProvider
             ),
             new ClassStringReference(LengthAwarePaginator::class),
             'LengthAwarePaginator',
-            true,
             ['Illuminate', 'Pagination'],
         );
     }
@@ -155,7 +155,6 @@ class LaravelDefaultTypesProvider implements DefaultTypesProvider
             ),
             new ClassStringReference(LengthAwarePaginatorInterface::class),
             'LengthAwarePaginator',
-            true,
             ['Illuminate', 'Contracts', 'Pagination'],
         );
     }

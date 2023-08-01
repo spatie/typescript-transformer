@@ -10,7 +10,7 @@ use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 
 class AttributeTransformer extends ClassTransformer
 {
-    public function shouldTransform(ReflectionClass $reflection): bool
+    protected function shouldTransform(ReflectionClass $reflection): bool
     {
         return count($reflection->getAttributes(TypeScript::class)) > 0;
     }

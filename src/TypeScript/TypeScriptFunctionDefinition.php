@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptFunctionDefinition implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptFunctionDefinition implements TypeScriptNode, TypeScriptVisitableNode
 {
     public function __construct(
         public TypeScriptNode $identifier,
@@ -23,13 +24,8 @@ class TypeScriptFunctionDefinition implements TypeScriptNode, TypeScriptNodeWith
         }";
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return [
-            $this->identifier,
-            ...$this->parameters ?? [],
-            $this->returnType,
-            $this->body,
-        ];
+        return VisitorProfile::create()->single('identifier', 'returnType', 'body')->iterable('parameters');
     }
 }

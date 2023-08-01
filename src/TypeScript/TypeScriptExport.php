@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptExport implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptExport implements TypeScriptNode, TypeScriptVisitableNode
 {
     public function __construct(
         public TypeScriptNode $node,
@@ -16,8 +17,8 @@ class TypeScriptExport implements TypeScriptNode, TypeScriptNodeWithChildren
         return "export {$this->node->write($context)}".PHP_EOL;
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return [$this->node];
+        return VisitorProfile::create()->single('node');
     }
 }

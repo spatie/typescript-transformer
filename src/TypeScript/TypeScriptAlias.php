@@ -2,9 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptAlias implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptAlias implements TypeScriptNode, TypeScriptVisitableNode
 {
     public function __construct(
         public TypeScriptNode $identifier,
@@ -17,8 +18,8 @@ class TypeScriptAlias implements TypeScriptNode, TypeScriptNodeWithChildren
         return "type {$this->identifier->write($context)} = {$this->type->write($context)};";
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return [$this->identifier, $this->type];
+        return VisitorProfile::create()->single('identifier', 'type');
     }
 }

@@ -3,9 +3,10 @@
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
 use Closure;
+use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptUnion implements TypeScriptNode, TypeScriptNodeWithChildren
+class TypeScriptUnion implements TypeScriptNode, TypeScriptVisitableNode
 {
     /**
      * @param  array<TypeScriptNode>  $types
@@ -34,8 +35,8 @@ class TypeScriptUnion implements TypeScriptNode, TypeScriptNodeWithChildren
         return false;
     }
 
-    public function children(): array
+    public function visitorProfile(): VisitorProfile
     {
-        return $this->types;
+        return VisitorProfile::create()->iterable('types');
     }
 }
