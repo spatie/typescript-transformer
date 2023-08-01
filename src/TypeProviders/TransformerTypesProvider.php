@@ -18,8 +18,8 @@ class TransformerTypesProvider implements TypesProvider
     protected array $transformers;
 
     /**
-     * @param array<class-string<Transformer>|Transformer> $transformers
-     * @param array<string> $directories
+     * @param  array<class-string<Transformer>|Transformer>  $transformers
+     * @param  array<string>  $directories
      */
     public function __construct(
         array $transformers,
@@ -44,7 +44,6 @@ class TransformerTypesProvider implements TypesProvider
         foreach ($discoveredClasses as $discoveredClass) {
             $transformed = $this->transformType($discoveredClass);
 
-
             if ($transformed) {
                 $types->add($transformed);
             }
@@ -52,7 +51,7 @@ class TransformerTypesProvider implements TypesProvider
     }
 
     /**
-     * @param class-string $type
+     * @param  class-string  $type
      */
     protected function transformType(string $type): ?Transformed
     {

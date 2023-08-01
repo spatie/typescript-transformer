@@ -26,7 +26,6 @@ class TypeScriptIndexedAccess implements TypeScriptNode, TypeScriptVisitableNode
         return "{$this->node->write($context)}".implode('', $segments);
     }
 
-
     public function visitorProfile(): VisitorProfile
     {
         return VisitorProfile::create()->single('node')->iterable('segments');

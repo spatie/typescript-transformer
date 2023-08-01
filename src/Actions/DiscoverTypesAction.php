@@ -4,13 +4,11 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\StructureDiscoverer\Discover;
 use Spatie\StructureDiscoverer\Enums\DiscoveredStructureType;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class DiscoverTypesAction
 {
     /**
-     * @param array<string> $directories
+     * @param  array<string>  $directories
      * @return array<class-string>
      */
     public function execute(

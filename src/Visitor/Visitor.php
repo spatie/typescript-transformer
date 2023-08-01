@@ -15,8 +15,8 @@ class Visitor
     }
 
     /**
-     * @param array<VisitorClosure> $beforeClosures
-     * @param array<VisitorClosure> $afterClosures
+     * @param  array<VisitorClosure>  $beforeClosures
+     * @param  array<VisitorClosure>  $afterClosures
      */
     public function __construct(
         protected array $beforeClosures = [],
@@ -26,7 +26,7 @@ class Visitor
 
     public function before(
         Closure $closure,
-        ?array $allowedNodes = null,
+        array $allowedNodes = null,
     ): self {
         $this->beforeClosures[] = new VisitorClosure($closure, $allowedNodes);
 
@@ -35,7 +35,7 @@ class Visitor
 
     public function after(
         Closure $closure,
-        ?array $allowedNodes = null,
+        array $allowedNodes = null,
     ): self {
         $this->afterClosures[] = new VisitorClosure($closure, $allowedNodes);
 
@@ -75,7 +75,7 @@ class Visitor
                 try {
                     $node->$singleNodeName = $visited;
                 } catch (Exception $e) {
-                    throw new Exception("Tried setting $singleNodeName on ".get_class($node)." to ".get_class($visited)." but failed.");
+                    throw new Exception("Tried setting $singleNodeName on ".get_class($node).' to '.get_class($visited).' but failed.');
                 }
             }
 

@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Transformed;
 
-use ReflectionClass;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 

@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\Support;
 
 class VisitorProfile
 {
-    public static function create():self
+    public static function create(): self
     {
         return new self();
     }

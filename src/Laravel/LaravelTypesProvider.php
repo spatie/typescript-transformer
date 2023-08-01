@@ -6,11 +6,11 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginator
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptBoolean;
@@ -31,7 +31,6 @@ class LaravelTypesProvider implements TypesProvider
     {
         /** @todo We should only keep these types if they are referenced otherwise they arent't required to be transformed */
         /** @todo writing types in phpdoc syntax would be a lot easier here */
-
         $types->add(
             $this->collection(),
             $this->eloquentCollection(),
@@ -95,7 +94,7 @@ class LaravelTypesProvider implements TypesProvider
                         new TypeScriptProperty('data', new TypeScriptGeneric(
                             new TypeScriptIdentifier('Array'),
                             [new TypeScriptIdentifier('T')],
-                        ),),
+                        ), ),
                         new TypeScriptProperty('links', new TypeScriptObject([
                             new TypeScriptProperty('url', new TypeScriptUnion([
                                 new TypeScriptIdentifier('string'),

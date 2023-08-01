@@ -17,7 +17,6 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\Visitor\Visitor;
 use Spatie\TypeScriptTransformer\Visitor\VisitorOperation;
-use Spatie\TypeScriptTransformer\Visitor\VisitTypeScriptTreeAction;
 
 class ReplaceLaravelCollectionByArrayClassPropertyProcessor implements ClassPropertyProcessor
 {
@@ -44,12 +43,12 @@ class ReplaceLaravelCollectionByArrayClassPropertyProcessor implements ClassProp
 
             $isRecord = $generic->genericTypes[0] instanceof TypeScriptUnion || $generic->genericTypes[0] instanceof TypeScriptString;
 
-            if($isRecord){
+            if ($isRecord) {
                 return VisitorOperation::replace(new TypeScriptGeneric(
                     new TypeScriptIdentifier('Record'),
                     [
                         $generic->genericTypes[0],
-                        $generic->genericTypes[1]
+                        $generic->genericTypes[1],
                     ]
                 ));
             }

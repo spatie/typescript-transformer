@@ -2,9 +2,8 @@
 
 namespace Spatie\TypeScriptTransformer;
 
-use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
-use Spatie\TypeScriptTransformer\Transformers\Transformer;
+use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
 class TypeScriptTransformerConfig
