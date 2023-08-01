@@ -45,8 +45,7 @@ class Visitor
     public function execute(
         TypeScriptNode $node,
         array &$metadata = [],
-    ): ?TypeScriptNode
-    {
+    ): ?TypeScriptNode {
         foreach ($this->beforeClosures as $beforeClosure) {
             if ($beforeClosure->shouldRun($node)) {
                 $operation = $beforeClosure->run($node, $metadata);
@@ -65,7 +64,13 @@ class Visitor
             $profile = $node->visitorProfile();
 
             foreach ($profile->singleNodes as $singleNodeName) {
-                $visited = $this->execute($node->$singleNodeName, $metadata);
+                $subNode = $node->$singleNodeName;
+
+                if ($subNode === null) {
+                    continue;
+                }
+
+                $visited = $this->execute($subNode, $metadata);
 
                 try {
                     $node->$singleNodeName = $visited;
@@ -75,8 +80,8 @@ class Visitor
             }
 
             foreach ($profile->iterableNodes as $iterableNodeName) {
-                for ($i = 0; $i < count($node->$iterableNodeName); $i++) {
-                    $node->$iterableNodeName[$i] = $this->execute($node->$iterableNodeName[$i], $metadata);
+                foreach ($node->$iterableNodeName as $key => $subNode) {
+                    $node->$iterableNodeName[$key] = $this->execute($subNode, $metadata);
                 }
 
                 $node->$iterableNodeName = array_values(array_filter($node->$iterableNodeName));

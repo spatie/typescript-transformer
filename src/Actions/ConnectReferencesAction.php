@@ -9,14 +9,12 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypeScriptTransformer\Visitor\Visitor;
-use Spatie\TypeScriptTransformer\Visitor\VisitTypeScriptTreeAction;
 
 class ConnectReferencesAction
 {
     public function __construct(
         protected TypeScriptTransformerConfig $config,
         public TypeScriptTransformerLog $log,
-        protected VisitTypeScriptTreeAction $visitTypeScriptTreeAction = new VisitTypeScriptTreeAction(),
     ) {
     }
 
