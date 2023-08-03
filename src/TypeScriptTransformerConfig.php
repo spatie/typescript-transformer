@@ -10,7 +10,7 @@ class TypeScriptTransformerConfig
 {
     /**
      * @param array<class-string<TypesProvider> $typeProviders
-     * @param array<string> $directoriesToWatch
+     * @param  array<string>  $directoriesToWatch
      */
     public function __construct(
         readonly public array $typeProviders,

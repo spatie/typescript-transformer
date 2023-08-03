@@ -222,20 +222,20 @@ it('can filter out certain routes', function (
 })->with(function () {
     yield 'named' => [
         WithoutRoutes::named('simple'),
-        function(RouteCollection $routes){
+        function (RouteCollection $routes) {
             expect($routes->closures)->toBeEmpty();
             expect($routes->controllers)->toHaveCount(2);
-        }
+        },
     ];
     yield 'multiple named' => [
         WithoutRoutes::named('simple', 'resource.index', 'resource.edit'),
-        function(RouteCollection $routes){
+        function (RouteCollection $routes) {
             expect($routes->closures)->toBeEmpty();
             expect($routes->controllers)
                 ->toHaveCount(2)
                 ->toHaveKeys([
                     'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController',
-                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController'
+                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController',
                 ]);
             expect($routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions)
                 ->toHaveCount(5)
@@ -246,45 +246,45 @@ it('can filter out certain routes', function (
                     'store',
                     'destroy',
                 ]);
-        }
+        },
     ];
     yield 'wildcard name' => [
         WithoutRoutes::named('invokable', 'resource.*'),
-        function(RouteCollection $routes){
+        function (RouteCollection $routes) {
             expect($routes->closures)->toHaveCount(1);
             expect($routes->controllers)->toHaveCount(0);
-        }
+        },
     ];
     yield 'controller' => [
         WithoutRoutes::controller(ResourceController::class),
-        function(RouteCollection $routes){
+        function (RouteCollection $routes) {
             expect($routes->closures)->toHaveCount(1);
             expect($routes->controllers)->toHaveCount(1)->toHaveKey('Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController');
-        }
+        },
     ];
     yield 'multiple controllers' => [
         WithoutRoutes::controller(ResourceController::class),
-        function(RouteCollection $routes){
+        function (RouteCollection $routes) {
             expect($routes->closures)->toHaveCount(1);
             expect($routes->controllers)->toHaveCount(1)->toHaveKey('Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController');
-        }
+        },
     ];
     yield 'controller wildcard' => [
         WithoutRoutes::controller('Spatie\TypeScriptTransformer\Tests\Laravel\FakeClasses\*'),
-        function(RouteCollection $routes){
+        function (RouteCollection $routes) {
             expect($routes->closures)->toHaveCount(1);
             expect($routes->controllers)->toHaveCount(0);
-        }
+        },
     ];
     yield 'controller action' => [
         WithoutRoutes::controller([ResourceController::class, 'index'], [ResourceController::class, 'edit']),
-        function(RouteCollection $routes){
+        function (RouteCollection $routes) {
             expect($routes->closures)->toHaveCount(1);
             expect($routes->controllers)
                 ->toHaveCount(2)
                 ->toHaveKeys([
                     'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController',
-                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController'
+                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController',
                 ]);
             expect($routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions)
                 ->toHaveCount(5)
@@ -295,6 +295,6 @@ it('can filter out certain routes', function (
                     'store',
                     'destroy',
                 ]);
-        }
+        },
     ];
 });

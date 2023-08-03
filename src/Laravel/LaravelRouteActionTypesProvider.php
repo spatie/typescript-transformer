@@ -38,8 +38,8 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 class LaravelRouteActionTypesProvider implements TypesProvider
 {
     /**
-     * @param array<string> $location
-     * @param array<WithoutRoutes> $filters
+     * @param  array<string>  $location
+     * @param  array<WithoutRoutes>  $filters
      */
     public function __construct(
         protected ResolveLaravelRoutControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRoutControllerCollectionsAction(),

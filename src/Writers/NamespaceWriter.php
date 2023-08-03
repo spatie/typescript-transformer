@@ -70,7 +70,7 @@ class NamespaceWriter implements Writer
     {
         $directory = dirname($this->filename);
 
-        if(! file_exists($directory)){
+        if (! file_exists($directory)) {
             mkdir($directory, recursive: true);
         }
 

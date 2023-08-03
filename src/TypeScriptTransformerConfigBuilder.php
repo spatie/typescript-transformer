@@ -12,8 +12,8 @@ use Spatie\TypeScriptTransformer\Writers\Writer;
 class TypeScriptTransformerConfigBuilder
 {
     /**
-     * @param array<TypesProvider|string> $typeProviders
-     * @param array<Transformer|string> $transformers
+     * @param  array<TypesProvider|string>  $typeProviders
+     * @param  array<Transformer|string>  $transformers
      */
     public function __construct(
         protected array $typeProviders = [],

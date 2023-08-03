@@ -18,7 +18,7 @@ use Spatie\TypeScriptTransformer\Laravel\Support\WithoutRoutes;
 class ResolveLaravelRoutControllerCollectionsAction
 {
     /**
-     * @param array<WithoutRoutes> $filters
+     * @param  array<WithoutRoutes>  $filters
      */
     public function execute(
         ?string $defaultNamespace,

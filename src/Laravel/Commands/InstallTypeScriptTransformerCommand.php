@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Laravel\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 /**
  * @note Taken from the Laravel Horizon package
