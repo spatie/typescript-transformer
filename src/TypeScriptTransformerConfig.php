@@ -8,15 +8,15 @@ use Spatie\TypeScriptTransformer\Writers\Writer;
 
 class TypeScriptTransformerConfig
 {
-    public array $directoriesToWatch = [];
-
     /**
-     * @param  array<class-string<TypesProvider>|TypesProvider>  $typeProviders
+     * @param array<class-string<TypesProvider> $typeProviders
+     * @param array<string> $directoriesToWatch
      */
     public function __construct(
         readonly public array $typeProviders,
         readonly public Writer $writer,
-        readonly public ?Formatter $formatter
+        readonly public ?Formatter $formatter,
+        readonly public array $directoriesToWatch = [],
     ) {
     }
 }

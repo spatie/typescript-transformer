@@ -10,6 +10,7 @@ use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
+use Spatie\TypeScriptTransformer\Laravel\Support\WithoutRoutes;
 use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
@@ -35,17 +36,23 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class LaravelNamedRouteTypesProvider implements TypesProvider
 {
+    /**
+     * @param array<string> $location
+     * @param array<WithoutRoutes> $filters
+     */
     public function __construct(
         protected ResolveLaravelRoutControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRoutControllerCollectionsAction(),
         protected array $location = [],
+        protected array $filters = [],
     ) {
     }
 
     public function provide(TypeScriptTransformerConfig $config, TypeScriptTransformerLog $log, TransformedCollection $types): void
     {
         $routeCollection = $this->resolveLaravelRoutControllerCollectionsAction->execute(
-            null,
+            defaultNamespace: null,
             includeRouteClosures: true,
+            filters: $this->filters,
         );
 
         $transformedRoutes = new Transformed(

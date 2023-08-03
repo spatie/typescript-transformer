@@ -14,22 +14,14 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TransformerTypesProvider implements TypesProvider
 {
-    /** @var array<Transformer> */
-    protected array $transformers;
-
     /**
-     * @param  array<class-string<Transformer>|Transformer>  $transformers
+     * @param  array<Transformer>  $transformers
      * @param  array<string>  $directories
      */
     public function __construct(
-        array $transformers,
+        protected array $transformers,
         protected array $directories,
     ) {
-        foreach ($transformers as $transformer) {
-            $this->transformers[] = $transformer instanceof Transformer
-                ? $transformer
-                : new $transformer;
-        }
     }
 
     public function provide(
@@ -38,8 +30,6 @@ class TransformerTypesProvider implements TypesProvider
         TransformedCollection $types
     ): void {
         $discoveredClasses = (new DiscoverTypesAction())->execute($this->directories);
-
-        array_push($config->directoriesToWatch, ...$this->directories);
 
         foreach ($discoveredClasses as $discoveredClass) {
             $transformed = $this->transformType($discoveredClass);

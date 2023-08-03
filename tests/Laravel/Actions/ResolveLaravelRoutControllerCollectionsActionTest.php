@@ -7,6 +7,7 @@ use Spatie\TypeScriptTransformer\Laravel\Routes\RouteController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
+use Spatie\TypeScriptTransformer\Laravel\Support\WithoutRoutes;
 use Spatie\TypeScriptTransformer\Tests\Laravel\FakeClasses\InvokableController;
 use Spatie\TypeScriptTransformer\Tests\Laravel\FakeClasses\ResourceController;
 use Spatie\TypeScriptTransformer\Tests\Laravel\LaravelTestCase;
@@ -173,7 +174,6 @@ it('can resolve all possible routes', function (Closure $route, Closure $expecta
             $router->get('simple', fn () => 'simple')->name('simple');
             $router->get('invokable', InvokableController::class)->name('invokable');
             $router->resource('resource', ResourceController::class);
-
         },
         function (RouteCollection $routes) {
             expect($routes->controllers)->toHaveCount(2);
@@ -204,6 +204,97 @@ it('can omit certain parts of a specified namespace', function () {
 
     expect($routes->controllers)->toHaveCount(2)->toHaveKeys([
         'Symfony.Component.HttpKernel.Controller.ErrorController',
-        'InvokableController',
+        '.InvokableController',
     ]);
+});
+
+it('can filter out certain routes', function (
+    WithoutRoutes $withoutRoutes,
+    Closure $expectations
+) {
+    app(Router::class)->get('simple', fn () => 'simple')->name('simple');
+    app(Router::class)->get('invokable', InvokableController::class)->name('invokable');
+    app(Router::class)->resource('resource', ResourceController::class);
+
+    $routes = app(ResolveLaravelRoutControllerCollectionsAction::class)->execute(null, true, [$withoutRoutes]);
+
+    $expectations($routes);
+})->with(function () {
+    yield 'named' => [
+        WithoutRoutes::named('simple'),
+        function(RouteCollection $routes){
+            expect($routes->closures)->toBeEmpty();
+            expect($routes->controllers)->toHaveCount(2);
+        }
+    ];
+    yield 'multiple named' => [
+        WithoutRoutes::named('simple', 'resource.index', 'resource.edit'),
+        function(RouteCollection $routes){
+            expect($routes->closures)->toBeEmpty();
+            expect($routes->controllers)
+                ->toHaveCount(2)
+                ->toHaveKeys([
+                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController',
+                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController'
+                ]);
+            expect($routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions)
+                ->toHaveCount(5)
+                ->toHaveKeys([
+                    'show',
+                    'create',
+                    'update',
+                    'store',
+                    'destroy',
+                ]);
+        }
+    ];
+    yield 'wildcard name' => [
+        WithoutRoutes::named('invokable', 'resource.*'),
+        function(RouteCollection $routes){
+            expect($routes->closures)->toHaveCount(1);
+            expect($routes->controllers)->toHaveCount(0);
+        }
+    ];
+    yield 'controller' => [
+        WithoutRoutes::controller(ResourceController::class),
+        function(RouteCollection $routes){
+            expect($routes->closures)->toHaveCount(1);
+            expect($routes->controllers)->toHaveCount(1)->toHaveKey('Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController');
+        }
+    ];
+    yield 'multiple controllers' => [
+        WithoutRoutes::controller(ResourceController::class),
+        function(RouteCollection $routes){
+            expect($routes->closures)->toHaveCount(1);
+            expect($routes->controllers)->toHaveCount(1)->toHaveKey('Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController');
+        }
+    ];
+    yield 'controller wildcard' => [
+        WithoutRoutes::controller('Spatie\TypeScriptTransformer\Tests\Laravel\FakeClasses\*'),
+        function(RouteCollection $routes){
+            expect($routes->closures)->toHaveCount(1);
+            expect($routes->controllers)->toHaveCount(0);
+        }
+    ];
+    yield 'controller action' => [
+        WithoutRoutes::controller([ResourceController::class, 'index'], [ResourceController::class, 'edit']),
+        function(RouteCollection $routes){
+            expect($routes->closures)->toHaveCount(1);
+            expect($routes->controllers)
+                ->toHaveCount(2)
+                ->toHaveKeys([
+                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController',
+                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController'
+                ]);
+            expect($routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions)
+                ->toHaveCount(5)
+                ->toHaveKeys([
+                    'show',
+                    'create',
+                    'update',
+                    'store',
+                    'destroy',
+                ]);
+        }
+    ];
 });

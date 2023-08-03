@@ -4,10 +4,10 @@ namespace Spatie\TypeScriptTransformer\Laravel;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\TypeScriptTransformer\Laravel\Commands\InstallTypeScriptTransformerCommand;
 use Spatie\TypeScriptTransformer\Laravel\Commands\TransformTypeScriptCommand;
 use Spatie\TypeScriptTransformer\Laravel\Commands\WatchTypeScriptCommand;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TypeScriptTransformerServiceProvider extends PackageServiceProvider
 {
@@ -16,17 +16,17 @@ class TypeScriptTransformerServiceProvider extends PackageServiceProvider
         $package
             ->name('typescript-transformer')
             ->hasCommand(WatchTypeScriptCommand::class)
-            ->hasCommand(TransformTypeScriptCommand::class);
+            ->hasCommand(TransformTypeScriptCommand::class)
+            ->hasCommand(InstallTypeScriptTransformerCommand::class);
     }
 
     public function bootingPackage(): void
     {
-        // TODO: use a laravel config file or something better here
-
-        $this->app->singleton(
-            TypeScriptTransformerConfig::class,
-            fn () => LaravelTypeScriptTransformerConfig::$defined
-        );
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../../stubs/TypeScriptTransformerServiceProvider.stub' => app_path('Providers/TypeScriptTransformerServiceProvider.php'),
+            ], 'typescript-transformer-provider');
+        }
 
         $this->app->singleton(
             TypeScriptTransformerLog::class,

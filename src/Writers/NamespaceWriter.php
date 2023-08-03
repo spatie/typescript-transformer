@@ -59,19 +59,24 @@ class NamespaceWriter implements Writer
             $output .= $namespace->write($writingContext);
         }
 
-        file_put_contents(
-            $this->filename,
-            $output,
-        );
+        $this->writeFile($output);
 
         return [
             new WrittenFile($this->filename),
         ];
     }
 
-    public function replaceReference(
-        Transformed $transformable
-    ): string {
-        return implode('.', $transformable->location).'.'.$transformable->name;
+    private function writeFile(string $output): void
+    {
+        $directory = dirname($this->filename);
+
+        if(! file_exists($directory)){
+            mkdir($directory, recursive: true);
+        }
+
+        file_put_contents(
+            $this->filename,
+            $output,
+        );
     }
 }

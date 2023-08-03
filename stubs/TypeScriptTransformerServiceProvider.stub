@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Providers;
+
+use Spatie\TypeScriptTransformer\Formatters\PrettierFormatter;
+use Spatie\TypeScriptTransformer\Transformers\AttributeTransformer;
+use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigBuilder;
+use Spatie\TypeScriptTransformer\Writers\NamespaceWriter;
+use Spatie\TypeScriptTransformer\Laravel\TypeScriptTransformerApplicationServiceProvider as BaseTypeScriptTransformerServiceProvider;
+
+class TypeScriptTransformerServiceProvider extends BaseTypeScriptTransformerServiceProvider
+{
+    protected function configure(TypeScriptTransformerConfigBuilder $config): void
+    {
+        $config
+            ->transformer(AttributeTransformer::class)
+            ->transformer(EnumTransformer::class)
+            ->watchDirectories(app_path())
+            ->writer(new NamespaceWriter(resource_path('types/generated.d.ts')))
+            ->formatter(PrettierFormatter::class);
+    }
+}

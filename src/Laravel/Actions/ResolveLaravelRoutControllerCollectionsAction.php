@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Laravel\Actions;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteClosure;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteCollection;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteController;
@@ -12,12 +13,17 @@ use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
+use Spatie\TypeScriptTransformer\Laravel\Support\WithoutRoutes;
 
 class ResolveLaravelRoutControllerCollectionsAction
 {
+    /**
+     * @param array<WithoutRoutes> $filters
+     */
     public function execute(
         ?string $defaultNamespace,
         bool $includeRouteClosures,
+        array $filters = [],
     ): RouteCollection {
         /** @var array<string, RouteController> $controllers */
         $controllers = [];
@@ -25,6 +31,12 @@ class ResolveLaravelRoutControllerCollectionsAction
         $closures = [];
 
         foreach (app(Router::class)->getRoutes()->getRoutes() as $route) {
+            foreach ($filters as $filter) {
+                if ($filter->shouldHide($route)) {
+                    continue 2;
+                }
+            }
+
             $controllerClass = $route->getControllerClass();
 
             if ($controllerClass === null && ! $includeRouteClosures) {
@@ -44,15 +56,13 @@ class ResolveLaravelRoutControllerCollectionsAction
                 continue;
             }
 
-            if ($defaultNamespace !== null) {
-                $controllerClass = Str::of($controllerClass)
-                    ->trim('\\')
-                    ->replace($defaultNamespace, '')
-                    ->trim('\\')
-                    ->toString();
+            $controllerClass = Str::of($controllerClass)->trim('\\');
+
+            if ($defaultNamespace) {
+                $controllerClass = $this->replaceDefaultNamespace($controllerClass, $defaultNamespace);
             }
 
-            $controllerClass = str_replace('\\', '.', $controllerClass);
+            $controllerClass = (string) $controllerClass->replace('\\', '.');
 
             if ($route->getActionMethod() === $route->getControllerClass()) {
                 $controllers[$controllerClass] = new RouteInvokableController(
@@ -78,6 +88,19 @@ class ResolveLaravelRoutControllerCollectionsAction
         }
 
         return new RouteCollection($controllers, $closures);
+    }
+
+    protected function replaceDefaultNamespace(
+        Stringable $controllerClass,
+        string $defaultNamespace
+    ): Stringable {
+        $defaultNamespace = Str::of($defaultNamespace)->trim('\\');
+
+        if (! $controllerClass->contains($defaultNamespace)) {
+            return $controllerClass;
+        }
+
+        return $controllerClass->replace($defaultNamespace, '')->trim('\\')->prepend('.');
     }
 
     protected function resolveRouteParameters(
