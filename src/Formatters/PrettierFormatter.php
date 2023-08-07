@@ -7,9 +7,9 @@ use Symfony\Component\Process\Process;
 
 class PrettierFormatter implements Formatter
 {
-    public function format(string $file): void
+    public function format(array $files): void
     {
-        $process = new Process(['npx', '--yes', 'prettier', '--write', $file]);
+        $process = new Process(['npx', '--yes', 'prettier', '--write', ...$files]);
         $process->run();
 
         if (! $process->isSuccessful()) {

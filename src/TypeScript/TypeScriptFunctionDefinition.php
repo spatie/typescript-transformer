@@ -5,10 +5,10 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptFunctionDefinition implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptFunctionDefinition implements TypeScriptNode, TypeScriptVisitableNode, TypeScriptForwardingExportableNode
 {
     public function __construct(
-        public TypeScriptNode $identifier,
+        public TypeScriptGeneric|TypeScriptIdentifier $identifier,
         public array $parameters,
         public TypeScriptNode $returnType,
         public TypeScriptNode $body,
@@ -27,5 +27,10 @@ class TypeScriptFunctionDefinition implements TypeScriptNode, TypeScriptVisitabl
     public function visitorProfile(): VisitorProfile
     {
         return VisitorProfile::create()->single('identifier', 'returnType', 'body')->iterable('parameters');
+    }
+
+    public function getForwardedExportableNode(): TypeScriptExportableNode|TypeScriptForwardingExportableNode
+    {
+        return $this->identifier;
     }
 }

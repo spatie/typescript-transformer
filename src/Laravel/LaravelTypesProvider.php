@@ -14,7 +14,6 @@ use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptBoolean;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNull;
@@ -27,7 +26,7 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class LaravelTypesProvider implements TypesProvider
 {
-    public function provide(TypeScriptTransformerConfig $config, TypeScriptTransformerLog $log, TransformedCollection $types): void
+    public function provide(TypeScriptTransformerConfig $config, TransformedCollection $types): void
     {
         /** @todo We should only keep these types if they are referenced otherwise they arent't required to be transformed */
         /** @todo writing types in phpdoc syntax would be a lot easier here */
@@ -42,119 +41,107 @@ class LaravelTypesProvider implements TypesProvider
     protected function collection(): Transformed
     {
         return new Transformed(
-            new TypeScriptExport(
-                new TypeScriptAlias(
-                    new TypeScriptGeneric(
-                        new TypeScriptIdentifier('Collection'),
-                        [new TypeScriptIdentifier('T')],
-                    ),
-                    new TypeScriptGeneric(
-                        new TypeScriptIdentifier('Array'),
-                        [new TypeScriptIdentifier('T')],
-                    ),
-                )
+            new TypeScriptAlias(
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('Collection'),
+                    [new TypeScriptIdentifier('T')],
+                ),
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('Array'),
+                    [new TypeScriptIdentifier('T')],
+                ),
             ),
             new ClassStringReference(Collection::class),
-            'Collection',
-            ['Illuminate', 'Support'],
+            ['Illuminate', 'Support'], true,
         );
     }
 
     protected function eloquentCollection(): Transformed
     {
         return new Transformed(
-            new TypeScriptExport(
-                new TypeScriptAlias(
-                    new TypeScriptGeneric(
-                        new TypeScriptIdentifier('Collection'),
-                        [new TypeScriptIdentifier('T')],
-                    ),
-                    new TypeScriptGeneric(
-                        new TypeScriptIdentifier('Array'),
-                        [new TypeScriptIdentifier('T')],
-                    ),
-                )
+            new TypeScriptAlias(
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('Collection'),
+                    [new TypeScriptIdentifier('T')],
+                ),
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('Array'),
+                    [new TypeScriptIdentifier('T')],
+                ),
             ),
             new ClassStringReference(EloquentCollection::class),
-            'Collection',
-            ['Illuminate', 'Database', 'Eloquent', 'Collection'],
+            ['Illuminate', 'Database', 'Eloquent', 'Collection'], true,
         );
     }
 
     protected function lengthAwarePaginator(): Transformed
     {
         return new Transformed(
-            new TypeScriptExport(
-                new TypeScriptAlias(
-                    new TypeScriptGeneric(
-                        new TypeScriptIdentifier('LengthAwarePaginator'),
+            new TypeScriptAlias(
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('LengthAwarePaginator'),
+                    [new TypeScriptIdentifier('T')],
+                ),
+                new TypeScriptObject([
+                    new TypeScriptProperty('data', new TypeScriptGeneric(
+                        new TypeScriptIdentifier('Array'),
                         [new TypeScriptIdentifier('T')],
-                    ),
-                    new TypeScriptObject([
-                        new TypeScriptProperty('data', new TypeScriptGeneric(
-                            new TypeScriptIdentifier('Array'),
-                            [new TypeScriptIdentifier('T')],
-                        ), ),
-                        new TypeScriptProperty('links', new TypeScriptObject([
-                            new TypeScriptProperty('url', new TypeScriptUnion([
-                                new TypeScriptIdentifier('string'),
-                                new TypeScriptIdentifier('null'),
-                            ])),
-                            new TypeScriptProperty('label', new TypeScriptString()),
-                            new TypeScriptProperty('active', new TypeScriptBoolean()),
+                    ),),
+                    new TypeScriptProperty('links', new TypeScriptObject([
+                        new TypeScriptProperty('url', new TypeScriptUnion([
+                            new TypeScriptIdentifier('string'),
+                            new TypeScriptIdentifier('null'),
                         ])),
-                        new TypeScriptProperty('meta', new TypeScriptObject([
-                            new TypeScriptProperty('total', new TypeScriptNumber()),
-                            new TypeScriptProperty('current_page', new TypeScriptNumber()),
-                            new TypeScriptProperty('first_page_url', new TypeScriptString()),
-                            new TypeScriptProperty('from', new TypeScriptUnion([
-                                new TypeScriptNumber(),
-                                new TypeScriptNull(),
-                            ])),
-                            new TypeScriptProperty('last_page', new TypeScriptNumber()),
-                            new TypeScriptProperty('last_page_url', new TypeScriptString()),
-                            new TypeScriptProperty('next_page_url', new TypeScriptUnion([
-                                new TypeScriptString(),
-                                new TypeScriptNull(),
-                            ])),
-                            new TypeScriptProperty('path', new TypeScriptString()),
-                            new TypeScriptProperty('per_page', new TypeScriptNumber()),
-                            new TypeScriptProperty('prev_page_url', new TypeScriptUnion([
-                                new TypeScriptString(),
-                                new TypeScriptNull(),
-                            ])),
-                            new TypeScriptProperty('to', new TypeScriptUnion([
-                                new TypeScriptNumber(),
-                                new TypeScriptNull(),
-                            ])),
+                        new TypeScriptProperty('label', new TypeScriptString()),
+                        new TypeScriptProperty('active', new TypeScriptBoolean()),
+                    ])),
+                    new TypeScriptProperty('meta', new TypeScriptObject([
+                        new TypeScriptProperty('total', new TypeScriptNumber()),
+                        new TypeScriptProperty('current_page', new TypeScriptNumber()),
+                        new TypeScriptProperty('first_page_url', new TypeScriptString()),
+                        new TypeScriptProperty('from', new TypeScriptUnion([
+                            new TypeScriptNumber(),
+                            new TypeScriptNull(),
                         ])),
-                    ]),
-                )
+                        new TypeScriptProperty('last_page', new TypeScriptNumber()),
+                        new TypeScriptProperty('last_page_url', new TypeScriptString()),
+                        new TypeScriptProperty('next_page_url', new TypeScriptUnion([
+                            new TypeScriptString(),
+                            new TypeScriptNull(),
+                        ])),
+                        new TypeScriptProperty('path', new TypeScriptString()),
+                        new TypeScriptProperty('per_page', new TypeScriptNumber()),
+                        new TypeScriptProperty('prev_page_url', new TypeScriptUnion([
+                            new TypeScriptString(),
+                            new TypeScriptNull(),
+                        ])),
+                        new TypeScriptProperty('to', new TypeScriptUnion([
+                            new TypeScriptNumber(),
+                            new TypeScriptNull(),
+                        ])),
+                    ])),
+                ]),
             ),
             new ClassStringReference(LengthAwarePaginator::class),
-            'LengthAwarePaginator',
-            ['Illuminate', 'Pagination'],
+            ['Illuminate', 'Pagination'], true,
         );
     }
 
     protected function lengthAwarePaginatorInterface(): Transformed
     {
         return new Transformed(
-            new TypeScriptExport(
-                new TypeScriptAlias(
-                    new TypeScriptGeneric(
-                        new TypeScriptIdentifier('LengthAwarePaginator'),
-                        [new TypeScriptIdentifier('T')],
-                    ),
-                    new TypeScriptGeneric(
-                        new TypeReference(new ClassStringReference(LengthAwarePaginator::class)),
-                        [new TypeScriptIdentifier('T')],
-                    ),
-                )
+            new TypeScriptAlias(
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('LengthAwarePaginator'),
+                    [new TypeScriptIdentifier('T')],
+                ),
+                new TypeScriptGeneric(
+                    new TypeReference(new ClassStringReference(LengthAwarePaginator::class)),
+                    [new TypeScriptIdentifier('T')],
+                ),
             ),
             new ClassStringReference(LengthAwarePaginatorInterface::class),
-            'LengthAwarePaginator',
-            ['Illuminate', 'Contracts', 'Pagination'],
+            ['Illuminate', 'Contracts', 'Pagination'], true,
         );
     }
 }

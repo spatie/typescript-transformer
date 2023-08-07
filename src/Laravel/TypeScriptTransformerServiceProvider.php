@@ -27,10 +27,5 @@ class TypeScriptTransformerServiceProvider extends PackageServiceProvider
                 __DIR__.'/../../stubs/TypeScriptTransformerServiceProvider.stub' => app_path('Providers/TypeScriptTransformerServiceProvider.php'),
             ], 'typescript-transformer-provider');
         }
-
-        $this->app->singleton(
-            TypeScriptTransformerLog::class,
-            fn () => new TypeScriptTransformerLog(),
-        );
     }
 }

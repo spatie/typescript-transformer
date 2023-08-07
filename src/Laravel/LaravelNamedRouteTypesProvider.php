@@ -47,7 +47,7 @@ class LaravelNamedRouteTypesProvider implements TypesProvider
     ) {
     }
 
-    public function provide(TypeScriptTransformerConfig $config, TypeScriptTransformerLog $log, TransformedCollection $types): void
+    public function provide(TypeScriptTransformerConfig $config, TransformedCollection $types): void
     {
         $routeCollection = $this->resolveLaravelRoutControllerCollectionsAction->execute(
             defaultNamespace: null,
@@ -61,8 +61,7 @@ class LaravelNamedRouteTypesProvider implements TypesProvider
                 $this->parseRouteCollection($routeCollection),
             ),
             $routesListReference = new CustomReference('laravel_named_routes', 'routes_list'),
-            'NamedRouteList',
-            $this->location,
+            $this->location, true,
         );
 
         $jsonEncodedRoutes = $this->routeCollectionToJson($routeCollection);
@@ -109,8 +108,7 @@ TS
                 )
             ),
             new CustomReference('laravel_named_routes', 'route_function'),
-            'route',
-            $this->location,
+            $this->location, true,
         );
 
         $types->add($transformedRoutes, $transformedRoute);

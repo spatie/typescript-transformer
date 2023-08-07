@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptEnum implements TypeScriptNode
+class TypeScriptEnum implements TypeScriptNode, TypeScriptExportableNode
 {
     public function __construct(
         public string $name,
@@ -23,5 +23,10 @@ class TypeScriptEnum implements TypeScriptNode
         $output .= '}'.PHP_EOL;
 
         return $output;
+    }
+
+    public function getExportedName(): string
+    {
+        return $this->name;
     }
 }

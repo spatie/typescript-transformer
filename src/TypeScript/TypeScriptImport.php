@@ -2,10 +2,15 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScript;
 
+use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
 class TypeScriptImport implements TypeScriptNode
 {
+    /**
+     * @param string $path
+     * @param array<ImportName> $names
+     */
     public function __construct(
         public string $path,
         public array $names,

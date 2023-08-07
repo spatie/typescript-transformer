@@ -49,7 +49,7 @@ class LaravelRouteActionTypesProvider implements TypesProvider
     ) {
     }
 
-    public function provide(TypeScriptTransformerConfig $config, TypeScriptTransformerLog $log, TransformedCollection $types): void
+    public function provide(TypeScriptTransformerConfig $config, TransformedCollection $types): void
     {
         $routeCollection = $this->resolveLaravelRoutControllerCollectionsAction->execute(
             defaultNamespace: $this->defaultNamespace,
@@ -63,8 +63,7 @@ class LaravelRouteActionTypesProvider implements TypesProvider
                 $this->parseRouteCollection($routeCollection),
             ),
             $routesListReference = new CustomReference('laravel_route_actions', 'routes_list'),
-            'ActionRoutesList',
-            $this->location,
+            $this->location, true,
         );
 
         $isInvokableControllerCondition = TypeScriptOperator::extends(
@@ -96,8 +95,7 @@ class LaravelRouteActionTypesProvider implements TypesProvider
                 )
             ),
             $actionControllerReference = new CustomReference('laravel_route_actions', 'action_controller'),
-            'ActionController',
-            $this->location,
+            $this->location, true,
         );
 
         $actionParameters = new Transformed(
@@ -124,8 +122,7 @@ class LaravelRouteActionTypesProvider implements TypesProvider
                 )
             ),
             $actionParametersReference = new CustomReference('laravel_route_actions', 'action_parameters'),
-            'ActionParameters',
-            $this->location,
+            $this->location, true,
         );
 
         $jsonEncodedRoutes = $this->routeCollectionToJson($routeCollection);
@@ -196,8 +193,7 @@ TS
                 )
             ),
             new CustomReference('laravel_route_actions', 'action_function'),
-            'action',
-            $this->location,
+            $this->location, true,
         );
 
         $types->add($transformedRoutes, $actionController, $actionParameters, $transformedAction);

@@ -26,7 +26,6 @@ class TransformerTypesProvider implements TypesProvider
 
     public function provide(
         TypeScriptTransformerConfig $config,
-        TypeScriptTransformerLog $log,
         TransformedCollection $types
     ): void {
         $discoveredClasses = (new DiscoverTypesAction())->execute($this->directories);

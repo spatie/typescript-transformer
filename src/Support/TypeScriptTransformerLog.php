@@ -8,6 +8,17 @@ class TypeScriptTransformerLog
 
     public array $warningMessages = [];
 
+    protected static self $instance;
+
+    private function __construct()
+    {
+    }
+
+    public static function resolve(): self
+    {
+        return self::$instance ??= new self();
+    }
+
     public function info(string $message): self
     {
         $this->infoMessages[] = $message;

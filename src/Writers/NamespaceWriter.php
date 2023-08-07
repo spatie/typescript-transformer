@@ -21,8 +21,10 @@ class NamespaceWriter implements Writer
         $this->splitTransformedPerLocationAction = new SplitTransformedPerLocationAction();
     }
 
-    public function output(TransformedCollection $collection, ReferenceMap $referenceMap): array
-    {
+    public function output(
+        TransformedCollection $collection,
+        ReferenceMap $referenceMap
+    ): array {
         $split = $this->splitTransformedPerLocationAction->execute(
             $collection
         );
@@ -33,10 +35,10 @@ class NamespaceWriter implements Writer
             $transformable = $referenceMap->get($reference);
 
             if (empty($transformable->location)) {
-                return $transformable->name;
+                return $transformable->getName();
             }
 
-            return implode('.', $transformable->location).'.'.$transformable->name;
+            return implode('.', $transformable->location).'.'.$transformable->getName();
         });
 
         foreach ($split as $splitConstruct) {
@@ -51,7 +53,7 @@ class NamespaceWriter implements Writer
             $namespace = new TypeScriptNamespace(
                 $splitConstruct->segments,
                 array_map(
-                    fn (Transformed $transformable) => $transformable->typeScriptNode,
+                    fn (Transformed $transformable) => $transformable->prepareForWrite(),
                     $splitConstruct->transformed,
                 ),
             );

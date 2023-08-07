@@ -10,7 +10,6 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptEnum;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptLiteral;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
@@ -39,8 +38,7 @@ class EnumTransformer implements Transformer
                 ? $this->transformAsNativeEnum($context->name, $cases)
                 : $this->transformAsUnion($context->name, $cases),
             new ReflectionClassReference($reflectionClass),
-            $context->name,
-            $context->nameSpaceSegments,
+            $context->nameSpaceSegments, true,
         );
     }
 
@@ -69,14 +67,14 @@ class EnumTransformer implements Transformer
         string $name,
         array $cases
     ): TypeScriptNode {
-        return new TypeScriptExport(new TypeScriptEnum($name, $cases));
+        return new TypeScriptEnum($name, $cases);
     }
 
     protected function transformAsUnion(
         string $name,
         array $cases
     ): TypeScriptNode {
-        return new TypeScriptExport(new TypeScriptAlias(
+        return new TypeScriptAlias(
             new TypeScriptIdentifier($name),
             new TypeScriptUnion(
                 array_map(
@@ -84,6 +82,6 @@ class EnumTransformer implements Transformer
                     $cases,
                 ),
             ),
-        ));
+        );
     }
 }

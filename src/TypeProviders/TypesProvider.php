@@ -10,7 +10,6 @@ interface TypesProvider
 {
     public function provide(
         TypeScriptTransformerConfig $config,
-        TypeScriptTransformerLog $log,
         TransformedCollection $types
     ): void;
 }

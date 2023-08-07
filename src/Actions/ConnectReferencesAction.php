@@ -14,7 +14,6 @@ class ConnectReferencesAction
 {
     public function __construct(
         protected TypeScriptTransformerConfig $config,
-        public TypeScriptTransformerLog $log,
     ) {
     }
 
@@ -28,32 +27,31 @@ class ConnectReferencesAction
             }
         }
 
-        $visitor = Visitor::create()->before(function (TypeReference $typeReference, array $metadata) use ($referenceMap, &$references) {
+        $visitor = Visitor::create()->before(function (TypeReference $typeReference, array &$metadata) use ($referenceMap) {
             $reference = $typeReference->reference;
 
             if (! $referenceMap->has($reference)) {
                 /** @var Transformed $transformed */
                 $transformed = $metadata['transformed'];
 
-                $this->log->warning("Tried replacing reference to `{$reference->humanFriendlyName()}` in `{$transformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
+                TypeScriptTransformerLog::resolve()->warning("Tried replacing reference to `{$reference->humanFriendlyName()}` in `{$transformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
 
                 return;
             }
 
-            $references[] = $reference;
+            $metadata['references'][] = $reference;
             $typeReference->connect($referenceMap->get($reference));
         }, [TypeReference::class]);
 
         foreach ($collection as $transformed) {
-            $references = [];
-
             $metadata = [
                 'transformed' => $transformed,
+                'references' => [],
             ];
 
             $visitor->execute($transformed->typeScriptNode, $metadata);
 
-            $transformed->references = $references;
+            $transformed->references = $metadata['references'];
         }
 
         return $referenceMap;

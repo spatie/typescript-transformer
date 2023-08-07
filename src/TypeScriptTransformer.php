@@ -14,7 +14,6 @@ class TypeScriptTransformer
 {
     public function __construct(
         protected TypeScriptTransformerConfig $config,
-        protected TypeScriptTransformerLog $log,
         protected DiscoverTypesAction $discoverTypesAction,
         protected ProvideTypesAction $appendDefaultTypesAction,
         protected ConnectReferencesAction $connectReferencesAction,
@@ -24,7 +23,7 @@ class TypeScriptTransformer
 
     }
 
-    public function execute(bool $watch = false): TypeScriptTransformerLog
+    public function execute(bool $watch = false): void
     {
         // Parallelize
         // - discovering types
@@ -51,7 +50,5 @@ class TypeScriptTransformer
         $writtenFiles = $this->writeTypesAction->execute($transformedCollection, $referenceMap);
 
         $this->formatFilesAction->execute($writtenFiles);
-
-        return $this->log;
     }
 }

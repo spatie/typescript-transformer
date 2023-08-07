@@ -10,12 +10,11 @@ class FormatFilesAction
 {
     public function __construct(
         public TypeScriptTransformerConfig $config,
-        public TypeScriptTransformerLog $log,
     ) {
     }
 
     /**
-     * @param  array<WrittenFile>  $writtenFiles
+     * @param array<WrittenFile> $writtenFiles
      */
     public function execute(array $writtenFiles): void
     {
@@ -23,8 +22,8 @@ class FormatFilesAction
             return;
         }
 
-        foreach ($writtenFiles as $writtenFile) {
-            $this->config->formatter->format($writtenFile->path);
-        }
+        $this->config->formatter->format(
+            array_map(fn (WrittenFile $writtenFile) => $writtenFile->path, $writtenFiles)
+        );
     }
 }

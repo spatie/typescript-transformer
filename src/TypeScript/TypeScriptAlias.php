@@ -5,10 +5,10 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptAlias implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptAlias implements TypeScriptNode, TypeScriptVisitableNode, TypeScriptForwardingExportableNode
 {
     public function __construct(
-        public TypeScriptNode $identifier,
+        public TypeScriptIdentifier|TypeScriptGeneric $identifier,
         public TypeScriptNode $type,
     ) {
     }
@@ -21,5 +21,10 @@ class TypeScriptAlias implements TypeScriptNode, TypeScriptVisitableNode
     public function visitorProfile(): VisitorProfile
     {
         return VisitorProfile::create()->single('identifier', 'type');
+    }
+
+    public function getForwardedExportableNode(): TypeScriptExportableNode|TypeScriptForwardingExportableNode
+    {
+        return $this->identifier;
     }
 }

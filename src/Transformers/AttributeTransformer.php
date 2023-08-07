@@ -27,7 +27,7 @@ class AttributeTransformer extends ClassTransformer
         $attribute = $reflectionClass->getAttributes(TypeScript::class)[0]->newInstance();
 
         if ($attribute->name !== null) {
-            $transformed->name = $attribute->name;
+            $transformed->nameAs($attribute->name);
         }
 
         if ($attribute->location !== null) {

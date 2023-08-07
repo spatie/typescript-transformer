@@ -17,7 +17,6 @@ use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
@@ -41,15 +40,12 @@ abstract class ClassTransformer implements Transformer
         }
 
         return new Transformed(
-            new TypeScriptExport(
-                new TypeScriptAlias(
-                    new TypeScriptIdentifier($context->name),
-                    $this->getTypeScriptNode($reflectionClass)
-                )
+            new TypeScriptAlias(
+                new TypeScriptIdentifier($context->name),
+                $this->getTypeScriptNode($reflectionClass)
             ),
             new ReflectionClassReference($reflectionClass),
-            $context->name,
-            $context->nameSpaceSegments,
+            $context->nameSpaceSegments, true,
         );
     }
 

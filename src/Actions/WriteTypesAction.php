@@ -12,7 +12,6 @@ class WriteTypesAction
 {
     public function __construct(
         public TypeScriptTransformerConfig $config,
-        public TypeScriptTransformerLog $log,
     ) {
     }
 

@@ -11,7 +11,6 @@ class ProvideTypesAction
 {
     public function __construct(
         protected TypeScriptTransformerConfig $config,
-        public TypeScriptTransformerLog $log,
     ) {
     }
 
@@ -24,7 +23,6 @@ class ProvideTypesAction
 
             $defaultTypeProvider->provide(
                 $this->config,
-                $this->log,
                 $collection
             );
         }

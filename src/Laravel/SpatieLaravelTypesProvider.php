@@ -8,7 +8,6 @@ use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGenericTypeVariable;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
@@ -18,11 +17,11 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class SpatieLaravelTypesProvider implements TypesProvider
 {
-    public function provide(TypeScriptTransformerConfig $config, TypeScriptTransformerLog $log, TransformedCollection $types): void
+    public function provide(TypeScriptTransformerConfig $config, TransformedCollection $types): void
     {
         if (class_exists(\Spatie\LaravelOptions\Options::class)) {
             $optionsType = new Transformed(
-                new TypeScriptExport(new TypeScriptAlias(
+                new TypeScriptAlias(
                     new TypeScriptGeneric(
                         new TypeScriptIdentifier('Options'),
                         [
@@ -45,11 +44,9 @@ class SpatieLaravelTypesProvider implements TypesProvider
                             ]),
                         ],
                     )
-                )
                 ),
                 new ClassStringReference(\Spatie\LaravelOptions\Options::class),
-                'Options',
-                ['Spatie', 'LaravelOptions'],
+                ['Spatie', 'LaravelOptions'], true,
             );
 
             $types->add($optionsType);

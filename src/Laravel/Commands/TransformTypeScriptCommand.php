@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Laravel\Commands;
 
 use Illuminate\Console\Command;
+use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
 class TransformTypeScriptCommand extends Command
@@ -14,7 +15,9 @@ class TransformTypeScriptCommand extends Command
     public function handle(
         TypeScriptTransformer $typeScriptTransformer
     ): int {
-        $log = $typeScriptTransformer->execute();
+        $typeScriptTransformer->execute();
+
+        $log = TypeScriptTransformerLog::resolve();
 
         if (! empty($log->infoMessages)) {
             foreach ($log->infoMessages as $infoMessage) {

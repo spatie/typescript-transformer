@@ -6,10 +6,12 @@ use Spatie\TypeScriptTransformer\Actions\ResolveRelativePathAction;
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\References\Reference;
+use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\Support\WrittenFile;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptImport;
 
 class ModuleWriter implements Writer
@@ -56,7 +58,7 @@ class ModuleWriter implements Writer
         $output = '';
 
         $writingContext = new WritingContext(function (Reference $reference) use ($referenceMap) {
-            return $referenceMap->get($reference)->name;
+            return $referenceMap->get($reference)->getName();
         });
 
         foreach ($imports as $import) {
@@ -66,7 +68,7 @@ class ModuleWriter implements Writer
         $output .= PHP_EOL;
 
         foreach ($location->transformed as $transformedItem) {
-            $output .= $transformedItem->typeScriptNode->write($writingContext);
+            $output .= $transformedItem->prepareForWrite()->write($writingContext);
         }
 
         if (is_dir($path) === false) {
@@ -85,8 +87,16 @@ class ModuleWriter implements Writer
         Location $location,
         ReferenceMap $referenceMap,
     ): array {
-        /** @var array<string, array{location: array<string>, names: array<string>}> $imports */
+        /** @var array<string, array{location: array<string>, names: array<ImportName>}> $imports */
         $imports = [];
+
+        // TODO: right now, we import directly the name
+        // Take a look at the LengthAwarePaginator interface, it imports LengthAwarePaginator which does not work
+        //
+
+        $usedNamesInScope = array_values(
+            array_map(fn (Transformed $transformed) => $transformed->getName(), $location->transformed)
+        );
 
         foreach ($location->transformed as $transformedItem) {
             foreach ($transformedItem->references as $reference) {
@@ -99,12 +109,24 @@ class ModuleWriter implements Writer
                     ];
                 }
 
-                $imports[implode($transformedReference->location)]['names'][] = $transformedReference->name;
+                $resolveImportedName = $this->resolveImportedName($usedNamesInScope, $transformedReference->getName());
+
+                $usedNamesInScope[] = $resolveImportedName;
+
+                $imports[implode($transformedReference->location)]['names'][] = ImportName::fromNameAndImportedName(
+                    $transformedReference->getName(),
+                    $resolveImportedName,
+                );
+
+                // TODO: the reference should now point to the alias if used
+                // This is not possible at the moment because we don't have any idea about the node
+                // Ideally the references list is actually a list with pointers to the nodes
             }
         }
 
         return array_filter(array_map(function (array $import) use ($location) {
-            $names = array_values(array_unique($import['names']));
+            $names = array_values($import['names']);
+
             $path = $this->resolveRelativePathAction->execute(
                 $location->segments,
                 $import['location'],
@@ -120,5 +142,26 @@ class ModuleWriter implements Writer
                 $names
             );
         }, $imports));
+    }
+
+    protected function resolveImportedName(
+        array $usedNamesInScope,
+        string $name,
+    ): string {
+        if (! in_array($name, $usedNamesInScope)) {
+            return $name;
+        }
+
+        if (! in_array("{$name}Alt", $usedNamesInScope)) {
+            return "{$name}Alt";
+        }
+
+        $counter = 2;
+
+        while (in_array("{$name}Alt{$counter}", $usedNamesInScope)) {
+            $counter++;
+        }
+
+        return "{$name}Alt{$counter}";
     }
 }

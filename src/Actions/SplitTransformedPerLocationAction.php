@@ -30,7 +30,7 @@ class SplitTransformedPerLocationAction
         ksort($split);
 
         foreach ($split as $splitConstruct) {
-            usort($splitConstruct->transformed, fn (Transformed $a, Transformed $b) => $a->name <=> $b->name);
+            usort($splitConstruct->transformed, fn (Transformed $a, Transformed $b) => $a->getName() <=> $b->getName());
         }
 
         return array_values($split);
