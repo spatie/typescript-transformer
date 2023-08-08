@@ -58,9 +58,9 @@ class ResolveLaravelRoutControllerCollectionsAction
 
             $controllerClass = Str::of($controllerClass)->trim('\\');
 
-            if ($defaultNamespace) {
-                $controllerClass = $this->replaceDefaultNamespace($controllerClass, $defaultNamespace);
-            }
+            $controllerClass = $defaultNamespace
+                ? $this->replaceDefaultNamespace($controllerClass, $defaultNamespace)
+                : $controllerClass->prepend('.');
 
             $controllerClass = (string) $controllerClass->replace('\\', '.');
 
@@ -97,10 +97,10 @@ class ResolveLaravelRoutControllerCollectionsAction
         $defaultNamespace = Str::of($defaultNamespace)->trim('\\');
 
         if (! $controllerClass->contains($defaultNamespace)) {
-            return $controllerClass;
+            return $controllerClass->prepend('.');
         }
 
-        return $controllerClass->replace($defaultNamespace, '')->trim('\\')->prepend('.');
+        return $controllerClass->replace($defaultNamespace, '')->trim('\\');
     }
 
     protected function resolveRouteParameters(

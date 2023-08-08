@@ -38,7 +38,7 @@ it('can resolve all possible routes', function (Closure $route, Closure $expecta
             expect($routes->controllers)->toHaveCount(1);
             expect($routes->closures)->toBeEmpty();
 
-            $actions = $routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions;
+            $actions = $routes->controllers['.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions;
 
             expect($actions)->toHaveCount(1);
             expect($actions['update'])->toBeInstanceOf(RouteControllerAction::class);
@@ -55,7 +55,7 @@ it('can resolve all possible routes', function (Closure $route, Closure $expecta
             expect($routes->controllers)->toHaveCount(1);
             expect($routes->closures)->toBeEmpty();
 
-            $controller = $routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController'];
+            $controller = $routes->controllers['.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController'];
 
             expect($controller)->toBeInstanceOf(RouteInvokableController::class);
             expect($controller->url)->toBe('invokable');
@@ -71,7 +71,7 @@ it('can resolve all possible routes', function (Closure $route, Closure $expecta
             expect($routes->controllers)->toHaveCount(1);
             expect($routes->closures)->toBeEmpty();
 
-            $controller = $routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController'];
+            $controller = $routes->controllers['.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController'];
 
             expect($controller)->toBeInstanceOf(RouteController::class);
             expect($controller->actions)->toHaveCount(7);
@@ -181,9 +181,9 @@ it('can resolve all possible routes', function (Closure $route, Closure $expecta
 
             expect($routes->closures['Closure(simple)']->name)->toBe('simple');
 
-            expect($routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController']->name)->toBe('invokable');
+            expect($routes->controllers['.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController']->name)->toBe('invokable');
 
-            $resourceController = $routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController'];
+            $resourceController = $routes->controllers['.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController'];
 
             expect($resourceController->actions['index']->name)->toBe('resource.index');
             expect($resourceController->actions['show']->name)->toBe('resource.show');
@@ -203,8 +203,8 @@ it('can omit certain parts of a specified namespace', function () {
     $routes = app(ResolveLaravelRoutControllerCollectionsAction::class)->execute('Spatie\TypeScriptTransformer\Tests\Laravel\FakeClasses', true);
 
     expect($routes->controllers)->toHaveCount(2)->toHaveKeys([
-        'Symfony.Component.HttpKernel.Controller.ErrorController',
-        '.InvokableController',
+        '.Symfony.Component.HttpKernel.Controller.ErrorController',
+        'InvokableController',
     ]);
 });
 
@@ -234,10 +234,10 @@ it('can filter out certain routes', function (
             expect($routes->controllers)
                 ->toHaveCount(2)
                 ->toHaveKeys([
-                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController',
-                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController',
+                    '.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController',
+                    '.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController',
                 ]);
-            expect($routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions)
+            expect($routes->controllers['.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions)
                 ->toHaveCount(5)
                 ->toHaveKeys([
                     'show',
@@ -259,14 +259,14 @@ it('can filter out certain routes', function (
         WithoutRoutes::controller(ResourceController::class),
         function (RouteCollection $routes) {
             expect($routes->closures)->toHaveCount(1);
-            expect($routes->controllers)->toHaveCount(1)->toHaveKey('Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController');
+            expect($routes->controllers)->toHaveCount(1)->toHaveKey('.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController');
         },
     ];
     yield 'multiple controllers' => [
         WithoutRoutes::controller(ResourceController::class),
         function (RouteCollection $routes) {
             expect($routes->closures)->toHaveCount(1);
-            expect($routes->controllers)->toHaveCount(1)->toHaveKey('Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController');
+            expect($routes->controllers)->toHaveCount(1)->toHaveKey('.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController');
         },
     ];
     yield 'controller wildcard' => [
@@ -283,10 +283,10 @@ it('can filter out certain routes', function (
             expect($routes->controllers)
                 ->toHaveCount(2)
                 ->toHaveKeys([
-                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController',
-                    'Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController',
+                    '.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController',
+                    '.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.InvokableController',
                 ]);
-            expect($routes->controllers['Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions)
+            expect($routes->controllers['.Spatie.TypeScriptTransformer.Tests.Laravel.FakeClasses.ResourceController']->actions)
                 ->toHaveCount(5)
                 ->toHaveKeys([
                     'show',
