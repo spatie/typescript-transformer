@@ -12,7 +12,7 @@ class ReferenceMap
     protected array $references = [];
 
     /**
-     * @param array<Transformed> $references
+     * @param  array<Transformed>  $references
      */
     public function __construct(array $references = [])
     {

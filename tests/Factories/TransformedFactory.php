@@ -24,10 +24,10 @@ class TransformedFactory
     public static function alias(
         string $name,
         TypeScriptNode $typeScriptNode,
-        ?Reference $reference = null,
-        ?array $location = null,
+        Reference $reference = null,
+        array $location = null,
         bool $export = true,
-        ?array $references = null,
+        array $references = null,
     ): TransformedFactory {
         $reference = $reference ?? new CustomReference(
             'factory_alias',

@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Closure;
 use Spatie\TypeScriptTransformer\Collections\ImportsCollection;
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
@@ -12,8 +11,7 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 class ResolveModuleImportsAction
 {
     /**
-     * @param ResolveRelativePathAction $resolveRelativePathAction
-     * @param Closure(array<string>,string):string|null $alternativeNamesResolver
+     * @param  Closure(array<string>,string):string|null  $alternativeNamesResolver
      */
     public function __construct(
         protected ResolveRelativePathAction $resolveRelativePathAction = new ResolveRelativePathAction(),

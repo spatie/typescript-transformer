@@ -76,7 +76,7 @@ it('wont import the same type twice', function () {
     ]);
 });
 
-it('will alias a reference if it is already in the module', function (){
+it('will alias a reference if it is already in the module', function () {
     $nestedCollection = TransformedFactory::alias('Collection', new TypeScriptString(), location: ['nested'])->build();
 
     $location = new Location([], [
@@ -96,7 +96,7 @@ it('will alias a reference if it is already in the module', function (){
     ]);
 });
 
-it('will alias a reference if it is already in the module and already aliased by another import', function (){
+it('will alias a reference if it is already in the module and already aliased by another import', function () {
     $nestedCollection = TransformedFactory::alias('Collection', new TypeScriptString(), location: ['nested'])->build();
     $otherNestedCollection = TransformedFactory::alias('Collection', new TypeScriptString(), location: ['otherNested'])->build();
 

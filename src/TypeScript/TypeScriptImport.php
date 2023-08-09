@@ -8,8 +8,7 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class TypeScriptImport implements TypeScriptNode
 {
     /**
-     * @param string $path
-     * @param array<ImportName> $names
+     * @param  array<ImportName>  $names
      */
     public function __construct(
         public string $path,

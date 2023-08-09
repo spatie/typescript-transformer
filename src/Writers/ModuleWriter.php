@@ -43,7 +43,7 @@ class ModuleWriter implements Writer
 
         $output = '';
 
-        $writingContext = new WritingContext(function (Reference $reference) use ($location, $referenceMap, $imports) {
+        $writingContext = new WritingContext(function (Reference $reference) use ($referenceMap, $imports) {
             if ($name = $imports->getAliasOrNameForReference($reference)) {
                 return $name;
             }

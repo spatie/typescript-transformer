@@ -12,7 +12,7 @@ use Traversable;
 class ImportsCollection implements IteratorAggregate
 {
     /**
-     * @param array<string, ImportLocation> $imports
+     * @param  array<string, ImportLocation>  $imports
      */
     public function __construct(
         protected array $imports = [],

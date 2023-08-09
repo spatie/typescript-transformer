@@ -12,7 +12,7 @@ class WriteFilesAction
     ) {
     }
 
-    /** @param array<WriteableFile> $writeableFiles */
+    /** @param  array<WriteableFile>  $writeableFiles */
     public function execute(
         array $writeableFiles
     ): void {

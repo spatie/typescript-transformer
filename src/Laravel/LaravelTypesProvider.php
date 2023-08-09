@@ -8,7 +8,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
@@ -86,7 +85,7 @@ class LaravelTypesProvider implements TypesProvider
                     new TypeScriptProperty('data', new TypeScriptGeneric(
                         new TypeScriptIdentifier('Array'),
                         [new TypeScriptIdentifier('T')],
-                    ),),
+                    ), ),
                     new TypeScriptProperty('links', new TypeScriptObject([
                         new TypeScriptProperty('url', new TypeScriptUnion([
                             new TypeScriptIdentifier('string'),

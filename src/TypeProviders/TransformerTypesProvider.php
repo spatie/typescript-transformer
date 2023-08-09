@@ -7,7 +7,6 @@ use ReflectionException;
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;

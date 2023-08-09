@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptImport;
 class ImportLocation
 {
     /**
-     * @param array<ImportName> $importNames
+     * @param  array<ImportName>  $importNames
      */
     public function __construct(
         protected string $relativePath,

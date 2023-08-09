@@ -3,7 +3,6 @@
 namespace Spatie\TypeScriptTransformer\Support;
 
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class ImportName
 {

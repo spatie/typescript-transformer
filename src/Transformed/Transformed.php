@@ -14,8 +14,8 @@ class Transformed
     protected ?string $name;
 
     /**
-     * @param array<string> $location
-     * @param array<Transformed> $references
+     * @param  array<string>  $location
+     * @param  array<Transformed>  $references
      */
     public function __construct(
         public TypeScriptNode $typeScriptNode,

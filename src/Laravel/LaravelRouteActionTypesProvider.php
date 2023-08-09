@@ -12,7 +12,6 @@ use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
 use Spatie\TypeScriptTransformer\Laravel\Support\WithoutRoutes;
 use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;

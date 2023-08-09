@@ -8,7 +8,6 @@ use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
 use Spatie\TypeScriptTransformer\Actions\ProvideTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 
 class TypeScriptTransformer
 {

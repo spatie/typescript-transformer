@@ -42,12 +42,12 @@ it('will return the correct path', function (array $current, array $requested, ?
         [
             ['a', 'b', 'c', 'd'],
             ['a', 'b', 'e', 'd'],
-            '../../e/d'
+            '../../e/d',
         ],
         [
             ['a', 'b'],
             ['a'],
-            '../'
-        ]
+            '../',
+        ],
     ]
 );
