@@ -39,11 +39,6 @@ class ImportLocation
             return null;
         }
 
-        $names = array_unique(array_map(
-            fn (ImportName $name) => (string) $name,
-            $this->importNames,
-        ));
-
-        return new TypeScriptImport($this->relativePath, $names);
+        return new TypeScriptImport($this->relativePath, $this->importNames);
     }
 }

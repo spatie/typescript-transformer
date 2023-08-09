@@ -27,12 +27,19 @@ class TransformedFactory
         ?Reference $reference = null,
         ?array $location = null,
         bool $export = true,
+        ?array $references = null,
     ): TransformedFactory {
+        $reference = $reference ?? new CustomReference(
+            'factory_alias',
+            ($location !== null ? implode('.', $location) : '').Str::slug($name)
+        );
+
         return new self(
             typeScriptNode: new TypeScriptAlias(new TypeScriptIdentifier($name), $typeScriptNode),
-            reference: $reference ?? new CustomReference('factory_alias', Str::slug($name)),
+            reference: $reference,
             location: $location,
             export: $export,
+            references: $references
         );
     }
 

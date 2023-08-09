@@ -3,17 +3,13 @@
 namespace Spatie\TypeScriptTransformer\Writers;
 
 use Spatie\TypeScriptTransformer\Actions\ResolveModuleImportsAction;
-use Spatie\TypeScriptTransformer\Actions\ResolveRelativePathAction;
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
-use Spatie\TypeScriptTransformer\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptImport;
 
 class ModuleWriter implements Writer
 {
@@ -43,15 +39,12 @@ class ModuleWriter implements Writer
         Location $location,
         ReferenceMap $referenceMap,
     ): WriteableFile {
-        $imports = $this->resolveModuleImportsAction->execute(
-            $location,
-            $referenceMap,
-        );
+        $imports = $this->resolveModuleImportsAction->execute($location);
 
         $output = '';
 
-        $writingContext = new WritingContext(function (Reference $reference) use ($referenceMap, $imports) {
-            if($name = $imports->getAliasOrNameForReference($reference)){
+        $writingContext = new WritingContext(function (Reference $reference) use ($location, $referenceMap, $imports) {
+            if ($name = $imports->getAliasOrNameForReference($reference)) {
                 return $name;
             }
 
@@ -63,7 +56,7 @@ class ModuleWriter implements Writer
             $output .= $import->write($writingContext);
         }
 
-        if($imports->isEmpty() === false){
+        if ($imports->isEmpty() === false) {
             $output .= PHP_EOL;
         }
 

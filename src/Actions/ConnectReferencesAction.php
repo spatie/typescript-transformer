@@ -38,8 +38,10 @@ class ConnectReferencesAction
                 return;
             }
 
-            $metadata['references'][] = $reference;
-            $typeReference->connect($referenceMap->get($reference));
+            $transformed = $referenceMap->get($reference);
+
+            $metadata['references'][] = $transformed;
+            $typeReference->connect($transformed);
         }, [TypeReference::class]);
 
         foreach ($collection as $transformed) {

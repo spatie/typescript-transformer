@@ -113,8 +113,8 @@ it('can reference other types within a nested module', function () {
     expect($files[0])
         ->path->toBe($this->path.'/index.ts')
         ->contents->toBe(<<<TypeScript
-import { A } from './nested';
-import { B } from './nested/subNested';
+import { A } from 'nested';
+import { B } from 'nested/subNested';
 
 export type C = {
 a: A
@@ -158,7 +158,7 @@ it('can combine imports from nested modules', function () {
     expect($files[0])
         ->path->toBe($this->path.'/index.ts')
         ->contents->toBe(<<<TypeScript
-import { A, B } from './nested';
+import { A, B } from 'nested';
 
 export type C = {
 a: A
@@ -197,9 +197,40 @@ it('can import from root into a nested module', function () {
     expect($files[1])
         ->path->toBe($this->path.'/nested/index.ts')
         ->contents->toBe(<<<'TypeScript'
-import { A } from './..';
+import { A } from '../';
 
 export type B = A;
+
+TypeScript);
+});
+
+it('can automatically alias imported types', function () {
+    $reference = new CustomReference('test', 'A');
+
+    $transformedCollection = new TransformedCollection([
+        TransformedFactory::alias('A', new TypeScriptString(), reference: $reference)->build(),
+        TransformedFactory::alias('A', new TypeReference($reference), location: ['nested'])->build(),
+    ]);
+
+    $files = $this->writer->output(
+        $transformedCollection,
+        (new ConnectReferencesAction())->execute($transformedCollection),
+    );
+
+    expect($files)
+        ->toHaveCount(2)
+        ->each->toBeInstanceOf(WriteableFile::class);
+
+    expect($files[0])
+        ->path->toBe($this->path.'/index.ts')
+        ->contents->toBe('export type A = string;'.PHP_EOL);
+
+    expect($files[1])
+        ->path->toBe($this->path.'/nested/index.ts')
+        ->contents->toBe(<<<'TypeScript'
+import { A as AImport } from '../';
+
+export type A = AImport;
 
 TypeScript);
 });

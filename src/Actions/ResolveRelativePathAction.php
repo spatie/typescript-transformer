@@ -26,10 +26,16 @@ class ResolveRelativePathAction
             $relativeSegments[] = '..';
         }
 
+        $hasSuffixedSegments = false;
+
         for ($i = $commonDepth; $i < count($to); $i++) {
             $relativeSegments[] = $to[$i];
+
+            $hasSuffixedSegments = true;
         }
 
-        return implode('/', $relativeSegments);
-     }
+        $relativePath = implode('/', $relativeSegments);
+
+        return $hasSuffixedSegments ? $relativePath : $relativePath.'/';
+    }
 }

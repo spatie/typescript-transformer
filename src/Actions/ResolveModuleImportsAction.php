@@ -23,7 +23,6 @@ class ResolveModuleImportsAction
 
     public function execute(
         Location $location,
-        ReferenceMap $referenceMap,
     ): ImportsCollection {
         $collection = new ImportsCollection();
 
@@ -32,9 +31,7 @@ class ResolveModuleImportsAction
         );
 
         foreach ($location->transformed as $transformedItem) {
-            foreach ($transformedItem->references as $reference) {
-                $referencedTransformed = $referenceMap->get($reference);
-
+            foreach ($transformedItem->references as $referencedTransformed) {
                 if ($referencedTransformed->location === $location->segments) {
                     continue;
                 }
@@ -80,7 +77,7 @@ class ResolveModuleImportsAction
         }
 
         if (! in_array("{$name}Import", $usedNamesInScope)) {
-            return "{$name}Alt";
+            return "{$name}Import";
         }
 
         $counter = 2;

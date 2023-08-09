@@ -59,9 +59,15 @@ class ImportsCollection implements IteratorAggregate
      */
     public function getTypeScriptNodes(): array
     {
-        return array_map(
+        return array_values(array_map(
             fn (ImportLocation $import) => $import->toTypeScriptNode(),
             $this->imports,
-        );
+        ));
+    }
+
+    /** @return array<ImportLocation> */
+    public function toArray(): array
+    {
+        return array_values($this->imports);
     }
 }

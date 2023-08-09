@@ -15,7 +15,7 @@ class Transformed
 
     /**
      * @param array<string> $location
-     * @param array<Reference> $references
+     * @param array<Transformed> $references
      */
     public function __construct(
         public TypeScriptNode $typeScriptNode,
@@ -25,7 +25,6 @@ class Transformed
         public array $references = [],
     ) {
     }
-
 
     public function getName(): ?string
     {
