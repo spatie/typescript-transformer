@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
-use Spatie\TypeScriptTransformer\Support\WrittenFile;
+use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class FormatFilesAction
@@ -14,7 +14,7 @@ class FormatFilesAction
     }
 
     /**
-     * @param array<WrittenFile> $writtenFiles
+     * @param array<WriteableFile> $writtenFiles
      */
     public function execute(array $writtenFiles): void
     {
@@ -23,7 +23,7 @@ class FormatFilesAction
         }
 
         $this->config->formatter->format(
-            array_map(fn (WrittenFile $writtenFile) => $writtenFile->path, $writtenFiles)
+            array_map(fn (WriteableFile $writtenFile) => $writtenFile->path, $writtenFiles)
         );
     }
 }

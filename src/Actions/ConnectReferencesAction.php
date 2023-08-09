@@ -13,7 +13,6 @@ use Spatie\TypeScriptTransformer\Visitor\Visitor;
 class ConnectReferencesAction
 {
     public function __construct(
-        protected TypeScriptTransformerConfig $config,
     ) {
     }
 

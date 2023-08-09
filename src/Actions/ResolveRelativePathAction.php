@@ -4,43 +4,32 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 class ResolveRelativePathAction
 {
-    public function execute(
-        array $currentNamespaceSegments,
-        array $requestedNamespaceSegments,
-    ): ?string {
-        $currentNamespaceSegments = array_values($currentNamespaceSegments);
-        $requestedNamespaceSegments = array_values($requestedNamespaceSegments);
-
-        $maxIndex = max(
-            count($currentNamespaceSegments),
-            count($requestedNamespaceSegments)
-        );
-
-        for ($i = 0; $i < $maxIndex; $i++) {
-            if (
-                array_key_exists($i, $currentNamespaceSegments)
-                && array_key_exists($i, $requestedNamespaceSegments)
-                && $currentNamespaceSegments[$i] === $requestedNamespaceSegments[$i]) {
-                unset($currentNamespaceSegments[$i]);
-                unset($requestedNamespaceSegments[$i]);
-            }
-        }
-
-        $currentNamespaceSegments = array_values($currentNamespaceSegments);
-        $requestedNamespaceSegments = array_values($requestedNamespaceSegments);
-
-        if (empty($currentNamespaceSegments) && empty($requestedNamespaceSegments)) {
+    public function execute(array $from, array $to): ?string
+    {
+        if ($from === $to) {
             return null;
         }
 
-        $segments = ['.'];
+        $commonDepth = 0;
+        $maxDepth = min(count($from), count($to));
 
-        foreach ($currentNamespaceSegments as $i) {
-            $segments[] = '..';
+        for ($i = 0; $i < $maxDepth; $i++) {
+            if ($from[$i] !== $to[$i]) {
+                break;
+            }
+            $commonDepth++;
         }
 
-        array_push($segments, ...$requestedNamespaceSegments);
+        $relativeSegments = [];
 
-        return implode('/', $segments);
-    }
+        for ($i = $commonDepth; $i < count($from); $i++) {
+            $relativeSegments[] = '..';
+        }
+
+        for ($i = $commonDepth; $i < count($to); $i++) {
+            $relativeSegments[] = $to[$i];
+        }
+
+        return implode('/', $relativeSegments);
+     }
 }

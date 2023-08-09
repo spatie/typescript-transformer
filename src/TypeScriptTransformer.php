@@ -6,7 +6,7 @@ use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
 use Spatie\TypeScriptTransformer\Actions\ProvideTypesAction;
-use Spatie\TypeScriptTransformer\Actions\WriteTypesAction;
+use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 
@@ -17,7 +17,7 @@ class TypeScriptTransformer
         protected DiscoverTypesAction $discoverTypesAction,
         protected ProvideTypesAction $appendDefaultTypesAction,
         protected ConnectReferencesAction $connectReferencesAction,
-        protected WriteTypesAction $writeTypesAction,
+        protected WriteFilesAction $writeFilesAction,
         protected FormatFilesAction $formatFilesAction,
     ) {
 
@@ -47,8 +47,10 @@ class TypeScriptTransformer
 
         $referenceMap = $this->connectReferencesAction->execute($transformedCollection);
 
-        $writtenFiles = $this->writeTypesAction->execute($transformedCollection, $referenceMap);
+        $writeableFiles = $this->config->writer->output($transformedCollection, $referenceMap);
 
-        $this->formatFilesAction->execute($writtenFiles);
+        $this->writeFilesAction->execute($writeableFiles);
+
+        $this->formatFilesAction->execute($writeableFiles);
     }
 }

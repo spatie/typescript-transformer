@@ -6,8 +6,8 @@ use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
-use Spatie\TypeScriptTransformer\Support\WrittenFile;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNamespace;
 
@@ -61,24 +61,6 @@ class NamespaceWriter implements Writer
             $output .= $namespace->write($writingContext);
         }
 
-        $this->writeFile($output);
-
-        return [
-            new WrittenFile($this->filename),
-        ];
-    }
-
-    private function writeFile(string $output): void
-    {
-        $directory = dirname($this->filename);
-
-        if (! file_exists($directory)) {
-            mkdir($directory, recursive: true);
-        }
-
-        file_put_contents(
-            $this->filename,
-            $output,
-        );
+        return [new WriteableFile($this->filename, $output)];
     }
 }

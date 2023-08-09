@@ -8,7 +8,18 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class ReferenceMap
 {
+    /** @var array<string, Transformed> */
     protected array $references = [];
+
+    /**
+     * @param array<Transformed> $references
+     */
+    public function __construct(array $references = [])
+    {
+        foreach ($references as $reference) {
+            $this->add($reference);
+        }
+    }
 
     public function add(
         Transformed $transformed

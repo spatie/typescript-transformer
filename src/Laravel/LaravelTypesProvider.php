@@ -65,7 +65,7 @@ class LaravelTypesProvider implements TypesProvider
                     [new TypeScriptIdentifier('T')],
                 ),
                 new TypeScriptGeneric(
-                    new TypeScriptIdentifier('Array'),
+                    new TypeReference(new ClassStringReference(Collection::class)),
                     [new TypeScriptIdentifier('T')],
                 ),
             ),

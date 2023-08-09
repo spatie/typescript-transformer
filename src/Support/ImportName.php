@@ -2,10 +2,14 @@
 
 namespace Spatie\TypeScriptTransformer\Support;
 
+use Spatie\TypeScriptTransformer\References\Reference;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
+
 class ImportName
 {
     public function __construct(
         public string $name,
+        public Reference $reference,
         public ?string $alias = null,
     ) {
     }
@@ -22,12 +26,5 @@ class ImportName
     public function isAliased(): bool
     {
         return $this->alias !== null;
-    }
-
-    public static function fromNameAndImportedName(
-        string $name,
-        string $importedName,
-    ): self {
-        return new self($name, $name === $importedName ? null : $importedName);
     }
 }
