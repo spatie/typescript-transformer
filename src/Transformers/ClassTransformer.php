@@ -54,6 +54,8 @@ abstract class ClassTransformer implements Transformer
     /** @return array<ClassPropertyProcessor> */
     protected function classPropertyProcessors(): array
     {
+        // Call this once per class we're transforming for some performance reasons
+
         return [];
     }
 
