@@ -6,7 +6,7 @@ use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
-class TypeReference implements TypeScriptNode, TypeScriptExportableNode
+class TypeReference implements TypeScriptExportableNode, TypeScriptNode
 {
     public function __construct(
         public Reference $reference,

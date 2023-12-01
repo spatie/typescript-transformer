@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptIdentifier implements TypeScriptNode, TypeScriptExportableNode
+class TypeScriptIdentifier implements TypeScriptExportableNode, TypeScriptNode
 {
     public function __construct(
         public string $name,

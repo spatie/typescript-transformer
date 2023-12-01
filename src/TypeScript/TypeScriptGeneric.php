@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptGeneric implements TypeScriptNode, TypeScriptVisitableNode, TypeScriptForwardingExportableNode
+class TypeScriptGeneric implements TypeScriptForwardingExportableNode, TypeScriptNode, TypeScriptVisitableNode
 {
     /**
      * @param  array<TypeScriptNode>  $genericTypes

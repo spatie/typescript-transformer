@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptAlias implements TypeScriptNode, TypeScriptVisitableNode, TypeScriptForwardingExportableNode
+class TypeScriptAlias implements TypeScriptForwardingExportableNode, TypeScriptNode, TypeScriptVisitableNode
 {
     public function __construct(
         public TypeScriptIdentifier|TypeScriptGeneric $identifier,

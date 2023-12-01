@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptInterface implements TypeScriptNode, TypeScriptVisitableNode, TypeScriptForwardingExportableNode
+class TypeScriptInterface implements TypeScriptForwardingExportableNode, TypeScriptNode, TypeScriptVisitableNode
 {
     /**
      * @param  array<TypeScriptProperty>  $properties

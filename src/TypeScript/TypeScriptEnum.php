@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptEnum implements TypeScriptNode, TypeScriptExportableNode
+class TypeScriptEnum implements TypeScriptExportableNode, TypeScriptNode
 {
     public function __construct(
         public string $name,
