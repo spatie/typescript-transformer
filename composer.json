@@ -19,10 +19,10 @@
         "php": "^8.0",
         "nikic/php-parser": "^4.13",
         "phpdocumentor/type-resolver": "^1.6.2",
-        "symfony/process": "^5.2|^6.0"
+        "symfony/process": "^5.2|^6.0|^7.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.18",
+        "friendsofphp/php-cs-fixer": "^3.40",
         "larapack/dd": "^1.1",
         "myclabs/php-enum": "^1.7",
         "pestphp/pest": "^1.22",
