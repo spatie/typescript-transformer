@@ -2,6 +2,18 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.2.2 - 2023-12-01
+
+### What's Changed
+
+* Allow Symfony 7 by @jmsche in https://github.com/spatie/typescript-transformer/pull/67
+
+### New Contributors
+
+* @jmsche made their first contribution in https://github.com/spatie/typescript-transformer/pull/67
+
+**Full Changelog**: https://github.com/spatie/typescript-transformer/compare/2.2.1...2.2.2
+
 ## 2.2.1 - 2023-07-05
 
 - Add support for pseudo types
