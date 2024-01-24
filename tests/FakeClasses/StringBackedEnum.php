@@ -9,4 +9,5 @@ enum StringBackedEnum: string
 {
     case JS = 'js';
     case PHP = 'php';
+    case BackslashesTest = 'backslashes\\test';
 }
