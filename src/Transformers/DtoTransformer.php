@@ -77,9 +77,11 @@ class DtoTransformer implements Transformer
                     return $carry;
                 }
 
+                $propertyName = $this->transformPropertyName($property, $missingSymbols);
+
                 return $isOptional
-                    ? "{$carry}{$property->getName()}?: {$transformed};" . PHP_EOL
-                    : "{$carry}{$property->getName()}: {$transformed};" . PHP_EOL;
+                    ? "{$carry}{$propertyName}?: {$transformed};" . PHP_EOL
+                    : "{$carry}{$propertyName}: {$transformed};" . PHP_EOL;
             },
             ''
         );
@@ -97,6 +99,13 @@ class DtoTransformer implements Transformer
         MissingSymbolsCollection $missingSymbols
     ): string {
         return '';
+    }
+
+    protected function transformPropertyName(
+        ReflectionProperty $property,
+        MissingSymbolsCollection $missingSymbols
+    ): string {
+        return $property->getName();
     }
 
     protected function typeProcessors(): array
