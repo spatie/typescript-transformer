@@ -192,7 +192,9 @@ export type UserRepository = {
 We can do better than this, since we know the keys of the array:
 
 ```php
-use Spatie\TypeScriptTransformer\Attributes\TypeScript;#[TypeScript]
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+
+#[TypeScript]
 class UserRepository{
     #[TypeScriptType([
         'name' => 'string',
