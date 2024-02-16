@@ -69,6 +69,6 @@ class EnumTransformer implements Transformer
     {
         $value = $case->getBackingValue();
 
-        return is_string($value) ? "'{$value}'" : "{$value}";
+        return is_string($value) ? "'" . str_replace('\\', '\\\\', $value) . "'" : "{$value}";
     }
 }
