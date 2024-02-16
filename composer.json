@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "nikic/php-parser": "^4.13|^5.0",
+        "nikic/php-parser": "^4.18|^5.0",
         "phpdocumentor/type-resolver": "^1.6.2",
         "symfony/process": "^5.2|^6.0|^7.0"
     },
