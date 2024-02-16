@@ -17,12 +17,13 @@
     ],
     "require": {
         "php": "^8.0",
-        "nikic/php-parser": "^4.13",
+        "nikic/php-parser": "^4.13|^5.0",
         "phpdocumentor/type-resolver": "^1.6.2",
         "symfony/process": "^5.2|^6.0|^7.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.40",
+        "phpstan/extension-installer": "^1.1",
         "larapack/dd": "^1.1",
         "myclabs/php-enum": "^1.7",
         "pestphp/pest": "^1.22",
@@ -30,8 +31,7 @@
         "spatie/data-transfer-object": "^2.0",
         "spatie/enum": "^3.0",
         "spatie/pest-plugin-snapshots": "^1.1",
-        "spatie/temporary-directory": "^1.2|^2.0",
-        "vimeo/psalm": "^4.2"
+        "spatie/temporary-directory": "^1.2|^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -44,6 +44,7 @@
         }
     },
     "scripts": {
+        "analyse" : "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
         "psalm": "./vendor/bin/psalm -c psalm.xml",
@@ -52,7 +53,8 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": false
         }
     },
     "minimum-stability": "dev",

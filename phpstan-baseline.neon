@@ -1,0 +1,46 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#1 \\$callback of function array_map expects \\(callable\\(PhpParser\\\\Node\\)\\: mixed\\)\\|null, Closure\\(PhpParser\\\\Node\\\\Stmt\\\\Class_\\|PhpParser\\\\Node\\\\Stmt\\\\Enum_\\|PhpParser\\\\Node\\\\Stmt\\\\Interface_\\|PhpParser\\\\Node\\\\Stmt\\\\Trait_\\)\\: \\(string\\|null\\) given\\.$#"
+			count: 1
+			path: src/Actions/ResolveClassesInPhpFileAction.php
+
+		-
+			message: "#^Instanceof between phpDocumentor\\\\Reflection\\\\Type and phpDocumentor\\\\Reflection\\\\Types\\\\ClassString will always evaluate to false\\.$#"
+			count: 1
+			path: src/Actions/TranspileTypeToTypeScriptAction.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Attributes/TypeScriptType.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Attributes/TypeScriptType.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function array_map expects \\(callable\\(ReflectionEnumUnitCase\\)\\: mixed\\)\\|null, Closure\\(ReflectionEnumBackedCase\\)\\: non\\-falsy\\-string given\\.$#"
+			count: 1
+			path: src/Transformers/EnumTransformer.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function array_map expects \\(callable\\(ReflectionEnumUnitCase\\)\\: mixed\\)\\|null, Closure\\(ReflectionEnumBackedCase\\)\\: string given\\.$#"
+			count: 1
+			path: src/Transformers/EnumTransformer.php
+
+		-
+			message: "#^Method Spatie\\\\TypeScriptTransformer\\\\TypeReflectors\\\\TypeReflector\\:\\:new\\(\\) should return static\\(Spatie\\\\TypeScriptTransformer\\\\TypeReflectors\\\\TypeReflector\\) but returns Spatie\\\\TypeScriptTransformer\\\\TypeReflectors\\\\MethodParameterTypeReflector\\.$#"
+			count: 1
+			path: src/TypeReflectors/TypeReflector.php
+
+		-
+			message: "#^Method Spatie\\\\TypeScriptTransformer\\\\TypeReflectors\\\\TypeReflector\\:\\:new\\(\\) should return static\\(Spatie\\\\TypeScriptTransformer\\\\TypeReflectors\\\\TypeReflector\\) but returns Spatie\\\\TypeScriptTransformer\\\\TypeReflectors\\\\MethodReturnTypeReflector\\.$#"
+			count: 1
+			path: src/TypeReflectors/TypeReflector.php
+
+		-
+			message: "#^Method Spatie\\\\TypeScriptTransformer\\\\TypeReflectors\\\\TypeReflector\\:\\:new\\(\\) should return static\\(Spatie\\\\TypeScriptTransformer\\\\TypeReflectors\\\\TypeReflector\\) but returns Spatie\\\\TypeScriptTransformer\\\\TypeReflectors\\\\PropertyTypeReflector\\.$#"
+			count: 1
+			path: src/TypeReflectors/TypeReflector.php
