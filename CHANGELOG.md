@@ -2,6 +2,19 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.3.0 - 2024-02-16
+
+### What's Changed
+
+* Fix annotations doc by @cosmastech in https://github.com/spatie/typescript-transformer/pull/73
+* Fix backslashes conversion to TypeScript by @Bloemendaal in https://github.com/spatie/typescript-transformer/pull/72
+* Add `DtoTransformer@transformPropertyName()` by @cosmastech in https://github.com/spatie/typescript-transformer/pull/74
+* Support PHP Parser 5
+* Removal of Psalm
+* Addition of PHPStan
+
+**Full Changelog**: https://github.com/spatie/typescript-transformer/compare/2.2.2...2.3.0
+
 ## 2.2.2 - 2023-12-01
 
 ### What's Changed
