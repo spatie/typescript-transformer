@@ -18,7 +18,7 @@ class ResolveClassesInPhpFileAction
 
     public function __construct()
     {
-        $this->parser = (new ParserFactory())->createForHostVersion();
+        $this->parser = (new ParserFactory())->createForNewestSupportedVersion();
     }
 
     public function execute(SplFileInfo $file): array
