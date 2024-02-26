@@ -3,7 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
 [![Tests](https://github.com/spatie/typescript-transformer/workflows/run-tests/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3Arun-tests)
 [![Styling](https://github.com/spatie/typescript-transformer/workflows/Check%20&%20fix%20styling/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3A%22Check+%26+fix+styling%22)
-[![Psalm](https://github.com/spatie/typescript-transformer/workflows/Psalm/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3APsalm)
+[![PHPStan](https://github.com/spatie/typescript-transformer/actions/workflows/phpstan.yml/badge.svg)](https://github.com/spatie/typescript-transformer/actions/workflows/phpstan.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
 
 This package allows you to convert PHP classes to TypeScript. 
