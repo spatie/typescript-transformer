@@ -1,8 +1,13 @@
 {
   "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "typescript": "^5.1.6"
   },
   "dependencies": {
     "chokidar": "^3.5.3"
+  },
+  "scripts": {
+    "prepare": "husky"
   }
 }
