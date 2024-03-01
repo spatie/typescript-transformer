@@ -111,7 +111,8 @@ it('can reference other types within a nested module', function () {
 
     expect($files[0])
         ->path->toBe($this->path.'/index.ts')
-        ->contents->toBe(<<<'TypeScript'
+        ->contents->toBe(
+            <<<'TypeScript'
 import { A } from 'nested';
 import { B } from 'nested/subNested';
 
@@ -156,7 +157,8 @@ it('can combine imports from nested modules', function () {
 
     expect($files[0])
         ->path->toBe($this->path.'/index.ts')
-        ->contents->toBe(<<<'TypeScript'
+        ->contents->toBe(
+            <<<'TypeScript'
 import { A, B } from 'nested';
 
 export type C = {

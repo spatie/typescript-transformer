@@ -38,7 +38,8 @@ class EnumTransformer implements Transformer
                 ? $this->transformAsNativeEnum($context->name, $cases)
                 : $this->transformAsUnion($context->name, $cases),
             new ReflectionClassReference($reflectionClass),
-            $context->nameSpaceSegments, true,
+            $context->nameSpaceSegments,
+            true,
         );
     }
 

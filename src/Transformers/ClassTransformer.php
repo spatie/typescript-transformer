@@ -45,7 +45,8 @@ abstract class ClassTransformer implements Transformer
                 $this->getTypeScriptNode($reflectionClass)
             ),
             new ReflectionClassReference($reflectionClass),
-            $context->nameSpaceSegments, true,
+            $context->nameSpaceSegments,
+            true,
         );
     }
 

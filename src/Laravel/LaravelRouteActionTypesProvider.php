@@ -62,7 +62,8 @@ class LaravelRouteActionTypesProvider implements TypesProvider
                 $this->parseRouteCollection($routeCollection),
             ),
             $routesListReference = new CustomReference('laravel_route_actions', 'routes_list'),
-            $this->location, true,
+            $this->location,
+            true,
         );
 
         $isInvokableControllerCondition = TypeScriptOperator::extends(
@@ -94,7 +95,8 @@ class LaravelRouteActionTypesProvider implements TypesProvider
                 )
             ),
             $actionControllerReference = new CustomReference('laravel_route_actions', 'action_controller'),
-            $this->location, true,
+            $this->location,
+            true,
         );
 
         $actionParameters = new Transformed(
@@ -121,7 +123,8 @@ class LaravelRouteActionTypesProvider implements TypesProvider
                 )
             ),
             $actionParametersReference = new CustomReference('laravel_route_actions', 'action_parameters'),
-            $this->location, true,
+            $this->location,
+            true,
         );
 
         $jsonEncodedRoutes = $this->routeCollectionToJson($routeCollection);
@@ -171,7 +174,8 @@ class LaravelRouteActionTypesProvider implements TypesProvider
                     ), isOptional: true),
                 ],
                 new TypeScriptString(),
-                new TypeScriptRaw(<<<TS
+                new TypeScriptRaw(
+                    <<<TS
 let routes = JSON.parse('$jsonEncodedRoutes');
 let baseUrl = '$baseUrl';
 
@@ -192,7 +196,8 @@ TS
                 )
             ),
             new CustomReference('laravel_route_actions', 'action_function'),
-            $this->location, true,
+            $this->location,
+            true,
         );
 
         $types->add($transformedRoutes, $actionController, $actionParameters, $transformedAction);
@@ -256,7 +261,8 @@ TS
     protected function routeCollectionToJson(RouteCollection $collection): string
     {
         return collect($collection->controllers)
-            ->map(fn (RouteController|RouteInvokableController $controller) => $controller instanceof RouteInvokableController
+            ->map(
+                fn (RouteController|RouteInvokableController $controller) => $controller instanceof RouteInvokableController
                 ? [
                     'url' => $controller->url,
                     'methods' => array_values($controller->methods),

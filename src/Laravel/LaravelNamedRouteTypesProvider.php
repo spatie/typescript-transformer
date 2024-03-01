@@ -60,7 +60,8 @@ class LaravelNamedRouteTypesProvider implements TypesProvider
                 $this->parseRouteCollection($routeCollection),
             ),
             $routesListReference = new CustomReference('laravel_named_routes', 'routes_list'),
-            $this->location, true,
+            $this->location,
+            true,
         );
 
         $jsonEncodedRoutes = $this->routeCollectionToJson($routeCollection);
@@ -85,10 +86,12 @@ class LaravelNamedRouteTypesProvider implements TypesProvider
                             new TypeScriptIdentifier('TRoute'),
                             new TypeScriptIdentifier('"parameters"'),
                         ]),
-                        isOptional: true),
+                        isOptional: true
+                    ),
                 ],
                 new TypeScriptString(),
-                new TypeScriptRaw(<<<TS
+                new TypeScriptRaw(
+                    <<<TS
 let routes = JSON.parse('$jsonEncodedRoutes');
 let baseUrl = '$baseUrl';
 
@@ -107,7 +110,8 @@ TS
                 )
             ),
             new CustomReference('laravel_named_routes', 'route_function'),
-            $this->location, true,
+            $this->location,
+            true,
         );
 
         $types->add($transformedRoutes, $transformedRoute);

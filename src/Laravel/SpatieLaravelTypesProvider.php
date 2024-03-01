@@ -45,7 +45,8 @@ class SpatieLaravelTypesProvider implements TypesProvider
                     )
                 ),
                 new ClassStringReference(\Spatie\LaravelOptions\Options::class),
-                ['Spatie', 'LaravelOptions'], true,
+                ['Spatie', 'LaravelOptions'],
+                true,
             );
 
             $types->add($optionsType);

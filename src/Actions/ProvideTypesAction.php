@@ -18,7 +18,7 @@ class ProvideTypesAction
         foreach ($this->config->typeProviders as $defaultTypeProvider) {
             $defaultTypeProvider = $defaultTypeProvider instanceof TypesProvider
                 ? $defaultTypeProvider
-                : new $defaultTypeProvider;
+                : new $defaultTypeProvider();
 
             $defaultTypeProvider->provide(
                 $this->config,

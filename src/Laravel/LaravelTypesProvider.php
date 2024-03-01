@@ -51,7 +51,8 @@ class LaravelTypesProvider implements TypesProvider
                 ),
             ),
             new ClassStringReference(Collection::class),
-            ['Illuminate', 'Support'], true,
+            ['Illuminate', 'Support'],
+            true,
         );
     }
 
@@ -69,7 +70,8 @@ class LaravelTypesProvider implements TypesProvider
                 ),
             ),
             new ClassStringReference(EloquentCollection::class),
-            ['Illuminate', 'Database', 'Eloquent', 'Collection'], true,
+            ['Illuminate', 'Database', 'Eloquent', 'Collection'],
+            true,
         );
     }
 
@@ -122,7 +124,8 @@ class LaravelTypesProvider implements TypesProvider
                 ]),
             ),
             new ClassStringReference(LengthAwarePaginator::class),
-            ['Illuminate', 'Pagination'], true,
+            ['Illuminate', 'Pagination'],
+            true,
         );
     }
 
@@ -140,7 +143,8 @@ class LaravelTypesProvider implements TypesProvider
                 ),
             ),
             new ClassStringReference(LengthAwarePaginatorInterface::class),
-            ['Illuminate', 'Contracts', 'Pagination'], true,
+            ['Illuminate', 'Contracts', 'Pagination'],
+            true,
         );
     }
 }

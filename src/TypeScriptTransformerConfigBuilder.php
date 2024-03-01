@@ -64,13 +64,13 @@ class TypeScriptTransformerConfigBuilder
         $this->ensureConfigIsValid();
 
         $typeProviders = array_map(
-            fn (TypesProvider|string $typeProvider) => is_string($typeProvider) ? new $typeProvider : $typeProvider,
+            fn (TypesProvider|string $typeProvider) => is_string($typeProvider) ? new $typeProvider() : $typeProvider,
             $this->typeProviders
         );
 
         if (! empty($this->transformers)) {
             $transformers = array_map(
-                fn (Transformer|string $transformer) => is_string($transformer) ? new $transformer : $transformer,
+                fn (Transformer|string $transformer) => is_string($transformer) ? new $transformer() : $transformer,
                 $this->transformers
             );
 
@@ -82,10 +82,10 @@ class TypeScriptTransformerConfigBuilder
         );
 
         if (is_string($writer)) {
-            $writer = new $writer;
+            $writer = new $writer();
         }
 
-        $formatter = is_string($this->formatter) ? new $this->formatter : $this->formatter;
+        $formatter = is_string($this->formatter) ? new $this->formatter() : $this->formatter;
 
         return new TypeScriptTransformerConfig(
             $typeProviders,
