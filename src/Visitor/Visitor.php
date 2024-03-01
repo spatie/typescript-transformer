@@ -26,7 +26,7 @@ class Visitor
 
     public function before(
         Closure $closure,
-        array $allowedNodes = null,
+        ?array $allowedNodes = null,
     ): self {
         $this->beforeClosures[] = new VisitorClosure($closure, $allowedNodes);
 
@@ -35,7 +35,7 @@ class Visitor
 
     public function after(
         Closure $closure,
-        array $allowedNodes = null,
+        ?array $allowedNodes = null,
     ): self {
         $this->afterClosures[] = new VisitorClosure($closure, $allowedNodes);
 

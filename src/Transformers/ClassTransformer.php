@@ -102,7 +102,7 @@ abstract class ClassTransformer implements Transformer
 
     protected function resolveTypeByAttribute(
         ReflectionClass $reflectionClass,
-        ReflectionProperty $property = null,
+        ?ReflectionProperty $property = null,
     ): ?TypeScriptNode {
         $subject = $property ?? $reflectionClass;
 
