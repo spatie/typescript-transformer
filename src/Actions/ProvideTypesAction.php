@@ -13,8 +13,10 @@ class ProvideTypesAction
     ) {
     }
 
-    public function execute(TransformedCollection $collection): void
+    public function execute(): TransformedCollection
     {
+        $collection = new TransformedCollection();
+
         foreach ($this->config->typeProviders as $defaultTypeProvider) {
             $defaultTypeProvider = $defaultTypeProvider instanceof TypesProvider
                 ? $defaultTypeProvider
@@ -25,5 +27,7 @@ class ProvideTypesAction
                 $collection
             );
         }
+
+        return $collection;
     }
 }

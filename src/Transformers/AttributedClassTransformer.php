@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 
-class AttributeTransformer extends ClassTransformer
+class AttributedClassTransformer extends ClassTransformer
 {
     protected function shouldTransform(ReflectionClass $reflection): bool
     {

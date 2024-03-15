@@ -3,8 +3,8 @@
 namespace Spatie\TypeScriptTransformer\Collections;
 
 use IteratorAggregate;
+use Spatie\TypeScriptTransformer\Data\ImportLocation;
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\Support\ImportLocation;
 use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptImport;
 use Traversable;

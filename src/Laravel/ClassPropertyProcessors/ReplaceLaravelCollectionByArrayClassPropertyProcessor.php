@@ -36,9 +36,15 @@ class ReplaceLaravelCollectionByArrayClassPropertyProcessor implements ClassProp
                 return;
             }
 
-            if (count($generic->genericTypes) !== 2) {
+            $genericTypesCount = count($generic->genericTypes);
+
+            if ($genericTypesCount > 2 || $genericTypesCount === 0) {
                 // Someone messed with the type, let's skip it
                 return;
+            }
+
+            if($genericTypesCount === 1) {
+                return VisitorOperation::replace(new TypeScriptArray([$generic->genericTypes[0]]));
             }
 
             $isRecord = $generic->genericTypes[0] instanceof TypeScriptUnion || $generic->genericTypes[0] instanceof TypeScriptString;

@@ -40,6 +40,7 @@ class ConnectReferencesAction
             $transformed = $referenceMap->get($reference);
 
             $metadata['references'][] = $transformed;
+
             $typeReference->connect($transformed);
         }, [TypeReference::class]);
 

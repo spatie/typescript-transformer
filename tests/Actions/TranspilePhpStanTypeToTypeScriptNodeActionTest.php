@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Collection;
-use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptTypeAction;
+use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Stubs\PhpDocTypesStub;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
@@ -28,7 +28,7 @@ it('can transpile PHPStan doc types', function (
     TypeScriptNode $expectedTypeScriptNode,
 ) {
     $docTypeResolver = new DocTypeResolver();
-    $transpiler = new TranspilePhpStanTypeToTypeScriptTypeAction();
+    $transpiler = new TranspilePhpStanTypeToTypeScriptNodeAction();
 
     $typeScriptNode = $transpiler->execute(
         $docTypeResolver->property(new ReflectionProperty(PhpDocTypesStub::class, $property))->type,
@@ -187,6 +187,20 @@ it('can transpile PHPStan doc types', function (
             new TypeScriptIdentifier('Record'),
             [
                 new TypeScriptNumber(),
+                new TypeScriptString(),
+            ]
+        ),
+    ];
+
+    yield [
+        'arrayGenericWithArrayKey',
+        new TypeScriptGeneric(
+            new TypeScriptIdentifier('Record'),
+            [
+                new TypeScriptUnion([
+                    new TypeScriptString(),
+                    new TypeScriptNumber(),
+                ]),
                 new TypeScriptString(),
             ]
         ),

@@ -3,17 +3,22 @@
 namespace Spatie\TypeScriptTransformer;
 
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
+use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeProviders\TransformerTypesProvider;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
+use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\Writers\NamespaceWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
-class TypeScriptTransformerConfigBuilder
+class TypeScriptTransformerConfigFactory
 {
     /**
-     * @param  array<TypesProvider|string>  $typeProviders
-     * @param  array<Transformer|string>  $transformers
+     * @param array<TypesProvider|string> $typeProviders
+     * @param array<Transformer|string> $transformers
+     * @param array<string> $directoriesToWatch
+     * @param array<array{search: TypeScriptNode, replacement: TypeScriptNode}> $nodeReplacements
      */
     public function __construct(
         protected array $typeProviders = [],
@@ -21,7 +26,13 @@ class TypeScriptTransformerConfigBuilder
         protected string|Formatter|null $formatter = null,
         protected array $transformers = [],
         protected array $directoriesToWatch = [],
+        protected array $nodeReplacements = [],
     ) {
+    }
+
+    public static function create(): self
+    {
+        return new self();
     }
 
     public function typesProvider(TypesProvider|string ...$typesProvider): self
@@ -59,6 +70,18 @@ class TypeScriptTransformerConfigBuilder
         return $this;
     }
 
+    public function replaceType(
+        string $search,
+        TypeScriptNode $replacement
+    ): self {
+        $this->nodeReplacements[] = [
+            'search' => new TypeReference(new ClassStringReference($search)),
+            'replacement' => $replacement,
+        ];
+
+        return $this;
+    }
+
     public function get(): TypeScriptTransformerConfig
     {
         $this->ensureConfigIsValid();
@@ -91,7 +114,8 @@ class TypeScriptTransformerConfigBuilder
             $typeProviders,
             $writer,
             $formatter,
-            $this->directoriesToWatch
+            $this->directoriesToWatch,
+            $this->nodeReplacements
         );
     }
 

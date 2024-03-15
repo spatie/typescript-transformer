@@ -22,7 +22,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUndefined;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
 
-class TranspileReflectionTypeToTypeScriptTypeAction
+class TranspileReflectionTypeToTypeScriptNodeAction
 {
     public function execute(
         ReflectionType $reflectionType,

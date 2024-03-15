@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\Attributes;
 
 use Attribute;
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptTypeAction;
+use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
@@ -23,7 +23,7 @@ class TypeScriptType implements TypeScriptTypeAttributeContract
     public function getType(ReflectionClass $class): TypeScriptNode
     {
         $docResolver = new DocTypeResolver();
-        $transpiler = new TranspilePhpStanTypeToTypeScriptTypeAction();
+        $transpiler = new TranspilePhpStanTypeToTypeScriptNodeAction();
 
         if (is_string($this->type)) {
             return $transpiler->execute($docResolver->type($this->type), $class);

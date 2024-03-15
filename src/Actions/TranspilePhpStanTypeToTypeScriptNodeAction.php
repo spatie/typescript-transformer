@@ -34,7 +34,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptVoid;
 
-class TranspilePhpStanTypeToTypeScriptTypeAction
+class TranspilePhpStanTypeToTypeScriptNodeAction
 {
     public function __construct(
         protected FindClassNameFqcnAction $findClassNameFqcnAction = new FindClassNameFqcnAction()
@@ -99,6 +99,13 @@ class TranspilePhpStanTypeToTypeScriptTypeAction
 
         if ($node->name === 'object') {
             return new TypeScriptObject([]);
+        }
+
+        if($node->name === 'array-key') {
+            return new TypeScriptUnion([
+                new TypeScriptString(),
+                new TypeScriptNumber(),
+            ]);
         }
 
         if (class_exists($node->name) || interface_exists($node->name)) {

@@ -1,8 +1,9 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Support;
+namespace Spatie\TypeScriptTransformer\Data;
 
 use Spatie\TypeScriptTransformer\References\Reference;
+use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptImport;
 
 class ImportLocation

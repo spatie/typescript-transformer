@@ -1,7 +1,7 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Actions\ResolveModuleImportsAction;
-use Spatie\TypeScriptTransformer\Support\ImportLocation;
+use Spatie\TypeScriptTransformer\Data\ImportLocation;
 use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;

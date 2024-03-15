@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Laravel\Transformers;
 
 use ReflectionClass;
+use Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors\AddDataCollectionOfInfoClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors\RemoveDataLazyTypeClassPropertyProcessor;
 
 class DataClassTransformer extends LaravelClassTransformer
@@ -16,6 +17,7 @@ class DataClassTransformer extends LaravelClassTransformer
     {
         return array_merge(parent::classPropertyProcessors(), [
             new RemoveDataLazyTypeClassPropertyProcessor(),
+            new AddDataCollectionOfInfoClassPropertyProcessor(),
         ]);
     }
 }

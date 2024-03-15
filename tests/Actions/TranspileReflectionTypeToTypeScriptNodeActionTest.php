@@ -2,7 +2,7 @@
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
-use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptTypeAction;
+use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Stubs\PhpTypesStub;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
@@ -22,7 +22,7 @@ it('can transpile php types', function (
     string $property,
     TypeScriptNode $expectedTypeScriptNode,
 ) {
-    $transpiler = new TranspileReflectionTypeToTypeScriptTypeAction();
+    $transpiler = new TranspileReflectionTypeToTypeScriptNodeAction();
 
     $typeScriptNode = $transpiler->execute(
         (new ReflectionProperty(PhpTypesStub::class, $property))->getType(),

@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Laravel\Commands;
 use Illuminate\Console\Command;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TransformTypeScriptCommand extends Command
 {
@@ -12,10 +13,15 @@ class TransformTypeScriptCommand extends Command
 
     public $description = 'Transforms PHP to TypeScript';
 
-    public function handle(
-        TypeScriptTransformer $typeScriptTransformer
-    ): int {
-        $typeScriptTransformer->execute();
+    public function handle(): int
+    {
+        if (! app()->has(TypeScriptTransformerConfig::class)) {
+            $this->error('Please, first publish the TypeScriptTransformerServiceProvider and configure it.');
+
+            return self::FAILURE;
+        }
+
+        app(TypeScriptTransformer::class)->execute();
 
         $log = TypeScriptTransformerLog::resolve();
 
