@@ -12,17 +12,11 @@ class EnumCollector extends DefaultCollector
 {
     public function getTransformedType(ReflectionClass $class): ?TransformedType
     {
-        $transformers = array_map('get_class', $this->config->getTransformers());
-
-        if (! \in_array(EnumTransformer::class, $transformers, true)) {
+        if (!$this->shouldCollect($class)) {
             return null;
         }
 
         $reflector = ClassTypeReflector::create($class);
-
-        if (! $reflector->getReflectionClass()->implementsInterface(BackedEnum::class)) {
-            return null;
-        }
 
         $transformedType = $reflector->getType()
             ? $this->resolveAlreadyTransformedType($reflector)
@@ -34,5 +28,30 @@ class EnumCollector extends DefaultCollector
         }
 
         return $transformedType;
+    }
+
+    protected function shouldCollect(ReflectionClass $class): bool
+    {
+        $transformers = array_map('get_class', $this->config->getTransformers());
+
+        $hasEnumTransformer = \count(
+            array_filter($transformers, function (string $transformer) {
+                if ($transformer === EnumTransformer::class) {
+                    return true;
+                }
+
+                return is_subclass_of($transformer, EnumTransformer::class);
+            }),
+        ) > 0;
+
+        if (!$hasEnumTransformer) {
+            return false;
+        }
+
+        if (!$class->implementsInterface(BackedEnum::class)) {
+            return false;
+        }
+
+        return true;
     }
 }
