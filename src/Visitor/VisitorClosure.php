@@ -13,8 +13,19 @@ class VisitorClosure
     public function __construct(
         protected Closure $closure,
         protected ?array $allowedNodes,
+        protected VisitorClosureType $type,
     ) {
         $this->requiresMetadata = (new ReflectionFunction($this->closure))->getNumberOfParameters() === 2;
+    }
+
+    public function isBefore(): bool
+    {
+        return $this->type === VisitorClosureType::Before;
+    }
+
+    public function isAfter(): bool
+    {
+        return $this->type === VisitorClosureType::After;
     }
 
     public function shouldRun(

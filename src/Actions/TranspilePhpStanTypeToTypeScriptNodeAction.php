@@ -112,6 +112,10 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             return new TypeReference(new ClassStringReference($node->name));
         }
 
+        if($reflectionClass === null) {
+            return new TypeScriptUnknown();
+        }
+
         $referenced = $this->findClassNameFqcnAction->execute(
             $reflectionClass,
             $node->name

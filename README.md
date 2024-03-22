@@ -392,7 +392,8 @@ class Types
 }
 ```
 
-When you want to replace a property type with a literal TypeScript type, you can use the `#[LiteralTypeScriptType]` attribute:
+When you want to replace a property type with a literal TypeScript type, you can use the `#[LiteralTypeScriptType]`
+attribute:
 
 ```php
 class Types 
@@ -451,17 +452,108 @@ class Types
 
 ## Replacing common types
 
+Some PHP classes should be transformed into a TypeScript object, an example of this is the `DateTime` class. When you
+send such an object to the front it will be represented by a string rather than an object. TypeScript transformer allows
+you to replace these kinds types with an appropriate TypeScript type.
+
+Replacing types can be done in the config:
+
+```php
+$config->replaceType(DateTime::class, 'string');
+```
+
+Now all `DateTime` objects will be transformed to a string in TypeScript. This also includes inherited classes
+like `Carbon`, those will also be transformed to a string.
+
+When using an interface like `DateTimeInterface` you can also replace it with a TypeScript type:
+
+```php
+$config->replaceType(DateTimeInterface::class, 'string');
+```
+
+All classes that implement `DateTimeInterface` will be transformed to a string in TypeScript.
+
+### Replacements
+
+As we've seen before it is possible to replace types by writing them out like you would do in an annotation, this allows
+you to build complex types, for example:
+
+```php
+$config->replaceType(DateTimeInterface::class, 'array{day: int, month: int, year: int}');
+```
+
+From now on, all `DateTimeInterface` objects will be replaced by the following TypeScript object:
+
+```ts
+{
+    day: number;
+    month: number;
+    year: number;
+}
+```
+
+It is also possible to define a replacement as an internal TypeScript node(more on that later):
+
+```php
+$config->replaceType(DateTimeInterface::class, new TypeScriptString());
+```
+
+Or use a closure to define the replacement:
+
+```php
+use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
+
+$config->replaceType(DateTimeInterface::class, function (TypeReference $reference) {
+    return new TypeScriptString();
+});
+```
+
 ## TypeScript nodes
 
-## Visiting TypeScript nodes
+Internally the package uses TypeScript nodes to represent TypeScript types, these nodes can be used to build complex
+types and it is possible to create your own nodes.
+
+For example, a TypeScript alias is representing a User object looks like this:
+
+```php
+use Spatie\TypeScriptTransformer\TypeScript;
+
+new TypeScriptAlias(
+    new TypeScriptIdentifier('User'),
+    new TypeScriptObject([
+        new TypeScriptProperty('id', new TypeScriptNumber()),
+        new TypeScriptProperty('name', new TypeScriptString()),
+        new TypeScriptProperty('address', new TypeScriptUnion([
+            new TypeScriptString(),
+            new TypeScriptNull(),
+        ])),
+    ]),
+);
+```
+
+Transforming this alias to TypeScript will result in the following type:
+
+```ts
+type User = {
+    id: number;
+    name: string;
+    address: string | null;
+}
+```
+
+There are a lot of TypeScript nodes available, you can find them in the `Spatie\TypeScriptTransformer\TypeScript` namespace.
 
 ## Creating a transformer
+
+
 
 ### Extending the class Transformer
 
 -> PropertyTypeProcessors
 
-## Creating a typesprovider
+## Creating a TypesProvider
+
+## Visiting TypeScript nodes
 
 ## Formatting TypeScript
 

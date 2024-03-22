@@ -2,15 +2,23 @@
 
 namespace Spatie\TypeScriptTransformer;
 
+use Closure;
+use Exception;
+use Spatie\TypeScriptTransformer\Actions\ParseUserDefinedTypeAction;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
-use Spatie\TypeScriptTransformer\References\ClassStringReference;
+use Spatie\TypeScriptTransformer\Support\Extensions\TypeScriptTransformerExtension;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeProviders\TransformerTypesProvider;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptRaw;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
+use Spatie\TypeScriptTransformer\Visitor\Common\ReplaceTypesVisitorClosure;
+use Spatie\TypeScriptTransformer\Visitor\VisitorClosure;
+use Spatie\TypeScriptTransformer\Visitor\VisitorClosureType;
 use Spatie\TypeScriptTransformer\Writers\NamespaceWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
+use Throwable;
 
 class TypeScriptTransformerConfigFactory
 {
@@ -18,7 +26,10 @@ class TypeScriptTransformerConfigFactory
      * @param array<TypesProvider|string> $typeProviders
      * @param array<Transformer|string> $transformers
      * @param array<string> $directoriesToWatch
-     * @param array<array{search: TypeScriptNode, replacement: TypeScriptNode}> $nodeReplacements
+     * @param array<class-string|string, TypeScriptNode> $typeReplacements
+     * @param array<TypeScriptTransformerExtension> $extensions
+     * @param array<VisitorClosure> $providedVisitorClosures
+     * @param array<VisitorClosure> $connectedVisitorClosures
      */
     public function __construct(
         protected array $typeProviders = [],
@@ -26,7 +37,10 @@ class TypeScriptTransformerConfigFactory
         protected string|Formatter|null $formatter = null,
         protected array $transformers = [],
         protected array $directoriesToWatch = [],
-        protected array $nodeReplacements = [],
+        protected array $typeReplacements = [],
+        protected array $extensions = [],
+        protected array $providedVisitorClosures = [],
+        protected array $connectedVisitorClosures = [],
     ) {
     }
 
@@ -37,6 +51,12 @@ class TypeScriptTransformerConfigFactory
 
     public function typesProvider(TypesProvider|string ...$typesProvider): self
     {
+        foreach ($typesProvider as $provider) {
+            if ($provider === TransformerTypesProvider::class || $provider instanceof TransformerTypesProvider) {
+                throw new Exception("Please add transformers using the config's `transformer` method.");
+            }
+        }
+
         array_push($this->typeProviders, ...$typesProvider);
 
         return $this;
@@ -45,6 +65,27 @@ class TypeScriptTransformerConfigFactory
     public function transformer(string|Transformer ...$transformer): self
     {
         array_push($this->transformers, ...$transformer);
+
+        return $this;
+    }
+
+    public function replaceTransformer(
+        string|Transformer $search,
+        string|Transformer $replacement
+    ): self {
+        $searchClass = is_string($search) ? $search : $search::class;
+
+        foreach ($this->transformers as $key => $transformer) {
+            if (is_string($transformer) && $transformer === $searchClass) {
+                $this->transformers[$key] = $replacement;
+
+                break;
+            }
+
+            if (is_object($transformer) && $transformer::class === $searchClass) {
+                $this->transformers[$key] = $replacement;
+            }
+        }
 
         return $this;
     }
@@ -70,14 +111,73 @@ class TypeScriptTransformerConfigFactory
         return $this;
     }
 
+    public function providedVisitor(
+        VisitorClosure|Closure $visitor,
+        ?array $allowedNodes = null,
+        VisitorClosureType $type = VisitorClosureType::Before
+    ): self {
+        if (! $visitor instanceof VisitorClosure) {
+            $visitor = new VisitorClosure($visitor, $allowedNodes, $type);
+        }
+
+        $this->providedVisitorClosures[] = $visitor;
+
+        return $this;
+    }
+
+    public function connectedVisitor(
+        VisitorClosure|Closure $visitor,
+        ?array $allowedNodes = null,
+        VisitorClosureType $type = VisitorClosureType::Before
+    ): self {
+        if (! $visitor instanceof VisitorClosure) {
+            $visitor = new VisitorClosure($visitor, $allowedNodes, $type);
+        }
+
+        $this->connectedVisitorClosures[] = $visitor;
+
+        return $this;
+    }
+
     public function replaceType(
         string $search,
-        TypeScriptNode $replacement
+        TypeScriptNode|string|Closure $replacement
     ): self {
-        $this->nodeReplacements[] = [
-            'search' => new TypeReference(new ClassStringReference($search)),
-            'replacement' => $replacement,
-        ];
+        if ($replacement instanceof TypeScriptNode) {
+            $this->typeReplacements[$search] = $replacement;
+
+            return $this;
+        }
+
+        if (is_string($replacement)) {
+            try {
+                $node = ParseUserDefinedTypeAction::instance()->execute($replacement);
+
+                if ($node instanceof TypeScriptUnknown) {
+                    $node = new TypeScriptRaw($replacement);
+                }
+
+                $this->typeReplacements[$search] = $node;
+            } catch (Throwable $e) {
+                $this->typeReplacements[$search] = new TypeScriptRaw($replacement);
+            }
+
+            return $this;
+        }
+
+        if (! $replacement instanceof Closure) {
+            throw new Exception('Replacement must be a TypeScriptNode, a string or a Closure');
+        }
+
+        $this->typeReplacements[$search] = $replacement;
+
+        return $this;
+    }
+
+    public function extension(
+        TypeScriptTransformerExtension ...$extensions
+    ): self {
+        array_push($this->extensions, ...$extensions);
 
         return $this;
     }
@@ -100,9 +200,7 @@ class TypeScriptTransformerConfigFactory
             $typeProviders[] = new TransformerTypesProvider($transformers, $this->directoriesToWatch);
         }
 
-        $writer = $this->writer ?? new NamespaceWriter(
-            resource_path('types/generated.d.ts')
-        );
+        $writer = $this->writer ?? new NamespaceWriter(__DIR__.'/js/typed.ts');
 
         if (is_string($writer)) {
             $writer = new $writer();
@@ -110,12 +208,21 @@ class TypeScriptTransformerConfigFactory
 
         $formatter = is_string($this->formatter) ? new $this->formatter() : $this->formatter;
 
+        if ($this->typeReplacements) {
+            array_unshift($this->providedVisitorClosures, new ReplaceTypesVisitorClosure($this->typeReplacements));
+        }
+
+        foreach ($this->extensions as $extension) {
+            $extension->enrich($this);
+        }
+
         return new TypeScriptTransformerConfig(
             $typeProviders,
             $writer,
             $formatter,
             $this->directoriesToWatch,
-            $this->nodeReplacements
+            $this->providedVisitorClosures,
+            $this->connectedVisitorClosures
         );
     }
 

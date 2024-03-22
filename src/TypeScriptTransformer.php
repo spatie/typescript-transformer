@@ -6,8 +6,8 @@ use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
 use Spatie\TypeScriptTransformer\Actions\ProvideTypesAction;
-use Spatie\TypeScriptTransformer\Actions\ReplaceNodesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
+use Spatie\TypeScriptTransformer\Visitor\Visitor;
 
 class TypeScriptTransformer
 {
@@ -15,7 +15,6 @@ class TypeScriptTransformer
         protected TypeScriptTransformerConfig $config,
         protected DiscoverTypesAction $discoverTypesAction,
         protected ProvideTypesAction $provideTypesAction,
-        protected ReplaceNodesAction $replaceNodesAction,
         protected ConnectReferencesAction $connectReferencesAction,
         protected WriteFilesAction $writeFilesAction,
         protected FormatFilesAction $formatFilesAction,
@@ -29,7 +28,6 @@ class TypeScriptTransformer
             $config,
             new DiscoverTypesAction(),
             new ProvideTypesAction($config),
-            new ReplaceNodesAction($config),
             new ConnectReferencesAction(),
             new WriteFilesAction($config),
             new FormatFilesAction($config),
@@ -67,9 +65,23 @@ class TypeScriptTransformer
          */
         $transformedCollection = $this->provideTypesAction->execute();
 
-        $this->replaceNodesAction->execute($transformedCollection);
+        if (! empty($this->config->providedVisitorClosures)) {
+            $visitor = Visitor::create()->closures(...$this->config->providedVisitorClosures);
+
+            foreach ($transformedCollection as $transformed) {
+                $visitor->execute($transformed->typeScriptNode);
+            }
+        }
 
         $referenceMap = $this->connectReferencesAction->execute($transformedCollection);
+
+        if (! empty($this->config->connectedVisitorClosures)) {
+            $visitor = Visitor::create()->closures(...$this->config->connectedVisitorClosures);
+
+            foreach ($transformedCollection as $transformed) {
+                $visitor->execute($transformed->typeScriptNode);
+            }
+        }
 
         $writeableFiles = $this->config->writer->output($transformedCollection, $referenceMap);
 

@@ -15,12 +15,10 @@ class Visitor
     }
 
     /**
-     * @param  array<VisitorClosure>  $beforeClosures
-     * @param  array<VisitorClosure>  $afterClosures
+     * @param array<VisitorClosure> $closures
      */
     public function __construct(
-        protected array $beforeClosures = [],
-        protected array $afterClosures = [],
+        protected array $closures = [],
     ) {
     }
 
@@ -28,7 +26,7 @@ class Visitor
         Closure $closure,
         ?array $allowedNodes = null,
     ): self {
-        $this->beforeClosures[] = new VisitorClosure($closure, $allowedNodes);
+        $this->closures[] = new VisitorClosure($closure, $allowedNodes, VisitorClosureType::Before);
 
         return $this;
     }
@@ -37,7 +35,15 @@ class Visitor
         Closure $closure,
         ?array $allowedNodes = null,
     ): self {
-        $this->afterClosures[] = new VisitorClosure($closure, $allowedNodes);
+        $this->closures[] = new VisitorClosure($closure, $allowedNodes, VisitorClosureType::Before);
+
+        return $this;
+    }
+
+    public function closures(
+        VisitorClosure ...$closures
+    ): self {
+        array_push($this->closures, ...$closures);
 
         return $this;
     }
@@ -46,9 +52,13 @@ class Visitor
         TypeScriptNode $node,
         array &$metadata = [],
     ): ?TypeScriptNode {
-        foreach ($this->beforeClosures as $beforeClosure) {
-            if ($beforeClosure->shouldRun($node)) {
-                $operation = $beforeClosure->run($node, $metadata);
+        foreach ($this->closures as $closure) {
+            if (! $closure->isBefore()) {
+                continue;
+            }
+
+            if ($closure->shouldRun($node)) {
+                $operation = $closure->run($node, $metadata);
 
                 if ($operation->type === VisitorOperationType::Remove) {
                     return null;
@@ -88,9 +98,13 @@ class Visitor
             }
         }
 
-        foreach ($this->afterClosures as $afterClosure) {
-            if ($afterClosure->shouldRun($node)) {
-                $operation = $afterClosure->run($node, $metadata);
+        foreach ($this->closures as $closure) {
+            if (! $closure->isAfter()) {
+                continue;
+            }
+
+            if ($closure->shouldRun($node)) {
+                $operation = $closure->run($node, $metadata);
 
                 if ($operation->type === VisitorOperationType::Remove) {
                     return null;
