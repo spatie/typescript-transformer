@@ -7,6 +7,7 @@ class TransformationContext
     public function __construct(
         public string $name,
         public array $nameSpaceSegments,
+        public bool $optional = false,
     ) {
     }
 }

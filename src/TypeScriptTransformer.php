@@ -61,7 +61,6 @@ class TypeScriptTransformer
          * - Split Laravel part again?
          * - Make it possible to hijack the PHPStan types, or some way to rename a Laravel Collection to an array? Would be easier
          * - When generating routes where we have the full namespace, prepend with ., check Laravel Echo for this
-         * - Prettier can run on complete directories, so formatting single files is maybe not required
          */
         $transformedCollection = $this->provideTypesAction->execute();
 

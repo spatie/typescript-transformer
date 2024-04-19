@@ -1,0 +1,6 @@
+declare namespace {
+export type TestSingleLiteralTypeScriptTypeAttribute = {
+property: Array<{label: string, value: string}>
+};
+
+}

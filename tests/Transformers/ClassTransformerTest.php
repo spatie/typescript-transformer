@@ -10,7 +10,8 @@ use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
-use Spatie\TypeScriptTransformer\Support\TransformationContext;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
+use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
@@ -23,28 +24,28 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
 
 it('can transform a class', function () {
-    $class = new class () {
-        public string $name;
-    };
+    $transformed = transformClass(SimpleClass::class);
 
-    $transformed = transformClass($class, new TransformationContext('ClassName', ['App', 'Data']));
-
-    expect($transformed->getName())->toBe('ClassName');
+    expect($transformed->getName())->toBe('SimpleClass');
     expect($transformed->typeScriptNode)->toEqual(
         new TypeScriptAlias(
-            new TypeScriptIdentifier('ClassName'),
+            new TypeScriptIdentifier('SimpleClass'),
             new TypeScriptObject([
                 new TypeScriptProperty(
-                    new TypeScriptIdentifier('name'),
+                    new TypeScriptIdentifier('stringProperty'),
+                    new TypeScriptString()
+                ),
+                new TypeScriptProperty(
+                    new TypeScriptIdentifier('constructorPromotedStringProperty'),
                     new TypeScriptString()
                 ),
             ])
         )
     );
     expect($transformed->reference)->toEqual(
-        new ReflectionClassReference(new ReflectionClass($class))
+        new ReflectionClassReference(new ReflectionClass(SimpleClass::class))
     );
-    expect($transformed->location)->toEqual(['App', 'Data']);
+    expect($transformed->location)->toEqual(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']);
     expect($transformed->export)->toBeTrue();
     expect($transformed->references)->toEqual([]);
 });
@@ -59,7 +60,7 @@ it('can transform a class by depending on a TypeScriptTypeAttributeContract attr
 
     expect($transformed->typeScriptNode)->toEqual(
         new TypeScriptAlias(
-            new TypeScriptIdentifier(TestTypeScriptTypeAttributeContractForClass::class),
+            new TypeScriptIdentifier('TestTypeScriptTypeAttributeContractForClass'),
             new TypeScriptRaw('string'),
         )
     );
@@ -179,7 +180,7 @@ it('can type a property using a TypeScriptTypeAttributeContract attribute type',
     );
 });
 
-it('can make a typescript property optional by annotation', function () {
+it('can make a typescript property optional by attribute', function () {
     $class = new class () {
         #[Optional]
         public string $name;
@@ -190,6 +191,30 @@ it('can make a typescript property optional by annotation', function () {
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
                 new TypeScriptString(),
+                isOptional: true
+            ),
+        ])
+    );
+});
+
+it('can make a complete class optional by attribute', function () {
+    #[Optional]
+    class TestAllPropertiesOptionalByClassAttribute
+    {
+        public string $name;
+        public int $age;
+    }
+
+    expect(resolveObjectNode(TestAllPropertiesOptionalByClassAttribute::class))->toEqual(
+        new TypeScriptObject([
+            new TypeScriptProperty(
+                new TypeScriptIdentifier('name'),
+                new TypeScriptString(),
+                isOptional: true
+            ),
+            new TypeScriptProperty(
+                new TypeScriptIdentifier('age'),
+                new TypeScriptNumber(),
                 isOptional: true
             ),
         ])
@@ -257,12 +282,7 @@ it('can run a class property processor', function () {
         public string $name;
     };
 
-    $object = resolveObjectNode($class, transformer: new class () extends ClassTransformer {
-        protected function shouldTransform(ReflectionClass $reflection): bool
-        {
-            return true;
-        }
-
+    $object = resolveObjectNode($class, transformer: new class () extends AllClassTransformer {
         protected function classPropertyProcessors(): array
         {
             return [

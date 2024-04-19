@@ -1,5 +1,35 @@
 <?php
 
-it('can output a single type')->todo();
+use function Spatie\Snapshots\assertMatchesSnapshot;
 
-it('can output an object type')->todo();
+use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
+use Spatie\TypeScriptTransformer\Support\WriteableFile;
+
+it('can output a single type', closure: function () {
+    class TestSingleTypeScriptTypeAttribute
+    {
+        #[TypeScriptType('array<int,'.WriteableFile::class.'>')]
+        public array $property;
+    }
+
+    assertMatchesSnapshot(classesToTypeScript([
+        WriteableFile::class,
+        TestSingleTypeScriptTypeAttribute::class,
+    ]));
+});
+
+it('can output an object type', function () {
+    class TestObjectTypeScriptTypeAttribute
+    {
+        #[TypeScriptType([
+            'name' => 'string',
+            'file' => WriteableFile::class,
+        ])]
+        public array $property;
+    }
+
+    assertMatchesSnapshot(classesToTypeScript([
+        WriteableFile::class,
+        TestObjectTypeScriptTypeAttribute::class,
+    ]));
+});

@@ -1,0 +1,13 @@
+declare namespace {
+export type TestSingleTypeScriptTypeAttribute = {
+property: Record<number, Spatie.TypeScriptTransformer.Support.WriteableFile>
+};
+
+}
+declare namespace Spatie.TypeScriptTransformer.Support{
+export type WriteableFile = {
+path: string
+contents: string
+};
+
+}

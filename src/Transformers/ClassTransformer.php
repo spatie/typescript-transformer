@@ -39,6 +39,10 @@ abstract class ClassTransformer implements Transformer
 
     public function transform(ReflectionClass $reflectionClass, TransformationContext $context): Transformed|Untransformable
     {
+        if ($reflectionClass->isEnum()) {
+            return Untransformable::create();
+        }
+
         if (! $this->shouldTransform($reflectionClass)) {
             return Untransformable::create();
         }
@@ -46,7 +50,7 @@ abstract class ClassTransformer implements Transformer
         return new Transformed(
             new TypeScriptAlias(
                 new TypeScriptIdentifier($context->name),
-                $this->getTypeScriptNode($reflectionClass)
+                $this->getTypeScriptNode($reflectionClass, $context)
             ),
             new ReflectionClassReference($reflectionClass),
             $context->nameSpaceSegments,
@@ -63,7 +67,8 @@ abstract class ClassTransformer implements Transformer
     }
 
     protected function getTypeScriptNode(
-        ReflectionClass $reflectionClass
+        ReflectionClass $reflectionClass,
+        TransformationContext $context,
     ): TypeScriptNode {
         if ($resolvedAttributeType = $this->resolveTypeByAttribute($reflectionClass)) {
             return $resolvedAttributeType;
@@ -86,7 +91,8 @@ abstract class ClassTransformer implements Transformer
             $property = $this->createProperty(
                 $reflectionClass,
                 $reflectionProperty,
-                $annotation?->type
+                $annotation?->type,
+                $context
             );
 
             if ($property === null) {
@@ -137,6 +143,7 @@ abstract class ClassTransformer implements Transformer
         ReflectionClass $reflectionClass,
         ReflectionProperty $reflectionProperty,
         ?TypeNode $annotation,
+        TransformationContext $context,
     ): ?TypeScriptProperty {
         $type = $this->resolveTypeForProperty(
             $reflectionClass,
@@ -147,8 +154,17 @@ abstract class ClassTransformer implements Transformer
         $property = new TypeScriptProperty(
             $reflectionProperty->getName(),
             $type,
-            $this->isPropertyOptional($reflectionProperty, $reflectionClass, $type),
-            $this->isPropertyReadonly($reflectionProperty, $reflectionClass, $type)
+            $this->isPropertyOptional(
+                $reflectionProperty,
+                $reflectionClass,
+                $type,
+                $context
+            ),
+            $this->isPropertyReadonly(
+                $reflectionProperty,
+                $reflectionClass,
+                $type,
+            )
         );
 
         if ($this->isPropertyHidden($reflectionProperty, $reflectionClass, $property)) {
@@ -188,8 +204,9 @@ abstract class ClassTransformer implements Transformer
         ReflectionProperty $reflectionProperty,
         ReflectionClass $reflectionClass,
         TypeScriptNode $type,
+        TransformationContext $context,
     ): bool {
-        return count($reflectionProperty->getAttributes(Optional::class)) > 0;
+        return $context->optional || count($reflectionProperty->getAttributes(Optional::class)) > 0;
     }
 
     protected function isPropertyReadonly(

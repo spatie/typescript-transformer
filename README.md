@@ -163,7 +163,7 @@ interface Transformer
 By default, the package comes with a few transformers:
 
 - `EnumTransformer`: Transforms PHP enums to TypeScript enums
-- `ClassTransformer`: Transforms PHP classes with its properties to TypeScript types
+- `ClassTransformer`: Transforms PHP classes with its properties to TypeScript types (abstract, read on for more info)
 - `AttributedClassTransformer`: A special version of the `ClassTransformer` that only transforms classes with
   the `#[TypeScript]` attribute
 - `LaravelClassTransformer`: A special version of the `ClassTransformer` with some goodies for Laravel users
@@ -244,6 +244,69 @@ $config->writeTypes(new ModuleWriter(resource_path('types')));
 That's it! You're now ready to transform your PHP classes to TypeScript types. If you've configured
 the `EnumTransformer` then, every enum should be transformed to TypeScript. When using the `AttributedClassTransformer`,
 be sure to add the `#[TypeScript]` attribute to classes you want transformed.
+
+### Special attributes
+
+Classes can have attributes that change the way they are transformed, let's go through them.
+
+Using the `#[TypeScript]` attribute is not only a way to tell typescript-transformer to transform a class, but it can
+also be used to change the name of the transformed class:
+
+```php
+#[TypeScript(name: 'UserWithoutEmail')]
+class User
+{
+    public int $id;
+    public string $name;
+}
+```
+
+This will transform the `User` class to `UserWithoutEmail` in TypeScript.
+
+```ts
+export type UserWithoutEmail = {
+    id: number;
+    name: string;
+}
+```
+
+Each type will be located somewhere either being a file when using the `ModuleWriter` or in a single file when using
+the `NamespaceWriter`. The location of the type can be changed by using the `#[TypeScript]` attribute:
+
+```php
+#[TypeScript(location: ['Data', 'Users'])]
+class User
+{
+    public int $id;
+    public string $name;
+}
+```
+
+This will transform as such:
+
+```ts
+declare namespace Data.Users {
+    export type User = {
+        id: number;
+        name: string;
+    };
+}
+```
+
+It is possible to completely remove a class from the TypeScript output by using the `#[Hidden]` attribute:
+
+```php
+#[Hidden]
+enum Members: string
+{
+    case John = 'john';
+    case Paul = 'paul';
+    case George = 'george';
+    case Ringo = 'ringo';
+}
+```
+
+This is particularly useful when using the `EnumTransformer` and you want to hide certain enums from the TypeScript.
 
 ## Making sure PHP classes are typed
 
@@ -624,7 +687,8 @@ that the transformer fits your needs.
 
 #### Choosing properties to transform
 
-By default, all public non-static properties of a class are transformed, but you can overwrite the `properties` method to change this:
+By default, all public non-static properties of a class are transformed, but you can overwrite the `properties` method
+to change this:
 
 ```php
 protected function getProperties(ReflectionClass $reflection): array
@@ -642,6 +706,7 @@ protected function isPropertyOptional(
     ReflectionProperty $reflectionProperty,
     ReflectionClass $reflectionClass,
     TypeScriptNode $type,
+    TransformationContext $context,
 ): bool {
     return str_starts_with($reflectionProperty->getName(), '_');
 }
@@ -683,7 +748,9 @@ By default, we check whether a property has an `#[Hidden]` attribute.
 
 #### Class property processors
 
-Sometimes a more fine-grained control is needed over how a property is transformed, this is where class property processors come to play. They allow you to update the TypeScript Node of the property, you can create them by implementing the `ClassPropertyProcessor` interface:
+Sometimes a more fine-grained control is needed over how a property is transformed, this is where class property
+processors come to play. They allow you to update the TypeScript Node of the property, you can create them by
+implementing the `ClassPropertyProcessor` interface:
 
 ```php
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
@@ -718,8 +785,6 @@ protected function classPropertyProcessors(): array
 ```
 
 ## Creating a TypesProvider
-
-
 
 ## Visiting TypeScript nodes
 
