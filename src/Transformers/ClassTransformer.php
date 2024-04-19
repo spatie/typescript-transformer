@@ -26,13 +26,15 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
 
 abstract class ClassTransformer implements Transformer
 {
+    protected array $classPropertyProcessors;
+
     public function __construct(
         protected DocTypeResolver $docTypeResolver = new DocTypeResolver(),
         protected TranspilePhpStanTypeToTypeScriptNodeAction $transpilePhpStanTypeToTypeScriptTypeAction = new TranspilePhpStanTypeToTypeScriptNodeAction(),
         protected TranspileReflectionTypeToTypeScriptNodeAction $transpileReflectionTypeToTypeScriptTypeAction = new TranspileReflectionTypeToTypeScriptNodeAction(),
         protected ParseUseDefinitionsAction $parseUseDefinitionsAction = new ParseUseDefinitionsAction(),
     ) {
-
+        $this->classPropertyProcessors = $this->classPropertyProcessors();
     }
 
     public function transform(ReflectionClass $reflectionClass, TransformationContext $context): Transformed|Untransformable
@@ -57,8 +59,6 @@ abstract class ClassTransformer implements Transformer
     /** @return array<ClassPropertyProcessor> */
     protected function classPropertyProcessors(): array
     {
-        // Call this once per class we're transforming for some performance reasons
-
         return [];
     }
 
@@ -127,10 +127,10 @@ abstract class ClassTransformer implements Transformer
 
     protected function getProperties(ReflectionClass $reflection): array
     {
-        return array_values(array_filter(
+        return array_filter(
             $reflection->getProperties(ReflectionProperty::IS_PUBLIC),
             fn (ReflectionProperty $property) => ! $property->isStatic()
-        ));
+        );
     }
 
     protected function createProperty(
@@ -213,7 +213,7 @@ abstract class ClassTransformer implements Transformer
         ?TypeNode $annotation,
         TypeScriptProperty $property,
     ): ?TypeScriptProperty {
-        $processors = $this->classPropertyProcessors();
+        $processors = $this->classPropertyProcessors;
 
         foreach ($processors as $processor) {
             $property = $processor->execute($reflectionProperty, $annotation, $property);

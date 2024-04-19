@@ -437,7 +437,7 @@ class Types
 }
 ```
 
-Also this attribute can be used to type an object, but this time the types can be PHP types:
+Also, this attribute can be used to type an object, but this time the types can be PHP types:
 
 ```php
 class Types 
@@ -541,17 +541,185 @@ type User = {
 }
 ```
 
-There are a lot of TypeScript nodes available, you can find them in the `Spatie\TypeScriptTransformer\TypeScript` namespace.
+There are a lot of TypeScript nodes available, you can find them in the `Spatie\TypeScriptTransformer\TypeScript`
+namespace. In the advanced section we'll take a look at how to build your own TypeScript nodes.
 
 ## Creating a transformer
 
+Transformers are the most important part of TypeScript transformer, they take a PHP class and try to transform it to a
+TypeScript type. A transformer implements the `Transformer` interface:
 
+```php
+interface Transformer
+{
+    public function transform(ReflectionClass $reflectionClass, TransformationContext $context): Transformed|Untransformable;
+}
+```
+
+The `TransformationContext` contains all the information you need to transform a class:
+
+```php
+class TransformationContext
+{
+    public function __construct(
+        // The name for the class that is being transformed, can be user defined
+        public string $name,
+        // The segments of the namespace where the class is located
+        public array $nameSpaceSegments,
+    ) {
+    }
+}
+```
+
+Within the method a `Transformed` data object should be created and returned which looks like this:
+
+```php
+use Spatie\TypeScriptTransformer\References\ClassStringReference;
+
+new Transformed(
+    // The TypeScript node representing the transformed class
+    typeScriptNode: $typeScriptNode,
+    // A unique name for the transformed class 
+    reference: new ClassStringReference($reflectionClass->getName()),
+    // A location where the class should be written to
+    // By default, this is the namespace of the class and the $nameSpaceSegments from the TransformationContext can be used
+    location: $context->nameSpaceSegments,
+    // Whether the type should be exported in TypeScript
+    export: true,
+);
+```
+
+If a class cannot be transformed, the `Untransformable` object should be returned:
+
+```php
+use Spatie\TypeScriptTransformer\Untransformable;
+
+Untransformable::create();
+```
+
+When a class cannot be transformed, the next transformer in the list will be executed.
 
 ### Extending the class Transformer
 
--> PropertyTypeProcessors
+Most of the time, transforming a class comes down to taking all the properties and transforming them to a TypeScript
+object with properties, the package provides an easy-to-extend class for this called `ClassTransformer`.
+
+You can create your own by extending the `ClassTransformer` and implementing the `shouldTransform` method:
+
+```php
+use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
+
+class MyTransformer extends ClassTransformer
+{
+    protected function shouldTransform(ReflectionClass $reflection): bool
+    {
+        return $reflection->implementsInterface(\Spatie\LaravelData\Data::class);
+    }
+}
+```
+
+In the case above, the transformer will only run when transforming classes which are data objects from
+the [laravel-data](https://github.com/spatie/laravel-data) package. We encourage you to overwrite certain methods so
+that the transformer fits your needs.
+
+#### Choosing properties to transform
+
+By default, all public non-static properties of a class are transformed, but you can overwrite the `properties` method to change this:
+
+```php
+protected function getProperties(ReflectionClass $reflection): array
+{
+    return $reflection->getProperties(ReflectionProperty::IS_PUBLIC|ReflectionProperty::IS_PROTECTED);
+}
+```
+
+#### Optional properties
+
+It is possible to make a property optional in TypeScript by overwriting the `isPropertyReadonly` method:
+
+```php
+protected function isPropertyOptional(
+    ReflectionProperty $reflectionProperty,
+    ReflectionClass $reflectionClass,
+    TypeScriptNode $type,
+): bool {
+    return str_starts_with($reflectionProperty->getName(), '_');
+}
+```
+
+By default, we check whether a property has an `#[Optional]` attribute.
+
+#### Readonly properties
+
+You can make a property readonly by overwriting the `isPropertyReadonly` method:
+
+```php
+protected function isPropertyReadonly(
+    ReflectionProperty $reflectionProperty,
+    ReflectionClass $reflectionClass,
+    TypeScriptNode $type,
+): bool {
+   return str_ends_with($reflectionProperty->getName(), 'Read');
+}
+```
+
+By default, we check whether a property was made readonly in PHP.
+
+#### Hiding properties
+
+It is possible to completely hide a property from the TypeScript object by overwriting the `isPropertyHidden` method:
+
+```php
+protected function isPropertyHidden(
+    ReflectionProperty $reflectionProperty,
+    ReflectionClass $reflectionClass,
+    TypeScriptProperty $property,
+): bool {
+    return count($reflectionProperty->getAttributes(Hidden::class)) > 0;
+}
+```
+
+By default, we check whether a property has an `#[Hidden]` attribute.
+
+#### Class property processors
+
+Sometimes a more fine-grained control is needed over how a property is transformed, this is where class property processors come to play. They allow you to update the TypeScript Node of the property, you can create them by implementing the `ClassPropertyProcessor` interface:
+
+```php
+use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
+
+class RemoveNullProcessor implements ClassPropertyProcessor
+{
+    public function execute(
+        ReflectionProperty $reflection,
+        ?TypeNode $annotation,
+        TypeScriptProperty $property
+    ): ?TypeScriptProperty {
+        if ($property->type instanceof TypeScriptUnion) {
+            $property->type = new TypeScriptUnion(
+                array_values(array_filter($property->type->types, fn (TypeScriptNode $type) => !$type instanceof TypeScriptNull))
+            );
+        }
+
+        return $property;
+    }
+}
+```
+
+You can add these processors to the transformer by overwriting the `classPropertyProcessors` method:
+
+```php
+protected function classPropertyProcessors(): array
+{
+    return [
+        new RemoveNullProcessor(),
+    ];
+}
+```
 
 ## Creating a TypesProvider
+
+
 
 ## Visiting TypeScript nodes
 
@@ -568,6 +736,8 @@ There are a lot of TypeScript nodes available, you can find them in the `Spatie\
 ### Building your own Writer
 
 ### Building your own Formatter
+
+### Building your own TypeScript node
 
 ## Testing
 
