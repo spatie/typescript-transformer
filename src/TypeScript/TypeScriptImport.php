@@ -20,6 +20,6 @@ class TypeScriptImport implements TypeScriptNode
     {
         $names = implode(', ', $this->names);
 
-        return "import { {$names} } from '{$this->path}';".PHP_EOL;
+        return "import { {$names} } from '{$this->path}';";
     }
 }

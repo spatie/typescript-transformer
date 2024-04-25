@@ -4,6 +4,8 @@ use Pest\Expectation;
 use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\HiddenAttributedClass;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\OptionalAttributedClass;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptAttributedClass;
@@ -40,7 +42,8 @@ function getTestProvidedTypes(
 it('will find types and takes attributes into account', function () {
     $collection = getTestProvidedTypes();
 
-    expect($collection)->toHaveCount(3);
+    expect($collection)->toHaveCount(5);
+    ray(iterator_to_array($collection));
     expect(iterator_to_array($collection))->sequence(
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)
@@ -66,6 +69,30 @@ it('will find types and takes attributes into account', function () {
             ->reference->toBeInstanceOf(ReflectionClassReference::class)
             ->reference->classString->toBe(TypeScriptLocationAttributedClass::class)
             ->location->toBe(['App', 'Here']),
+        fn (Expectation $transformed) => $transformed
+            ->toBeInstanceOf(Transformed::class)
+            ->getName()->toBe('OptionalAttributedClass')
+            ->typeScriptNode->toEqual(new TypeScriptAlias(
+                new TypeScriptIdentifier('OptionalAttributedClass'),
+                new TypeScriptObject([
+                    new TypeScriptProperty('property', new TypeScriptString(), isOptional: true),
+                ])
+            ))
+            ->reference->toBeInstanceOf(ReflectionClassReference::class)
+            ->reference->classString->toBe(OptionalAttributedClass::class)
+            ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
+        fn (Expectation $transformed) => $transformed
+            ->toBeInstanceOf(Transformed::class)
+            ->getName()->toBe('ReadonlyClass')
+            ->typeScriptNode->toEqual(new TypeScriptAlias(
+                new TypeScriptIdentifier('ReadonlyClass'),
+                new TypeScriptObject([
+                    new TypeScriptProperty('property', new TypeScriptString(), isReadonly: true),
+                ])
+            ))
+            ->reference->toBeInstanceOf(ReflectionClassReference::class)
+            ->reference->classString->toBe(ReadonlyClass::class)
+            ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)
             ->getName()->toBe('SimpleClass')

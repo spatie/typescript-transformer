@@ -52,4 +52,9 @@ class TransformedCollection implements IteratorAggregate, ArrayAccess
     {
         unset($this->items[$offset]);
     }
+
+    public function all(): array
+    {
+        return $this->items;
+    }
 }

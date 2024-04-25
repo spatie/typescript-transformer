@@ -2,24 +2,25 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use BackedEnum;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
+use Spatie\TypeScriptTransformer\Transformers\EnumProviders\EnumProvider;
+use Spatie\TypeScriptTransformer\Transformers\EnumProviders\PhpEnumProvider;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptEnum;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptLiteral;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
-use UnitEnum;
 
 class EnumTransformer implements Transformer
 {
     public function __construct(
-        public bool $useNativeEnums = false,
+        public bool $useUnionEnums = true,
+        public EnumProvider $enumProvider = new PhpEnumProvider()
     ) {
     }
 
@@ -27,41 +28,24 @@ class EnumTransformer implements Transformer
         ReflectionClass $reflectionClass,
         TransformationContext $context
     ): Transformed|Untransformable {
-        if (! $this->isEnum($reflectionClass)) {
+        if (! $this->enumProvider->isEnum($reflectionClass)) {
             return Untransformable::create();
         }
 
-        $cases = $this->resolveCases($reflectionClass);
+        if ($this->useUnionEnums === true && ! $this->enumProvider->isValidUnion($reflectionClass)) {
+            return Untransformable::create();
+        }
+
+        $cases = $this->enumProvider->resolveCases($reflectionClass);
 
         return new Transformed(
-            $this->useNativeEnums
-                ? $this->transformAsNativeEnum($context->name, $cases)
-                : $this->transformAsUnion($context->name, $cases),
+            $this->useUnionEnums
+                ? $this->transformAsUnion($context->name, $cases)
+                : $this->transformAsNativeEnum($context->name, $cases),
             new ReflectionClassReference($reflectionClass),
             $context->nameSpaceSegments,
             true,
         );
-    }
-
-    protected function isEnum(ReflectionClass $reflection): bool
-    {
-        return $reflection->isEnum();
-    }
-
-    protected function resolveCases(ReflectionClass $reflection): array
-    {
-        /** @var class-string<UnitEnum> $enumClass */
-        $enumClass = $reflection->getName();
-
-        $cases = [];
-
-        foreach ($enumClass::cases() as $case) {
-            $cases[$case->name] = $case instanceof BackedEnum
-                ? $case->value
-                : $case->name;
-        }
-
-        return $cases;
     }
 
     protected function transformAsNativeEnum(
@@ -79,7 +63,7 @@ class EnumTransformer implements Transformer
             new TypeScriptIdentifier($name),
             new TypeScriptUnion(
                 array_map(
-                    fn (string $case) => new TypeScriptLiteral($case),
+                    fn (array $case) => new TypeScriptLiteral($case['value']),
                     $cases,
                 ),
             ),

@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\Tests\Support;
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\Writers\NamespaceWriter;
+use Spatie\TypeScriptTransformer\Writers\FlatWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
 class MemoryWriter implements Writer
@@ -33,7 +33,7 @@ class MemoryWriter implements Writer
 
     public function getOutput(): string
     {
-        $writer = new NamespaceWriter('test.ts');
+        $writer = new FlatWriter('test.ts');
 
         [$writeableFile] = $writer->output(static::$collection, static::$referenceMap);
 

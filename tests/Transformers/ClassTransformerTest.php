@@ -10,6 +10,7 @@ use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
@@ -24,7 +25,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
 
 it('can transform a class', function () {
-    $transformed = transformClass(SimpleClass::class);
+    $transformed = transformSingle(SimpleClass::class);
 
     expect($transformed->getName())->toBe('SimpleClass');
     expect($transformed->typeScriptNode)->toEqual(
@@ -56,7 +57,7 @@ it('can transform a class by depending on a TypeScriptTypeAttributeContract attr
     {
     }
 
-    $transformed = transformClass(TestTypeScriptTypeAttributeContractForClass::class);
+    $transformed = transformSingle(TestTypeScriptTypeAttributeContractForClass::class);
 
     expect($transformed->typeScriptNode)->toEqual(
         new TypeScriptAlias(
@@ -81,7 +82,7 @@ it('transforms only public non static properties by default', function () {
         private static string $privateStatic;
     };
 
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle($class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('public'),
@@ -97,7 +98,7 @@ it('can type a property using php reflection types', function () {
         public string $name;
     };
 
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle($class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
@@ -113,7 +114,7 @@ it('can type a property using a var annotation', function () {
         public $name;
     };
 
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle($class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
@@ -135,7 +136,7 @@ it('can type a property using a constructor annotation', function () {
         }
     };
 
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle($class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
@@ -154,7 +155,7 @@ it('can type a property using a class property annotation', function () {
         public $name;
     }
 
-    expect(resolveObjectNode(TestClassPropertyAnnotation::class))->toEqual(
+    expect(transformSingle(TestClassPropertyAnnotation::class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
@@ -170,7 +171,7 @@ it('can type a property using a TypeScriptTypeAttributeContract attribute type',
         public $name;
     };
 
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle($class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
@@ -186,7 +187,7 @@ it('can make a typescript property optional by attribute', function () {
         public string $name;
     };
 
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle($class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
@@ -205,7 +206,7 @@ it('can make a complete class optional by attribute', function () {
         public int $age;
     }
 
-    expect(resolveObjectNode(TestAllPropertiesOptionalByClassAttribute::class))->toEqual(
+    expect(transformSingle(TestAllPropertiesOptionalByClassAttribute::class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
@@ -226,7 +227,7 @@ it('will type an untyped property as unknown', function () {
         public $name;
     };
 
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle($class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
@@ -241,7 +242,7 @@ it('can make a TypeScript property readonly by adding the modifier to the proper
         public readonly string $name;
     };
 
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle($class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
                 new TypeScriptIdentifier('name'),
@@ -253,18 +254,16 @@ it('can make a TypeScript property readonly by adding the modifier to the proper
 });
 
 it('can make a TypeScript property readonly by adding the modifier to the class', function () {
-    $class = eval('$class = new readonly class {public string $name;};');
-
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle(ReadonlyClass::class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(
-                new TypeScriptIdentifier('name'),
+                new TypeScriptIdentifier('property'),
                 new TypeScriptString(),
                 isReadonly: true
             ),
         ])
     );
-})->skip(fn () => PHP_VERSION_ID < 80300);
+});
 
 it('can hide a property by adding a hidden attribute', function () {
     $class = new class () {
@@ -272,7 +271,7 @@ it('can hide a property by adding a hidden attribute', function () {
         public string $property;
     };
 
-    expect(resolveObjectNode($class))->toEqual(
+    expect(transformSingle($class)->typeScriptNode->type)->toEqual(
         new TypeScriptObject([])
     );
 });
@@ -282,7 +281,7 @@ it('can run a class property processor', function () {
         public string $name;
     };
 
-    $object = resolveObjectNode($class, transformer: new class () extends AllClassTransformer {
+    $object = transformSingle($class, transformer: new class () extends AllClassTransformer {
         protected function classPropertyProcessors(): array
         {
             return [
@@ -299,7 +298,7 @@ it('can run a class property processor', function () {
                 },
             ];
         }
-    });
+    })->typeScriptNode->type;
 
     expect($object)->toEqual(
         new TypeScriptObject([
@@ -318,7 +317,7 @@ it('can use a class property processor to remove a property', function () {
         public string $name;
     };
 
-    $object = resolveObjectNode($class, transformer: new class () extends ClassTransformer {
+    $object = transformSingle($class, transformer: new class () extends ClassTransformer {
         protected function shouldTransform(ReflectionClass $reflection): bool
         {
             return true;
@@ -335,7 +334,7 @@ it('can use a class property processor to remove a property', function () {
                 },
             ];
         }
-    });
+    })->typeScriptNode->type;
 
     expect($object)->toEqual(
         new TypeScriptObject([])

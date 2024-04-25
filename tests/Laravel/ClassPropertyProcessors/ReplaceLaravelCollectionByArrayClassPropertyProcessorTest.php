@@ -10,6 +10,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNumber;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 
@@ -42,10 +43,17 @@ it('replaces laravel collections', function (
         public Collection $no_annotation_collection;
     };
 
+    $object = transformSingle($class)->typeScriptNode->type;
+
+    [$propertyNode] = array_values(array_filter(
+        $object->properties,
+        fn (TypeScriptProperty $propertyNode) => $propertyNode->name instanceof TypeScriptIdentifier && $propertyNode->name->name === $property
+    ));
+
     $propertyNode = (new ReplaceLaravelCollectionByArrayClassPropertyProcessor())->execute(
         reflection: new ReflectionProperty($class, $property),
         annotation: null,
-        property: resolvePropertyNode($class, $property)
+        property: $propertyNode
     );
 
     expect($propertyNode->type)->toEqual(

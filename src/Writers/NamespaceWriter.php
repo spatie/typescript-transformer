@@ -44,7 +44,7 @@ class NamespaceWriter implements Writer
         foreach ($split as $splitConstruct) {
             if (count($splitConstruct->segments) === 0) {
                 foreach ($splitConstruct->transformed as $transformable) {
-                    $output .= $transformable->typeScriptNode->write($writingContext);
+                    $output .= $transformable->prepareForWrite()->write($writingContext) . PHP_EOL;
                 }
 
                 continue;
@@ -58,7 +58,7 @@ class NamespaceWriter implements Writer
                 ),
             );
 
-            $output .= $namespace->write($writingContext);
+            $output .= $namespace->write($writingContext) . PHP_EOL;
         }
 
         return [new WriteableFile($this->filename, $output)];

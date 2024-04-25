@@ -11,8 +11,8 @@ use Spatie\TypeScriptTransformer\Visitor\Visitor;
 
 class ConnectReferencesAction
 {
-    public function __construct(
-    ) {
+    public function __construct()
+    {
     }
 
     public function execute(TransformedCollection $collection): ReferenceMap
@@ -20,39 +20,32 @@ class ConnectReferencesAction
         $referenceMap = new ReferenceMap();
 
         foreach ($collection as $transformed) {
-            if ($transformed->reference) {
-                $referenceMap->add($transformed);
-            }
+            $referenceMap->add($transformed);
         }
 
         $visitor = Visitor::create()->before(function (TypeReference $typeReference, array &$metadata) use ($referenceMap) {
-            $reference = $typeReference->reference;
+            /** @var Transformed $transformed */
+            $transformed = $metadata['transformed'];
 
-            if (! $referenceMap->has($reference)) {
-                /** @var Transformed $transformed */
-                $transformed = $metadata['transformed'];
-
-                TypeScriptTransformerLog::resolve()->warning("Tried replacing reference to `{$reference->humanFriendlyName()}` in `{$transformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
+            if (! $referenceMap->has($typeReference->reference)) {
+                TypeScriptTransformerLog::resolve()->warning("Tried replacing reference to `{$typeReference->reference->humanFriendlyName()}` in `{$transformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
 
                 return;
             }
 
-            $transformed = $referenceMap->get($reference);
+            $transformedReference = $referenceMap->get($typeReference->reference);
 
-            $metadata['references'][] = $transformed;
+            $transformed->references[] = $transformedReference;
 
-            $typeReference->connect($transformed);
+            $typeReference->connect($transformedReference);
         }, [TypeReference::class]);
 
         foreach ($collection as $transformed) {
             $metadata = [
                 'transformed' => $transformed,
-                'references' => [],
             ];
 
             $visitor->execute($transformed->typeScriptNode, $metadata);
-
-            $transformed->references = $metadata['references'];
         }
 
         return $referenceMap;

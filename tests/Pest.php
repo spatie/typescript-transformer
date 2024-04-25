@@ -2,37 +2,36 @@
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
-use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
+use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\Writers\NamespaceWriter;
+use Spatie\TypeScriptTransformer\Transformed\Untransformable;
+use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
 function classesToTypeScript(
     array $classes,
-    ?TransformationContext $transformationContext = null,
+    ?Transformer $transformer = null
 ): string {
     $collection = new TransformedCollection();
 
     foreach ($classes as $class) {
-        $collection->add(transformClass($class, $transformationContext));
+        $collection->add(transformSingle($class, $transformer));
     }
 
     $referenceMap = (new ConnectReferencesAction())->execute($collection);
 
-    $writeableFile = (new NamespaceWriter('fakeFile'))->output($collection, $referenceMap)[0];
+    $writer = new MemoryWriter();
 
-    return $writeableFile->contents;
+    ($writer)->output($collection, $referenceMap);
+
+    return $writer->getOutput();
 }
 
-function transformClass(
+function transformSingle(
     string|object $class,
-    ?ClassTransformer $transformer = null
-): Transformed {
+    ?Transformer $transformer = null
+): Transformed|Untransformable {
     $transformer ??= new AllClassTransformer();
 
     $transformTypesAction = new TransformTypesAction();
@@ -42,28 +41,5 @@ function transformClass(
         [is_string($class) ? $class : $class::class],
     );
 
-    return $transformed;
-}
-
-function resolveObjectNode(
-    string|object $class,
-    ?ClassTransformer $transformer = null
-): TypeScriptObject {
-    return transformClass($class, $transformer)->typeScriptNode->type;
-}
-
-function resolvePropertyNode(
-    string|object $class,
-    string $property,
-    ?ClassTransformer $transformer = null
-): TypeScriptProperty {
-    $objectNode = resolveObjectNode($class, $transformer);
-
-    foreach ($objectNode->properties as $propertyNode) {
-        if ($propertyNode->name instanceof TypeScriptIdentifier && $propertyNode->name->name === $property) {
-            return $propertyNode;
-        }
-    }
-
-    throw new Exception("Could not find node for property {$property}");
+    return $transformed ?? Untransformable::create();
 }

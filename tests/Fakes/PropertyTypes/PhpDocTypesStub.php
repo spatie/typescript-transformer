@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Stubs;
+namespace Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes;
 
 use Illuminate\Support\Collection;
 use stdClass;

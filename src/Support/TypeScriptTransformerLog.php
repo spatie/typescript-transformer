@@ -8,6 +8,8 @@ class TypeScriptTransformerLog
 
     public array $warningMessages = [];
 
+    public array $errorMessages = [];
+
     protected static self $instance;
 
     private function __construct()
@@ -29,6 +31,13 @@ class TypeScriptTransformerLog
     public function warning(string $message): self
     {
         $this->warningMessages[] = $message;
+
+        return $this;
+    }
+
+    public function error(string $message): self
+    {
+        $this->errorMessages[] = $message;
 
         return $this;
     }

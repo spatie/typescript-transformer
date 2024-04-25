@@ -4,7 +4,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
-use Spatie\TypeScriptTransformer\Tests\Stubs\PhpTypesStub;
+use Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes\PhpTypesStub;
 use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAny;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptArray;

@@ -5,7 +5,6 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use ReflectionClass;
 use ReflectionProperty;
-use Spatie\TypeScriptTransformer\Actions\ParseUseDefinitionsAction;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
@@ -32,7 +31,6 @@ abstract class ClassTransformer implements Transformer
         protected DocTypeResolver $docTypeResolver = new DocTypeResolver(),
         protected TranspilePhpStanTypeToTypeScriptNodeAction $transpilePhpStanTypeToTypeScriptTypeAction = new TranspilePhpStanTypeToTypeScriptNodeAction(),
         protected TranspileReflectionTypeToTypeScriptNodeAction $transpileReflectionTypeToTypeScriptTypeAction = new TranspileReflectionTypeToTypeScriptNodeAction(),
-        protected ParseUseDefinitionsAction $parseUseDefinitionsAction = new ParseUseDefinitionsAction(),
     ) {
         $this->classPropertyProcessors = $this->classPropertyProcessors();
     }

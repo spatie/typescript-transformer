@@ -1,16 +1,10 @@
-declare namespace {
-export type TestObjectTypeScriptTypeAttribute = {
-property: {
-name: string
-file: Spatie.TypeScriptTransformer.Support.WriteableFile
-}
-};
-
-}
-declare namespace Spatie.TypeScriptTransformer.Support{
 export type WriteableFile = {
 path: string
 contents: string
 };
-
+export type TestObjectTypeScriptTypeAttribute = {
+property: {
+name: string
+file: WriteableFile
 }
+};

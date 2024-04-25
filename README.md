@@ -786,8 +786,6 @@ protected function classPropertyProcessors(): array
 
 ## Creating a TypesProvider
 
-## Visiting TypeScript nodes
-
 ## Formatting TypeScript
 
 ## Laravel
@@ -803,6 +801,8 @@ protected function classPropertyProcessors(): array
 ### Building your own Formatter
 
 ### Building your own TypeScript node
+
+### Visiting TypeScript nodes
 
 ## Testing
 

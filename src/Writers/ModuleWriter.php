@@ -53,7 +53,7 @@ class ModuleWriter implements Writer
         });
 
         foreach ($imports->getTypeScriptNodes() as $import) {
-            $output .= $import->write($writingContext);
+            $output .= $import->write($writingContext) . PHP_EOL;
         }
 
         if ($imports->isEmpty() === false) {
@@ -61,7 +61,7 @@ class ModuleWriter implements Writer
         }
 
         foreach ($location->transformed as $transformedItem) {
-            $output .= $transformedItem->prepareForWrite()->write($writingContext);
+            $output .= $transformedItem->prepareForWrite()->write($writingContext) . PHP_EOL;
         }
 
         return new WriteableFile("{$this->resolvePath($location)}/index.ts", $output);

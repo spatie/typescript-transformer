@@ -14,7 +14,7 @@ class TypeScriptExport implements TypeScriptNode, TypeScriptVisitableNode
 
     public function write(WritingContext $context): string
     {
-        return "export {$this->node->write($context)}".PHP_EOL;
+        return "export {$this->node->write($context)}";
     }
 
     public function visitorProfile(): VisitorProfile

@@ -23,7 +23,7 @@ class TypeScriptNamespace implements TypeScriptNode
             $output .= $type->write($context).PHP_EOL;
         }
 
-        $output .= '}'.PHP_EOL;
+        $output .= '}';
 
         return $output;
     }

@@ -41,4 +41,9 @@ class ReferenceMap
     ): Transformed {
         return $this->references[$reference->getKey()];
     }
+
+    public function all(): array
+    {
+        return $this->references;
+    }
 }

@@ -17,12 +17,12 @@ class ProvideTypesAction
     {
         $collection = new TransformedCollection();
 
-        foreach ($this->config->typeProviders as $defaultTypeProvider) {
-            $defaultTypeProvider = $defaultTypeProvider instanceof TypesProvider
-                ? $defaultTypeProvider
-                : new $defaultTypeProvider();
+        foreach ($this->config->typeProviders as $typeProvider) {
+            $typeProvider = $typeProvider instanceof TypesProvider
+                ? $typeProvider
+                : new $typeProvider();
 
-            $defaultTypeProvider->provide(
+            $typeProvider->provide(
                 $this->config,
                 $collection
             );
