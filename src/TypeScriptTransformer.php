@@ -22,8 +22,10 @@ class TypeScriptTransformer
 
     }
 
-    public static function create(TypeScriptTransformerConfig $config): self
+    public static function create(TypeScriptTransformerConfig|TypeScriptTransformerConfigFactory $config): self
     {
+        $config = $config instanceof TypeScriptTransformerConfigFactory ? $config->get() : $config;
+
         return new self(
             $config,
             new DiscoverTypesAction(),

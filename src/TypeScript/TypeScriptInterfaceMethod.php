@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptMethod implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptInterfaceMethod implements TypeScriptNode, TypeScriptVisitableNode
 {
     /**
      * @param  array<TypeScriptParameter>  $parameters

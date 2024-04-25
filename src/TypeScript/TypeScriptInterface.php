@@ -9,7 +9,7 @@ class TypeScriptInterface implements TypeScriptForwardingExportableNode, TypeScr
 {
     /**
      * @param  array<TypeScriptProperty>  $properties
-     * @param  array<TypeScriptMethod>  $methods
+     * @param  array<TypeScriptInterfaceMethod>  $methods
      */
     public function __construct(
         public TypeScriptIdentifier $name,
@@ -24,7 +24,7 @@ class TypeScriptInterface implements TypeScriptForwardingExportableNode, TypeScr
 
         $items = array_reduce(
             $combined,
-            fn (string $carry, TypeScriptProperty|TypeScriptMethod $item) => $carry.$item->write($context).PHP_EOL,
+            fn (string $carry, TypeScriptProperty|TypeScriptInterfaceMethod $item) => $carry.$item->write($context).PHP_EOL,
             empty($combined) ? '' : PHP_EOL
         );
 
