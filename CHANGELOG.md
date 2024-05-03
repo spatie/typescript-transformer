@@ -2,6 +2,14 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.3.1 - 2024-05-03
+
+### What's Changed
+
+* feat(enum-collector): improve extensibility of `EnumTransformer` by @innocenzi in https://github.com/spatie/typescript-transformer/pull/78
+
+**Full Changelog**: https://github.com/spatie/typescript-transformer/compare/2.3.0...2.3.1
+
 ## 2.3.0 - 2024-02-16
 
 ### What's Changed
