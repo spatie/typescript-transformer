@@ -12,7 +12,7 @@ class EnumCollector extends DefaultCollector
 {
     public function getTransformedType(ReflectionClass $class): ?TransformedType
     {
-        if (!$this->shouldCollect($class)) {
+        if (! $this->shouldCollect($class)) {
             return null;
         }
 
@@ -44,11 +44,11 @@ class EnumCollector extends DefaultCollector
             }),
         ) > 0;
 
-        if (!$hasEnumTransformer) {
+        if (! $hasEnumTransformer) {
             return false;
         }
 
-        if (!$class->implementsInterface(BackedEnum::class)) {
+        if (! $class->implementsInterface(BackedEnum::class)) {
             return false;
         }
 
