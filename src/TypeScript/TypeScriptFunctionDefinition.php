@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptFunctionDefinition implements TypeScriptForwardingExportableNode, TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptFunctionDefinition implements TypeScriptForwardingNamedNode, TypeScriptNode, TypeScriptVisitableNode
 {
     public function __construct(
         public TypeScriptGeneric|TypeScriptIdentifier $identifier,
@@ -29,7 +29,7 @@ class TypeScriptFunctionDefinition implements TypeScriptForwardingExportableNode
         return VisitorProfile::create()->single('identifier', 'returnType', 'body')->iterable('parameters');
     }
 
-    public function getForwardedExportableNode(): TypeScriptExportableNode|TypeScriptForwardingExportableNode
+    public function getForwardedNamedNode(): TypeScriptNamedNode|TypeScriptForwardingNamedNode
     {
         return $this->identifier;
     }

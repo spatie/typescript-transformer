@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class TypeScriptExport implements TypeScriptNode, TypeScriptVisitableNode
 {
     public function __construct(
-        public TypeScriptExportableNode|TypeScriptForwardingExportableNode $node,
+        public TypeScriptNamedNode|TypeScriptForwardingNamedNode $node,
     ) {
     }
 

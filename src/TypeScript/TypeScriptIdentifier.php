@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptIdentifier implements TypeScriptExportableNode, TypeScriptNode
+class TypeScriptIdentifier implements TypeScriptNamedNode, TypeScriptNode
 {
     public function __construct(
         public string $name,
@@ -16,7 +16,7 @@ class TypeScriptIdentifier implements TypeScriptExportableNode, TypeScriptNode
         return (str_contains($this->name, '.') || str_contains($this->name, '\\')) ? "'{$this->name}'" : $this->name;
     }
 
-    public function getExportedName(): string
+    public function getName(): string
     {
         return $this->name;
     }

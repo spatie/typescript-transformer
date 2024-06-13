@@ -784,9 +784,212 @@ protected function classPropertyProcessors(): array
 }
 ```
 
+A class property processor can also be used to remove properties from the TypeScript object:
+
+```php
+class RemoveAllStrings implements ClassPropertyProcessor
+{
+    public function execute(
+        ReflectionProperty $reflection,
+        ?TypeNode $annotation,
+        TypeScriptProperty $property
+    ): ?TypeScriptProperty {
+        if ($property->type instanceof TypeScriptString) {
+            return null;
+        }
+
+        return $property;
+    }
+}
+```
+
 ## Creating a TypesProvider
 
+Until now we've only taken a look at transforming PHP classes to TypeScript, but what if you want to transform something
+else? This is where the `TypesProvider` comes in, it is a class that provides TypeScript types. The transformers
+we've seen before are actually bundled in a default `TypesProvider` provided by the package.
+
+A `TypesProvider` implements the `TypeProvider` interface:
+
+```php
+namespace Spatie\TypeScriptTransformer\TypeProviders;
+
+use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+
+interface TypesProvider
+{
+    public function provide(
+        TypeScriptTransformerConfig $config,
+        TransformedCollection $types
+    ): void;
+}
+```
+
+The `provide` method is called when the TypeScript transformer is executed, it should add `Transformed` objects to the
+collection provided. We could for example add a generic type which transforms Laravel collections:
+
+```php
+class AddLaravelCollectionProvider implements TypesProvider
+{
+    public function provide(
+        TypeScriptTransformerConfig $config,
+        TransformedCollection $types
+    ): void {
+        $types->add(new Transformed(
+            typeScriptNode: new TypeScriptAlias(
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('Collection'),
+                    [new TypeScriptIdentifier('T')],
+                ),
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('Array'),
+                    [new TypeScriptIdentifier('T')],
+                ),
+            ),
+            reference: new ClassStringReference(Collection::class),
+            location: ['Illuminate', 'Support']
+        ));
+    }
+}
+```
+
+When we register the provider as such in the configuration:
+
+```php
+$config->addProvider(new AddLaravelCollectionProvider());
+```
+
+Our transformed TypeScript will have the following type:
+
+```ts
+namespace Illuminate.Support {
+    export type Collection<T> = Array<T>;
+}
+```
+
+When referencing a Laravel collection in one of our PHP classes like this:
+
+```php
+class Data 
+{
+    /** @var Collection<string>  */
+    public Collection $collection;
+}
+```
+
+The transformed TypeScript will look like this:
+
+```ts
+export type Data = {
+    collection: Illuminate.Support.Collection<string>;
+}
+```
+
+## Referencing types
+
+Types sometimes reference other types like PHP classes referencing other PHP classes. Within the package a concept of
+references is used to link these types together.
+
+When creating `Transformed` objects we've always used the `ClassStringReference` since we were referencing PHP classes,
+sometimes you might be transforming something which is not a PHP class for example a list of strings. In this case, you
+can use a `CustomReference`:
+
+```php
+use Spatie\TypeScriptTransformer\References\CustomReference;
+
+new Transformed(
+    typeScriptNode: new TypeScriptAlias(
+        new TypeScriptIdentifier('Type'),
+        new TypeScriptUnion([new TypeScriptLiteral('PHP'), new TypeScriptLiteral('TypeScript')]),
+    ),
+    reference: new CustomReference('my_languages_package', 'some_languages'),
+    location: ['App', 'Languages'],
+);
+```
+
+A custom reference should be unique for each type, that's why it is built up from a group and a name. We advise you when
+creating a package (or if you're implementing a feature within your app) to choose a custom group name in order not to
+conflict with other packages.
+
+In the end the transformed TypeScript will look like this:
+
+```ts
+namespace App.Languages {
+    export type Type = 'PHP' | 'TypeScript';
+}
+```
+
+It is possible to reference this type in another `Transformed` object:
+
+```php
+new Transformed(
+    typeScriptNode: new TypeScriptAlias(
+        new TypeScriptIdentifier('Compiler'),
+        new TypeScriptObject([
+            new TypeScriptProperty('type', new CustomTypeReference('my_languages_package', 'some_languages')),
+        ]),
+    ),
+    reference: new ClassStringReference(Compiler::class),
+    location: ['App', 'Compilers'],
+);
+```
+
+The transformed TypeScript now will look like this:
+
+```ts
+namespace App.Compilers {
+    export type Compiler = {
+        type: App.Languages.Type;
+    };
+}
+```
+
+Since we're using the same reference, the package is smart enough to link them together when transforming to TypeScript.
+
+Off course, you can also reference PHP classes in the same way:
+
+```php
+new Transformed(
+    typeScriptNode: new TypeScriptAlias(
+        new TypeScriptIdentifier('Post'),
+        new TypeScriptObject([
+            new TypeScriptProperty('publisher', new TypeScriptReference(new ClassStringReference(User::class))),
+        ]),
+    ),
+    reference: new ClassStringReference(User::class),
+    location: ['App', 'Models'],
+);
+```
+
 ## Formatting TypeScript
+
+The package tries to format the transformed TypeScript as good as possible, but sometimes this could be far from
+perfect. That's why it is possible to automatically format the TypeScript code after transforming.
+
+By default, the package has support for two formatters:
+
+- `PrettierFormatter`: Formats the TypeScript code using Prettier
+- `EslintFormatter`: Formats the TypeScript code using ESLint
+
+You can add a formatter to the configuration like this:
+
+```php
+use Spatie\TypeScriptTransformer\Formatters\PrettierFormatter;
+
+$config->formatter(new PrettierFormatter());
+```
+
+It is possible to create your own formatter by implementing the `Formatter` interface:
+
+```php
+interface Formatter
+{
+    public function format(array $files): void;
+}
+```
+
+The `$files` array contains the TypeScript files that need to be formatted, you can format them in any way you like.
 
 ## Laravel
 
@@ -796,13 +999,146 @@ protected function classPropertyProcessors(): array
 
 ## Advanced concepts
 
-### Building your own Writer
-
-### Building your own Formatter
+The package is highly configurable and can be extended in many ways, let's take a look at some advanced concepts.
 
 ### Building your own TypeScript node
 
+The package comes with a lot of TypeScript nodes, but sometimes it might be necessary to build your own.
+
+A TypeScript node is a regular PHP class that implements the `TypeScriptNode` interface:
+
+```php
+use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNamedNode;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+
+class PickNode implements TypeScriptNode, TypeScriptNamedNode
+{
+    public function __construct(
+        private TypeScriptNode $type,
+        private array $properties,
+    ) {}
+
+    public function write(WritingContext $context): string
+    {
+        return 'Pick<' . $this->type->write($context) . ', ' . implode(' | ', $this->properties) . '>';
+    }
+    
+    public function getName(): string
+    {
+        return 'Pick';
+    }
+}
+```
+
+The write method is responsible for transforming the TypeScript node to a string, the `WritingContext` object is passed
+to
+lower level TypeScript nodes to reference other TypeScript types and can generally be ignored.
+
+Some TypeScript nodes represent a type with a name like an interface, enum, ... these nodes should implement
+the `TypeScriptNamedNode` interface. The `getName` method should return the name of the TypeScript node so that it can
+be referenced by other TypeScript nodes.
+
+When you've got a node which itself contains another TypeScript node that can be a `TypeScriptNamedNode` we recommend
+you to implement `TypeScriptForwardingNamedNode`. This interface requires you to implement the `getForwardedNamedNode`
+method which should return the TypeScript node that either is another `TypeScriptForwardingNamedNode`
+or `TypeScriptNamedNode`. An example of such a node is the `TypeScriptAlias`:
+
+```php
+class TypeScriptAlias implements TypeScriptForwardingNamedNode, TypeScriptNode
+{
+    public function __construct(
+        public TypeScriptIdentifier|TypeScriptGeneric $identifier,
+        public TypeScriptNode $type,
+    ) {
+    }
+
+    public function write(WritingContext $context): string
+    {
+        return "type {$this->identifier->write($context)} = {$this->type->write($context)};";
+    }
+
+    public function getForwardedNamedNode(): TypeScriptNamedNode|TypeScriptForwardingNamedNode
+    {
+        return $this->identifier;
+    }
+}
+```
+
+Lastly, the package also provides some tooling to visit a tree of all TypeScript nodes, when your custom node is
+encapsulating other TypeScript nodes you should implement the `TypeScriptVisitableNode` interface which requires you to
+implement the visitorProfile method.
+
+The `visitorProfile` method should return a `VisitorProfile` object which contains information about the properties
+of your TypeScript node PHP class that can be visited. We extinguish two types of properties: single nodes properties
+containing a single node and iterable properties containing a set of properties.
+
+The `TypeScriptGeneric` node is an excellent example:
+
+```php
+class TypeScriptGeneric implements TypeScriptForwardingNamedNode, TypeScriptNode, TypeScriptVisitableNode
+{
+    /**
+     * @param  array<TypeScriptNode>  $genericTypes
+     */
+    public function __construct(
+        public TypeScriptIdentifier|TypeReference $type,
+        public array $genericTypes,
+    ) {
+    }
+
+    public function visitorProfile(): VisitorProfile
+    {
+        return VisitorProfile::create()->single('type')->iterable('genericTypes');
+    }
+
+    // ....
+}
+```
+
 ### Visiting TypeScript nodes
+
+### Building your own Writer
+
+Writers are responsible for writing out the TypeScript types, the package comes with three writers:
+
+- `NamespaceWriter`: Writes all types to a single TypeScript file with namespaces
+- `ModuleWriter`: Writes all types to a file per namespace
+- `FlatWriter`: Writes all types to a single TypeScript file without namespaces
+
+It is possible to create your own writer by implementing the `Writer` interface:
+
+```php
+use Spatie\TypeScriptTransformer\Support\WriteableFile;
+
+interface Writer
+{
+    /** @return array<WriteableFile> */
+    public function write(
+        TransformedCollection $collection,
+        ReferenceMap $referenceMap,
+    ): void;
+}
+```
+
+In the end the `write` method should return an array of `WriteableFile` objects, these objects contain the TypeScript
+code and the location where it should be written to.
+
+In the writer you should loop over each `Transformed` object in the collection, decide in which file it should be stored
+and transform the TypeScript node to a string:
+
+```php
+foreach ($collection as $transformed) {
+    $output .= $transformed->prepareForWrite()->write($writingContext) . PHP_EOL;
+}
+```
+
+The `prepareForWrite` method will make sure that a TypeScript node is exported when required. The `write` method will
+transform the TypeScript node to a string and requires a `WritingContext` object with information about the writing
+context.
+
+For now the `WritingContext` consists of a Closure returning a string referencing other TypeScript types. We recommend
+you to take a look at the `FlatWriter` to see how this is implemented.
 
 ## Testing
 

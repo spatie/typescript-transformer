@@ -5,8 +5,8 @@ namespace Spatie\TypeScriptTransformer\Transformed;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExportableNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptForwardingExportableNode;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptForwardingNamedNode;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNamedNode;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
 
 class Transformed
@@ -32,18 +32,18 @@ class Transformed
             return $this->name;
         }
 
-        if ($this->typeScriptNode instanceof TypeScriptExportableNode) {
-            return $this->name = $this->typeScriptNode->getExportedName();
+        if ($this->typeScriptNode instanceof TypeScriptNamedNode) {
+            return $this->name = $this->typeScriptNode->getName();
         }
 
-        if ($this->typeScriptNode instanceof TypeScriptForwardingExportableNode) {
+        if ($this->typeScriptNode instanceof TypeScriptForwardingNamedNode) {
             $exportableNode = $this->typeScriptNode;
 
-            while ($exportableNode instanceof TypeScriptForwardingExportableNode) {
-                $exportableNode = $exportableNode->getForwardedExportableNode();
+            while ($exportableNode instanceof TypeScriptForwardingNamedNode) {
+                $exportableNode = $exportableNode->getForwardedNamedNode();
             }
 
-            return $this->name = $exportableNode->getExportedName();
+            return $this->name = $exportableNode->getName();
         }
 
         return null;
@@ -62,7 +62,7 @@ class Transformed
             return $this->typeScriptNode;
         }
 
-        if (! $this->typeScriptNode instanceof TypeScriptExportableNode && ! $this->typeScriptNode instanceof TypeScriptForwardingExportableNode) {
+        if (! $this->typeScriptNode instanceof TypeScriptNamedNode && ! $this->typeScriptNode instanceof TypeScriptForwardingNamedNode) {
             TypeScriptTransformerLog::resolve()->warning("Could not export `{$this->reference->humanFriendlyName()}` because it is not exportable");
 
             return $this->typeScriptNode;

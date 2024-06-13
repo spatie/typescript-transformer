@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptEnum implements TypeScriptExportableNode, TypeScriptNode
+class TypeScriptEnum implements TypeScriptNamedNode, TypeScriptNode
 {
     /**
      * @param string $name
@@ -37,7 +37,7 @@ class TypeScriptEnum implements TypeScriptExportableNode, TypeScriptNode
         return $output;
     }
 
-    public function getExportedName(): string
+    public function getName(): string
     {
         return $this->name;
     }

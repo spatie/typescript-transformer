@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
-class TypeReference implements TypeScriptExportableNode, TypeScriptNode
+class TypeReference implements TypeScriptNamedNode, TypeScriptNode
 {
     public static function referencingPhpClass(string $class): self
     {
@@ -34,7 +34,7 @@ class TypeReference implements TypeScriptExportableNode, TypeScriptNode
         return ($context->referenceWriter)($this->reference);
     }
 
-    public function getExportedName(): string
+    public function getName(): string
     {
         return $this->referenced->getName();
     }

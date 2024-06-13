@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\TypeScript;
 use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class TypeScriptInterface implements TypeScriptForwardingExportableNode, TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptInterface implements TypeScriptForwardingNamedNode, TypeScriptNode, TypeScriptVisitableNode
 {
     /**
      * @param  array<TypeScriptProperty>  $properties
@@ -39,7 +39,7 @@ class TypeScriptInterface implements TypeScriptForwardingExportableNode, TypeScr
             ->iterable('methods');
     }
 
-    public function getForwardedExportableNode(): TypeScriptExportableNode|TypeScriptForwardingExportableNode
+    public function getForwardedNamedNode(): TypeScriptNamedNode|TypeScriptForwardingNamedNode
     {
         return $this->name;
     }

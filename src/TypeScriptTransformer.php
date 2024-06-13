@@ -38,14 +38,17 @@ class TypeScriptTransformer
 
     public function execute(bool $watch = false): void
     {
-        // Parallelize
-        // - discovering types
-        // - transforming types
-
-        // Cant't do parallel
-        // - replace type references
-
-        // watch -> only reload when the config changes (difficult, maybe skip for now)
+        /**
+         * TODO:
+         * - Add interface implementation + tests
+         * - Split off Laravel specific code and test
+         * - Split off data specific code and test
+         * - Add support for watching files
+         * - Further write docs + check them
+         * - Check old Laravel tests if we missed something
+         * - Check in Flare whether everything is working as expected
+         * - Release
+         */
 
         /**
          * Watch implementation
@@ -58,12 +61,6 @@ class TypeScriptTransformer
          *  - Rewrite the file (partially)
          */
 
-        /**
-         * Notes after knowledge sharing
-         * - Split Laravel part again?
-         * - Make it possible to hijack the PHPStan types, or some way to rename a Laravel Collection to an array? Would be easier
-         * - When generating routes where we have the full namespace, prepend with ., check Laravel Echo for this
-         */
         $transformedCollection = $this->provideTypesAction->execute();
 
         if (! empty($this->config->providedVisitorClosures)) {
