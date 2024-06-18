@@ -29,7 +29,7 @@ Each property of the DTO will be checked: does it have a PHP type and/or does it
 A good example of a type processor is the `ReplaceDefaultsTypeProcessor`. This one will replace some default types you can define in the configuration with a TypeScript representation. For example transforming `DateTime` or `Carbon` types to `string`.
 
 DTO's often have properties that contain other DTO's, or even other custom types. This is why we'll also keep track of the missing symbols when transforming a DTO.
-Let's say your DTO has a property that contains another DTO. At the moment of transformation, the package will not know how that other DTO should be transformed. We'll temporarily use a missing symbol that can be replaced by a reference to the correcty DTO type later.
+Let's say your DTO has a property that contains another DTO. At the moment of transformation, the package will not know how that other DTO should be transformed. We'll temporarily use a missing symbol that can be replaced by a reference to the correct DTO type later.
 
 ## Step 3: Replacing missing symbols
 

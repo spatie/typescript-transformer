@@ -114,7 +114,7 @@ It is possible to directly represent a type as TypeScript within your PHP code:
 class CustomString{}
 ```
 
-Now when `Language` is being transformed, the TypeScript respresentation is used:
+Now when `Language` is being transformed, the TypeScript representation is used:
 
 ```tsx
 export type CustomString = string | null;
