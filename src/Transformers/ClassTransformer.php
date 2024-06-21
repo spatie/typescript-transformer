@@ -10,6 +10,7 @@ use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNode
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptTypeAttributeContract;
+use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
@@ -61,7 +62,9 @@ abstract class ClassTransformer implements Transformer
     /** @return array<ClassPropertyProcessor> */
     protected function classPropertyProcessors(): array
     {
-        return [];
+        return [
+            new FixArrayLikeStructuresClassPropertyProcessor(),
+        ];
     }
 
     protected function getTypeScriptNode(

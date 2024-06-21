@@ -80,7 +80,10 @@ class PhpDocTypesStub extends stdClass
     public $arrayGeneric;
 
     /** @var array<int, string> */
-    public $arrayGenericWithKey;
+    public $arrayGenericWithIntKey;
+
+    /** @var array<string, string> */
+    public $arrayGenericWithStringKey;
 
     /** @var array<array-key, string> */
     public $arrayGenericWithArrayKey;
@@ -88,7 +91,7 @@ class PhpDocTypesStub extends stdClass
     /** @var string[] */
     public $typeArray;
 
-    /** @var array<int, array<string>> */
+    /** @var array<string, array<string>> */
     public $nestedArray;
 
     /** @var array{a: int, 'b': int, "c": int, d?: int} */

@@ -128,6 +128,9 @@ class TypeScriptTransformerServiceProvider extends BaseTypeScriptTransformerServ
 }
 ```
 
+And it will also register the service provider in your `bootstrap/providers.php` file (when running Laravel 11 or
+above). Or in your `config/app.php` file when running Laravel 10 or below.
+
 Now you can transform types as such:
 
 ```bash
@@ -995,7 +998,7 @@ The `$files` array contains the TypeScript files that need to be formatted, you 
 
 ### Getting routes as TypeScript
 
-## Live updates
+## Watching changes and live updating TypeScript
 
 ## Advanced concepts
 
@@ -1182,7 +1185,7 @@ Visitor::create()
 ### Hooking into TypeScript transformer
 
 Every time the TypeScript transformer is executed, it will go through a series of steps, it is possible to run a visitor
-in between some of these steps. 
+in between some of these steps.
 
 The steps look as following:
 

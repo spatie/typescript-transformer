@@ -19,31 +19,51 @@ class InstallTypeScriptTransformerCommand extends Command
         $this->comment('Publishing TypeScript Transformer Service Provider...');
         $this->callSilent('vendor:publish', ['--tag' => 'typescript-transformer-provider']);
 
-        $this->registerTypescriptTransformerServiceProvider();
-
-        $this->info('TypeScript Transformer scaffolding installed successfully.');
-    }
-
-    protected function registerTypescriptTransformerServiceProvider(): void
-    {
         $namespace = Str::replaceLast('\\', '', $this->laravel->getNamespace());
 
-        $appConfig = file_get_contents(config_path('app.php'));
+        $this->installServiceProvider($namespace);
+        $this->registerServiceProvider($namespace);
+    }
 
-        if (Str::contains($appConfig, $namespace.'\\Providers\\TypeScriptTransformerServiceProvider::class')) {
+    protected function installServiceProvider(string $namespace): void
+    {
+        $serviceProviderPath = app_path('Providers/TypeScriptTransformerServiceProvider.php');
+
+        if (file_exists($serviceProviderPath)) {
+            $this->info('TypeScript Transformer Service Provider already installed.');
+
             return;
         }
 
-        file_put_contents(config_path('app.php'), str_replace(
-            "{$namespace}\\Providers\RouteServiceProvider::class,".PHP_EOL,
-            "{$namespace}\\Providers\RouteServiceProvider::class,".PHP_EOL.PHP_EOL."{$namespace}\Providers\TypeScriptTransformerServiceProvider::class,".PHP_EOL,
+        file_put_contents($serviceProviderPath, str_replace(
+            "namespace App\Providers;",
+            "namespace {$namespace}\Providers;",
+            file_get_contents($serviceProviderPath)
+        ));
+
+        $this->info('TypeScript Transformer Service Provider installed.');
+    }
+
+    protected function registerServiceProvider(string $namespace): void
+    {
+        $configFile = version_compare($this->laravel->version(), '11.0.0', '>=') ?
+            base_path('bootstrap/providers.php') :
+            config_path('app.php');
+
+        $appConfig = file_get_contents($configFile);
+
+        if (Str::contains($appConfig, $namespace.'\\Providers\\TypeScriptTransformerServiceProvider::class')) {
+            $this->info('TypeScript Transformer Service Provider already registered.');
+
+            return;
+        }
+
+        file_put_contents($configFile, str_replace(
+            "{$namespace}\\Providers\AppServiceProvider::class,".PHP_EOL,
+            "{$namespace}\\Providers\AppServiceProvider::class,".PHP_EOL."    {$namespace}\Providers\TypeScriptTransformerServiceProvider::class,".PHP_EOL,
             $appConfig
         ));
 
-        file_put_contents(app_path('Providers/TypeScriptTransformerServiceProvider.php'), str_replace(
-            "namespace App\Providers;",
-            "namespace {$namespace}\Providers;",
-            file_get_contents(app_path('Providers/TypeScriptTransformerServiceProvider.php'))
-        ));
+        $this->info('TypeScript Transformer Service Provider registered.');
     }
 }

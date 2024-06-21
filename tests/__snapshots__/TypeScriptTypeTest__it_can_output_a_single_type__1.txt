@@ -3,5 +3,5 @@ path: string
 contents: string
 };
 export type TestSingleTypeScriptTypeAttribute = {
-property: Record<number, WriteableFile>
+property: [WriteableFile]
 };

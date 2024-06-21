@@ -101,7 +101,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             return new TypeScriptObject([]);
         }
 
-        if($node->name === 'array-key') {
+        if ($node->name === 'array-key') {
             return new TypeScriptUnion([
                 new TypeScriptString(),
                 new TypeScriptNumber(),
@@ -112,7 +112,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             return new TypeReference(new ClassStringReference($node->name));
         }
 
-        if($reflectionClass === null) {
+        if ($reflectionClass === null) {
             return new TypeScriptUnknown();
         }
 
@@ -132,8 +132,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         ArrayTypeNode $node,
         ?ReflectionClass $reflectionClass
     ): TypeScriptNode {
-        return new TypeScriptGeneric(
-            new TypeScriptIdentifier('Array'),
+        return new TypeScriptArray(
             [$this->execute($node->type, $reflectionClass)]
         );
     }
@@ -195,22 +194,8 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         GenericTypeNode $node,
         ?ReflectionClass $reflectionClass
     ): TypeScriptNode {
-        if ($node->type->name === 'array') {
-            return match (count($node->genericTypes)) {
-                0 => new TypeScriptArray([]),
-                1 => new TypeScriptGeneric(
-                    new TypeScriptIdentifier('Array'),
-                    [$this->execute($node->genericTypes[0], $reflectionClass)]
-                ),
-                2 => new TypeScriptGeneric(
-                    new TypeScriptIdentifier('Record'),
-                    [
-                        $this->execute($node->genericTypes[0], $reflectionClass),
-                        $this->execute($node->genericTypes[1], $reflectionClass),
-                    ]
-                ),
-                default => throw new Exception('Invalid number of generic types for array'),
-            };
+        if ($node->type->name === 'array' || $node->type->name === 'Array') {
+            return $this->genericArrayNode($node, $reflectionClass);
         }
 
         $type = $this->execute($node->type, $reflectionClass);
@@ -225,6 +210,35 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
                 fn (TypeNode $type) => $this->execute($type, $reflectionClass),
                 $node->genericTypes
             )
+        );
+    }
+
+    private function genericArrayNode(GenericTypeNode $node, ?ReflectionClass $reflectionClass): TypeScriptGeneric|TypeScriptArray
+    {
+        $genericTypes = count($node->genericTypes);
+
+        if ($genericTypes === 0) {
+            return new TypeScriptArray([]);
+        }
+
+        if ($genericTypes === 1) {
+            return new TypeScriptArray([$this->execute($node->genericTypes[0], $reflectionClass)]);
+        }
+
+        if ($genericTypes > 2) {
+            throw new Exception('Invalid number of generic types for array');
+        }
+
+        $key = $this->execute($node->genericTypes[0], $reflectionClass);
+        $value = $this->execute($node->genericTypes[1], $reflectionClass);
+
+        if ($key instanceof TypeScriptNumber) {
+            return new TypeScriptArray([$value]);
+        }
+
+        return new TypeScriptGeneric(
+            new TypeScriptIdentifier('Record'),
+            [$key, $value,]
         );
     }
 }
