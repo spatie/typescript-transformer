@@ -40,13 +40,13 @@ class TypeScriptTransformer
     {
         /**
          * TODO:
-         * - Add interface implementation + tests
+         * - Add interface implementation + tests -> OK
          * - Split off Laravel specific code and test
          * - Split off data specific code and test
          * - Add support for watching files
-         * - Further write docs + check them
+         * - Further write docs + check them -> only Laravel specific stuff
          * - Check old Laravel tests if we missed something
-         * - Check in Flare whether everything is working as expected
+         * - Check in Flare whether everything is working as expected -> PR ready, needs fixing TS
          * - Release
          */
 

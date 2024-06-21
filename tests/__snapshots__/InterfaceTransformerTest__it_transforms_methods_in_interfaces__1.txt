@@ -1,0 +1,8 @@
+export interface SimpleInterface {
+withoutParametersAndReturnType(): void;
+withReturnType(): string;
+withAnnotatedReturnType(): [string];
+withParameters(param1: string, param2: number): void;
+withOptionalParameters(param1: string, param2?: number): void;
+withAnnotatedParameters(param1: [string], param2: [boolean]): void;
+}

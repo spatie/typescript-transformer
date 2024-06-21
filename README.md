@@ -9,7 +9,7 @@ This package allows you to convert PHP classes to TypeScript.
 This class...
 
 ```php
-/** @typescript */
+#[TypeScript]
 class User
 {
     public int $id;
@@ -31,10 +31,10 @@ export type User = {
 Here's another example.
 
 ```php
-class Languages extends Enum
+enum Languages: string
 {
-    const TYPESCRIPT = 'typescript';
-    const PHP = 'php';
+    case TYPESCRIPT = 'typescript';
+    case PHP = 'php';
 }
 ```
 

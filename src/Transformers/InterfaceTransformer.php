@@ -2,25 +2,26 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use ReflectionClass;
 use ReflectionMethod;
-use ReflectionProperty;
+use ReflectionParameter;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
-use Spatie\TypeScriptTransformer\Attributes\Hidden;
-use Spatie\TypeScriptTransformer\Attributes\Optional;
-use Spatie\TypeScriptTransformer\Attributes\TypeScriptTypeAttributeContract;
 use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
+use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedMethod;
+use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedNameAndType;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptInterface;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptInterfaceMethod;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptParameter;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptVoid;
 
 abstract class InterfaceTransformer implements Transformer
 {
@@ -33,7 +34,7 @@ abstract class InterfaceTransformer implements Transformer
 
     public function transform(ReflectionClass $reflectionClass, TransformationContext $context): Transformed|Untransformable
     {
-        if ($reflectionClass->isEnum()) {
+        if (! $reflectionClass->isInterface()) {
             return Untransformable::create();
         }
 
@@ -41,11 +42,14 @@ abstract class InterfaceTransformer implements Transformer
             return Untransformable::create();
         }
 
+        $node = new TypeScriptInterface(
+            new TypeScriptIdentifier($context->name),
+            $this->getProperties($reflectionClass, $context),
+            $this->getMethods($reflectionClass, $context)
+        );
+
         return new Transformed(
-            new TypeScriptAlias(
-                new TypeScriptIdentifier($context->name),
-                $this->getTypeScriptNode($reflectionClass, $context)
-            ),
+            $node,
             new ReflectionClassReference($reflectionClass),
             $context->nameSpaceSegments,
             true,
@@ -54,173 +58,96 @@ abstract class InterfaceTransformer implements Transformer
 
     abstract protected function shouldTransform(ReflectionClass $reflection): bool;
 
-    protected function getTypeScriptNode(
+    /** @return TypeScriptInterfaceMethod[] */
+    protected function getMethods(
         ReflectionClass $reflectionClass,
         TransformationContext $context,
-    ): TypeScriptNode {
-        if ($resolvedAttributeType = $this->resolveTypeByAttribute($reflectionClass)) {
-            return $resolvedAttributeType;
+    ): array {
+        $methods = [];
+
+        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
+            $methods[] = $this->getTypeScriptMethod($reflectionClass, $reflectionMethod, $context);
         }
 
-        $constructorAnnotations = $reflectionClass->hasMethod('__construct')
-            ? $this->docTypeResolver->method($reflectionClass->getMethod('__construct'))?->parameters ?? []
-            : [];
-
-        $properties = [];
-
-        foreach ($this->getMethods($reflectionClass) as $reflectionMethod) {
-            $property = $this->createProperty(
-                $reflectionClass,
-                $reflectionMethod,
-                $annotation?->type,
-                $context
-            );
-
-            if ($property === null) {
-                continue;
-            }
-
-            $property = $this->runClassPropertyProcessors(
-                $reflectionMethod,
-                $annotation?->type,
-                $property
-            );
-
-            if ($property !== null) {
-                $properties[] = $property;
-            }
-        }
-
-        return new Type($properties);
+        return $methods;
     }
 
-    protected function resolveTypeByAttribute(
+    /** @return TypeScriptProperty[] */
+    protected function getProperties(
         ReflectionClass $reflectionClass,
-        ?ReflectionProperty $property = null,
-    ): ?TypeScriptNode {
-        $subject = $property ?? $reflectionClass;
-
-        foreach ($subject->getAttributes() as $attribute) {
-            if (is_a($attribute->getName(), TypeScriptTypeAttributeContract::class, true)) {
-                /** @var TypeScriptTypeAttributeContract $attributeInstance */
-                $attributeInstance = $attribute->newInstance();
-
-                return $attributeInstance->getType($reflectionClass);
-            }
-        }
-
-        return null;
-    }
-
-    protected function getMethods(ReflectionClass $reflection): array
-    {
-        return array_filter(
-            $reflection->getMethods(),
-            fn (ReflectionMethod $method) => ! $method->isStatic()
-        );
-    }
-
-    protected function createProperty(
-        ReflectionClass $reflectionClass,
-        ReflectionProperty $reflectionProperty,
-        ?TypeNode $annotation,
         TransformationContext $context,
-    ): ?TypeScriptProperty {
-        $type = $this->resolveTypeForProperty(
-            $reflectionClass,
-            $reflectionProperty,
-            $annotation
-        );
-
-        $property = new TypeScriptProperty(
-            $reflectionProperty->getName(),
-            $type,
-            $this->isPropertyOptional(
-                $reflectionProperty,
-                $reflectionClass,
-                $type,
-                $context
-            ),
-            $this->isPropertyReadonly(
-                $reflectionProperty,
-                $reflectionClass,
-                $type,
-            )
-        );
-
-        if ($this->isPropertyHidden($reflectionProperty, $reflectionClass, $property)) {
-            return null;
-        }
-
-        return $property;
+    ): array {
+        return [];
     }
 
-    protected function resolveTypeForProperty(
+    protected function getTypeScriptMethod(
         ReflectionClass $reflectionClass,
-        ReflectionProperty $reflectionProperty,
-        ?TypeNode $annotation,
-    ): TypeScriptNode {
-        if ($resolvedAttributeType = $this->resolveTypeByAttribute($reflectionClass, $reflectionProperty)) {
-            return $resolvedAttributeType;
-        }
+        ReflectionMethod $reflectionMethod,
+        TransformationContext $context,
+    ): TypeScriptInterfaceMethod {
+        $annotation = $this->docTypeResolver->method($reflectionMethod);
 
-        if ($annotation) {
+        return new TypeScriptInterfaceMethod(
+            $reflectionMethod->getName(),
+            array_map(fn (ReflectionParameter $parameter) => $this->resolveMethodParameterType(
+                $reflectionClass,
+                $reflectionMethod,
+                $parameter,
+                $context,
+                $annotation->parameters[$parameter->getName()] ?? null
+            ), $reflectionMethod->getParameters()),
+            $this->resolveMethodReturnType($reflectionClass, $reflectionMethod, $context, $annotation)
+        );
+    }
+
+    protected function resolveMethodReturnType(
+        ReflectionClass $reflectionClass,
+        ReflectionMethod $reflectionMethod,
+        TransformationContext $context,
+        ?ParsedMethod $annotation
+    ): TypeScriptNode {
+        if ($annotation->returnType) {
             return $this->transpilePhpStanTypeToTypeScriptTypeAction->execute(
-                $annotation,
-                $reflectionClass,
-            );
-        }
-
-        if ($reflectionProperty->hasType()) {
-            return $this->transpileReflectionTypeToTypeScriptTypeAction->execute(
-                $reflectionProperty->getType(),
+                $annotation->returnType,
                 $reflectionClass
             );
         }
 
-        return new TypeScriptUnknown();
-    }
+        $reflectionType = $reflectionMethod->getReturnType();
 
-    protected function isPropertyOptional(
-        ReflectionProperty $reflectionProperty,
-        ReflectionClass $reflectionClass,
-        TypeScriptNode $type,
-        TransformationContext $context,
-    ): bool {
-        return $context->optional || count($reflectionProperty->getAttributes(Optional::class)) > 0;
-    }
-
-    protected function isPropertyReadonly(
-        ReflectionProperty $reflectionProperty,
-        ReflectionClass $reflectionClass,
-        TypeScriptNode $type,
-    ): bool {
-        return $reflectionProperty->isReadOnly() || $reflectionClass->isReadOnly();
-    }
-
-    protected function isPropertyHidden(
-        ReflectionProperty $reflectionProperty,
-        ReflectionClass $reflectionClass,
-        TypeScriptProperty $property,
-    ): bool {
-        return count($reflectionProperty->getAttributes(Hidden::class)) > 0;
-    }
-
-    protected function runClassPropertyProcessors(
-        ReflectionProperty $reflectionProperty,
-        ?TypeNode $annotation,
-        TypeScriptProperty $property,
-    ): ?TypeScriptProperty {
-        $processors = $this->classPropertyProcessors;
-
-        foreach ($processors as $processor) {
-            $property = $processor->execute($reflectionProperty, $annotation, $property);
-
-            if ($property === null) {
-                return null;
-            }
+        if ($reflectionType) {
+            return $this->transpileReflectionTypeToTypeScriptTypeAction->execute(
+                $reflectionType,
+                $reflectionClass
+            );
         }
 
-        return $property;
+        return new TypeScriptVoid();
+    }
+
+    protected function resolveMethodParameterType(
+        ReflectionClass $reflectionClass,
+        ReflectionMethod $reflectionMethod,
+        ReflectionParameter $reflectionParameter,
+        TransformationContext $context,
+        ?ParsedNameAndType $annotation,
+    ): TypeScriptParameter {
+        $type = match (true) {
+            $annotation !== null => $this->transpilePhpStanTypeToTypeScriptTypeAction->execute(
+                $annotation->type,
+                $reflectionClass
+            ),
+            $reflectionParameter->hasType() => $this->transpileReflectionTypeToTypeScriptTypeAction->execute(
+                $reflectionParameter->getType(),
+                $reflectionClass
+            ),
+            default => new TypeScriptUnknown(),
+        };
+
+        return new TypeScriptParameter(
+            $reflectionParameter->getName(),
+            $type,
+            $reflectionParameter->isOptional()
+        );
     }
 }

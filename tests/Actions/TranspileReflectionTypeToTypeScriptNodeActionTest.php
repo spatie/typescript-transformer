@@ -17,6 +17,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptVoid;
 
 it('can transpile php types', function (
     string $property,
@@ -137,4 +138,15 @@ it('can transpile php types', function (
         'reference',
         new TypeReference(new ClassStringReference(Collection::class)),
     ];
+});
+
+it('can transpile a void return type', function () {
+    $transpiler = new TranspileReflectionTypeToTypeScriptNodeAction();
+
+    $typeScriptNode = $transpiler->execute(
+        (new ReflectionMethod(PhpTypesStub::class, 'voidReturn'))->getReturnType(),
+        new ReflectionClass(PhpTypesStub::class)
+    );
+
+    expect($typeScriptNode)->toBeInstanceOf(TypeScriptVoid::class);
 });

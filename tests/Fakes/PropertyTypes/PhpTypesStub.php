@@ -43,4 +43,9 @@ class PhpTypesStub extends stdClass
     public array $array;
 
     public Collection $reference;
+
+    public function voidReturn(): void
+    {
+
+    }
 }

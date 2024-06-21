@@ -21,6 +21,7 @@ use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUndefined;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
+use Spatie\TypeScriptTransformer\TypeScript\TypeScriptVoid;
 
 class TranspileReflectionTypeToTypeScriptNodeAction
 {
@@ -96,6 +97,10 @@ class TranspileReflectionTypeToTypeScriptNodeAction
 
         if ($type->getName() === 'object') {
             return new TypeScriptObject([]);
+        }
+
+        if ($type->getName() === 'void') {
+            return new TypeScriptVoid();
         }
 
         if (class_exists($type->getName()) || interface_exists($type->getName())) {

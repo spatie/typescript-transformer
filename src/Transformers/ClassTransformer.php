@@ -38,7 +38,7 @@ abstract class ClassTransformer implements Transformer
 
     public function transform(ReflectionClass $reflectionClass, TransformationContext $context): Transformed|Untransformable
     {
-        if ($reflectionClass->isEnum()) {
+        if ($reflectionClass->isEnum() || $reflectionClass->isInterface()) {
             return Untransformable::create();
         }
 

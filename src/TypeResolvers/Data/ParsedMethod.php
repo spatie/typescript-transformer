@@ -7,7 +7,7 @@ use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 class ParsedMethod
 {
     /**
-     * @param  array<ParsedNameAndType>  $parameters
+     * @param array<string,ParsedNameAndType> $parameters
      */
     public function __construct(
         public array $parameters,
