@@ -35,7 +35,7 @@ class Visitor
         Closure $closure,
         ?array $allowedNodes = null,
     ): self {
-        $this->closures[] = new VisitorClosure($closure, $allowedNodes, VisitorClosureType::Before);
+        $this->closures[] = new VisitorClosure($closure, $allowedNodes, VisitorClosureType::After);
 
         return $this;
     }

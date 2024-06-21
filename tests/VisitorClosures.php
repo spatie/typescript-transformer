@@ -21,7 +21,7 @@ it('can run visitor closures when types are provided', function () {
             ])
         )))
         ->writer($writer = new MemoryWriter())
-        ->providedVisitor(function (TypeScriptObject $reference) {
+        ->providedVisitorHook(function (TypeScriptObject $reference) {
             return VisitorOperation::replace(new TypeScriptString());
         }, [TypeScriptObject::class])
         ->get();
@@ -40,7 +40,7 @@ it('can run visitor closures when types are connected', function () {
             ])
         )))
         ->writer($writer = new MemoryWriter())
-        ->connectedVisitor(function (TypeScriptObject $reference) {
+        ->connectedVisitorHook(function (TypeScriptObject $reference) {
             return VisitorOperation::replace(new TypeScriptString());
         }, [TypeScriptObject::class])
         ->get();

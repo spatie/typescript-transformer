@@ -1032,8 +1032,7 @@ class PickNode implements TypeScriptNode, TypeScriptNamedNode
 ```
 
 The write method is responsible for transforming the TypeScript node to a string, the `WritingContext` object is passed
-to
-lower level TypeScript nodes to reference other TypeScript types and can generally be ignored.
+to lower level TypeScript nodes to reference other TypeScript types and can generally be ignored.
 
 Some TypeScript nodes represent a type with a name like an interface, enum, ... these nodes should implement
 the `TypeScriptNamedNode` interface. The `getName` method should return the name of the TypeScript node so that it can
@@ -1096,7 +1095,138 @@ class TypeScriptGeneric implements TypeScriptForwardingNamedNode, TypeScriptNode
 }
 ```
 
+It contains a single node property `type` and an iterable property `genericTypes`. From now on the package will visit
+the nodes within these properties.
+
 ### Visiting TypeScript nodes
+
+When working with TypeScript nodes in a class property processor or a custom TypeScript node, it might be necessary to
+visit and alter nodes in the tree. The `Visitor` class can be used to visit such a tree of TypeScript
+nodes.
+
+The visitor will start in a node and then traverse the tree of TypeScript nodes, it is possible to register a `before`
+and `after` callback for each node it visits. The `before` callback is called before visiting the children of a node and
+the `after` callback is called after visiting the children of a node.
+
+```php
+use Spatie\TypeScriptTransformer\Visitor\Visitor;
+
+Visitor::create()
+    ->before(function (TypeScriptNode $node){
+        echo 'Before visiting ' . $node::class . PHP_EOL;
+    })
+    ->after(function (TypeScriptNode $node) {
+        echo 'After visiting ' . $node::class . PHP_EOL;
+    })
+    ->execute($rootNode);
+```
+
+When running the visitor on the following node:
+
+```php
+$rootNode = new TypeScriptUnion([
+    new TypeScriptString(),
+    new TypeScriptNumber(),
+]);
+```
+
+The output will be (redacted for readability):
+
+```
+Before visiting TypeScriptUnion
+Before visiting TypeScriptString
+After visiting TypeScriptString
+Before visiting TypeScriptNumber
+After visiting TypeScriptNumber
+After visiting TypeScriptUnion
+```
+
+By default, the visitor will visit the tree of nodes and run the callback on each node within the tree. It is possible
+to limit the types of nodes the callback runs on:
+
+```php
+Visitor::create()
+    ->after(function (TypeScriptUnion $node, [TypeScriptUnion::class]) {
+        // Do something with TypeScriptUnion nodes
+    })
+    ->execute($rootNode);
+```
+
+When not returning a TypeScript node from the callback, the visitor will continue traversing the tree. It is possible to
+replace a node in the tree like this:
+
+```php
+use Spatie\TypeScriptTransformer\Visitor\VisitorOperation;
+
+Visitor::create()
+    ->after(function (TypeScriptUnion $node, [TypeScriptUnion::class]) {
+        if(count($node->types) === 1) {
+            return VisitorOperation::replace(array_values($node->types)[0]);
+        }  
+    })
+    ->execute($rootNode);
+```
+
+The visitor above will replace all union nodes with a single type with that type.
+
+It is also possible to remove a node from the tree:
+
+```php
+Visitor::create()
+    ->after(function (TypeScriptString $node, [TypeScriptString::class]) {
+        return VisitorOperation::remove();
+    })
+    ->execute($rootNode);
+```
+
+### Hooking into TypeScript transformer
+
+Every time the TypeScript transformer is executed, it will go through a series of steps, it is possible to run a visitor
+in between some of these steps. 
+
+The steps look as following:
+
+1. Running of the TypeProviders creating a collection of Transformed types
+2. Possible hooking point: `providedVisitorHook`
+3. Connecting references between Transformed types
+4. Possible hooking point: `connectedVisitorHook`
+5. Create a collection of WriteableFiles
+6. Write those files to disk
+7. Format the files
+
+The two hooking points above can be used to run a visitor on the collection of Transformed types:
+
+```php
+use Spatie\TypeScriptTransformer\Visitor\VisitorClosureType;
+
+$config->providedVisitorHook(
+    fn(TransformedCollection $collection) => Visitor::create()->execute($collection),
+    [TypeScriptUnion::class],
+    VisitorClosureType::Before
+);
+
+$config->connectedVisitorHook(
+    fn(TransformedCollection $collection) => Visitor::create()->execute($collection),
+    [TypeScriptUnion::class],
+    VisitorClosureType::Before
+);
+```
+
+Running visitors as an after hook is also possible:
+
+```php
+$config->providedVisitorHook(
+    fn(TransformedCollection $collection) => Visitor::create()->execute($collection),
+    [TypeScriptUnion::class],
+    VisitorClosureType::After
+);
+
+$config->connectedVisitorHook(
+    fn(TransformedCollection $collection) => Visitor::create()->execute($collection),
+    [TypeScriptUnion::class],
+    VisitorClosureType::After
+);
+```
 
 ### Building your own Writer
 

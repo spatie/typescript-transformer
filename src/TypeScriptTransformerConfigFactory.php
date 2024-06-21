@@ -111,7 +111,7 @@ class TypeScriptTransformerConfigFactory
         return $this;
     }
 
-    public function providedVisitor(
+    public function providedVisitorHook(
         VisitorClosure|Closure $visitor,
         ?array $allowedNodes = null,
         VisitorClosureType $type = VisitorClosureType::Before
@@ -125,7 +125,7 @@ class TypeScriptTransformerConfigFactory
         return $this;
     }
 
-    public function connectedVisitor(
+    public function connectedVisitorHook(
         VisitorClosure|Closure $visitor,
         ?array $allowedNodes = null,
         VisitorClosureType $type = VisitorClosureType::Before

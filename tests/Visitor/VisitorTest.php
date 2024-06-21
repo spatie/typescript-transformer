@@ -87,3 +87,30 @@ it('can replace a single node in an iterateable', function () {
     expect($visited)->toBe($unionNode);
     expect($unionNode->types)->toEqual([$stringNode, new TypeScriptBoolean()]);
 });
+
+it('will execute a before and after closure correctly', function () {
+    $rootNode = new TypeScriptUnion([
+        new TypeScriptString(),
+        new TypeScriptNumber(),
+    ]);
+
+    $order = [];
+
+    Visitor::create()
+        ->before(function (TypeScriptNode $node) use (&$order) {
+            $order[] = 'before '. $node::class;
+        })
+        ->after(function (TypeScriptNode $node) use (&$order) {
+            $order[] = 'after '. $node::class;
+        })
+        ->execute($rootNode);
+
+    expect($order)->toEqual([
+        'before '. TypeScriptUnion::class,
+        'before '. TypeScriptString::class,
+        'after '. TypeScriptString::class,
+        'before '. TypeScriptNumber::class,
+        'after '. TypeScriptNumber::class,
+        'after '. TypeScriptUnion::class,
+    ]);
+});
