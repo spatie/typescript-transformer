@@ -12,12 +12,12 @@ abstract class TypeScriptTransformerApplicationServiceProvider extends ServicePr
 
     public function register(): void
     {
-        $builder = new TypeScriptTransformerConfigFactory();
+        $this->app->singleton(TypeScriptTransformerConfig::class, function () {
+            $builder = new TypeScriptTransformerConfigFactory();
 
-        $this->configure($builder);
+            $this->configure($builder);
 
-        $config = $builder->get();
-
-        $this->app->singleton(TypeScriptTransformerConfig::class, fn () => $config);
+            return $builder->get();
+        });
     }
 }

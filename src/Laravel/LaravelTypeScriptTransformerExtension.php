@@ -3,9 +3,9 @@
 namespace Spatie\TypeScriptTransformer\Laravel;
 
 use Carbon\CarbonInterface;
-use Illuminate\Support\Collection;
+use Spatie\TypeScriptTransformer\Laravel\Transformers\LaravelAttributedClassTransformer;
 use Spatie\TypeScriptTransformer\Support\Extensions\TypeScriptTransformerExtension;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\Transformers\AttributedClassTransformer;
 use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 
@@ -14,8 +14,11 @@ class LaravelTypeScriptTransformerExtension implements TypeScriptTransformerExte
     public function enrich(TypeScriptTransformerConfigFactory $factory): void
     {
         $factory
+            ->replaceTransformer(
+                AttributedClassTransformer::class,
+                LaravelAttributedClassTransformer::class
+            )
             ->typesProvider(LaravelTypesProvider::class)
-            ->replaceType(Collection::class, new TypeScriptIdentifier('Array'))
             ->replaceType(CarbonInterface::class, new TypeScriptString());
     }
 }

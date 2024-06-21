@@ -2,10 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel;
 
+use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorInterface;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
@@ -27,51 +27,11 @@ class LaravelTypesProvider implements TypesProvider
 {
     public function provide(TypeScriptTransformerConfig $config, TransformedCollection $types): void
     {
-        /** @todo We should only keep these types if they are referenced otherwise they arent't required to be transformed */
-        /** @todo writing types in phpdoc syntax would be a lot easier here */
         $types->add(
-            $this->collection(),
-            $this->eloquentCollection(),
             $this->lengthAwarePaginator(),
             $this->lengthAwarePaginatorInterface(),
-        );
-    }
-
-    protected function collection(): Transformed
-    {
-        return new Transformed(
-            new TypeScriptAlias(
-                new TypeScriptGeneric(
-                    new TypeScriptIdentifier('Collection'),
-                    [new TypeScriptIdentifier('T')],
-                ),
-                new TypeScriptGeneric(
-                    new TypeScriptIdentifier('Array'),
-                    [new TypeScriptIdentifier('T')],
-                ),
-            ),
-            new ClassStringReference(Collection::class),
-            ['Illuminate', 'Support'],
-            true,
-        );
-    }
-
-    protected function eloquentCollection(): Transformed
-    {
-        return new Transformed(
-            new TypeScriptAlias(
-                new TypeScriptGeneric(
-                    new TypeScriptIdentifier('Collection'),
-                    [new TypeScriptIdentifier('T')],
-                ),
-                new TypeScriptGeneric(
-                    new TypeReference(new ClassStringReference(Collection::class)),
-                    [new TypeScriptIdentifier('T')],
-                ),
-            ),
-            new ClassStringReference(EloquentCollection::class),
-            ['Illuminate', 'Database', 'Eloquent', 'Collection'],
-            true,
+            $this->cursorPaginator(),
+            $this->cursorPaginatorInterface(),
         );
     }
 
@@ -81,12 +41,12 @@ class LaravelTypesProvider implements TypesProvider
             new TypeScriptAlias(
                 new TypeScriptGeneric(
                     new TypeScriptIdentifier('LengthAwarePaginator'),
-                    [new TypeScriptIdentifier('T')],
+                    [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
                 ),
                 new TypeScriptObject([
                     new TypeScriptProperty('data', new TypeScriptGeneric(
-                        new TypeScriptIdentifier('Array'),
-                        [new TypeScriptIdentifier('T')],
+                        new TypeScriptIdentifier('Record'),
+                        [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
                     ), ),
                     new TypeScriptProperty('links', new TypeScriptObject([
                         new TypeScriptProperty('url', new TypeScriptUnion([
@@ -124,7 +84,7 @@ class LaravelTypesProvider implements TypesProvider
                 ]),
             ),
             new ClassStringReference(LengthAwarePaginator::class),
-            ['Illuminate', 'Pagination'],
+            ['Illuminate'],
             true,
         );
     }
@@ -134,7 +94,7 @@ class LaravelTypesProvider implements TypesProvider
         return new Transformed(
             new TypeScriptAlias(
                 new TypeScriptGeneric(
-                    new TypeScriptIdentifier('LengthAwarePaginator'),
+                    new TypeScriptIdentifier('LengthAwarePaginatorInterface'),
                     [new TypeScriptIdentifier('T')],
                 ),
                 new TypeScriptGeneric(
@@ -143,7 +103,75 @@ class LaravelTypesProvider implements TypesProvider
                 ),
             ),
             new ClassStringReference(LengthAwarePaginatorInterface::class),
-            ['Illuminate', 'Contracts', 'Pagination'],
+            ['Illuminate'],
+            true,
+        );
+    }
+
+    protected function cursorPaginator(): Transformed
+    {
+        return new Transformed(
+            new TypeScriptAlias(
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('CursorPaginator'),
+                    [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
+                ),
+                new TypeScriptObject([
+                    new TypeScriptProperty('data', new TypeScriptGeneric(
+                        new TypeScriptIdentifier('Record'),
+                        [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
+                    ), ),
+                    new TypeScriptProperty('links', new TypeScriptObject([
+                        new TypeScriptProperty('url', new TypeScriptUnion([
+                            new TypeScriptIdentifier('string'),
+                            new TypeScriptIdentifier('null'),
+                        ])),
+                        new TypeScriptProperty('label', new TypeScriptString()),
+                        new TypeScriptProperty('active', new TypeScriptBoolean()),
+                    ])),
+                    new TypeScriptProperty('meta', new TypeScriptObject([
+                        new TypeScriptProperty('path', new TypeScriptString()),
+                        new TypeScriptProperty('per_page', new TypeScriptNumber()),
+                        new TypeScriptProperty('next_cursor', new TypeScriptUnion([
+                            new TypeScriptString(),
+                            new TypeScriptNull(),
+                        ])),
+                        new TypeScriptProperty('next_page_url', new TypeScriptUnion([
+                            new TypeScriptString(),
+                            new TypeScriptNull(),
+                        ])),
+                        new TypeScriptProperty('prev_cursor', new TypeScriptUnion([
+                            new TypeScriptString(),
+                            new TypeScriptNull(),
+                        ])),
+                        new TypeScriptProperty('prev_page_url', new TypeScriptUnion([
+                            new TypeScriptString(),
+                            new TypeScriptNull(),
+                        ])),
+                    ])),
+                ]),
+            ),
+            new ClassStringReference(CursorPaginator::class),
+            ['Illuminate'],
+            true,
+        );
+    }
+
+    protected function cursorPaginatorInterface(): Transformed
+    {
+        return new Transformed(
+            new TypeScriptAlias(
+                new TypeScriptGeneric(
+                    new TypeScriptIdentifier('CursorPaginatorInterface'),
+                    [new TypeScriptIdentifier('T')],
+                ),
+                new TypeScriptGeneric(
+                    new TypeReference(new ClassStringReference(CursorPaginator::class)),
+                    [new TypeScriptIdentifier('T')],
+                ),
+            ),
+            new ClassStringReference(CursorPaginatorInterface::class),
+            ['Illuminate'],
             true,
         );
     }

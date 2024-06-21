@@ -8,11 +8,11 @@ use Spatie\LaravelData\Support\DataConfig;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors\AddDataCollectionOfInfoClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors\RemoveDataLazyTypeClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors\DataClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 
-class DataClassTransformer extends LaravelClassTransformer
+class DataClassTransformer extends ClassTransformer
 {
     protected DataConfig $dataConfig;
 
@@ -35,20 +35,20 @@ class DataClassTransformer extends LaravelClassTransformer
 
     protected function classPropertyProcessors(): array
     {
-        $processors = parent::classPropertyProcessors();
-
-        foreach ($processors as $processor) {
-            if ($processor instanceof FixArrayLikeStructuresClassPropertyProcessor) {
-                $processor->replaceArrayLikeClass(
+        return [
+            new DataClassPropertyProcessor(
+                $this->dataConfig,
+                $this->customLazyTypes,
+            ),
+            new FixArrayLikeStructuresClassPropertyProcessor(
+                replaceArrays: true,
+                arrayLikeClassesToReplace: [
+                    \Illuminate\Support\Collection::class,
+                    \Illuminate\Database\Eloquent\Collection::class,
                     \Spatie\LaravelData\DataCollection::class,
-                    ...$this->customDataCollections
-                );
-            }
-        }
-
-        $processors[] = new AddDataCollectionOfInfoClassPropertyProcessor();
-        $processors[] = new RemoveDataLazyTypeClassPropertyProcessor($this->customLazyTypes);
-
-        return $processors;
+                    ...$this->customDataCollections,
+                ]
+            ),
+        ];
     }
 }

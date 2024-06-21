@@ -27,7 +27,7 @@ class TypeScriptTransformerConfigFactory
      * @param array<Transformer|string> $transformers
      * @param array<string> $directoriesToWatch
      * @param array<class-string|string, TypeScriptNode> $typeReplacements
-     * @param array<TypeScriptTransformerExtension> $extensions
+     * @param array<class-string<TypeScriptTransformerExtension>, TypeScriptTransformerExtension> $extensions
      * @param array<VisitorClosure> $providedVisitorClosures
      * @param array<VisitorClosure> $connectedVisitorClosures
      */
@@ -65,6 +65,13 @@ class TypeScriptTransformerConfigFactory
     public function transformer(string|Transformer ...$transformer): self
     {
         array_push($this->transformers, ...$transformer);
+
+        return $this;
+    }
+
+    public function prependTransformer(string|Transformer ...$transformer): self
+    {
+        array_unshift($this->transformers, ...$transformer);
 
         return $this;
     }
@@ -177,7 +184,15 @@ class TypeScriptTransformerConfigFactory
     public function extension(
         TypeScriptTransformerExtension ...$extensions
     ): self {
-        array_push($this->extensions, ...$extensions);
+        foreach ($extensions as $extension) {
+            if (array_key_exists($extension::class, $this->extensions)) {
+                continue;
+            }
+
+            $this->extensions[$extension::class] = $extension;
+
+            $extension->enrich($this);
+        }
 
         return $this;
     }
@@ -191,15 +206,6 @@ class TypeScriptTransformerConfigFactory
             $this->typeProviders
         );
 
-        if (! empty($this->transformers)) {
-            $transformers = array_map(
-                fn (Transformer|string $transformer) => is_string($transformer) ? new $transformer() : $transformer,
-                $this->transformers
-            );
-
-            $typeProviders[] = new TransformerTypesProvider($transformers, $this->directoriesToWatch);
-        }
-
         $writer = $this->writer ?? new NamespaceWriter(__DIR__.'/js/typed.ts');
 
         if (is_string($writer)) {
@@ -212,8 +218,13 @@ class TypeScriptTransformerConfigFactory
             array_unshift($this->providedVisitorClosures, new ReplaceTypesVisitorClosure($this->typeReplacements));
         }
 
-        foreach ($this->extensions as $extension) {
-            $extension->enrich($this);
+        if (! empty($this->transformers)) {
+            $transformers = array_map(
+                fn (Transformer|string $transformer) => is_string($transformer) ? new $transformer() : $transformer,
+                $this->transformers
+            );
+
+            $typeProviders[] = new TransformerTypesProvider($transformers, $this->directoriesToWatch);
         }
 
         return new TypeScriptTransformerConfig(

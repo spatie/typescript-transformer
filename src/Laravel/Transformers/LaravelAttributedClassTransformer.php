@@ -3,9 +3,9 @@
 namespace Spatie\TypeScriptTransformer\Laravel\Transformers;
 
 use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
+use Spatie\TypeScriptTransformer\Transformers\AttributedClassTransformer;
 
-abstract class LaravelClassTransformer extends ClassTransformer
+class LaravelAttributedClassTransformer extends AttributedClassTransformer
 {
     protected function classPropertyProcessors(): array
     {
