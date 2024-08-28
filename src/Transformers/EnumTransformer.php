@@ -31,7 +31,7 @@ class EnumTransformer implements Transformer
             return null;
         }
 
-        if (empty($enum->getCases()) {
+        if (empty($enum->getCases())) {
             return null;
         }
 
