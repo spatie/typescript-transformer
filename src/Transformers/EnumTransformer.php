@@ -31,6 +31,10 @@ class EnumTransformer implements Transformer
             return null;
         }
 
+        if (empty($enum->getCases()) {
+            return null;
+        }
+
         return $this->config->shouldTransformToNativeEnums()
             ? $this->toEnum($enum, $name)
             : $this->toType($enum, $name);
