@@ -6,10 +6,10 @@ use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\Writers\ModuleWriter;
 
 beforeEach(function () {

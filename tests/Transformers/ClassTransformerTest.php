@@ -15,14 +15,14 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNumber;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptRaw;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
 
 it('can transform a class', function () {
     $transformed = transformSingle(SimpleClass::class);

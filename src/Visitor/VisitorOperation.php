@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Visitor;
 
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
 class VisitorOperation
 {

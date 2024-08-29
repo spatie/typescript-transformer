@@ -17,12 +17,12 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
 
 abstract class ClassTransformer implements Transformer
 {

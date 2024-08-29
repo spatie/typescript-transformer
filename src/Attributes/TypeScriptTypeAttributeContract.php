@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Attributes;
 
 use ReflectionClass;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
 interface TypeScriptTypeAttributeContract
 {

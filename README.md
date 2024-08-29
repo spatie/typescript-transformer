@@ -567,7 +567,7 @@ $config->replaceType(DateTimeInterface::class, new TypeScriptString());
 Or use a closure to define the replacement:
 
 ```php
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 
 $config->replaceType(DateTimeInterface::class, function (TypeReference $reference) {
     return new TypeScriptString();
@@ -582,7 +582,7 @@ types and it is possible to create your own nodes.
 For example, a TypeScript alias is representing a User object looks like this:
 
 ```php
-use Spatie\TypeScriptTransformer\TypeScript;
+use Spatie\TypeScriptTransformer\TypeScriptNodes;
 
 new TypeScriptAlias(
     new TypeScriptIdentifier('User'),
@@ -1012,8 +1012,8 @@ A TypeScript node is a regular PHP class that implements the `TypeScriptNode` in
 
 ```php
 use Spatie\TypeScriptTransformer\Support\WritingContext;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNamedNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamedNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
 class PickNode implements TypeScriptNode, TypeScriptNamedNode
 {

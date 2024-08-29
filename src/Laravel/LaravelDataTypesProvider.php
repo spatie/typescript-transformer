@@ -10,10 +10,10 @@ use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class LaravelDataTypesProvider implements TypesProvider

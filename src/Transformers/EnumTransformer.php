@@ -9,12 +9,12 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\Transformers\EnumProviders\EnumProvider;
 use Spatie\TypeScriptTransformer\Transformers\EnumProviders\PhpEnumProvider;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptEnum;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptLiteral;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptEnum;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptLiteral;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 
 class EnumTransformer implements Transformer
 {

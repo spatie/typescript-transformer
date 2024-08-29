@@ -10,9 +10,9 @@ use Spatie\TypeScriptTransformer\Support\Extensions\TypeScriptTransformerExtensi
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeProviders\TransformerTypesProvider;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptRaw;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
 use Spatie\TypeScriptTransformer\Visitor\Common\ReplaceTypesVisitorClosure;
 use Spatie\TypeScriptTransformer\Visitor\VisitorClosure;
 use Spatie\TypeScriptTransformer\Visitor\VisitorClosureType;

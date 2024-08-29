@@ -10,17 +10,17 @@ use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptBoolean;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNull;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNumber;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNull;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class LaravelTypesProvider implements TypesProvider

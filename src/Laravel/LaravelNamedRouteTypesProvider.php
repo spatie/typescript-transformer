@@ -15,22 +15,22 @@ use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAlias;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptFunctionDefinition;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGenericTypeVariable;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIndexedAccess;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNumber;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptOperator;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptParameter;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptRaw;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptFunctionDefinition;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGenericTypeVariable;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIndexedAccess;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptOperator;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptParameter;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class LaravelNamedRouteTypesProvider implements TypesProvider
@@ -41,7 +41,7 @@ class LaravelNamedRouteTypesProvider implements TypesProvider
      */
     public function __construct(
         protected ResolveLaravelRoutControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRoutControllerCollectionsAction(),
-        protected array $location = [],
+        protected array $location = ['App'],
         protected array $filters = [],
     ) {
     }

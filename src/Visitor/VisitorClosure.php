@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\Visitor;
 
 use Closure;
 use ReflectionFunction;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
 class VisitorClosure
 {

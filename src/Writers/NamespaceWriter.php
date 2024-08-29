@@ -9,7 +9,7 @@ use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNamespace;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamespace;
 
 class NamespaceWriter implements Writer
 {

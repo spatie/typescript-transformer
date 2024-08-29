@@ -5,9 +5,9 @@ use Spatie\TypeScriptTransformer\Data\ImportLocation;
 use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptImport;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptImport;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 
 beforeEach(function () {
     $this->action = new ResolveModuleImportsAction();

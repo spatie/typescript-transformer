@@ -4,11 +4,17 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use ReflectionClass;
 use Spatie\StructureDiscoverer\Collections\UsageCollection;
+use Spatie\StructureDiscoverer\Support\UseDefinitionsResolver;
 
 class FindClassNameFqcnAction
 {
     /** @var array<string, UsageCollection> */
     protected static array $cache = [];
+
+    public function __construct(
+        protected UseDefinitionsResolver $useDefinitionsResolver = new UseDefinitionsResolver()
+    ) {
+    }
 
     public function execute(ReflectionClass $reflectionClass, string $className): ?string
     {
@@ -38,7 +44,7 @@ class FindClassNameFqcnAction
         $filename = $reflectionClass->getFileName();
 
         if (! array_key_exists($filename, static::$cache)) {
-            static::$cache[$filename] = (new ParseUseDefinitionsAction())->execute($filename);
+            static::$cache[$filename] = $this->useDefinitionsResolver->execute($filename);
         }
 
         return static::$cache[$filename];

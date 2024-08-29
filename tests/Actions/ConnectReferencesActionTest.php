@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularB;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 
 it('can connect references', function () {
     $class = new class () {

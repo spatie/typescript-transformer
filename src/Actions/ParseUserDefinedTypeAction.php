@@ -8,7 +8,7 @@ use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Support\Concerns\Instanceable;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
 class ParseUserDefinedTypeAction
 {

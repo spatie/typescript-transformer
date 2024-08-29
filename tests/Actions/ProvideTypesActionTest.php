@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Tests\Support\InlineTypesProvider;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 

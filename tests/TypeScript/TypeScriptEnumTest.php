@@ -1,7 +1,7 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Support\WritingContext;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptEnum;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptEnum;
 
 it('can write enums in all sorts of configs', function (
     array $cases,

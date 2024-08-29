@@ -14,14 +14,14 @@ use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedMethod;
 use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedNameAndType;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptInterface;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptInterfaceMethod;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptParameter;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptVoid;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptInterface;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptInterfaceMethod;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptParameter;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptVoid;
 
 abstract class InterfaceTransformer implements Transformer
 {

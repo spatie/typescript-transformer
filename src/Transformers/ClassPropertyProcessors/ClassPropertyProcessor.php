@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors;
 
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use ReflectionProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 
 interface ClassPropertyProcessor
 {

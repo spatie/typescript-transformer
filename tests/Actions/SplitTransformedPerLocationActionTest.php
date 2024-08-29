@@ -4,7 +4,7 @@ use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 
 it('can split per location', function () {
     $transformedCollection = new TransformedCollection([

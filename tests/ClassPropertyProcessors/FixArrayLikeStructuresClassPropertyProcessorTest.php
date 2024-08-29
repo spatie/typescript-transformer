@@ -3,16 +3,16 @@
 use Illuminate\Support\Collection;
 use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptArray;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptBoolean;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptGeneric;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIdentifier;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNumber;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptProperty;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 
 it('replaces array like structures', function (
     string $property,

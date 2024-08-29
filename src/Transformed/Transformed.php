@@ -4,10 +4,10 @@ namespace Spatie\TypeScriptTransformer\Transformed;
 
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptExport;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptForwardingNamedNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNamedNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptExport;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptForwardingNamedNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamedNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
 class Transformed
 {

@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\Tests\Support;
 
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\Writers\FlatWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 

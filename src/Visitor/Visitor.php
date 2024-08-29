@@ -4,8 +4,8 @@ namespace Spatie\TypeScriptTransformer\Visitor;
 
 use Closure;
 use Exception;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptVisitableNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptVisitableNode;
 
 class Visitor
 {

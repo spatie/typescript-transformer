@@ -6,7 +6,7 @@ use IteratorAggregate;
 use Spatie\TypeScriptTransformer\Data\ImportLocation;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\ImportName;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptImport;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptImport;
 use Traversable;
 
 class ImportsCollection implements IteratorAggregate

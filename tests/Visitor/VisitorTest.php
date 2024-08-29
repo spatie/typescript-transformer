@@ -1,10 +1,10 @@
 <?php
 
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptBoolean;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNumber;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\Visitor\Visitor;
 use Spatie\TypeScriptTransformer\Visitor\VisitorOperation;
 

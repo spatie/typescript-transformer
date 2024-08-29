@@ -2,9 +2,9 @@
 
 use Spatie\TypeScriptTransformer\Actions\ParseUserDefinedTypeAction;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptArray;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 
 it('can parse a user defined type', function () {
     $parser = new ParseUserDefinedTypeAction();

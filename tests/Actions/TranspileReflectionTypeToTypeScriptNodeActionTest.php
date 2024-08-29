@@ -5,19 +5,19 @@ use Illuminate\Support\Collection;
 use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes\PhpTypesStub;
-use Spatie\TypeScriptTransformer\TypeScript\TypeReference;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptAny;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptArray;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptBoolean;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptIntersection;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNull;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptNumber;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptObject;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptString;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnion;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptUnknown;
-use Spatie\TypeScriptTransformer\TypeScript\TypeScriptVoid;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAny;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIntersection;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNull;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptVoid;
 
 it('can transpile php types', function (
     string $property,
