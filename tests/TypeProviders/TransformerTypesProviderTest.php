@@ -1,7 +1,7 @@
 <?php
 
 use Pest\Expectation;
-use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
+use Spatie\TypeScriptTransformer\References\PhpClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\HiddenAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\OptionalAttributedClass;
@@ -54,7 +54,7 @@ it('will find types and takes attributes into account', function () {
                     new TypeScriptProperty('property', new TypeScriptString()),
                 ])
             ))
-            ->reference->toBeInstanceOf(ReflectionClassReference::class)
+            ->reference->toBeInstanceOf(PhpClassReference::class)
             ->reference->classString->toBe(TypeScriptAttributedClass::class)
             ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
         fn (Expectation $transformed) => $transformed
@@ -66,7 +66,7 @@ it('will find types and takes attributes into account', function () {
                     new TypeScriptProperty('property', new TypeScriptString()),
                 ])
             ))
-            ->reference->toBeInstanceOf(ReflectionClassReference::class)
+            ->reference->toBeInstanceOf(PhpClassReference::class)
             ->reference->classString->toBe(TypeScriptLocationAttributedClass::class)
             ->location->toBe(['App', 'Here']),
         fn (Expectation $transformed) => $transformed
@@ -78,7 +78,7 @@ it('will find types and takes attributes into account', function () {
                     new TypeScriptProperty('property', new TypeScriptString(), isOptional: true),
                 ])
             ))
-            ->reference->toBeInstanceOf(ReflectionClassReference::class)
+            ->reference->toBeInstanceOf(PhpClassReference::class)
             ->reference->classString->toBe(OptionalAttributedClass::class)
             ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
         fn (Expectation $transformed) => $transformed
@@ -90,7 +90,7 @@ it('will find types and takes attributes into account', function () {
                     new TypeScriptProperty('property', new TypeScriptString(), isReadonly: true),
                 ])
             ))
-            ->reference->toBeInstanceOf(ReflectionClassReference::class)
+            ->reference->toBeInstanceOf(PhpClassReference::class)
             ->reference->classString->toBe(ReadonlyClass::class)
             ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
         fn (Expectation $transformed) => $transformed
@@ -103,7 +103,7 @@ it('will find types and takes attributes into account', function () {
                     new TypeScriptProperty('constructorPromotedStringProperty', new TypeScriptString()),
                 ])
             ))
-            ->reference->toBeInstanceOf(ReflectionClassReference::class)
+            ->reference->toBeInstanceOf(PhpClassReference::class)
             ->reference->classString->toBe(SimpleClass::class)
             ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
     );

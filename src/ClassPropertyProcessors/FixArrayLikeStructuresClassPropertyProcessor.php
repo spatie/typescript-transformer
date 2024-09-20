@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\ClassPropertyProcessors;
 
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
-use ReflectionProperty;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -77,7 +77,7 @@ class FixArrayLikeStructuresClassPropertyProcessor implements ClassPropertyProce
     }
 
     public function execute(
-        ReflectionProperty $reflection,
+        PhpPropertyNode $phpPropertyNode,
         ?TypeNode $annotation,
         TypeScriptProperty $property
     ): ?TypeScriptProperty {

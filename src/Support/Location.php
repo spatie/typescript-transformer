@@ -28,6 +28,17 @@ class Location
         return null;
     }
 
+    public function hasChanges(): bool
+    {
+        foreach ($this->transformed as $transformed) {
+            if ($transformed->changed) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function hasReference(Reference $reference): bool
     {
         return $this->getTransformedByReference($reference) !== null;

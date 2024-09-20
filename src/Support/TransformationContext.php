@@ -2,9 +2,9 @@
 
 namespace Spatie\TypeScriptTransformer\Support;
 
-use ReflectionClass;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 
 class TransformationContext
 {
@@ -15,19 +15,19 @@ class TransformationContext
     ) {
     }
 
-    public static function createFromReflection(
-        ReflectionClass $reflection
+    public static function createFromPhpClass(
+        PhpClassNode $node
     ): TransformationContext {
-        $attribute = ($reflection->getAttributes(TypeScript::class)[0] ?? null)?->newInstance();
+        $attributeArguments = ($node->getAttributes(TypeScript::class)[0] ?? null)?->getArguments() ?? [];
 
-        $name = $attribute?->name ?? $reflection->getShortName();
+        $name = $attributeArguments['name'] ?? $node->getShortName();
 
-        $nameSpaceSegments = $attribute?->location ?? explode('\\', $reflection->getNamespaceName());
+        $nameSpaceSegments = $attributeArguments['location'] ?? explode('\\', $node->getNamespaceName());
 
         return new TransformationContext(
             $name,
             $nameSpaceSegments,
-            count($reflection->getAttributes(Optional::class)) > 0,
+            count($node->getAttributes(Optional::class)) > 0,
         );
     }
 }

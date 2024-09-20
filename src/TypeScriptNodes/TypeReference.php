@@ -25,6 +25,11 @@ class TypeReference implements TypeScriptNamedNode, TypeScriptNode
         $this->referenced = $transformed;
     }
 
+    public function unconnect(): void
+    {
+        $this->referenced = null;
+    }
+
     public function write(WritingContext $context): string
     {
         if($this->referenced === null) {

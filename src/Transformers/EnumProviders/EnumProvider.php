@@ -2,13 +2,13 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers\EnumProviders;
 
-use ReflectionClass;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 
 interface EnumProvider
 {
-    public function isEnum(ReflectionClass $reflection): bool;
+    public function isEnum(PhpClassNode $phpClassNode): bool;
 
-    public function isValidUnion(ReflectionClass $reflection): bool;
+    public function isValidUnion(PhpClassNode $phpClassNode): bool;
 
-    public function resolveCases(ReflectionClass $reflection): array;
+    public function resolveCases(PhpClassNode $phpClassNode): array;
 }

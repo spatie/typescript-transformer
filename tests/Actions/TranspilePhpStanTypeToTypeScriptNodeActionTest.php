@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Collection;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes\PhpDocTypesStub;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
@@ -31,8 +33,8 @@ it('can transpile PHPStan doc types', function (
     $transpiler = new TranspilePhpStanTypeToTypeScriptNodeAction();
 
     $typeScriptNode = $transpiler->execute(
-        $docTypeResolver->property(new ReflectionProperty(PhpDocTypesStub::class, $property))->type,
-        new ReflectionClass(PhpDocTypesStub::class)
+        $docTypeResolver->property(new PhpPropertyNode(new ReflectionProperty(PhpDocTypesStub::class, $property)))->type,
+        new PhpClassNode(new ReflectionClass(PhpDocTypesStub::class))
     );
 
     expect($typeScriptNode)->toBeInstanceOf($expectedTypeScriptNode::class);

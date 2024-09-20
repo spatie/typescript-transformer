@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Attributes;
 
 use Attribute;
-use ReflectionClass;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
@@ -19,7 +19,7 @@ class LiteralTypeScriptType implements TypeScriptTypeAttributeContract
         $this->typeScript = $typeScript;
     }
 
-    public function getType(ReflectionClass $class): TypeScriptNode
+    public function getType(PhpClassNode $class): TypeScriptNode
     {
         if (is_string($this->typeScript)) {
             return new TypeScriptRaw($this->typeScript);

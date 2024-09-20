@@ -2,36 +2,36 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use ReflectionClass;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 
 class AttributedClassTransformer extends ClassTransformer
 {
-    protected function shouldTransform(ReflectionClass $reflection): bool
+    protected function shouldTransform(PhpClassNode $phpClassNode): bool
     {
-        return count($reflection->getAttributes(TypeScript::class)) > 0;
+        return count($phpClassNode->getAttributes(TypeScript::class)) > 0;
     }
 
-    public function transform(ReflectionClass $reflectionClass, TransformationContext $context): Transformed|Untransformable
+    public function transform(PhpClassNode $phpClassNode, TransformationContext $context): Transformed|Untransformable
     {
-        $transformed = parent::transform($reflectionClass, $context);
+        $transformed = parent::transform($phpClassNode, $context);
 
         if ($transformed instanceof Untransformable) {
             return $transformed;
         }
 
         /** @var TypeScript $attribute */
-        $attribute = $reflectionClass->getAttributes(TypeScript::class)[0]->newInstance();
+        $attribute = $phpClassNode->getAttributes(TypeScript::class)[0]->getArguments();
 
-        if ($attribute->name !== null) {
-            $transformed->nameAs($attribute->name);
+        if (($attribute['name'] ?? null) !== null) {
+            $transformed->nameAs($attribute['name']);
         }
 
-        if ($attribute->location !== null) {
-            $transformed->location = $attribute->location;
+        if (($attribute['location'] ?? null) !== null) {
+            $transformed->location = $attribute['location'];
         }
 
         return $transformed;

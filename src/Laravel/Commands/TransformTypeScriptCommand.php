@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Laravel\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
+use Spatie\TypeScriptTransformer\Laravel\Support\WrappedLaravelConsole;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -21,21 +21,10 @@ class TransformTypeScriptCommand extends Command
             return self::FAILURE;
         }
 
-        app(TypeScriptTransformer::class)->execute();
-
-        $log = TypeScriptTransformerLog::resolve();
-
-        if (! empty($log->infoMessages)) {
-            foreach ($log->infoMessages as $infoMessage) {
-                $this->info($infoMessage);
-            }
-        }
-
-        if (! empty($log->warningMessages)) {
-            foreach ($log->warningMessages as $warningMessage) {
-                $this->warn($warningMessage);
-            }
-        }
+        TypeScriptTransformer::create(
+            config: app(TypeScriptTransformerConfig::class),
+            console: new WrappedLaravelConsole($this)
+        )->execute();
 
         $this->comment('All done');
 

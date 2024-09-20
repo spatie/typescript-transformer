@@ -4,6 +4,7 @@ use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -69,7 +70,7 @@ it('will reference correctly between namespaces', function () {
 
     $files = (new NamespaceWriter($filename))->output(
         $transformedCollection,
-        (new ConnectReferencesAction())->execute($transformedCollection),
+        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)

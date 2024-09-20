@@ -2,8 +2,8 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use ReflectionClass;
-use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\References\PhpClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
@@ -25,24 +25,24 @@ class EnumTransformer implements Transformer
     }
 
     public function transform(
-        ReflectionClass $reflectionClass,
+        PhpClassNode $phpClassNode,
         TransformationContext $context
     ): Transformed|Untransformable {
-        if (! $this->enumProvider->isEnum($reflectionClass)) {
+        if (! $this->enumProvider->isEnum($phpClassNode)) {
             return Untransformable::create();
         }
 
-        if ($this->useUnionEnums === true && ! $this->enumProvider->isValidUnion($reflectionClass)) {
+        if ($this->useUnionEnums === true && ! $this->enumProvider->isValidUnion($phpClassNode)) {
             return Untransformable::create();
         }
 
-        $cases = $this->enumProvider->resolveCases($reflectionClass);
+        $cases = $this->enumProvider->resolveCases($phpClassNode);
 
         return new Transformed(
             $this->useUnionEnums
                 ? $this->transformAsUnion($context->name, $cases)
                 : $this->transformAsNativeEnum($context->name, $cases),
-            new ReflectionClassReference($reflectionClass),
+            new PhpClassReference($phpClassNode),
             $context->nameSpaceSegments,
             true,
         );

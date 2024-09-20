@@ -2,7 +2,9 @@
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
@@ -19,7 +21,7 @@ function classesToTypeScript(
         $collection->add(transformSingle($class, $transformer));
     }
 
-    $referenceMap = (new ConnectReferencesAction())->execute($collection);
+    $referenceMap = (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($collection);
 
     $writer = new MemoryWriter();
 
@@ -38,7 +40,7 @@ function transformSingle(
 
     [$transformed] = $transformTypesAction->execute(
         [$transformer],
-        [is_string($class) ? $class : $class::class],
+        [PhpClassNode::fromClassString(is_string($class) ? $class : $class::class)],
     );
 
     return $transformed ?? Untransformable::create();

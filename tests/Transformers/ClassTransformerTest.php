@@ -3,13 +3,13 @@
 namespace Spatie\TypeScriptTransformer\Tests\Transformers;
 
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
-use ReflectionClass;
-use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
-use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
+use Spatie\TypeScriptTransformer\References\PhpClassReference;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
@@ -44,11 +44,11 @@ it('can transform a class', function () {
         )
     );
     expect($transformed->reference)->toEqual(
-        new ReflectionClassReference(new ReflectionClass(SimpleClass::class))
+        new PhpClassReference(PhpClassNode::fromClassString(SimpleClass::class))
     );
     expect($transformed->location)->toEqual(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']);
     expect($transformed->export)->toBeTrue();
-    expect($transformed->references)->toEqual([]);
+    expect($transformed->references)->toHaveCount(0);
 });
 
 it('can transform a class by depending on a TypeScriptTypeAttributeContract attribute type', function () {
@@ -286,7 +286,7 @@ it('can run a class property processor', function () {
         {
             return [
                 new class () implements ClassPropertyProcessor {
-                    public function execute(ReflectionProperty $reflection, ?TypeNode $annotation, TypeScriptProperty $property): ?TypeScriptProperty
+                    public function execute(PhpPropertyNode $phpPropertyNode, ?TypeNode $annotation, TypeScriptProperty $property): ?TypeScriptProperty
                     {
                         $property->name = new TypeScriptIdentifier('newName');
                         $property->type = new TypeScriptNumber();
@@ -318,7 +318,7 @@ it('can use a class property processor to remove a property', function () {
     };
 
     $object = transformSingle($class, transformer: new class () extends ClassTransformer {
-        protected function shouldTransform(ReflectionClass $reflection): bool
+        protected function shouldTransform(PhpClassNode $phpClassNode): bool
         {
             return true;
         }
@@ -327,7 +327,7 @@ it('can use a class property processor to remove a property', function () {
         {
             return [
                 new class () implements ClassPropertyProcessor {
-                    public function execute(ReflectionProperty $reflection, ?TypeNode $annotation, TypeScriptProperty $property): ?TypeScriptProperty
+                    public function execute(PhpPropertyNode $phpPropertyNode, ?TypeNode $annotation, TypeScriptProperty $property): ?TypeScriptProperty
                     {
                         return null;
                     }

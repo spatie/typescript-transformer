@@ -2,11 +2,11 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use ReflectionClass;
-use ReflectionIntersectionType;
-use ReflectionNamedType;
-use ReflectionType;
-use ReflectionUnionType;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpIntersectionTypeNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpNamedTypeNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpTypeNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpUnionTypeNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAny;
@@ -23,16 +23,16 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptVoid;
 
-class TranspileReflectionTypeToTypeScriptNodeAction
+class TranspilePhpTypeNodeToTypeScriptNodeAction
 {
     public function execute(
-        ReflectionType $reflectionType,
-        ReflectionClass $reflectionClass,
+        PhpTypeNode $phpTypeNode,
+        PhpClassNode $phpClassNode,
     ): TypeScriptNode {
-        $type = $this->resolveType($reflectionType, $reflectionClass);
+        $type = $this->resolveType($phpTypeNode, $phpClassNode);
 
         if (
-            ! $reflectionType->allowsNull()
+            ! $phpTypeNode->allowsNull()
             || $type instanceof TypeScriptAny
             || $type instanceof TypeScriptNull) {
             return $type;
@@ -52,20 +52,20 @@ class TranspileReflectionTypeToTypeScriptNodeAction
     }
 
     protected function resolveType(
-        ReflectionType $reflectionType,
-        ReflectionClass $reflectionClass,
+        PhpTypeNode $phpTypeNode,
+        PhpClassNode $phpClassNode,
     ): TypeScriptNode {
-        return match ($reflectionType::class) {
-            ReflectionNamedType::class => $this->reflectionNamedType($reflectionType, $reflectionClass),
-            ReflectionUnionType::class => $this->reflectionUnionType($reflectionType, $reflectionClass),
-            ReflectionIntersectionType::class => $this->reflectionIntersectionType($reflectionType, $reflectionClass),
+        return match ($phpTypeNode::class) {
+            PhpNamedTypeNode::class => $this->namedType($phpTypeNode, $phpClassNode),
+            PhpUnionTypeNode::class => $this->unionType($phpTypeNode, $phpClassNode),
+            PhpIntersectionTypeNode::class => $this->intersectionType($phpTypeNode, $phpClassNode),
             default => new TypeScriptUndefined(),
         };
     }
 
-    protected function reflectionNamedType(
-        ReflectionNamedType $type,
-        ReflectionClass $reflectionClass,
+    protected function namedType(
+        PhpNamedTypeNode $type,
+        PhpClassNode $phpClassNode,
     ): TypeScriptNode {
         if ($type->getName() === 'string') {
             return new TypeScriptString();
@@ -92,7 +92,7 @@ class TranspileReflectionTypeToTypeScriptNodeAction
         }
 
         if ($type->getName() === 'self' || $type->getName() === 'static') {
-            return new TypeReference(new ClassStringReference($reflectionClass->getName()));
+            return new TypeReference(new ClassStringReference($phpClassNode->getName()));
         }
 
         if ($type->getName() === 'object') {
@@ -110,22 +110,22 @@ class TranspileReflectionTypeToTypeScriptNodeAction
         return new TypeScriptUnknown();
     }
 
-    protected function reflectionUnionType(
-        ReflectionUnionType $type,
-        ReflectionClass $reflectionClass,
+    protected function unionType(
+        PhpUnionTypeNode $type,
+        PhpClassNode $phpClassNode,
     ): TypeScriptNode {
         return new TypeScriptUnion(array_map(
-            fn (ReflectionType $type) => $this->resolveType($type, $reflectionClass),
+            fn (PhpTypeNode $type) => $this->resolveType($type, $phpClassNode),
             $type->getTypes()
         ));
     }
 
-    protected function reflectionIntersectionType(
-        ReflectionIntersectionType $type,
-        ReflectionClass $reflectionClass,
+    protected function intersectionType(
+        PhpIntersectionTypeNode $type,
+        PhpClassNode $classNode,
     ): TypeScriptNode {
         return new TypeScriptIntersection(array_map(
-            fn (ReflectionType $type) => $this->resolveType($type, $reflectionClass),
+            fn (PhpTypeNode $type) => $this->resolveType($type, $classNode),
             $type->getTypes()
         ));
     }

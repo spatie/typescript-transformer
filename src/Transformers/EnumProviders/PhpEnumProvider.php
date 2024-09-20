@@ -2,37 +2,33 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers\EnumProviders;
 
-use BackedEnum;
-use ReflectionClass;
-use ReflectionEnum;
-use UnitEnum;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpEnumCaseNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpEnumNode;
 
 class PhpEnumProvider implements EnumProvider
 {
-    public function isEnum(ReflectionClass $reflection): bool
+    public function isEnum(PhpClassNode $phpClassNode): bool
     {
-        return $reflection->isEnum();
+        return $phpClassNode->isEnum();
     }
 
-    public function isValidUnion(ReflectionClass $reflection): bool
+    public function isValidUnion(PhpClassNode $phpClassNode): bool
     {
-        return (new ReflectionEnum($reflection->getName()))->isBacked();
+        return $phpClassNode instanceof PhpEnumNode && $phpClassNode->isBacked();
     }
 
     /**
      * @return array<int, array{name: string, value:string|int|null}>
      */
-    public function resolveCases(ReflectionClass $reflection): array
+    public function resolveCases(PhpClassNode|PhpEnumNode $phpClassNode): array
     {
-        /** @var class-string<UnitEnum> $enumClass */
-        $enumClass = $reflection->getName();
-
         return array_map(
-            fn ($case) => [
-                'name' => $case->name,
-                'value' => $case instanceof BackedEnum ? $case->value : null,
+            fn (PhpEnumCaseNode $case) => [
+                'name' => $case->getName(),
+                'value' => $case->getValue(),
             ],
-            $enumClass::cases()
+            array_values($phpClassNode->getCases())
         );
     }
 }

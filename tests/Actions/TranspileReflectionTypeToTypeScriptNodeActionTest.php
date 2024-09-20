@@ -2,7 +2,10 @@
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
-use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
+use Spatie\TypeScriptTransformer\Actions\TranspilePhpTypeNodeToTypeScriptNodeAction;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpMethodNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes\PhpTypesStub;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -23,11 +26,11 @@ it('can transpile php types', function (
     string $property,
     TypeScriptNode $expectedTypeScriptNode,
 ) {
-    $transpiler = new TranspileReflectionTypeToTypeScriptNodeAction();
+    $transpiler = new TranspilePhpTypeNodeToTypeScriptNodeAction();
 
     $typeScriptNode = $transpiler->execute(
-        (new ReflectionProperty(PhpTypesStub::class, $property))->getType(),
-        new ReflectionClass(PhpTypesStub::class)
+        (new PhpPropertyNode(new ReflectionProperty(PhpTypesStub::class, $property)))->getType(),
+        new PhpClassNode(new ReflectionClass(PhpTypesStub::class))
     );
 
     expect($typeScriptNode)->toBeInstanceOf($expectedTypeScriptNode::class);
@@ -141,11 +144,11 @@ it('can transpile php types', function (
 });
 
 it('can transpile a void return type', function () {
-    $transpiler = new TranspileReflectionTypeToTypeScriptNodeAction();
+    $transpiler = new TranspilePhpTypeNodeToTypeScriptNodeAction();
 
     $typeScriptNode = $transpiler->execute(
-        (new ReflectionMethod(PhpTypesStub::class, 'voidReturn'))->getReturnType(),
-        new ReflectionClass(PhpTypesStub::class)
+        (new PhpMethodNode(new ReflectionMethod(PhpTypesStub::class, 'voidReturn')))->getReturnType(),
+        new PhpClassNode(new ReflectionClass(PhpTypesStub::class))
     );
 
     expect($typeScriptNode)->toBeInstanceOf(TypeScriptVoid::class);

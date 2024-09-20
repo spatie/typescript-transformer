@@ -1,6 +1,7 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\HiddenAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
@@ -16,8 +17,8 @@ it('can transform types', function () {
             new AllClassTransformer(),
         ],
         [
-            StringBackedEnum::class,
-            SimpleClass::class,
+            PhpClassNode::fromClassString(StringBackedEnum::class),
+            PhpClassNode::fromClassString(SimpleClass::class),
         ]
     );
 
@@ -32,7 +33,7 @@ it('will not transform untransformable types', function () {
             new EnumTransformer(),
         ],
         [
-            SimpleClass::class,
+            PhpClassNode::fromClassString(SimpleClass::class),
         ]
     );
 
@@ -45,7 +46,7 @@ it('can hide classes using an attribute', function () {
             new AllClassTransformer(),
         ],
         [
-            HiddenAttributedClass::class,
+            PhpClassNode::fromClassString(HiddenAttributedClass::class),
         ]
     );
 
@@ -58,7 +59,7 @@ it('will log errors when a type cannot be reflected', function () {
             new AllClassTransformer(),
         ],
         [
-            'NonExistentClass',
+            PhpClassNode::fromClassString('NonExistentClass'),
         ]
     );
 

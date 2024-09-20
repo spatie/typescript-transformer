@@ -4,39 +4,64 @@ namespace Spatie\TypeScriptTransformer;
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
+use Spatie\TypeScriptTransformer\Actions\ExecuteConnectedClosuresAction;
+use Spatie\TypeScriptTransformer\Actions\ExecuteProvidedClosuresAction;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
 use Spatie\TypeScriptTransformer\Actions\ProvideTypesAction;
+use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
-use Spatie\TypeScriptTransformer\Visitor\Visitor;
+use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Support\Console\WrappedConsole;
+use Spatie\TypeScriptTransformer\Support\Console\WrappedNullConsole;
+use Spatie\TypeScriptTransformer\Support\LoadPhpClassNodeAction;
+use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 
 class TypeScriptTransformer
 {
     public function __construct(
-        protected TypeScriptTransformerConfig $config,
-        protected DiscoverTypesAction $discoverTypesAction,
-        protected ProvideTypesAction $provideTypesAction,
-        protected ConnectReferencesAction $connectReferencesAction,
-        protected WriteFilesAction $writeFilesAction,
-        protected FormatFilesAction $formatFilesAction,
+        public readonly TypeScriptTransformerConfig $config,
+        public readonly TypeScriptTransformerLog $log,
+        public readonly DiscoverTypesAction $discoverTypesAction,
+        public readonly ProvideTypesAction $provideTypesAction,
+        public readonly ExecuteProvidedClosuresAction $executeProvidedClosuresAction,
+        public readonly ConnectReferencesAction $connectReferencesAction,
+        public readonly ExecuteConnectedClosuresAction $executeConnectedClosuresAction,
+        public readonly WriteFilesAction $writeFilesAction,
+        public readonly FormatFilesAction $formatFilesAction,
+        public readonly TransformTypesAction $transformTypesAction,
+        public readonly LoadPhpClassNodeAction $loadPhpClassNodeAction,
+        public readonly bool $watch = false,
     ) {
 
     }
 
-    public static function create(TypeScriptTransformerConfig|TypeScriptTransformerConfigFactory $config): self
-    {
+    public static function create(
+        TypeScriptTransformerConfig|TypeScriptTransformerConfigFactory $config,
+        WrappedConsole $console = new WrappedNullConsole(),
+        bool $watch = false,
+    ): self {
         $config = $config instanceof TypeScriptTransformerConfigFactory ? $config->get() : $config;
+
+        $log = new TypeScriptTransformerLog($console);
 
         return new self(
             $config,
+            $log,
             new DiscoverTypesAction(),
             new ProvideTypesAction($config),
-            new ConnectReferencesAction(),
+            new ExecuteProvidedClosuresAction($config),
+            new ConnectReferencesAction($log),
+            new ExecuteConnectedClosuresAction($config),
             new WriteFilesAction($config),
             new FormatFilesAction($config),
+            new TransformTypesAction(),
+            new LoadPhpClassNodeAction(),
+            $watch
         );
     }
 
-    public function execute(bool $watch = false): void
+    public function execute(): void
     {
         /**
          * TODO:
@@ -50,35 +75,33 @@ class TypeScriptTransformer
          * - Release
          */
 
-        /**
-         * Watch implementation
-         * - We care about file create, update and delete
-         * - Directory changes are basically combined operations of file changes
-         * - File create
-         *  - Run the file though `TransformerTypesProvider` and check if a ReflectionClass can be created
-         *  - If so, add it to the types collection
-         *  - Add it to the reference map
-         *  - Rewrite the file (partially)
-         */
-
         $transformedCollection = $this->provideTypesAction->execute();
 
-        if (! empty($this->config->providedVisitorClosures)) {
-            $visitor = Visitor::create()->closures(...$this->config->providedVisitorClosures);
-
-            foreach ($transformedCollection as $transformed) {
-                $visitor->execute($transformed->typeScriptNode);
-            }
-        }
+        $this->executeProvidedClosuresAction->execute($transformedCollection);
 
         $referenceMap = $this->connectReferencesAction->execute($transformedCollection);
 
-        if (! empty($this->config->connectedVisitorClosures)) {
-            $visitor = Visitor::create()->closures(...$this->config->connectedVisitorClosures);
+        $this->executeConnectedClosuresAction->execute($transformedCollection);
 
-            foreach ($transformedCollection as $transformed) {
-                $visitor->execute($transformed->typeScriptNode);
-            }
+        $this->outputTransformed($transformedCollection, $referenceMap);
+
+        if ($this->watch) {
+            $watcher = new FileSystemWatcher(
+                $this,
+                $transformedCollection,
+                $referenceMap
+            );
+
+            $watcher->run();
+        }
+    }
+
+    public function outputTransformed(
+        TransformedCollection $transformedCollection,
+        ReferenceMap $referenceMap
+    ): void {
+        if (! $transformedCollection->hasChanges()) {
+            return;
         }
 
         $writeableFiles = $this->config->writer->output($transformedCollection, $referenceMap);

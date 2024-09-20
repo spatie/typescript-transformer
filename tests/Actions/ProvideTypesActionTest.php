@@ -33,6 +33,9 @@ it('can provide types based upon the config', function () {
     $types = (new ProvideTypesAction($config))->execute();
 
     expect($types)->toHaveCount(2);
-    expect($types[0]->getName())->toBe('Bar');
-    expect($types[1]->getName())->toBe('Foo');
+
+    $typesArray = array_values($types->all());
+
+    expect($typesArray[0]->getName())->toBe('Bar');
+    expect($typesArray[1]->getName())->toBe('Foo');
 });

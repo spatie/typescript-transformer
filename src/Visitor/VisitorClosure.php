@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Visitor;
 
 use Closure;
-use ReflectionFunction;
+use Roave\BetterReflection\Reflection\ReflectionFunction;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
 class VisitorClosure
@@ -15,7 +15,7 @@ class VisitorClosure
         protected ?array $allowedNodes,
         protected VisitorClosureType $type,
     ) {
-        $this->requiresMetadata = (new ReflectionFunction($this->closure))->getNumberOfParameters() === 2;
+        $this->requiresMetadata = ReflectionFunction::createFromClosure($this->closure)->getNumberOfParameters() === 2;
     }
 
     public function isBefore(): bool

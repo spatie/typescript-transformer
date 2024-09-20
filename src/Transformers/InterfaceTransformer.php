@@ -2,12 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionParameter;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
-use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
-use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
+use Spatie\TypeScriptTransformer\Actions\TranspilePhpTypeNodeToTypeScriptNodeAction;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpMethodNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpParameterNode;
+use Spatie\TypeScriptTransformer\References\PhpClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
@@ -28,45 +28,45 @@ abstract class InterfaceTransformer implements Transformer
     public function __construct(
         protected DocTypeResolver $docTypeResolver = new DocTypeResolver(),
         protected TranspilePhpStanTypeToTypeScriptNodeAction $transpilePhpStanTypeToTypeScriptTypeAction = new TranspilePhpStanTypeToTypeScriptNodeAction(),
-        protected TranspileReflectionTypeToTypeScriptNodeAction $transpileReflectionTypeToTypeScriptTypeAction = new TranspileReflectionTypeToTypeScriptNodeAction(),
+        protected TranspilePhpTypeNodeToTypeScriptNodeAction $transpilePhpTypeNodeToTypeScriptNodeAction = new TranspilePhpTypeNodeToTypeScriptNodeAction(),
     ) {
     }
 
-    public function transform(ReflectionClass $reflectionClass, TransformationContext $context): Transformed|Untransformable
+    public function transform(PhpClassNode $phpClassNode, TransformationContext $context): Transformed|Untransformable
     {
-        if (! $reflectionClass->isInterface()) {
+        if (! $phpClassNode->isInterface()) {
             return Untransformable::create();
         }
 
-        if (! $this->shouldTransform($reflectionClass)) {
+        if (! $this->shouldTransform($phpClassNode)) {
             return Untransformable::create();
         }
 
         $node = new TypeScriptInterface(
             new TypeScriptIdentifier($context->name),
-            $this->getProperties($reflectionClass, $context),
-            $this->getMethods($reflectionClass, $context)
+            $this->getProperties($phpClassNode, $context),
+            $this->getMethods($phpClassNode, $context)
         );
 
         return new Transformed(
             $node,
-            new ReflectionClassReference($reflectionClass),
+            new PhpClassReference($phpClassNode),
             $context->nameSpaceSegments,
             true,
         );
     }
 
-    abstract protected function shouldTransform(ReflectionClass $reflection): bool;
+    abstract protected function shouldTransform(PhpClassNode $phpClassNode): bool;
 
     /** @return TypeScriptInterfaceMethod[] */
     protected function getMethods(
-        ReflectionClass $reflectionClass,
+        PhpClassNode $phpClassNode,
         TransformationContext $context,
     ): array {
         $methods = [];
 
-        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            $methods[] = $this->getTypeScriptMethod($reflectionClass, $reflectionMethod, $context);
+        foreach ($phpClassNode->getMethods() as $phpMethodNode) {
+            $methods[] = $this->getTypeScriptMethod($phpClassNode, $phpMethodNode, $context);
         }
 
         return $methods;
@@ -74,51 +74,51 @@ abstract class InterfaceTransformer implements Transformer
 
     /** @return TypeScriptProperty[] */
     protected function getProperties(
-        ReflectionClass $reflectionClass,
+        PhpClassNode $phpClassNode,
         TransformationContext $context,
     ): array {
         return [];
     }
 
     protected function getTypeScriptMethod(
-        ReflectionClass $reflectionClass,
-        ReflectionMethod $reflectionMethod,
+        PhpClassNode $phpClassNode,
+        PhpMethodNode $phpMethodNode,
         TransformationContext $context,
     ): TypeScriptInterfaceMethod {
-        $annotation = $this->docTypeResolver->method($reflectionMethod);
+        $annotation = $this->docTypeResolver->method($phpMethodNode);
 
         return new TypeScriptInterfaceMethod(
-            $reflectionMethod->getName(),
-            array_map(fn (ReflectionParameter $parameter) => $this->resolveMethodParameterType(
-                $reflectionClass,
-                $reflectionMethod,
-                $parameter,
+            $phpMethodNode->getName(),
+            array_map(fn (PhpParameterNode $parameterNode) => $this->resolveMethodParameterType(
+                $phpClassNode,
+                $phpMethodNode,
+                $parameterNode,
                 $context,
-                $annotation->parameters[$parameter->getName()] ?? null
-            ), $reflectionMethod->getParameters()),
-            $this->resolveMethodReturnType($reflectionClass, $reflectionMethod, $context, $annotation)
+                $annotation->parameters[$parameterNode->getName()] ?? null
+            ), $phpMethodNode->getParameters()),
+            $this->resolveMethodReturnType($phpClassNode, $phpMethodNode, $context, $annotation)
         );
     }
 
     protected function resolveMethodReturnType(
-        ReflectionClass $reflectionClass,
-        ReflectionMethod $reflectionMethod,
+        PhpClassNode $classNode,
+        PhpMethodNode $methodNode,
         TransformationContext $context,
         ?ParsedMethod $annotation
     ): TypeScriptNode {
         if ($annotation->returnType) {
             return $this->transpilePhpStanTypeToTypeScriptTypeAction->execute(
                 $annotation->returnType,
-                $reflectionClass
+                $classNode
             );
         }
 
-        $reflectionType = $reflectionMethod->getReturnType();
+        $returnType = $methodNode->getReturnType();
 
-        if ($reflectionType) {
-            return $this->transpileReflectionTypeToTypeScriptTypeAction->execute(
-                $reflectionType,
-                $reflectionClass
+        if ($returnType) {
+            return $this->transpilePhpTypeNodeToTypeScriptNodeAction->execute(
+                $returnType,
+                $classNode
             );
         }
 
@@ -126,28 +126,28 @@ abstract class InterfaceTransformer implements Transformer
     }
 
     protected function resolveMethodParameterType(
-        ReflectionClass $reflectionClass,
-        ReflectionMethod $reflectionMethod,
-        ReflectionParameter $reflectionParameter,
+        PhpClassNode $classNode,
+        PhpMethodNode $methodNode,
+        PhpParameterNode $parameterNode,
         TransformationContext $context,
         ?ParsedNameAndType $annotation,
     ): TypeScriptParameter {
         $type = match (true) {
             $annotation !== null => $this->transpilePhpStanTypeToTypeScriptTypeAction->execute(
                 $annotation->type,
-                $reflectionClass
+                $classNode
             ),
-            $reflectionParameter->hasType() => $this->transpileReflectionTypeToTypeScriptTypeAction->execute(
-                $reflectionParameter->getType(),
-                $reflectionClass
+            $parameterNode->hasType() => $this->transpilePhpTypeNodeToTypeScriptNodeAction->execute(
+                $parameterNode->getType(),
+                $classNode
             ),
             default => new TypeScriptUnknown(),
         };
 
         return new TypeScriptParameter(
-            $reflectionParameter->getName(),
+            $parameterNode->getName(),
             $type,
-            $reflectionParameter->isOptional()
+            $parameterNode->isOptional()
         );
     }
 }

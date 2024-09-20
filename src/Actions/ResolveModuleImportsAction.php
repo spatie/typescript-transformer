@@ -29,7 +29,7 @@ class ResolveModuleImportsAction
         );
 
         foreach ($location->transformed as $transformedItem) {
-            foreach ($transformedItem->references as $referencedTransformed) {
+            foreach ($transformedItem->references as $referencedTransformed => $typeReferences) {
                 if ($referencedTransformed->location === $location->segments) {
                     continue;
                 }

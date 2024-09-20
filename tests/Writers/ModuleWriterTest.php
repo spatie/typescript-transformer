@@ -4,6 +4,7 @@ use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
 use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -75,7 +76,7 @@ it('can reference other types within the module', function () {
 
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction())->execute($transformedCollection),
+        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)
@@ -102,7 +103,7 @@ it('can reference other types within a nested module', function () {
 
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction())->execute($transformedCollection),
+        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)
@@ -148,7 +149,7 @@ it('can combine imports from nested modules', function () {
 
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction())->execute($transformedCollection),
+        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)
@@ -184,7 +185,7 @@ it('can import from root into a nested module', function () {
 
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction())->execute($transformedCollection),
+        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)
@@ -215,7 +216,7 @@ it('can automatically alias imported types', function () {
 
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction())->execute($transformedCollection),
+        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)

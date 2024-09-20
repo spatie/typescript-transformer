@@ -2,11 +2,9 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use ReflectionClass;
-use ReflectionException;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
@@ -14,7 +12,7 @@ class TransformTypesAction
 {
     /**
      * @param array<Transformer> $transformers
-     * @param array<class-string> $discoveredClasses
+     * @param array<PhpClassNode> $discoveredClasses
      *
      * @return array<Transformed>
      */
@@ -25,7 +23,7 @@ class TransformTypesAction
         $types = [];
 
         foreach ($discoveredClasses as $discoveredClass) {
-            $transformed = $this->transformType(
+            $transformed = $this->transformClassNode(
                 $transformers,
                 $discoveredClass
             );
@@ -38,31 +36,18 @@ class TransformTypesAction
         return $types;
     }
 
-    /**
-     * @param class-string $type
-     */
-    protected function transformType(
+    public function transformClassNode(
         array $transformers,
-        string $type
+        PhpClassNode $node
     ): ?Transformed {
-        try {
-            $reflection = new ReflectionClass($type);
-        } catch (ReflectionException) {
-            TypeScriptTransformerLog::resolve()->error(
-                "Failed to reflect class `{$type}`"
-            );
-
-            return null;
-        }
-
-        if (count($reflection->getAttributes(Hidden::class)) > 0) {
+        if (count($node->getAttributes(Hidden::class)) > 0) {
             return null;
         }
 
         foreach ($transformers as $transformer) {
             $transformed = $transformer->transform(
-                $reflection,
-                TransformationContext::createFromReflection($reflection),
+                $node,
+                TransformationContext::createFromPhpClass($node),
             );
 
             if ($transformed instanceof Transformed) {

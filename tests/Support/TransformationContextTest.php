@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\OptionalAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
@@ -7,9 +8,9 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptAttributed
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptLocationAttributedClass;
 
 it('can create a context from reflection', function () {
-    $reflection = new ReflectionClass(SimpleClass::class);
+    $reflection = PhpClassNode::fromClassString(SimpleClass::class);
 
-    $context = TransformationContext::createFromReflection($reflection);
+    $context = TransformationContext::createFromPhpClass($reflection);
 
     expect($context->name)->toBe('SimpleClass');
     expect($context->nameSpaceSegments)->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']);
@@ -17,25 +18,25 @@ it('can create a context from reflection', function () {
 });
 
 it('can make a class optional by attribute in its context', function () {
-    $reflection = new ReflectionClass(OptionalAttributedClass::class);
+    $reflection = PhpClassNode::fromClassString(OptionalAttributedClass::class);
 
-    $context = TransformationContext::createFromReflection($reflection);
+    $context = TransformationContext::createFromPhpClass($reflection);
 
     expect($context->optional)->toBeTrue();
 });
 
 it('can set the name by attribute', function () {
-    $reflection = new ReflectionClass(TypeScriptAttributedClass::class);
+    $reflection = PhpClassNode::fromClassString(TypeScriptAttributedClass::class);
 
-    $context = TransformationContext::createFromReflection($reflection);
+    $context = TransformationContext::createFromPhpClass($reflection);
 
     expect($context->name)->toBe('JustAnotherName');
 });
 
 it('can set the location by attribute', function () {
-    $reflection = new ReflectionClass(TypeScriptLocationAttributedClass::class);
+    $reflection = PhpClassNode::fromClassString(TypeScriptLocationAttributedClass::class);
 
-    $context = TransformationContext::createFromReflection($reflection);
+    $context = TransformationContext::createFromPhpClass($reflection);
 
     expect($context->nameSpaceSegments)->toBe(['App', 'Here']);
 });

@@ -18,6 +18,7 @@
         "php": "^8.2",
         "illuminate/contracts": "^10.0|^11.0",
         "phpstan/phpdoc-parser": "^1.13",
+        "roave/better-reflection": "^6.41",
         "spatie/file-system-watcher": "^1.1",
         "spatie/laravel-package-tools": "^1.14.0",
         "spatie/php-structure-discoverer": "^2.2",

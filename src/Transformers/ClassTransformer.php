@@ -3,15 +3,15 @@
 namespace Spatie\TypeScriptTransformer\Transformers;
 
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
-use ReflectionClass;
-use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
-use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
+use Spatie\TypeScriptTransformer\Actions\TranspilePhpTypeNodeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptTypeAttributeContract;
 use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\References\ReflectionClassReference;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
+use Spatie\TypeScriptTransformer\References\PhpClassReference;
 use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
@@ -31,33 +31,33 @@ abstract class ClassTransformer implements Transformer
     public function __construct(
         protected DocTypeResolver $docTypeResolver = new DocTypeResolver(),
         protected TranspilePhpStanTypeToTypeScriptNodeAction $transpilePhpStanTypeToTypeScriptTypeAction = new TranspilePhpStanTypeToTypeScriptNodeAction(),
-        protected TranspileReflectionTypeToTypeScriptNodeAction $transpileReflectionTypeToTypeScriptTypeAction = new TranspileReflectionTypeToTypeScriptNodeAction(),
+        protected TranspilePhpTypeNodeToTypeScriptNodeAction $transpilePhpTypeNodeToTypeScriptTypeAction = new TranspilePhpTypeNodeToTypeScriptNodeAction(),
     ) {
         $this->classPropertyProcessors = $this->classPropertyProcessors();
     }
 
-    public function transform(ReflectionClass $reflectionClass, TransformationContext $context): Transformed|Untransformable
+    public function transform(PhpClassNode $phpClassNode, TransformationContext $context): Transformed|Untransformable
     {
-        if ($reflectionClass->isEnum() || $reflectionClass->isInterface()) {
+        if ($phpClassNode->isEnum() || $phpClassNode->isInterface()) {
             return Untransformable::create();
         }
 
-        if (! $this->shouldTransform($reflectionClass)) {
+        if (! $this->shouldTransform($phpClassNode)) {
             return Untransformable::create();
         }
 
         return new Transformed(
             new TypeScriptAlias(
                 new TypeScriptIdentifier($context->name),
-                $this->getTypeScriptNode($reflectionClass, $context)
+                $this->getTypeScriptNode($phpClassNode, $context)
             ),
-            new ReflectionClassReference($reflectionClass),
+            new PhpClassReference($phpClassNode),
             $context->nameSpaceSegments,
             true,
         );
     }
 
-    abstract protected function shouldTransform(ReflectionClass $reflection): bool;
+    abstract protected function shouldTransform(PhpClassNode $phpClassNode): bool;
 
     /** @return array<ClassPropertyProcessor> */
     protected function classPropertyProcessors(): array
@@ -68,30 +68,30 @@ abstract class ClassTransformer implements Transformer
     }
 
     protected function getTypeScriptNode(
-        ReflectionClass $reflectionClass,
+        PhpClassNode $phpClassNode,
         TransformationContext $context,
     ): TypeScriptNode {
-        if ($resolvedAttributeType = $this->resolveTypeByAttribute($reflectionClass)) {
+        if ($resolvedAttributeType = $this->resolveTypeByAttribute($phpClassNode)) {
             return $resolvedAttributeType;
         }
 
-        $classAnnotations = $this->docTypeResolver->class($reflectionClass)?->properties ?? [];
+        $classAnnotations = $this->docTypeResolver->class($phpClassNode)?->properties ?? [];
 
-        $constructorAnnotations = $reflectionClass->hasMethod('__construct')
-            ? $this->docTypeResolver->method($reflectionClass->getMethod('__construct'))?->parameters ?? []
+        $constructorAnnotations = $phpClassNode->hasMethod('__construct')
+            ? $this->docTypeResolver->method($phpClassNode->getMethod('__construct'))?->parameters ?? []
             : [];
 
         $properties = [];
 
-        foreach ($this->getProperties($reflectionClass) as $reflectionProperty) {
-            $annotation = $classAnnotations[$reflectionProperty->getName()]
-                ?? $constructorAnnotations[$reflectionProperty->getName()]
-                ?? $this->docTypeResolver->property($reflectionProperty)
+        foreach ($this->getProperties($phpClassNode) as $phpPropertyNode) {
+            $annotation = $classAnnotations[$phpPropertyNode->getName()]
+                ?? $constructorAnnotations[$phpPropertyNode->getName()]
+                ?? $this->docTypeResolver->property($phpPropertyNode)
                 ?? null;
 
             $property = $this->createProperty(
-                $reflectionClass,
-                $reflectionProperty,
+                $phpClassNode,
+                $phpPropertyNode,
                 $annotation?->type,
                 $context
             );
@@ -101,7 +101,7 @@ abstract class ClassTransformer implements Transformer
             }
 
             $property = $this->runClassPropertyProcessors(
-                $reflectionProperty,
+                $phpPropertyNode,
                 $annotation?->type,
                 $property
             );
@@ -115,60 +115,60 @@ abstract class ClassTransformer implements Transformer
     }
 
     protected function resolveTypeByAttribute(
-        ReflectionClass $reflectionClass,
-        ?ReflectionProperty $property = null,
+        PhpClassNode $phpClassNode,
+        ?PhpPropertyNode $property = null,
     ): ?TypeScriptNode {
-        $subject = $property ?? $reflectionClass;
+        $subject = $property ?? $phpClassNode;
 
         foreach ($subject->getAttributes() as $attribute) {
             if (is_a($attribute->getName(), TypeScriptTypeAttributeContract::class, true)) {
                 /** @var TypeScriptTypeAttributeContract $attributeInstance */
                 $attributeInstance = $attribute->newInstance();
 
-                return $attributeInstance->getType($reflectionClass);
+                return $attributeInstance->getType($phpClassNode);
             }
         }
 
         return null;
     }
 
-    protected function getProperties(ReflectionClass $reflection): array
+    protected function getProperties(PhpClassNode $phpClassNode): array
     {
         return array_filter(
-            $reflection->getProperties(ReflectionProperty::IS_PUBLIC),
-            fn (ReflectionProperty $property) => ! $property->isStatic()
+            $phpClassNode->getProperties(\ReflectionProperty::IS_PUBLIC),
+            fn (PhpPropertyNode $property) => ! $property->isStatic()
         );
     }
 
     protected function createProperty(
-        ReflectionClass $reflectionClass,
-        ReflectionProperty $reflectionProperty,
+        PhpClassNode $phpClassNode,
+        PhpPropertyNode $phpPropertyNode,
         ?TypeNode $annotation,
         TransformationContext $context,
     ): ?TypeScriptProperty {
         $type = $this->resolveTypeForProperty(
-            $reflectionClass,
-            $reflectionProperty,
+            $phpClassNode,
+            $phpPropertyNode,
             $annotation
         );
 
         $property = new TypeScriptProperty(
-            $reflectionProperty->getName(),
+            $phpPropertyNode->getName(),
             $type,
             $this->isPropertyOptional(
-                $reflectionProperty,
-                $reflectionClass,
+                $phpPropertyNode,
+                $phpClassNode,
                 $type,
                 $context
             ),
             $this->isPropertyReadonly(
-                $reflectionProperty,
-                $reflectionClass,
+                $phpPropertyNode,
+                $phpClassNode,
                 $type,
             )
         );
 
-        if ($this->isPropertyHidden($reflectionProperty, $reflectionClass, $property)) {
+        if ($this->isPropertyHidden($phpPropertyNode, $phpClassNode, $property)) {
             return null;
         }
 
@@ -176,25 +176,25 @@ abstract class ClassTransformer implements Transformer
     }
 
     protected function resolveTypeForProperty(
-        ReflectionClass $reflectionClass,
-        ReflectionProperty $reflectionProperty,
+        PhpClassNode $phpClassNode,
+        PhpPropertyNode $phpPropertyNode,
         ?TypeNode $annotation,
     ): TypeScriptNode {
-        if ($resolvedAttributeType = $this->resolveTypeByAttribute($reflectionClass, $reflectionProperty)) {
+        if ($resolvedAttributeType = $this->resolveTypeByAttribute($phpClassNode, $phpPropertyNode)) {
             return $resolvedAttributeType;
         }
 
         if ($annotation) {
             return $this->transpilePhpStanTypeToTypeScriptTypeAction->execute(
                 $annotation,
-                $reflectionClass,
+                $phpClassNode,
             );
         }
 
-        if ($reflectionProperty->hasType()) {
-            return $this->transpileReflectionTypeToTypeScriptTypeAction->execute(
-                $reflectionProperty->getType(),
-                $reflectionClass
+        if ($phpPropertyNode->hasType()) {
+            return $this->transpilePhpTypeNodeToTypeScriptTypeAction->execute(
+                $phpPropertyNode->getType(),
+                $phpClassNode
             );
         }
 
@@ -202,39 +202,39 @@ abstract class ClassTransformer implements Transformer
     }
 
     protected function isPropertyOptional(
-        ReflectionProperty $reflectionProperty,
-        ReflectionClass $reflectionClass,
+        PhpPropertyNode $phpPropertyNode,
+        PhpClassNode $phpClassNode,
         TypeScriptNode $type,
         TransformationContext $context,
     ): bool {
-        return $context->optional || count($reflectionProperty->getAttributes(Optional::class)) > 0;
+        return $context->optional || count($phpPropertyNode->getAttributes(Optional::class)) > 0;
     }
 
     protected function isPropertyReadonly(
-        ReflectionProperty $reflectionProperty,
-        ReflectionClass $reflectionClass,
+        PhpPropertyNode $phpPropertyNode,
+        PhpClassNode $phpClassNode,
         TypeScriptNode $type,
     ): bool {
-        return $reflectionProperty->isReadOnly() || $reflectionClass->isReadOnly();
+        return $phpPropertyNode->isReadOnly() || $phpClassNode->isReadOnly();
     }
 
     protected function isPropertyHidden(
-        ReflectionProperty $reflectionProperty,
-        ReflectionClass $reflectionClass,
+        PhpPropertyNode $phpPropertyNode,
+        PhpClassNode $phpClassNode,
         TypeScriptProperty $property,
     ): bool {
-        return count($reflectionProperty->getAttributes(Hidden::class)) > 0;
+        return count($phpPropertyNode->getAttributes(Hidden::class)) > 0;
     }
 
     protected function runClassPropertyProcessors(
-        ReflectionProperty $reflectionProperty,
+        PhpPropertyNode $phpPropertyNode,
         ?TypeNode $annotation,
         TypeScriptProperty $property,
     ): ?TypeScriptProperty {
         $processors = $this->classPropertyProcessors;
 
         foreach ($processors as $processor) {
-            $property = $processor->execute($reflectionProperty, $annotation, $property);
+            $property = $processor->execute($phpPropertyNode, $annotation, $property);
 
             if ($property === null) {
                 return null;

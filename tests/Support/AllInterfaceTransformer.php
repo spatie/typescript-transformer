@@ -2,12 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Support;
 
-use ReflectionClass;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\Transformers\InterfaceTransformer;
 
 class AllInterfaceTransformer extends InterfaceTransformer
 {
-    protected function shouldTransform(ReflectionClass $reflection): bool
+    protected function shouldTransform(PhpClassNode $phpClassNode): bool
     {
         return true;
     }

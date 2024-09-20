@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Collection;
 use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
@@ -51,7 +52,7 @@ it('replaces array like structures', function (
     ));
 
     $propertyNode = (new FixArrayLikeStructuresClassPropertyProcessor())->execute(
-        reflection: new ReflectionProperty($class, $property),
+        phpPropertyNode: new PhpPropertyNode(new ReflectionProperty($class, $property)),
         annotation: null,
         property: $propertyNode
     );
@@ -170,7 +171,7 @@ it('replaces array like classes', function (
     $propertyNode = (new FixArrayLikeStructuresClassPropertyProcessor(
         arrayLikeClassesToReplace: [Collection::class],
     ))->execute(
-        reflection: new ReflectionProperty($class, $property),
+        phpPropertyNode: new PhpPropertyNode(new ReflectionProperty($class, $property)),
         annotation: null,
         property: $propertyNode
     );

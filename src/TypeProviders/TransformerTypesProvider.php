@@ -24,14 +24,12 @@ class TransformerTypesProvider implements TypesProvider
         TypeScriptTransformerConfig $config,
         TransformedCollection $types
     ): void {
-        $discoverTypesAction = new DiscoverTypesAction();
         $transformTypesAction = new TransformTypesAction();
-
-        $discoveredClasses = $discoverTypesAction->execute($this->directories);
+        $discoverTypesAction = new DiscoverTypesAction();
 
         $types->add(...$transformTypesAction->execute(
             $this->transformers,
-            $discoveredClasses,
+            $discoverTypesAction->execute($this->directories),
         ));
     }
 }

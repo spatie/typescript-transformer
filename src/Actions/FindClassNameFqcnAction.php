@@ -2,9 +2,9 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use ReflectionClass;
 use Spatie\StructureDiscoverer\Collections\UsageCollection;
 use Spatie\StructureDiscoverer\Support\UseDefinitionsResolver;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 
 class FindClassNameFqcnAction
 {
@@ -16,9 +16,9 @@ class FindClassNameFqcnAction
     ) {
     }
 
-    public function execute(ReflectionClass $reflectionClass, string $className): ?string
+    public function execute(PhpClassNode $node, string $className): ?string
     {
-        $usages = $this->loadUsages($reflectionClass);
+        $usages = $this->loadUsages($node);
 
         $className = $this->cleanupClassname($className);
 
@@ -26,11 +26,11 @@ class FindClassNameFqcnAction
             return $this->cleanupClassname($usage->fcqn);
         }
 
-        if (! $reflectionClass->inNamespace() && class_exists($className)) {
+        if (! $node->inNamespace() && class_exists($className)) {
             return $this->cleanupClassname($className);
         }
 
-        $guessedFqcn = "{$reflectionClass->getNamespaceName()}\\{$className}";
+        $guessedFqcn = "{$node->getNamespaceName()}\\{$className}";
 
         if (class_exists($guessedFqcn)) {
             return $this->cleanupClassname($guessedFqcn);
@@ -39,9 +39,9 @@ class FindClassNameFqcnAction
         return $className;
     }
 
-    protected function loadUsages(ReflectionClass $reflectionClass): UsageCollection
+    protected function loadUsages(PhpClassNode $node): UsageCollection
     {
-        $filename = $reflectionClass->getFileName();
+        $filename = $node->getFileName();
 
         if (! array_key_exists($filename, static::$cache)) {
             static::$cache[$filename] = $this->useDefinitionsResolver->execute($filename);

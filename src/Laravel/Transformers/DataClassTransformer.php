@@ -2,13 +2,13 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel\Transformers;
 
-use ReflectionClass;
 use Spatie\LaravelData\Contracts\BaseData;
 use Spatie\LaravelData\Support\DataConfig;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
-use Spatie\TypeScriptTransformer\Actions\TranspileReflectionTypeToTypeScriptNodeAction;
+use Spatie\TypeScriptTransformer\Actions\TranspilePhpTypeNodeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors\DataClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 
@@ -21,16 +21,16 @@ class DataClassTransformer extends ClassTransformer
         protected array $customDataCollections = [],
         DocTypeResolver $docTypeResolver = new DocTypeResolver(),
         TranspilePhpStanTypeToTypeScriptNodeAction $transpilePhpStanTypeToTypeScriptTypeAction = new TranspilePhpStanTypeToTypeScriptNodeAction(),
-        TranspileReflectionTypeToTypeScriptNodeAction $transpileReflectionTypeToTypeScriptTypeAction = new TranspileReflectionTypeToTypeScriptNodeAction(),
+        TranspilePhpTypeNodeToTypeScriptNodeAction $transpilePhpTypeNodeToTypeScriptTypeAction = new TranspilePhpTypeNodeToTypeScriptNodeAction(),
     ) {
         $this->dataConfig = app(DataConfig::class);
 
-        parent::__construct($docTypeResolver, $transpilePhpStanTypeToTypeScriptTypeAction, $transpileReflectionTypeToTypeScriptTypeAction);
+        parent::__construct($docTypeResolver, $transpilePhpStanTypeToTypeScriptTypeAction, $transpilePhpTypeNodeToTypeScriptTypeAction);
     }
 
-    protected function shouldTransform(ReflectionClass $reflection): bool
+    protected function shouldTransform(PhpClassNode $phpClassNode): bool
     {
-        return $reflection->implementsInterface(BaseData::class);
+        return $phpClassNode->implementsInterface(BaseData::class);
     }
 
     protected function classPropertyProcessors(): array

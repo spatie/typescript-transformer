@@ -42,8 +42,19 @@ class ReferenceMap
         return $this->references[$reference->getKey()];
     }
 
+    public function getByReferenceKey(string $key): ?Transformed
+    {
+        return $this->references[$key] ?? null;
+    }
+
     public function all(): array
     {
         return $this->references;
+    }
+
+    public function remove(
+        Transformed $transformed
+    ): void {
+        unset($this->references[$transformed->reference->getKey()]);
     }
 }

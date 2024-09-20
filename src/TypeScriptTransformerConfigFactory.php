@@ -218,12 +218,12 @@ class TypeScriptTransformerConfigFactory
             array_unshift($this->providedVisitorClosures, new ReplaceTypesVisitorClosure($this->typeReplacements));
         }
 
-        if (! empty($this->transformers)) {
-            $transformers = array_map(
-                fn (Transformer|string $transformer) => is_string($transformer) ? new $transformer() : $transformer,
-                $this->transformers
-            );
+        $transformers = array_map(
+            fn (Transformer|string $transformer) => is_string($transformer) ? new $transformer() : $transformer,
+            $this->transformers
+        );
 
+        if (! empty($transformers)) {
             $typeProviders[] = new TransformerTypesProvider($transformers, $this->directoriesToWatch);
         }
 
@@ -233,7 +233,8 @@ class TypeScriptTransformerConfigFactory
             $formatter,
             $this->directoriesToWatch,
             $this->providedVisitorClosures,
-            $this->connectedVisitorClosures
+            $this->connectedVisitorClosures,
+            $transformers,
         );
     }
 

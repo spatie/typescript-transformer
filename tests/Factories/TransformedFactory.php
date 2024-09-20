@@ -18,6 +18,7 @@ class TransformedFactory
         public ?array $location = null,
         public ?bool $export = null,
         public ?array $references = null,
+        public ?array $referencedBy = null,
     ) {
     }
 
@@ -28,6 +29,7 @@ class TransformedFactory
         ?array $location = null,
         bool $export = true,
         ?array $references = null,
+        ?array $referencedBy = null,
     ): TransformedFactory {
         $reference = $reference ?? new CustomReference(
             'factory_alias',
@@ -39,7 +41,8 @@ class TransformedFactory
             reference: $reference,
             location: $location,
             export: $export,
-            references: $references
+            references: $references,
+            referencedBy: $referencedBy
         );
     }
 
@@ -48,14 +51,22 @@ class TransformedFactory
         $reference = $this->reference ?? new CustomReference('factory', Str::random(6));
         $location = $this->location ?? [];
         $export = $this->export ?? true;
-        $references = $this->references ?? [];
 
-        return new Transformed(
+        $transformed = new Transformed(
             typeScriptNode: $this->typeScriptNode,
             reference: $reference,
             location: $location,
             export: $export,
-            references: $references,
         );
+
+        foreach ($this->references ?? [] as $reference) {
+            $transformed->references[$reference] = null;
+        }
+
+        foreach ($this->referencedBy ?? [] as $reference) {
+            $transformed->referencedBy[$reference] = null;
+        }
+
+        return $transformed;
     }
 }

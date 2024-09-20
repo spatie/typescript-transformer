@@ -3,13 +3,14 @@
 namespace Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors;
 
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
-use ReflectionProperty;
+use Spatie\LaravelData\Attributes\Hidden as DataHidden;
 use Spatie\LaravelData\Optional;
 use Spatie\LaravelData\Support\DataConfig;
+use Spatie\TypeScriptTransformer\Attributes\Hidden;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 
@@ -32,20 +33,20 @@ class DataClassPropertyProcessor implements ClassPropertyProcessor
     }
 
     public function execute(
-        ReflectionProperty $reflection,
+        PhpPropertyNode $phpPropertyNode,
         ?TypeNode $annotation,
         TypeScriptProperty $property
     ): ?TypeScriptProperty {
-        $dataClass = $this->dataConfig->getDataClass($reflection->getDeclaringClass()->getName());
-        $dataProperty = $dataClass->properties->get($reflection->getName());
-
-        if ($dataProperty->hidden) {
+        if (! empty($phpPropertyNode->getAttributes(Hidden::class)) && ! empty($phpPropertyNode->getAttributes(DataHidden::class))) {
             return null;
         }
 
-        if ($dataProperty->outputMappedName) {
-            $property->name = new TypeScriptIdentifier($dataProperty->outputMappedName);
-        }
+        // TODO: somehow get mapping working here without dataconfig and dataproperty
+        //        $phpAttributeNodes = $phpPropertyNode->getAttributes(MapOutputName::class);
+        //
+        //        if ($phpAttributeNodes) {
+        //            $property->name = new TypeScriptIdentifier($dataProperty->outputMappedName);
+        //        }
 
         if (! $property->type instanceof TypeScriptUnion) {
             return $property;

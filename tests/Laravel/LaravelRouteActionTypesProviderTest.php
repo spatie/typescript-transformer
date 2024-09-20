@@ -1,5 +1,7 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Laravel\LaravelRouteActionTypesProvider;
+
 it('provides the correct route action types', function () {
     $provider = new LaravelRouteActionTypesProvider();
 

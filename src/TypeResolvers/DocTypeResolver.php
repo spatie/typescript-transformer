@@ -9,9 +9,9 @@ use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionProperty;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpMethodNode;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedClass;
 use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedMethod;
 use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedNameAndType;
@@ -33,9 +33,9 @@ class DocTypeResolver
         $this->lexer = new Lexer();
     }
 
-    public function class(ReflectionClass $class): ?ParsedClass
+    public function class(PhpClassNode $phpClassNode): ?ParsedClass
     {
-        $parsed = $this->parseDocComment($class);
+        $parsed = $this->parseDocComment($phpClassNode);
 
         if ($parsed === null) {
             return null;
@@ -56,9 +56,9 @@ class DocTypeResolver
         return new ParsedClass($properties);
     }
 
-    public function method(ReflectionMethod $method): ?ParsedMethod
+    public function method(PhpMethodNode $phpMethodNode): ?ParsedMethod
     {
-        $parsed = $this->parseDocComment($method);
+        $parsed = $this->parseDocComment($phpMethodNode);
 
         if ($parsed === null) {
             return null;
@@ -85,9 +85,9 @@ class DocTypeResolver
         return new ParsedMethod($parameters, $return);
     }
 
-    public function property(ReflectionProperty $property): ?ParsedNameAndType
+    public function property(PhpPropertyNode $phpPropertyNode): ?ParsedNameAndType
     {
-        $parsed = $this->parseDocComment($property);
+        $parsed = $this->parseDocComment($phpPropertyNode);
 
         if ($parsed === null) {
             return null;
@@ -103,7 +103,7 @@ class DocTypeResolver
             return null;
         }
 
-        return new ParsedNameAndType($property->name, $var);
+        return new ParsedNameAndType($phpPropertyNode->getName(), $var);
     }
 
     public function type(string $type): TypeNode
@@ -114,14 +114,14 @@ class DocTypeResolver
     }
 
     protected function parseDocComment(
-        ReflectionClass|ReflectionMethod|ReflectionProperty $reflection
+        PhpClassNode|PhpMethodNode|PhpPropertyNode $phpNode
     ): ?PhpDocNode {
-        if ($reflection->getDocComment() === false) {
+        if ($phpNode->getDocComment() === false || $phpNode->getDocComment() === null) {
             return null;
         }
 
         return $this->docParser->parse(
-            new TokenIterator($this->lexer->tokenize($reflection->getDocComment()))
+            new TokenIterator($this->lexer->tokenize($phpNode->getDocComment()))
         );
     }
 }
