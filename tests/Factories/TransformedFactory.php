@@ -12,6 +12,10 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
 class TransformedFactory
 {
+    /**
+     * @param array<Transformed> $references
+     * @param array<Transformed> $referencedBy
+     */
     public function __construct(
         public TypeScriptNode $typeScriptNode,
         public ?Reference $reference = null,
@@ -60,11 +64,11 @@ class TransformedFactory
         );
 
         foreach ($this->references ?? [] as $reference) {
-            $transformed->references[$reference] = null;
+            $transformed->references[$reference->reference->getKey()] = [];
         }
 
         foreach ($this->referencedBy ?? [] as $reference) {
-            $transformed->referencedBy[$reference] = null;
+            $transformed->referencedBy[] = $reference->reference->getKey();
         }
 
         return $transformed;

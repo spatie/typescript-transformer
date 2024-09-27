@@ -4,10 +4,9 @@ namespace Spatie\TypeScriptTransformer\Writers;
 
 use Spatie\TypeScriptTransformer\Actions\ResolveModuleImportsAction;
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\Location;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
@@ -20,7 +19,7 @@ class ModuleWriter implements Writer
     ) {
     }
 
-    public function output(TransformedCollection $collection, ReferenceMap $referenceMap): array
+    public function output(TransformedCollection $collection): array
     {
         $locations = $this->transformedPerLocationAction->execute(
             $collection
@@ -33,7 +32,7 @@ class ModuleWriter implements Writer
                 continue;
             }
 
-            $writtenFiles[] = $this->writeLocation($location, $referenceMap);
+            $writtenFiles[] = $this->writeLocation($location, $collection);
         }
 
         return $writtenFiles;
@@ -41,19 +40,19 @@ class ModuleWriter implements Writer
 
     protected function writeLocation(
         Location $location,
-        ReferenceMap $referenceMap,
+        TransformedCollection $collection,
     ): WriteableFile {
-        $imports = $this->resolveModuleImportsAction->execute($location);
+        $imports = $this->resolveModuleImportsAction->execute($location, $collection);
 
         $output = '';
 
-        $writingContext = new WritingContext(function (Reference $reference) use ($referenceMap, $imports) {
+        $writingContext = new WritingContext(function (Reference $reference) use ($collection, $imports) {
             if ($name = $imports->getAliasOrNameForReference($reference)) {
                 return $name;
             }
 
             // Type declared somewhere else in the module
-            return $referenceMap->get($reference)->getName();
+            return $collection->get($reference)->getName();
         });
 
         foreach ($imports->getTypeScriptNodes() as $import) {

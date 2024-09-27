@@ -2,10 +2,11 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypeScriptTransformer\Visitor\Visitor;
+use Traversable;
 
 class ExecuteProvidedClosuresAction
 {
@@ -18,19 +19,17 @@ class ExecuteProvidedClosuresAction
     }
 
     /**
-     * @param TransformedCollection|array<TypeScriptNode> $nodes
+     * @param TransformedCollection|Traversable<Transformed> $nodes
      */
     public function execute(
-        TransformedCollection|array $nodes,
+        TransformedCollection|Traversable $nodes,
     ): void {
         if (empty($this->config->providedVisitorClosures)) {
             return;
         }
 
-        $isTransformedCollection = $nodes instanceof TransformedCollection;
-
         foreach ($nodes as $node) {
-            $this->visitor->execute($isTransformedCollection ? $node->typeScriptNode : $node);
+            $this->visitor->execute($node->typeScriptNode);
         }
     }
 }

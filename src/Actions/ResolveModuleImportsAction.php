@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Closure;
 use Spatie\TypeScriptTransformer\Collections\ImportsCollection;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
@@ -21,6 +22,7 @@ class ResolveModuleImportsAction
 
     public function execute(
         Location $location,
+        TransformedCollection $transformedCollection,
     ): ImportsCollection {
         $collection = new ImportsCollection();
 
@@ -29,7 +31,9 @@ class ResolveModuleImportsAction
         );
 
         foreach ($location->transformed as $transformedItem) {
-            foreach ($transformedItem->references as $referencedTransformed => $typeReferences) {
+            foreach ($transformedItem->references as $referencedTransformedKey => $typeReferences) {
+                $referencedTransformed = $transformedCollection->get($referencedTransformedKey);
+
                 if ($referencedTransformed->location === $location->segments) {
                     continue;
                 }

@@ -1,5 +1,8 @@
 <?php
 
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\Support\TransformationContext;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\EmptyEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\IntBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\UnitEnum;
@@ -65,4 +68,15 @@ export enum StringBackedEnum {
 
 TS
         );
+});
+
+it('will not transform empty enums', function () {
+    $transformer = new EnumTransformer();
+
+    $transformed = $transformer->transform(
+        $enum = PhpClassNode::fromClassString(EmptyEnum::class),
+        TransformationContext::createFromPhpClass($enum),
+    );
+
+    expect($transformed)->toBeInstanceOf(Untransformable::class);
 });

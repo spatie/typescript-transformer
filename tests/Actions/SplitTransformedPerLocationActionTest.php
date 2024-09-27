@@ -1,8 +1,8 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\Location;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 

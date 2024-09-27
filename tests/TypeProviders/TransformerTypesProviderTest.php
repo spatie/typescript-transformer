@@ -1,8 +1,8 @@
 <?php
 
 use Pest\Expectation;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\PhpClassReference;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\HiddenAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\OptionalAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
@@ -43,7 +43,6 @@ it('will find types and takes attributes into account', function () {
     $collection = getTestProvidedTypes();
 
     expect($collection)->toHaveCount(5);
-    ray(iterator_to_array($collection));
     expect(iterator_to_array($collection))->sequence(
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)

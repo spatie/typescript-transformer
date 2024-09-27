@@ -1,6 +1,7 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Actions\ResolveModuleImportsAction;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\ImportLocation;
 use Spatie\TypeScriptTransformer\Support\ImportName;
 use Spatie\TypeScriptTransformer\Support\Location;
@@ -14,21 +15,25 @@ beforeEach(function () {
 });
 
 it('wont resolve imports when types are in the same module', function () {
-    $location = new Location([], [
+    $transformedCollection = new TransformedCollection([
         $reference = TransformedFactory::alias('A', new TypeScriptString())->build(),
         TransformedFactory::alias('B', new TypeReference($reference->reference), references: [
             $reference,
         ])->build(),
     ]);
 
-    expect($this->action->execute($location)->isEmpty())->toBe(true);
+    $location = new Location([], [$reference]);
+
+    expect($this->action->execute($location, $transformedCollection)->isEmpty())->toBe(true);
 });
 
 it('will import a type from another module', function () {
-    $nestedReference = TransformedFactory::alias('Nested', new TypeScriptString(), location: ['parent', 'level', 'nested'])->build();
-    $parentReference = TransformedFactory::alias('Parent', new TypeScriptString(), location: ['parent'])->build();
-    $deeperParent = TransformedFactory::alias('DeeperParent', new TypeScriptString(), location: ['parent', 'deeper'])->build();
-    $rootReference = TransformedFactory::alias('Root', new TypeScriptString(), location: [])->build();
+    $transformedCollection = new TransformedCollection([
+        $nestedReference = TransformedFactory::alias('Nested', new TypeScriptString(), location: ['parent', 'level', 'nested'])->build(),
+        $parentReference = TransformedFactory::alias('Parent', new TypeScriptString(), location: ['parent'])->build(),
+        $deeperParent = TransformedFactory::alias('DeeperParent', new TypeScriptString(), location: ['parent', 'deeper'])->build(),
+        $rootReference = TransformedFactory::alias('Root', new TypeScriptString(), location: [])->build(),
+    ]);
 
     $location = new Location(['parent', 'level'], [
         TransformedFactory::alias('Type', new TypeScriptString(), references: [
@@ -39,7 +44,7 @@ it('will import a type from another module', function () {
         ])->build(),
     ]);
 
-    $imports = $this->action->execute($location);
+    $imports = $this->action->execute($location, $transformedCollection);
 
     expect($imports->toArray())
         ->toHaveCount(4)
@@ -54,7 +59,9 @@ it('will import a type from another module', function () {
 });
 
 it('wont import the same type twice', function () {
-    $nestedReference = TransformedFactory::alias('Nested', new TypeScriptString(), location: ['nested'])->build();
+    $transformedCollection = new TransformedCollection([
+        $nestedReference = TransformedFactory::alias('Nested', new TypeScriptString(), location: ['nested'])->build(),
+    ]);
 
     $location = new Location([], [
         TransformedFactory::alias('TypeA', new TypeScriptString(), references: [
@@ -65,7 +72,7 @@ it('wont import the same type twice', function () {
         ])->build(),
     ]);
 
-    $imports = $this->action->execute($location);
+    $imports = $this->action->execute($location, $transformedCollection);
 
     expect($imports->toArray())
         ->toHaveCount(1)
@@ -77,7 +84,9 @@ it('wont import the same type twice', function () {
 });
 
 it('will alias a reference if it is already in the module', function () {
-    $nestedCollection = TransformedFactory::alias('Collection', new TypeScriptString(), location: ['nested'])->build();
+    $transformedCollection = new TransformedCollection([
+        $nestedCollection = TransformedFactory::alias('Collection', new TypeScriptString(), location: ['nested'])->build(),
+    ]);
 
     $location = new Location([], [
         TransformedFactory::alias('Collection', new TypeScriptString(), references: [
@@ -85,7 +94,7 @@ it('will alias a reference if it is already in the module', function () {
         ])->build(),
     ]);
 
-    $imports = $this->action->execute($location);
+    $imports = $this->action->execute($location, $transformedCollection);
 
     expect($imports->toArray())
         ->toHaveCount(1)
@@ -97,8 +106,10 @@ it('will alias a reference if it is already in the module', function () {
 });
 
 it('will alias a reference if it is already in the module and already aliased by another import', function () {
-    $nestedCollection = TransformedFactory::alias('Collection', new TypeScriptString(), location: ['nested'])->build();
-    $otherNestedCollection = TransformedFactory::alias('Collection', new TypeScriptString(), location: ['otherNested'])->build();
+    $transformedCollection = new TransformedCollection([
+        $nestedCollection = TransformedFactory::alias('Collection', new TypeScriptString(), location: ['nested'])->build(),
+        $otherNestedCollection = TransformedFactory::alias('Collection', new TypeScriptString(), location: ['otherNested'])->build(),
+    ]);
 
     $location = new Location([], [
         TransformedFactory::alias('Collection', new TypeScriptString(), references: [
@@ -107,7 +118,7 @@ it('will alias a reference if it is already in the module and already aliased by
         ])->build(),
     ]);
 
-    $imports = $this->action->execute($location);
+    $imports = $this->action->execute($location, $transformedCollection);
 
     expect($imports->toArray())
         ->toHaveCount(2)

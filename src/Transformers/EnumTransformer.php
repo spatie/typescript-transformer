@@ -38,6 +38,10 @@ class EnumTransformer implements Transformer
 
         $cases = $this->enumProvider->resolveCases($phpClassNode);
 
+        if(count($cases) === 0) {
+            return Untransformable::create();
+        }
+
         return new Transformed(
             $this->useUnionEnums
                 ? $this->transformAsUnion($context->name, $cases)

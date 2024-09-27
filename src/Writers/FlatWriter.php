@@ -2,9 +2,8 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
@@ -17,12 +16,11 @@ class FlatWriter implements Writer
 
     public function output(
         TransformedCollection $collection,
-        ReferenceMap $referenceMap
     ): array {
         $output = '';
 
-        $writingContext = new WritingContext(function (Reference $reference) use ($referenceMap) {
-            $transformable = $referenceMap->get($reference);
+        $writingContext = new WritingContext(function (Reference $reference) use ($collection) {
+            $transformable = $collection->get($reference);
 
             if (empty($transformable->location)) {
                 return $transformable->getName();

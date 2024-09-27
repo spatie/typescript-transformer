@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use Spatie\TypeScriptTransformer\Actions\ProvideTypesAction;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Tests\Support\InlineTypesProvider;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;

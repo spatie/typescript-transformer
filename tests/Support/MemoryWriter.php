@@ -2,8 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Support;
 
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\Writers\FlatWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
@@ -12,12 +11,9 @@ class MemoryWriter implements Writer
 {
     public static TransformedCollection $collection;
 
-    public static ReferenceMap $referenceMap;
-
-    public function output(TransformedCollection $collection, ReferenceMap $referenceMap): array
+    public function output(TransformedCollection $collection): array
     {
         static::$collection = $collection;
-        static::$referenceMap = $referenceMap;
 
         return [];
     }
@@ -35,7 +31,7 @@ class MemoryWriter implements Writer
     {
         $writer = new FlatWriter('test.ts');
 
-        [$writeableFile] = $writer->output(static::$collection, static::$referenceMap);
+        [$writeableFile] = $writer->output(static::$collection);
 
         return $writeableFile->contents;
     }

@@ -1,9 +1,8 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\CustomReference;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
@@ -31,7 +30,6 @@ it('can write everything in one flat file', function () {
 
     [$file] = $this->writer->output(
         $transformedCollection,
-        new ReferenceMap(),
     );
 
     expect($file)
@@ -60,9 +58,10 @@ it('can reference to other types in a flat file', function () {
         ]))->build(),
     ]);
 
+    (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection);
+
     [$file] = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($file)

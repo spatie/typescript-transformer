@@ -3,17 +3,15 @@
 namespace Spatie\TypeScriptTransformer;
 
 use Exception;
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Events\Watch\DirectoryDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileCreatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileUpdatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\WatchEvent;
-use Spatie\TypeScriptTransformer\Handlers\Watch\FileCreatedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\FileDeletedWatchEventHandler;
-use Spatie\TypeScriptTransformer\Handlers\Watch\FileUpdatedWatchEventHandler;
+use Spatie\TypeScriptTransformer\Handlers\Watch\FileUpdatedOrCreatedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\WatchEventHandler;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\Watcher\Exceptions\CouldNotStartWatcher;
 use Spatie\Watcher\Watch;
 
@@ -29,7 +27,6 @@ class FileSystemWatcher
     public function __construct(
         protected TypeScriptTransformer $typeScriptTransformer,
         protected TransformedCollection $transformedCollection,
-        protected ReferenceMap $referenceMap,
     ) {
         $this->initializeHandlers();
     }
@@ -87,22 +84,19 @@ class FileSystemWatcher
     {
         // TODO: handle directory deleted
 
-        $this->handlers[FileCreatedWatchEvent::class] = new FileCreatedWatchEventHandler(
+        $this->handlers[FileCreatedWatchEvent::class] = new FileUpdatedOrCreatedWatchEventHandler(
             $this->typeScriptTransformer,
             $this->transformedCollection,
-            $this->referenceMap
         );
 
-        $this->handlers[FileUpdatedWatchEvent::class] = new FileUpdatedWatchEventHandler(
+        $this->handlers[FileUpdatedWatchEvent::class] = new FileUpdatedOrCreatedWatchEventHandler(
             $this->typeScriptTransformer,
             $this->transformedCollection,
-            $this->referenceMap
         );
 
         $this->handlers[FileDeletedWatchEvent::class] = new FileDeletedWatchEventHandler(
             $this->typeScriptTransformer,
             $this->transformedCollection,
-            $this->referenceMap
         );
     }
 
@@ -116,11 +110,22 @@ class FileSystemWatcher
             $this->handlers[$event::class]->handle($event);
         }
 
+        $this->typeScriptTransformer->executeProvidedClosuresAction->execute(
+            $this->transformedCollection->onlyChanged()
+        );
+
+        $this->typeScriptTransformer->connectReferencesAction->execute(
+            $this->transformedCollection
+        );
+
         $this->tryToConnectMissingReferencesWithNewTransformed();
+
+        $this->typeScriptTransformer->executeConnectedClosuresAction->execute(
+            $this->transformedCollection->onlyChanged()
+        );
 
         $this->typeScriptTransformer->outputTransformed(
             $this->transformedCollection,
-            $this->referenceMap
         );
 
         $this->typeScriptTransformer->log->info('Processed events');
@@ -128,18 +133,15 @@ class FileSystemWatcher
 
     protected function tryToConnectMissingReferencesWithNewTransformed(): void
     {
-        foreach ($this->transformedCollection as $transformed) {
-            foreach ($transformed->missingReferences as $missingReference => $typeReferences) {
-                $referenced = $this->referenceMap->getByReferenceKey($missingReference);
+        foreach ($this->transformedCollection as $currentTransformed) {
+            foreach ($currentTransformed->missingReferences as $missingReference => $typeReferences) {
+                $foundTransformed = $this->transformedCollection->get($missingReference);
 
-                if ($referenced === null) {
+                if ($foundTransformed === null) {
                     continue;
                 }
 
-                $referenced->markMissingReferenceFound($transformed);
-                $referenced->markAsChanged();
-
-                $transformed->referencedBy[$referenced] = $referenced->reference->getKey();
+                $currentTransformed->markMissingReferenceFound($foundTransformed);
 
                 break;
             }

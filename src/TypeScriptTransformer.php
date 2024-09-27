@@ -10,11 +10,10 @@ use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
 use Spatie\TypeScriptTransformer\Actions\ProvideTypesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\Console\WrappedConsole;
 use Spatie\TypeScriptTransformer\Support\Console\WrappedNullConsole;
 use Spatie\TypeScriptTransformer\Support\LoadPhpClassNodeAction;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 
 class TypeScriptTransformer
@@ -79,17 +78,16 @@ class TypeScriptTransformer
 
         $this->executeProvidedClosuresAction->execute($transformedCollection);
 
-        $referenceMap = $this->connectReferencesAction->execute($transformedCollection);
+        $this->connectReferencesAction->execute($transformedCollection);
 
         $this->executeConnectedClosuresAction->execute($transformedCollection);
 
-        $this->outputTransformed($transformedCollection, $referenceMap);
+        $this->outputTransformed($transformedCollection);
 
         if ($this->watch) {
             $watcher = new FileSystemWatcher(
                 $this,
                 $transformedCollection,
-                $referenceMap
             );
 
             $watcher->run();
@@ -98,13 +96,12 @@ class TypeScriptTransformer
 
     public function outputTransformed(
         TransformedCollection $transformedCollection,
-        ReferenceMap $referenceMap
     ): void {
         if (! $transformedCollection->hasChanges()) {
             return;
         }
 
-        $writeableFiles = $this->config->writer->output($transformedCollection, $referenceMap);
+        $writeableFiles = $this->config->writer->output($transformedCollection);
 
         $this->writeFilesAction->execute($writeableFiles);
 

@@ -1,8 +1,8 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\Console\WrappedArrayConsole;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularA;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularB;
@@ -23,21 +23,16 @@ it('can connect references', function () {
 
     $action = new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog());
 
-    $referenceMap = $action->execute($collection)->all();
+    $action->execute($collection);
 
-    expect($referenceMap)
-        ->toHaveCount(2)
-        ->toBe([
-            $transformedEnum->reference->getKey() => $transformedEnum,
-            $transformedClass->reference->getKey() => $transformedClass,
-        ]);
+    ray($transformedClass, $transformedEnum);
 
     expect($transformedEnum->references)->toHaveCount(0);
     expect($transformedEnum->referencedBy)->toHaveCount(1);
-    expect($transformedEnum->referencedBy->offsetExists($transformedClass));
+    expect($transformedEnum->referencedBy)->toContain($transformedClass->reference->getKey());
 
     expect($transformedClass->references)->toHaveCount(1);
-    expect($transformedClass->references->offsetExists($transformedEnum));
+    expect($transformedClass->references)->toHaveKey($transformedEnum->reference->getKey());
     expect($transformedClass->referencedBy)->toHaveCount(0);
 
     expect($transformedClass->typeScriptNode->type->properties[0]->type)
@@ -53,24 +48,17 @@ it('can connect two objects referencing each other', function () {
 
     $action = new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog());
 
-    $referenceMap = $action->execute($collection)->all();
-
-    expect($referenceMap)
-        ->toHaveCount(2)
-        ->toBe([
-            $circularA->reference->getKey() => $circularA,
-            $circularB->reference->getKey() => $circularB,
-        ]);
+    $action->execute($collection);
 
     expect($circularA->references)->toHaveCount(1);
-    expect($circularA->references->offsetExists($circularB))->toBeTrue();
+    expect($circularA->references)->toHaveKey($circularB->reference->getKey());
     expect($circularA->referencedBy)->toHaveCount(1);
-    expect($circularA->referencedBy->offsetExists($circularB))->toBeTrue();
+    expect($circularA->referencedBy)->toContain($circularB->reference->getKey());
 
     expect($circularB->references)->toHaveCount(1);
-    expect($circularB->references->offsetExists($circularA))->toBeTrue();
+    expect($circularB->references)->toHaveKey($circularA->reference->getKey());
     expect($circularB->referencedBy)->toHaveCount(1);
-    expect($circularB->referencedBy->offsetExists($circularA))->toBeTrue();
+    expect($circularB->referencedBy)->toContain($circularA->reference->getKey());
 
     expect($circularA->typeScriptNode->type->properties[0]->type)
         ->toBeInstanceOf(TypeReference::class)
@@ -95,13 +83,7 @@ it('will write to the log when a reference cannot be found', function () {
         new TypeScriptTransformerLog($console = new WrappedArrayConsole())
     );
 
-    $referenceMap = $action->execute($collection)->all();
-
-    expect($referenceMap)
-        ->toHaveCount(1)
-        ->toBe([
-            $transformedClass->reference->getKey() => $transformedClass,
-        ]);
+    $action->execute($collection);
 
     expect($transformedClass->references)->toHaveCount(0);
     expect($transformedClass->referencedBy)->toHaveCount(0);

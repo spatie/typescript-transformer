@@ -3,6 +3,7 @@
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpEnumNode;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\EmptyEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\HiddenAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\IntBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\OptionalAttributedClass;
@@ -26,6 +27,7 @@ it('can discover types', function () {
         new PhpClassNode(new ReflectionClass(SimpleInterface::class)),
         new PhpClassNode(new ReflectionClass(TypeScriptLocationAttributedClass::class)),
         new PhpClassNode(new ReflectionClass(OptionalAttributedClass::class)),
+        new PhpEnumNode(new ReflectionEnum(EmptyEnum::class)),
         new PhpClassNode(new ReflectionClass(ReadonlyClass::class)),
         new PhpClassNode(new ReflectionClass(SimpleClass::class)),
         new PhpEnumNode(new ReflectionEnum(UnitEnum::class)),

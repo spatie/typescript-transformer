@@ -2,8 +2,8 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\Location;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class SplitTransformedPerLocationAction

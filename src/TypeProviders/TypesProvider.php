@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\TypeProviders;
 
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 interface TypesProvider

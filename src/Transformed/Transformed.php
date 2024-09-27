@@ -8,7 +8,6 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptForwardingNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
-use WeakMap;
 
 class Transformed
 {
@@ -16,11 +15,11 @@ class Transformed
 
     public bool $changed = true;
 
-    /** @var WeakMap<Transformed, TypeReference[]> */
-    public WeakMap $references;
+    /** @var array<string, TypeReference[]> */
+    public array $references = [];
 
-    /** @var WeakMap<Transformed, null> */
-    public WeakMap $referencedBy;
+    /** @var array<string> */
+    public array $referencedBy = [];
 
     /** @var array<string, TypeReference[]> */
     public array $missingReferences = [];
@@ -34,8 +33,6 @@ class Transformed
         public array $location,
         public bool $export = true,
     ) {
-        $this->references = new WeakMap();
-        $this->referencedBy = new WeakMap();
     }
 
     public function getName(): ?string
@@ -98,11 +95,6 @@ class Transformed
         $this->missingReferences[$key][] = $typeReference;
     }
 
-    public function isMissingReference(string $key)
-    {
-        return array_key_exists($key, $this->missingReferences);
-    }
-
     public function markMissingReferenceFound(
         Transformed $transformed
     ): void {
@@ -114,23 +106,29 @@ class Transformed
             $typeReference->connect($transformed);
         }
 
-        $this->references[$transformed] = $typeReferences;
+        $this->references[$key] = $typeReferences;
 
         unset($this->missingReferences[$key]);
+
+        $this->markAsChanged();
+
+        $transformed->referencedBy[] = $this->reference->getKey();
     }
 
-    public function markReferenceRemoved(
+    public function markReferenceMissing(
         Transformed $transformed
-    ) {
-        $typeReferences = $this->references[$transformed];
+    ): void {
+        $key = $transformed->reference->getKey();
+
+        $typeReferences = $this->references[$key];
 
         foreach ($typeReferences as $typeReference) {
             $typeReference->unconnect();
         }
 
-        unset($this->references[$transformed]);
+        unset($this->references[$key]);
 
-        $this->missingReferences = $typeReferences;
+        $this->missingReferences[$key] = $typeReferences;
     }
 
     public function markAsChanged(): void

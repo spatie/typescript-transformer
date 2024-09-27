@@ -1,9 +1,8 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\CustomReference;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
@@ -30,7 +29,6 @@ it('can write modules', function () {
 
     $files = $this->writer->output(
         $transformedCollection,
-        new ReferenceMap(),
     );
 
     expect($files)
@@ -58,10 +56,9 @@ it('can define paths in different ways', function () {
     $withoutEndWriter = new ModuleWriter('/some-path');
 
     $transformedCollection = new TransformedCollection([$rootTransformed, $nestedTransformed]);
-    $referenceMap = new ReferenceMap();
 
-    $withEndFiles = $withEndWriter->output($transformedCollection, $referenceMap);
-    $withoutEndFiles = $withoutEndWriter->output($transformedCollection, $referenceMap);
+    $withEndFiles = $withEndWriter->output($transformedCollection);
+    $withoutEndFiles = $withoutEndWriter->output($transformedCollection);
 
     expect($withEndFiles)->toEqual($withoutEndFiles);
 });
@@ -74,9 +71,10 @@ it('can reference other types within the module', function () {
         TransformedFactory::alias('B', new TypeReference($reference))->build(),
     ]);
 
+    (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection);
+
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)
@@ -101,9 +99,10 @@ it('can reference other types within a nested module', function () {
         ]))->build(),
     ]);
 
+    (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection);
+
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)
@@ -147,9 +146,10 @@ it('can combine imports from nested modules', function () {
         ]))->build(),
     ]);
 
+    (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection);
+
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)
@@ -183,9 +183,10 @@ it('can import from root into a nested module', function () {
         TransformedFactory::alias('B', new TypeReference($reference), location: ['nested'])->build(),
     ]);
 
+    (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection);
+
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)
@@ -214,9 +215,10 @@ it('can automatically alias imported types', function () {
         TransformedFactory::alias('A', new TypeReference($reference), location: ['nested'])->build(),
     ]);
 
+    (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection);
+
     $files = $this->writer->output(
         $transformedCollection,
-        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)

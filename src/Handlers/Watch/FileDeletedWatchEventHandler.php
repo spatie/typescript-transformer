@@ -2,10 +2,8 @@
 
 namespace Spatie\TypeScriptTransformer\Handlers\Watch;
 
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Events\Watch\FileDeletedWatchEvent;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
-use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
 class FileDeletedWatchEventHandler implements WatchEventHandler
@@ -13,7 +11,6 @@ class FileDeletedWatchEventHandler implements WatchEventHandler
     public function __construct(
         protected TypeScriptTransformer $typeScriptTransformer,
         protected TransformedCollection $transformedCollection,
-        protected ReferenceMap $referenceMap
     ) {
     }
 
@@ -28,13 +25,6 @@ class FileDeletedWatchEventHandler implements WatchEventHandler
             return;
         }
 
-        foreach ($transformed->referencedBy as $referencedBy => $key) {
-            /** @var Transformed $referencedBy */
-            $referencedBy->markReferenceRemoved($transformed);
-            $referencedBy->markAsChanged();
-        }
-
-        $this->referenceMap->remove($transformed);
-        $this->transformedCollection->removeTransformedByPath($event->path);
+        $this->transformedCollection->remove($transformed->reference);
     }
 }

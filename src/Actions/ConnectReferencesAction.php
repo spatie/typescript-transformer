@@ -2,8 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -20,58 +19,50 @@ class ConnectReferencesAction
     }
 
     /**
-     * @param TransformedCollection|array<Transformed> $collection
+     * @param TransformedCollection $collection
      */
-    public function execute(TransformedCollection|array $collection): ReferenceMap
+    public function execute(TransformedCollection $collection): void
     {
-        $referenceMap = new ReferenceMap();
-
-        foreach ($collection as $transformed) {
-            $referenceMap->add($transformed);
-        }
-
-        foreach ($collection as $transformed) {
+        foreach ($collection->onlyChanged() as $transformed) {
             $metadata = [
                 'transformed' => $transformed,
-                'referenceMap' => $referenceMap,
+                'collection' => $collection,
             ];
 
             $this->visitor->execute($transformed->typeScriptNode, $metadata);
         }
-
-        return $referenceMap;
     }
 
     protected function resolveVisitor(): Visitor
     {
         return Visitor::create()->before(function (TypeReference $typeReference, array &$metadata) {
-            /** @var Transformed $transformed */
-            $transformed = $metadata['transformed'];
+            /** @var Transformed $currentTransformed */
+            $currentTransformed = $metadata['transformed'];
 
-            /** @var ReferenceMap $referenceMap */
-            $referenceMap = $metadata['referenceMap'];
+            /** @var TransformedCollection $collection */
+            $collection = $metadata['collection'];
 
-            if (! $referenceMap->has($typeReference->reference)) {
-                $transformed->addMissingReference($typeReference->reference, $typeReference);
+            $foundTransformed = $collection->get($typeReference->reference);
 
-                $this->log->warning("Tried replacing reference to `{$typeReference->reference->humanFriendlyName()}` in `{$transformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
+            if ($foundTransformed === null) {
+                $currentTransformed->addMissingReference($typeReference->reference, $typeReference);
+
+                $this->log->warning("Tried replacing reference to `{$typeReference->reference->humanFriendlyName()}` in `{$currentTransformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
 
                 return;
             }
 
-            $transformedReference = $referenceMap->get($typeReference->reference);
-
-            if(! $transformed->references->offsetExists($transformedReference)) {
-                $transformed->references[$transformedReference] = [];
+            if (! array_key_exists($foundTransformed->reference->getKey(), $currentTransformed->references)) {
+                $currentTransformed->references[$foundTransformed->reference->getKey()] = [];
             }
 
-            $transformed->references[$transformedReference][] = $typeReference;
-            $transformedReference->referencedBy[$transformed] = $transformed->reference->getKey();
+            $currentTransformed->references[$foundTransformed->reference->getKey()][] = $typeReference;
+            $foundTransformed->referencedBy[] = $currentTransformed->reference->getKey();
 
-            $typeReference->connect($transformedReference);
+            $typeReference->connect($foundTransformed);
 
-            if (array_key_exists($typeReference->reference->getKey(), $transformed->missingReferences)) {
-                unset($transformed->missingReferences[$typeReference->reference->getKey()]);
+            if (array_key_exists($foundTransformed->reference->getKey(), $currentTransformed->missingReferences)) {
+                unset($currentTransformed->missingReferences[$foundTransformed->reference->getKey()]);
             }
         }, [TypeReference::class]);
     }

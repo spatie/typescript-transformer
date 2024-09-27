@@ -1,9 +1,8 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
-use Spatie\TypeScriptTransformer\Collections\ReferenceMap;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\CustomReference;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
@@ -26,7 +25,6 @@ it('can write a namespaced file', function () {
 
     $files = (new NamespaceWriter($filename))->output(
         $transformedCollection,
-        new ReferenceMap(),
     );
 
     expect($files)
@@ -68,9 +66,10 @@ it('will reference correctly between namespaces', function () {
 
     $filename = 'types.ts';
 
+    (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection);
+
     $files = (new NamespaceWriter($filename))->output(
         $transformedCollection,
-        (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection),
     );
 
     expect($files)

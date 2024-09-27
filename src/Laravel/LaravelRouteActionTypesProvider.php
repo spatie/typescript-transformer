@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Laravel;
 
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Laravel\Actions\ResolveLaravelRoutControllerCollectionsAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteCollection;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteController;
@@ -11,7 +12,6 @@ use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
 use Spatie\TypeScriptTransformer\Laravel\Support\WithoutRoutes;
 use Spatie\TypeScriptTransformer\References\CustomReference;
-use Spatie\TypeScriptTransformer\Support\TransformedCollection;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
