@@ -32,7 +32,7 @@ class TypeReference implements TypeScriptNamedNode, TypeScriptNode
 
     public function write(WritingContext $context): string
     {
-        if($this->referenced === null) {
+        if ($this->referenced === null) {
             return 'undefined';
         }
 

@@ -67,7 +67,7 @@ class TransformedCollection implements IteratorAggregate
 
         unset($this->items[$transformed->reference->getKey()]);
 
-        if($transformed->reference instanceof FilesystemReference) {
+        if ($transformed->reference instanceof FilesystemReference) {
             $path = $this->cleanupFilePath($transformed->reference->getFilesystemOriginPath());
 
             unset($this->fileMapping[$path]);

@@ -88,7 +88,7 @@ class Transformed
             $key = $key->getKey();
         }
 
-        if(! array_key_exists($key, $this->missingReferences)) {
+        if (! array_key_exists($key, $this->missingReferences)) {
             $this->missingReferences[$key] = [];
         }
 

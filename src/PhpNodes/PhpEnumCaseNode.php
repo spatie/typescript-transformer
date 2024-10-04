@@ -20,11 +20,11 @@ class PhpEnumCaseNode
 
     public function getValue(): string|int|null
     {
-        if($this->reflection instanceof ReflectionEnumCase) {
+        if ($this->reflection instanceof ReflectionEnumCase) {
             return $this->reflection->getValue();
         }
 
-        if(! method_exists($this->reflection, 'getBackingValue')) {
+        if (! method_exists($this->reflection, 'getBackingValue')) {
             return null;
         }
 

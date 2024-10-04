@@ -38,7 +38,7 @@ class EnumTransformer implements Transformer
 
         $cases = $this->enumProvider->resolveCases($phpClassNode);
 
-        if(count($cases) === 0) {
+        if (count($cases) === 0) {
             return Untransformable::create();
         }
 

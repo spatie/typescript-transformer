@@ -81,11 +81,11 @@ class PhpAttributeNode
         $constructor = new ReflectionMethod($this->reflection->getName(), '__construct');
 
         foreach ($constructor->getParameters() as $index => $param) {
-            if(array_key_exists($param->getName(), $this->arguments)) {
+            if (array_key_exists($param->getName(), $this->arguments)) {
                 continue;
             }
 
-            if(! array_key_exists($index, $values)) {
+            if (! array_key_exists($index, $values)) {
                 continue;
             }
 
