@@ -25,8 +25,6 @@ it('can connect references', function () {
 
     $action->execute($collection);
 
-    ray($transformedClass, $transformedEnum);
-
     expect($transformedEnum->references)->toHaveCount(0);
     expect($transformedEnum->referencedBy)->toHaveCount(1);
     expect($transformedEnum->referencedBy)->toContain($transformedClass->reference->getKey());

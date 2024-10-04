@@ -71,16 +71,11 @@ class TypeScriptTransformer
          * - Further write docs + check them -> only Laravel specific stuff
          * - Check old Laravel tests if we missed something
          * - Check in Flare whether everything is working as expected -> PR ready, needs fixing TS
+         * - Make sure nullables can be exported as optional: https://github.com/spatie/typescript-transformer/pull/88/files
          * - Release
          */
 
-        $transformedCollection = $this->provideTypesAction->execute();
-
-        $this->executeProvidedClosuresAction->execute($transformedCollection);
-
-        $this->connectReferencesAction->execute($transformedCollection);
-
-        $this->executeConnectedClosuresAction->execute($transformedCollection);
+        $transformedCollection = $this->resolveTransformedCollection();
 
         $this->outputTransformed($transformedCollection);
 
@@ -92,6 +87,19 @@ class TypeScriptTransformer
 
             $watcher->run();
         }
+    }
+
+    public function resolveTransformedCollection(): TransformedCollection
+    {
+        $transformedCollection = $this->provideTypesAction->execute();
+
+        $this->executeProvidedClosuresAction->execute($transformedCollection);
+
+        $this->connectReferencesAction->execute($transformedCollection);
+
+        $this->executeConnectedClosuresAction->execute($transformedCollection);
+
+        return $transformedCollection;
     }
 
     public function outputTransformed(

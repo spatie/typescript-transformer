@@ -19,7 +19,7 @@ class FileDeletedWatchEventHandler implements WatchEventHandler
      */
     public function handle($event): void
     {
-        $transformed = $this->transformedCollection->findTransformedByPath($event->path);
+        $transformed = $this->transformedCollection->findTransformedByFile($event->path);
 
         if ($transformed === null) {
             return;

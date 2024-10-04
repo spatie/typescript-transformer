@@ -43,7 +43,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
             throw $throwable;
         }
 
-        $originalTransformed = $this->transformedCollection->findTransformedByPath(
+        $originalTransformed = $this->transformedCollection->findTransformedByFile(
             $event->path
         );
 

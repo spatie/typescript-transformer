@@ -93,11 +93,22 @@ class TransformedCollection implements IteratorAggregate
         }
     }
 
-    public function findTransformedByPath(string $path): ?Transformed
+    public function findTransformedByFile(string $path): ?Transformed
     {
         $path = $this->cleanupFilePath($path);
 
         return $this->fileMapping[$path] ?? null;
+    }
+
+    public function findTransformedByDirectory(string $path): Generator
+    {
+        $path = $this->cleanupFilePath($path);
+
+        foreach ($this->fileMapping as $transformedPath => $transformed) {
+            if (str_starts_with($transformedPath, $path)) {
+                yield $transformed;
+            }
+        }
     }
 
     public function hasChanges(): bool

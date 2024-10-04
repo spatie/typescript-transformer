@@ -129,6 +129,8 @@ class Transformed
         unset($this->references[$key]);
 
         $this->missingReferences[$key] = $typeReferences;
+
+        $this->markAsChanged();
     }
 
     public function markAsChanged(): void
