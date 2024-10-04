@@ -2,6 +2,15 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.4.0 - 2024-10-04
+
+### What's Changed
+
+* Don't generate if an enum has no cases yet by @jameshulse in https://github.com/spatie/typescript-transformer/pull/87
+* feat: support `nullToOptional` config by @innocenzi in https://github.com/spatie/typescript-transformer/pull/88
+
+**Full Changelog**: https://github.com/spatie/typescript-transformer/compare/2.3.1...2.4.0
+
 ## 2.3.1 - 2024-05-03
 
 ### What's Changed
