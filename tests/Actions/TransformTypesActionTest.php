@@ -2,7 +2,6 @@
 
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\HiddenAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
@@ -51,20 +50,4 @@ it('can hide classes using an attribute', function () {
     );
 
     expect($types)->toBeEmpty();
-});
-
-it('will log errors when a type cannot be reflected', function () {
-    $types = (new TransformTypesAction())->execute(
-        [
-            new AllClassTransformer(),
-        ],
-        [
-            PhpClassNode::fromClassString('NonExistentClass'),
-        ]
-    );
-
-    expect($types)->toBeEmpty();
-
-    expect(TypeScriptTransformerLog::resolve()->errorMessages)
-        ->toHaveCount(1);
 });

@@ -27,13 +27,14 @@ class ModuleWriter implements Writer
 
         $writtenFiles = [];
 
-        foreach ($locations as $location) {
-            if ($location->hasChanges() === false) {
-                continue;
-            }
+        // TODO: remove files which still exists due to previous run
 
+        foreach ($locations as $location) {
             $writtenFiles[] = $this->writeLocation($location, $collection);
         }
+
+        // TODO: we probably can be a bit smarter about this
+        // -> only write files which have changed
 
         return $writtenFiles;
     }

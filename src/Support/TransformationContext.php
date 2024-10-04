@@ -18,11 +18,15 @@ class TransformationContext
     public static function createFromPhpClass(
         PhpClassNode $node
     ): TransformationContext {
-        $attributeArguments = ($node->getAttributes(TypeScript::class)[0] ?? null)?->getArguments() ?? [];
+        $attribute = $node->getAttributes(TypeScript::class)[0] ?? null;
 
-        $name = $attributeArguments['name'] ?? $node->getShortName();
+        $name = $attribute && $attribute->hasArgument('name')
+            ? $attribute->getArgument('name')
+            : $node->getShortName();
 
-        $nameSpaceSegments = $attributeArguments['location'] ?? explode('\\', $node->getNamespaceName());
+        $nameSpaceSegments = $attribute && $attribute->hasArgument('location')
+            ? $attribute->getArgument('location')
+            : explode('\\', $node->getNamespaceName());
 
         return new TransformationContext(
             $name,
