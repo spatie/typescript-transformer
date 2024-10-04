@@ -2,6 +2,9 @@
 
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\String_;
+use function PHPUnit\Framework\assertEquals;
+use function Spatie\Snapshots\assertMatchesSnapshot;
+use function Spatie\Snapshots\assertMatchesTextSnapshot;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
@@ -13,13 +16,10 @@ use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\DtoWithChildren;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\Enum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\LevelUp\YetAnotherDto;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Integration\OtherDto;
+
 use Spatie\TypeScriptTransformer\Transformers\DtoTransformer;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-
-use function PHPUnit\Framework\assertEquals;
-use function Spatie\Snapshots\assertMatchesSnapshot;
-use function Spatie\Snapshots\assertMatchesTextSnapshot;
 
 beforeEach(function () {
     $config = TypeScriptTransformerConfig::create()
@@ -49,10 +49,10 @@ it('will replace types', function () {
 it('a type processor can remove properties', function () {
     $config = TypeScriptTransformerConfig::create();
 
-    $transformer = new class ($config) extends DtoTransformer {
+    $transformer = new class($config) extends DtoTransformer {
         protected function typeProcessors(): array
         {
-            $onlyStringPropertiesProcessor = new class () implements TypeProcessor {
+            $onlyStringPropertiesProcessor = new class() implements TypeProcessor {
                 public function process(
                     Type $type,
                     ReflectionProperty | ReflectionParameter | ReflectionMethod $reflection,
@@ -75,7 +75,7 @@ it('a type processor can remove properties', function () {
 });
 
 it('will take transform as typescript attributes into account', function () {
-    $class = new class () {
+    $class = new class() {
         #[TypeScriptType('int')]
         public $int;
 
@@ -103,7 +103,7 @@ it('will take transform as typescript attributes into account', function () {
 });
 
 it('transforms properties to optional ones when using optional attribute', function () {
-    $class = new class () {
+    $class = new class() {
         #[Optional]
         public string $string;
     };
@@ -134,7 +134,7 @@ it('transforms all properties of a class with optional attribute to optional', f
 
 
 it('transforms properties to hidden ones when using hidden attribute', function () {
-    $class = new class () {
+    $class = new class() {
         public string $visible;
         #[Hidden]
         public string $hidden;
@@ -149,7 +149,7 @@ it('transforms properties to hidden ones when using hidden attribute', function 
 });
 
 it('transforms nullable properties to optional ones according to config', function () {
-    $class = new class () {
+    $class = new class() {
         public ?string $string;
     };
 

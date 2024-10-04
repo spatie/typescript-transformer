@@ -4,14 +4,14 @@ use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Self_;
 use phpDocumentor\Reflection\Types\Static_;
 use phpDocumentor\Reflection\Types\This;
-use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
-use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
-use Spatie\TypeScriptTransformer\Types\StructType;
-
 use function PHPUnit\Framework\assertContains;
 use function PHPUnit\Framework\assertEquals;
 use function Spatie\Snapshots\assertMatchesSnapshot;
+use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
+
+use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
+use Spatie\TypeScriptTransformer\Types\StructType;
 
 beforeEach(function () {
     $this->missingSymbols = new MissingSymbolsCollection();
