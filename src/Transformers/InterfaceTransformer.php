@@ -35,6 +35,7 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
                         $type = $this->reflectionToTypeScript(
                             $parameter,
                             $missingSymbols,
+                            false,
                             ...$this->typeProcessors()
                         );
 
@@ -53,6 +54,7 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
                     $returnType = $this->reflectionToTypeScript(
                         $method,
                         $missingSymbols,
+                        false,
                         ...$this->typeProcessors()
                     );
                 }

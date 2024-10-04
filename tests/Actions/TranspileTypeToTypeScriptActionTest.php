@@ -4,13 +4,14 @@ use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Self_;
 use phpDocumentor\Reflection\Types\Static_;
 use phpDocumentor\Reflection\Types\This;
-use function PHPUnit\Framework\assertContains;
-use function PHPUnit\Framework\assertEquals;
-use function Spatie\Snapshots\assertMatchesSnapshot;
 use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
 use Spatie\TypeScriptTransformer\Types\StructType;
+
+use function PHPUnit\Framework\assertContains;
+use function PHPUnit\Framework\assertEquals;
+use function Spatie\Snapshots\assertMatchesSnapshot;
 
 beforeEach(function () {
     $this->missingSymbols = new MissingSymbolsCollection();
@@ -19,6 +20,7 @@ beforeEach(function () {
 
     $this->action = new TranspileTypeToTypeScriptAction(
         $this->missingSymbols,
+        false,
         'fake_class'
     );
 });
@@ -61,4 +63,18 @@ it('can resolve pseudo types', function () {
     $transformed = $this->action->execute($this->typeResolver->resolve('array-key'));
 
     expect($transformed)->toBe('string | number');
+});
+
+it('does not add nullable unions to optional properties', function () {
+    $action = new TranspileTypeToTypeScriptAction(
+        $this->missingSymbols,
+        true
+    );
+
+    $transformed = $action->execute(StructType::fromArray([
+        'a_string' => 'string',
+        'a_nullable_string' => '?string',
+    ]));
+
+    assertEquals('{a_string:string;a_nullable_string:string;}', $transformed);
 });

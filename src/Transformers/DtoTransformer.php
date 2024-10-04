@@ -54,22 +54,26 @@ class DtoTransformer implements Transformer
         ReflectionClass $class,
         MissingSymbolsCollection $missingSymbols
     ): string {
-        $isOptional = ! empty($class->getAttributes(Optional::class));
+        $isClassOptional = ! empty($class->getAttributes(Optional::class));
+        $nullablesAreOptional = $this->config->shouldConsiderNullAsOptional();
 
         return array_reduce(
             $this->resolveProperties($class),
-            function (string $carry, ReflectionProperty $property) use ($isOptional, $missingSymbols) {
+            function (string $carry, ReflectionProperty $property) use ($isClassOptional, $missingSymbols, $nullablesAreOptional) {
                 $isHidden = ! empty($property->getAttributes(Hidden::class));
 
                 if ($isHidden) {
                     return $carry;
                 }
 
-                $isOptional = $isOptional || ! empty($property->getAttributes(Optional::class));
+                $isOptional = $isClassOptional
+                    || ! empty($property->getAttributes(Optional::class))
+                    || ($property->getType()?->allowsNull() && $nullablesAreOptional);
 
                 $transformed = $this->reflectionToTypeScript(
                     $property,
                     $missingSymbols,
+                    $isOptional,
                     ...$this->typeProcessors()
                 );
 
