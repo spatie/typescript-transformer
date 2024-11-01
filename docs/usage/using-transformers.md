@@ -10,7 +10,7 @@ Transformers are the heart of the package. They take a PHP class and try to make
 The package comes with a few transformers out of the box:
 
 - `EnumTransformer`: this transforms a PHP 8.1 native enum
-- `MyclabsEnumTransformer`: this transforms an enum from the [`myclabs\enum`](https://github.com/myclab/enum) package
+- `MyclabsEnumTransformer`: this transforms an enum from the [`myclabs\php-enum`](https://github.com/myclabs/php-enum) package
 - `SpatieEnumTransformer`: this transforms an enum from the [`spatie\enum`](https://github.com/spatie/enum) package
 - `DtoTransformer`: a powerful transformer that transforms entire classes and their properties, you can read more about
   it [here](/docs/typescript-transformer/v2/dtos/typing-properties)
