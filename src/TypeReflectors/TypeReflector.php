@@ -36,6 +36,9 @@ abstract class TypeReflector
     public static function new(ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection): static
     {
         if ($reflection instanceof ReflectionProperty) {
+            if ($reflection->isPromoted()) {
+                return new PromotedPropertyTypeReflector($reflection);
+            }
             return new PropertyTypeReflector($reflection);
         }
 
