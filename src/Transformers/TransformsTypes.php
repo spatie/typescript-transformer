@@ -10,6 +10,7 @@ use Spatie\TypeScriptTransformer\Actions\TranspileTypeToTypeScriptAction;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\TypeProcessors\TypeProcessor;
 use Spatie\TypeScriptTransformer\TypeReflectors\TypeReflector;
+use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
 trait TransformsTypes
 {
@@ -65,7 +66,8 @@ trait TransformsTypes
         bool $nullablesAreOptional = false,
         ?string $currentClass = null,
     ): string {
-        $transpiler = new TranspileTypeToTypeScriptAction(
+        $transpiler = TypeScriptTransformer::make(
+            TranspileTypeToTypeScriptAction::class,
             $missingSymbolsCollection,
             $nullablesAreOptional,
             $currentClass,

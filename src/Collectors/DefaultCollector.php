@@ -10,6 +10,7 @@ use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeReflectors\ClassTypeReflector;
+use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
 class DefaultCollector extends Collector
 {
@@ -39,7 +40,8 @@ class DefaultCollector extends Collector
         $name = $reflector->getName();
         $nullablesAreOptional = $this->config->shouldConsiderNullAsOptional();
 
-        $transpiler = new TranspileTypeToTypeScriptAction(
+        $transpiler = TypeScriptTransformer::make(
+            TranspileTypeToTypeScriptAction::class,
             $missingSymbols,
             $nullablesAreOptional,
             $name
