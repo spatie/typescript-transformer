@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class PersistTypesCollectionAction
@@ -20,7 +21,8 @@ class PersistTypesCollectionAction
 
         $writer = $this->config->getWriter();
 
-        (new ReplaceSymbolsInCollectionAction())->execute(
+        TypeScriptTransformer::make(ReplaceSymbolsInCollectionAction::class)
+            ->execute(
             $collection,
             $writer->replacesSymbolsWithFullyQualifiedIdentifiers()
         );

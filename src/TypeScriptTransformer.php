@@ -12,6 +12,17 @@ class TypeScriptTransformer
 {
     protected TypeScriptTransformerConfig $config;
 
+    private static $overriddenClasses = [];
+
+    public static function override(string $className, string $newClassName): void {
+        self::$overriddenClasses[$className] = $newClassName;
+    }
+
+    public static function make(string $className, ...$args) {
+        $className = self::$overriddenClasses[$className] ?? $className;
+        return new $className(...$args);
+    }
+
     public static function create(TypeScriptTransformerConfig $config): self
     {
         return new self($config);
@@ -24,14 +35,15 @@ class TypeScriptTransformer
 
     public function transform(): TypesCollection
     {
-        $typesCollection = (new ResolveTypesCollectionAction(
+        $typesCollection = self::make(
+            ResolveTypesCollectionAction::class,
             new Finder(),
             $this->config,
-        ))->execute();
+        )->execute();
 
-        (new PersistTypesCollectionAction($this->config))->execute($typesCollection);
+        self::make(PersistTypesCollectionAction::class, $this->config)->execute($typesCollection);
 
-        (new FormatTypeScriptAction($this->config))->execute();
+        self::make(FormatTypeScriptAction::class, $this->config)->execute();
 
         return $typesCollection;
     }

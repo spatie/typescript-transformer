@@ -8,6 +8,7 @@ use ReflectionClass;
 use Spatie\TypeScriptTransformer\Exceptions\NoAutoDiscoverTypesPathsDefined;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Finder\Finder;
 
@@ -61,7 +62,7 @@ class ResolveTypesCollectionAction
 
         foreach ($this->finder->in($paths) as $fileInfo) {
             try {
-                $classes = (new ResolveClassesInPhpFileAction())->execute($fileInfo);
+                $classes = TypeScriptTransformer::make(ResolveClassesInPhpFileAction::class)->execute($fileInfo);
 
                 foreach ($classes as $name) {
                     yield $name => new ReflectionClass($name);

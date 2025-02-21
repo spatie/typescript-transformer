@@ -5,12 +5,13 @@ namespace Spatie\TypeScriptTransformer\Writers;
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
-
+use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 class TypeDefinitionWriter implements Writer
 {
     public function format(TypesCollection $collection): string
     {
-        (new ReplaceSymbolsInCollectionAction())->execute($collection);
+        
+        TypeScriptTransformer::make(ReplaceSymbolsInCollectionAction::class)->execute($collection);
 
         [$namespaces, $rootTypes] = $this->groupByNamespace($collection);
 
