@@ -82,10 +82,10 @@ class EnumTransformer implements Transformer
         for ($i = 0; $i < strlen($value); $i++) {
             $char = $value[$i];
 
-            match ($char) {
-                '\\' => $newValue .= '\\\\',
-                '\'' => $newValue .= '\\\'',
-                default => $newValue .= $char,
+            $newValue .= match ($char) {
+                '\\' => '\\\\',
+                '\'' => '\\\'',
+                default => $char,
             };
         }
 
