@@ -1,10 +1,20 @@
-# Transform PHP types to TypeScript
+<div align="left">
+    <a href="https://spatie.be/open-source?utm_source=github&utm_medium=banner&utm_campaign=typescript-transformer">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://spatie.be/packages/header/typescript-transformer/html/dark.webp">
+        <img alt="Logo for typescript-transformer" src=" https://spatie.be/packages/header/typescript-transformer/html/light.webp" height="190">
+      </picture>
+    </a>
+
+<h1>Transform PHP types to TypeScript</h1>
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
 [![Tests](https://github.com/spatie/typescript-transformer/workflows/run-tests/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3Arun-tests)
 [![Styling](https://github.com/spatie/typescript-transformer/workflows/Check%20&%20fix%20styling/badge.svg)](https://github.com/spatie/typescript-transformer/actions?query=workflow%3A%22Check+%26+fix+styling%22)
 [![PHPStan](https://github.com/spatie/typescript-transformer/actions/workflows/phpstan.yml/badge.svg)](https://github.com/spatie/typescript-transformer/actions/workflows/phpstan.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
+    
+</div>
 
 This package allows you to convert PHP classes to TypeScript. 
 
