@@ -73,7 +73,7 @@ class EnumTransformer implements Transformer
     {
         $value = $case->getBackingValue();
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return "{$value}";
         }
 

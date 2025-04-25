@@ -11,7 +11,6 @@ use function PHPUnit\Framework\assertTrue;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\IntBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnumWithSingleQuotes;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use UnitEnum;
