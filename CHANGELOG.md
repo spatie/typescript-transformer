@@ -2,6 +2,15 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 2.4.1 - 2025-04-25
+
+### What's Changed
+
+* Fix: EnumTransformer properly handling single-quotes in backed enum string values by @sugarmaplemedia in https://github.com/spatie/typescript-transformer/pull/100
+* fix: No quotes for the enum case according to typescriptlang.org by @ABartelt in https://github.com/spatie/typescript-transformer/pull/97
+
+**Full Changelog**: https://github.com/spatie/typescript-transformer/compare/2.4.0...2.4.1
+
 ## 2.4.0 - 2024-10-04
 
 ### What's Changed
