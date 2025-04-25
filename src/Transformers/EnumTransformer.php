@@ -73,22 +73,15 @@ class EnumTransformer implements Transformer
     {
         $value = $case->getBackingValue();
 
-        $newValue = "";
-
-        if (! is_string($value)) {
+        if (!is_string($value)) {
             return "{$value}";
         }
 
-        for ($i = 0; $i < strlen($value); $i++) {
-            $char = $value[$i];
+        $escaped = strtr($value, [
+            '\\' => '\\\\',
+            '\'' => '\\\'',
+        ]);
 
-            $newValue .= match ($char) {
-                '\\' => '\\\\',
-                '\'' => '\\\'',
-                default => $char,
-            };
-        }
-
-        return "'" . $newValue . "'";
+        return "'{$escaped}'";
     }
 }

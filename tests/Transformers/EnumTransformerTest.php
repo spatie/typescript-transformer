@@ -116,12 +116,18 @@ it('can transform a backed enum with integers into a union', function () {
 });
 
 it('can transform a backed enum with strings with single-quotes into a enum', function () {
+    enum TestStringBackedEnumWithSingleQuotes: string
+    {
+        case NO_QUOTE = 'no quote';
+        case HAS_QUOTE = 'has quote \'';
+    }
+
     $transformer = new EnumTransformer(
         TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
     );
 
     $type = $transformer->transform(
-        new ReflectionClass(StringBackedEnumWithSingleQuotes::class),
+        new ReflectionClass(TestStringBackedEnumWithSingleQuotes::class),
         'Enum'
     );
 
@@ -129,15 +135,13 @@ it('can transform a backed enum with strings with single-quotes into a enum', fu
     assertTrue($type->missingSymbols->isEmpty());
     assertFalse($type->isInline);
     assertEquals('enum', $type->keyword);
-});
 
-it('can transform a backed enum with strings with single-quotes into a union', function () {
     $transformer = new EnumTransformer(
         TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
     );
 
     $type = $transformer->transform(
-        new ReflectionClass(StringBackedEnumWithSingleQuotes::class),
+        new ReflectionClass(TestStringBackedEnumWithSingleQuotes::class),
         'Enum'
     );
 
