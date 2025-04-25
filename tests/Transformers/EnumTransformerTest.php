@@ -15,12 +15,6 @@ use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use UnitEnum;
 
-beforeEach(function () {
-    if (\PHP_VERSION_ID < 80100) {
-        test()->markTestSkipped('Native enums not supported before PHP 8.1');
-    }
-});
-
 it('will only convert enums', function () {
     $transformer = new EnumTransformer(
         TypeScriptTransformerConfig::create()->transformToNativeEnums(false)

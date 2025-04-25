@@ -16,11 +16,6 @@ class EnumTransformer implements Transformer
 
     public function transform(ReflectionClass $class, string $name): ?TransformedType
     {
-        // If we're not on PHP >= 8.1, we don't support native enums.
-        if (! method_exists($class, 'isEnum')) {
-            return null;
-        }
-
         if (! $class->isEnum()) {
             return null;
         }
