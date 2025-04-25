@@ -124,7 +124,7 @@ it('can transform a backed enum with strings with single-quotes into a enum', fu
         'Enum'
     );
 
-    assertEquals("'NO_QUOTE' = 'no quote', 'HAS_QUOTE' = 'has quote \''", $type->transformed);
+    assertEquals("NO_QUOTE = 'no quote', HAS_QUOTE = 'has quote \''", $type->transformed);
     assertTrue($type->missingSymbols->isEmpty());
     assertFalse($type->isInline);
     assertEquals('enum', $type->keyword);
