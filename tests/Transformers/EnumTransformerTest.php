@@ -61,7 +61,7 @@ it('can transform a backed enum into enum', function () {
         'Enum'
     );
 
-    assertEquals("'JS' = 'js', 'PHP' = 'php', 'BackslashesTest' = 'backslashes\\\\test'", $type->transformed);
+    assertEquals("JS = 'js', PHP = 'php', BackslashesTest = 'backslashes\\\\test'", $type->transformed);
     assertTrue($type->missingSymbols->isEmpty());
     assertFalse($type->isInline);
     assertEquals('enum', $type->keyword);
@@ -93,7 +93,7 @@ it('can transform a backed enum with integers into an enum', function () {
         'Enum'
     );
 
-    assertEquals("'JS' = 1, 'PHP' = 2", $type->transformed);
+    assertEquals("JS = 1, PHP = 2", $type->transformed);
     assertTrue($type->missingSymbols->isEmpty());
     assertFalse($type->isInline);
     assertEquals('enum', $type->keyword);
