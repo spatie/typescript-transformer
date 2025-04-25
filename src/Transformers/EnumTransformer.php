@@ -75,7 +75,7 @@ class EnumTransformer implements Transformer
 
         $newValue = "";
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return "{$value}";
         }
 
