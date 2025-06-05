@@ -161,3 +161,61 @@ it('transforms nullable properties to optional ones according to config', functi
 
     $this->assertMatchesSnapshot($type->transformed);
 });
+
+it('compacts namespaces', function () {
+    $reflectionClass = new ReflectionClass(Dto::class);
+    assertEquals(
+        'Dto',
+        (new DtoTransformer(
+            TypeScriptTransformerConfig::create()
+                ->compactorPrefixes([
+                    "Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration"
+                ])
+        ))->transform(
+            $reflectionClass,
+            'Dto'
+        )->getTypeScriptName(true)
+    );
+
+    assertEquals(
+        'Integration.Dto',
+        (new DtoTransformer(
+            TypeScriptTransformerConfig::create()
+                ->compactorPrefixes([
+                    "Spatie.TypeScriptTransformer.Tests.FakeClasses"
+                ])
+        ))->transform(
+            $reflectionClass,
+            'Dto'
+        )->getTypeScriptName(true)
+    );
+    assertEquals(
+        'Integration.Dto',
+        (new DtoTransformer(
+            TypeScriptTransformerConfig::create()
+                ->compactorPrefixes([
+                    "Spatie.TypeScriptTransformer.Tests.RealClasses",
+                    "Spatie.TypeScriptTransformer.Tests.FakeClasses"
+                ])
+        ))->transform(
+            $reflectionClass,
+            'Dto'
+        )->getTypeScriptName(true)
+    );
+});
+it('compacts type names', function () {
+    $reflectionClass = new ReflectionClass(DtoWithChildren::class);
+    assertEquals(
+        'Dto',
+        (new DtoTransformer(
+            TypeScriptTransformerConfig::create()
+                ->compactorPrefixes("Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration")
+                ->compactorSuffixes([
+                    'WithChildren'
+                ])
+        ))->transform(
+            $reflectionClass,
+            'DtoWithChildren'
+        )->getTypeScriptName(true)
+    );
+});

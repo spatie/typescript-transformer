@@ -4,13 +4,17 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
+use Spatie\TypeScriptTransformer\Compactors\ConfigCompactor;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class MyclabsEnumTransformer implements Transformer
 {
+    protected ConfigCompactor $compactor;
+
     public function __construct(protected TypeScriptTransformerConfig $config)
     {
+        $this->compactor = new ConfigCompactor($config);
     }
 
     public function transform(ReflectionClass $class, string $name): ?TransformedType
@@ -39,6 +43,7 @@ class MyclabsEnumTransformer implements Transformer
             $class,
             $name,
             implode(', ', $options),
+            $this->compactor,
             keyword: 'enum'
         );
     }
@@ -56,7 +61,8 @@ class MyclabsEnumTransformer implements Transformer
         return TransformedType::create(
             $class,
             $name,
-            implode(' | ', $options)
+            implode(' | ', $options),
+            $this->compactor
         );
     }
 }

@@ -21,6 +21,7 @@ class FakeTypeScriptCollector extends Collector
             $class,
             $class->getShortName(),
             'fake-collected-class',
+            $this->compactor,
             new MissingSymbolsCollection(),
             false
         );

@@ -68,3 +68,9 @@ it('can use a php dodumenter type in a class property replacer', function () {
         $config->getDefaultTypeReplacements()
     );
 });
+
+it('can handle string as compactor_prefixes parameter', function () {
+    $config = TypeScriptTransformerConfig::create()->compactorPrefixes('asdf.asdf');
+
+    assertEquals(['asdf.asdf'], $config->getCompactorPrefixes());
+});
