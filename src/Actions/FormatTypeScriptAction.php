@@ -8,8 +8,10 @@ class FormatTypeScriptAction
 {
     protected TypeScriptTransformerConfig $config;
 
-    public function __construct(TypeScriptTransformerConfig $config)
-    {
+    public function __construct(
+        TypeScriptTransformerConfig $config,
+        protected string $outputFile
+    ) {
         $this->config = $config;
     }
 
@@ -21,6 +23,6 @@ class FormatTypeScriptAction
             return;
         }
 
-        $formatter->format($this->config->getOutputFile());
+        $formatter->format($this->outputFile);
     }
 }

@@ -11,11 +11,13 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 beforeEach(function () {
     $this->temporaryDirectory = (new TemporaryDirectory())->create();
 
-    $this->action = new PersistTypesCollectionAction(
-        TypeScriptTransformerConfig::create()
+    $config = TypeScriptTransformerConfig::create()
         ->autoDiscoverTypes(__DIR__ . '/../FakeClasses')
         ->transformers([MyclabsEnumTransformer::class])
-        ->outputFile($this->temporaryDirectory->path('types.d.ts'))
+        ->outputFile($this->temporaryDirectory->path('types.d.ts'));
+    $this->action = new PersistTypesCollectionAction(
+        $config,
+        $config->getOutputFile()
     );
 });
 

@@ -21,10 +21,13 @@ it('can format an generated file', function () {
         }
     };
 
-    $action = new FormatTypeScriptAction(
-        TypeScriptTransformerConfig::create()
+    $config = TypeScriptTransformerConfig::create()
         ->formatter($formatter::class)
-        ->outputFile($this->outputFile)
+        ->outputFile($this->outputFile);
+
+    $action = new FormatTypeScriptAction(
+        $config,
+        $config->getOutputFile()
     );
 
     file_put_contents(
@@ -38,8 +41,11 @@ it('can format an generated file', function () {
 });
 
 it('can disable formatting', function () {
+    $config = TypeScriptTransformerConfig::create()->outputFile($this->outputFile);
+
     $action = new FormatTypeScriptAction(
-        TypeScriptTransformerConfig::create()->outputFile($this->outputFile)
+        $config,
+        $config->getOutputFile()
     );
 
     file_put_contents(

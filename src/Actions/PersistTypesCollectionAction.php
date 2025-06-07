@@ -9,7 +9,7 @@ class PersistTypesCollectionAction
 {
     protected TypeScriptTransformerConfig $config;
 
-    public function __construct(TypeScriptTransformerConfig $config)
+    public function __construct(TypeScriptTransformerConfig $config, protected string $outputFile)
     {
         $this->config = $config;
     }
@@ -26,15 +26,15 @@ class PersistTypesCollectionAction
         );
 
         file_put_contents(
-            $this->config->getOutputFile(),
+            $this->outputFile,
             $writer->format($collection)
         );
     }
 
     protected function ensureOutputFileExists(): void
     {
-        if (! file_exists(pathinfo($this->config->getOutputFile(), PATHINFO_DIRNAME))) {
-            mkdir(pathinfo($this->config->getOutputFile(), PATHINFO_DIRNAME), 0755, true);
+        if (! file_exists(pathinfo($this->outputFile, PATHINFO_DIRNAME))) {
+            mkdir(pathinfo($this->outputFile, PATHINFO_DIRNAME), 0755, true);
         }
     }
 }

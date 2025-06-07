@@ -31,6 +31,8 @@ class TypeScriptTransformerConfig
 
     private bool $nullToOptional = false;
 
+    private string|null $splitModulesBaseDir = null;
+
     public static function create(): self
     {
         return new self();
@@ -95,6 +97,13 @@ class TypeScriptTransformerConfig
     public function nullToOptional(bool $nullToOptional = false): self
     {
         $this->nullToOptional = $nullToOptional;
+
+        return $this;
+    }
+
+    public function splitModulesBaseDir(string|null $splitModules = null): self
+    {
+        $this->splitModulesBaseDir = $splitModules;
 
         return $this;
     }
@@ -175,5 +184,10 @@ class TypeScriptTransformerConfig
     public function shouldConsiderNullAsOptional(): bool
     {
         return $this->nullToOptional;
+    }
+
+    public function getSplitModulesBaseDir(): string|null
+    {
+        return $this->splitModulesBaseDir;
     }
 }
