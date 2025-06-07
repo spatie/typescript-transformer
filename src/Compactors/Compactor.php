@@ -7,5 +7,7 @@ namespace Spatie\TypeScriptTransformer\Compactors;
  */
 interface Compactor
 {
-    public function compact(string $typescriptIdentifier): string;
+    public function removeSuffix(string $typeName): string;
+
+    public function removePrefix(string $namespace): string;
 }

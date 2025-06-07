@@ -27,7 +27,7 @@ class TypeDefinitionWriter implements Writer
 
         foreach ($namespaces as $namespace => $types) {
             asort($types);
-            $namespace = $this->compactor->compact($namespace);
+            $namespace = $this->compactor->removePrefix($namespace);
 
             $output .= "declare namespace {$namespace} {".PHP_EOL;
 

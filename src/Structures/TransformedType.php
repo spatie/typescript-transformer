@@ -33,7 +33,7 @@ class TransformedType
         string $keyword = 'type',
         bool $trailingSemicolon = true,
     ): self {
-        return new self($class, $compactor->compact($name), $transformed, $compactor, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $keyword, $trailingSemicolon);
+        return new self($class, $compactor->removeSuffix($name), $transformed, $compactor, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $keyword, $trailingSemicolon);
     }
 
     public static function createInline(
@@ -77,6 +77,12 @@ class TransformedType
             return [];
         }
 
+        $namespace = $this->compactor->removePrefix($namespace);
+
+        if ($namespace === '') {
+            return [];
+        }
+
         return explode('\\', $namespace);
     }
 
@@ -91,9 +97,7 @@ class TransformedType
             [$this->name]
         );
 
-        return $this->compactor->compact(
-            implode('.', $segments)
-        );
+        return implode('.', $segments);
     }
 
     public function replaceSymbol(string $class, string $replacement): void

@@ -23,10 +23,9 @@ class ConfigCompactor implements Compactor
     protected function getPrefixes(): array {
         if ($this->prefixes === null) {
             $this->prefixes = array_map(
-                function(string $prefix): string {
-                    $prefix = str_replace("\\", ".", $prefix);
-                    if (!str_ends_with($prefix, ".")) {
-                        $prefix .= ".";
+                function (string $prefix): string {
+                    if (str_ends_with($prefix, "\\")) {
+                        $prefix = rtrim($prefix, "\\");
                     }
                     return $prefix;
                 },
@@ -46,28 +45,30 @@ class ConfigCompactor implements Compactor
         return $this->suffixes;
     }
 
-    public function compact(
-        string $typescriptIdentifier
-    ): string {
-        $matchingPrefix = '';
+    public function removeSuffix(string $typeName): string {
         $matchingSuffix = '';
-        foreach ($this->getPrefixes() as $prefix) {
-            if (str_starts_with($typescriptIdentifier, $prefix)) {
-                $matchingPrefix = $prefix;
-                break;
-            }
-        }
         foreach ($this->getSuffixes() as $suffix) {
-            if (str_ends_with($typescriptIdentifier, $suffix)) {
+            if (str_ends_with($typeName, $suffix)) {
                 $matchingSuffix = $suffix;
                 break;
             }
         }
         if ($matchingSuffix !== '') {
-            $typescriptIdentifier = substr($typescriptIdentifier, 0, -strlen($matchingSuffix));
+            $typeName = substr($typeName, 0, -strlen($matchingSuffix));
         }
-        $substr = substr($typescriptIdentifier, strlen($matchingPrefix));
-        return $substr;
+        return $typeName;
+    }
+
+    public function removePrefix(string $namespace): string {
+        $matchingPrefix = '';
+        foreach ($this->getPrefixes() as $prefix) {
+            if (str_starts_with($namespace, $prefix)) {
+                $matchingPrefix = $prefix;
+                break;
+            }
+        }
+        $substr = substr($namespace, strlen($matchingPrefix));
+        return ltrim($substr, '\\');
     }
 
 }

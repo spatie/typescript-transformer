@@ -169,7 +169,7 @@ it('compacts namespaces', function () {
         (new DtoTransformer(
             TypeScriptTransformerConfig::create()
                 ->compactorPrefixes([
-                    "Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration"
+                    "Spatie\\TypeScriptTransformer\\Tests\\FakeClasses\\Integration"
                 ])
         ))->transform(
             $reflectionClass,
@@ -182,7 +182,7 @@ it('compacts namespaces', function () {
         (new DtoTransformer(
             TypeScriptTransformerConfig::create()
                 ->compactorPrefixes([
-                    "Spatie.TypeScriptTransformer.Tests.FakeClasses"
+                    "Spatie\\TypeScriptTransformer\\Tests\\FakeClasses"
                 ])
         ))->transform(
             $reflectionClass,
@@ -194,8 +194,8 @@ it('compacts namespaces', function () {
         (new DtoTransformer(
             TypeScriptTransformerConfig::create()
                 ->compactorPrefixes([
-                    "Spatie.TypeScriptTransformer.Tests.RealClasses",
-                    "Spatie.TypeScriptTransformer.Tests.FakeClasses"
+                    "Spatie\\TypeScriptTransformer\\Tests\\RealClasses",
+                    "Spatie\\TypeScriptTransformer\\Tests\\FakeClasses"
                 ])
         ))->transform(
             $reflectionClass,
@@ -209,7 +209,7 @@ it('compacts type names', function () {
         'Dto',
         (new DtoTransformer(
             TypeScriptTransformerConfig::create()
-                ->compactorPrefixes("Spatie.TypeScriptTransformer.Tests.FakeClasses.Integration")
+                ->compactorPrefixes("Spatie\\TypeScriptTransformer\\Tests\\FakeClasses\\Integration")
                 ->compactorSuffixes([
                     'WithChildren'
                 ])
