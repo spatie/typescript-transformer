@@ -34,7 +34,10 @@ class NamespacedType
             $i++;
         }
 
-        return substr($a, 0, $i);
+        $prefix = substr($a, 0, $i);
+        $lastSlashPos = strrpos($prefix, '\\');
+
+        return $lastSlashPos !== false ? substr($prefix, 0, $lastSlashPos + 1) : '';
     }
 
     public static function shortName(string|ReflectionClass $type): string {

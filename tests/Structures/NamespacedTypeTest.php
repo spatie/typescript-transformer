@@ -21,3 +21,19 @@ it('common prefix of equal strings is that string', function () {
         )
     );
 });
+it('common prefix goes up to last backslash even with another nesting level', function () {
+    assertEquals(
+        'app\\', // not 'app\\co'
+        NamespacedType::commonPrefix(
+            'app\\companies',
+            'app\\countries'
+        )
+    );
+    assertEquals(
+        'app\\',
+        NamespacedType::commonPrefix(
+            'app\\data',
+            'app\\data\\stuff'
+        )
+    );
+});
