@@ -28,7 +28,7 @@ it('will persist the types', function () {
     $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test');
     $collection[] = FakeTransformedType::fake('Enum')->withNamespace('test\test');
 
-    $this->action->execute($collection);
+    $this->action->execute($collection, $collection);
 
     assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
 });
@@ -41,7 +41,7 @@ it('can persist multiple types in one namespace', function () {
     $collection[] = FakeTransformedType::fake('Enum')->withTransformed('transformed test\Enum')->withNamespace('test');
     $collection[] = FakeTransformedType::fake('OtherEnum')->withTransformed('transformed test\OtherEnum')->withNamespace('test');
 
-    $this->action->execute($collection);
+    $this->action->execute($collection, $collection);
 
     assertMatchesFileSnapshot($this->temporaryDirectory->path("types.d.ts"));
 });

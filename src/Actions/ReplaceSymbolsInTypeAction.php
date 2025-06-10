@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Exceptions\CircularDependencyChain;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 
 class ReplaceSymbolsInTypeAction
@@ -18,7 +19,7 @@ class ReplaceSymbolsInTypeAction
         $this->withFullyQualifiedNames = $withFullyQualifiedNames;
     }
 
-    public function execute(TransformedType $type, array $chain = []): string
+    public function execute(TransformedType $type, array $chain = []): TranspilationResult
     {
         if (in_array($type->getTypeScriptName(), $chain)) {
             $chain = array_merge($chain, [$type->getTypeScriptName()]);

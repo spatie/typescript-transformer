@@ -6,6 +6,7 @@ use ReflectionClass;
 use ReflectionEnum;
 use ReflectionEnumBackedCase;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class EnumTransformer implements Transformer
@@ -45,7 +46,9 @@ class EnumTransformer implements Transformer
         return TransformedType::create(
             $enum,
             $name,
-            implode(', ', $options),
+            TranspilationResult::noDeps(
+                implode(', ', $options),
+            ),
             keyword: 'enum'
         );
     }
@@ -60,16 +63,18 @@ class EnumTransformer implements Transformer
         return TransformedType::create(
             $enum,
             $name,
-            implode(' | ', $options)
+            TranspilationResult::noDeps(
+                implode(' | ', $options)
+            )
         );
     }
 
-    protected function toEnumValue(ReflectionEnumBackedCase $case): string
+    protected function toEnumValue(ReflectionEnumBackedCase $case): TranspilationResult
     {
         $value = $case->getBackingValue();
 
         if (! is_string($value)) {
-            return "{$value}";
+            return TranspilationResult::noDeps("{$value}");
         }
 
         $escaped = strtr($value, [
@@ -77,6 +82,6 @@ class EnumTransformer implements Transformer
             '\'' => '\\\'',
         ]);
 
-        return "'{$escaped}'";
+        return TranspilationResult::noDeps("'{$escaped}'");
     }
 }

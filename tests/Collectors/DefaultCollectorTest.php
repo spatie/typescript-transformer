@@ -50,7 +50,7 @@ it('will collect annotated classes', function () {
     assertNotNull($transformedType);
     assertEquals(
         "'a' | 'yes' | 'no'",
-        $transformedType->transformed,
+        $transformedType->transformed->typescript,
     );
 });
 
@@ -70,7 +70,7 @@ it('will collect annotated classes and use the given name', function () {
     assertEquals('EnumTransformed', $transformedType->name);
     assertEquals(
         "'a' | 'yes' | 'no'",
-        $transformedType->transformed,
+        $transformedType->transformed->typescript,
     );
 });
 
@@ -95,7 +95,7 @@ it('will read overwritten transformers', function () {
     assertEquals('DtoTransformed', $transformedType->name);
     assertEquals(
         '{'.PHP_EOL.'an_integer: number;'.PHP_EOL.'}',
-        $transformedType->transformed,
+        $transformedType->transformed->typescript,
     );
 });
 
@@ -120,7 +120,7 @@ it('will collect classes with attributes', function () {
     assertEquals('WithTypeScriptAttribute', $transformedType->name);
     assertEquals(
         "'a' | 'b'",
-        $transformedType->transformed,
+        $transformedType->transformed->typescript,
     );
 });
 
@@ -133,7 +133,7 @@ it('will collect attribute overwritten transformers', function () {
     assertEquals('WithTypeScriptTransformerAttribute', $transformedType->name);
     assertEquals(
         '{'.PHP_EOL.'an_int: number;'.PHP_EOL.'}',
-        $transformedType->transformed,
+        $transformedType->transformed->typescript,
     );
 });
 
@@ -145,7 +145,7 @@ it('will collect classes with already transformed attributes', function () {
     assertNotNull($transformedType);
     assertEquals(
         '{an_int:number;a_bool:boolean;}',
-        $transformedType->transformed,
+        $transformedType->transformed->typescript,
     );
 });
 

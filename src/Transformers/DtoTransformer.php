@@ -8,6 +8,7 @@ use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeProcessors\ReplaceDefaultsTypeProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
@@ -31,16 +32,26 @@ class DtoTransformer implements Transformer
 
         $missingSymbols = new MissingSymbolsCollection();
 
-        $type = join([
-            $this->transformProperties($class, $missingSymbols),
-            $this->transformMethods($class, $missingSymbols),
-            $this->transformExtra($class, $missingSymbols),
+        $trProps = $this->transformProperties($class, $missingSymbols);
+        $trMethods = $this->transformMethods($class, $missingSymbols);
+        $trExtra = $this->transformExtra($class, $missingSymbols);
+        $type = join('', [
+            $trProps->typescript,
+            $trMethods->typescript,
+            $trExtra->typescript,
         ]);
 
         return TransformedType::create(
             $class,
             $name,
-            "{" . PHP_EOL . $type . "}",
+            new TranspilationResult(
+                array_merge(
+                    $trProps->dependencies,
+                    $trMethods->dependencies,
+                    $trExtra->dependencies
+                ),
+                "{" . PHP_EOL . $type . "}"
+            ),
             $missingSymbols
         );
     }
@@ -53,13 +64,13 @@ class DtoTransformer implements Transformer
     protected function transformProperties(
         ReflectionClass $class,
         MissingSymbolsCollection $missingSymbols
-    ): string {
+    ): TranspilationResult {
         $isClassOptional = ! empty($class->getAttributes(Optional::class));
         $nullablesAreOptional = $this->config->shouldConsiderNullAsOptional();
 
         return array_reduce(
             $this->resolveProperties($class),
-            function (string $carry, ReflectionProperty $property) use ($isClassOptional, $missingSymbols, $nullablesAreOptional) {
+            function (TranspilationResult $carry, ReflectionProperty $property) use ($isClassOptional, $missingSymbols, $nullablesAreOptional) {
                 $isHidden = ! empty($property->getAttributes(Hidden::class));
 
                 if ($isHidden) {
@@ -83,33 +94,39 @@ class DtoTransformer implements Transformer
 
                 $propertyName = $this->transformPropertyName($property, $missingSymbols);
 
-                return $isOptional
-                    ? "{$carry}{$propertyName}?: {$transformed};" . PHP_EOL
-                    : "{$carry}{$propertyName}: {$transformed};" . PHP_EOL;
+                return new TranspilationResult(
+                    array_merge(
+                        $carry->dependencies,
+                        $transformed->dependencies
+                    ),
+                    $isOptional
+                        ? "{$carry->typescript}{$propertyName}?: {$transformed->typescript};" . PHP_EOL
+                        : "{$carry->typescript}{$propertyName}: {$transformed->typescript};" . PHP_EOL
+                );
             },
-            ''
+            new TranspilationResult([], '')
         );
     }
 
     protected function transformMethods(
         ReflectionClass $class,
         MissingSymbolsCollection $missingSymbols
-    ): string {
-        return '';
+    ): TranspilationResult {
+        return new TranspilationResult([], '');
     }
 
     protected function transformExtra(
         ReflectionClass $class,
         MissingSymbolsCollection $missingSymbols
-    ): string {
-        return '';
+    ): TranspilationResult {
+        return new TranspilationResult([], '');
     }
 
     protected function transformPropertyName(
         ReflectionProperty $property,
         MissingSymbolsCollection $missingSymbols
-    ): string {
-        return $property->getName();
+    ): TranspilationResult {
+        return new TranspilationResult([], $property->getName());
     }
 
     protected function typeProcessors(): array

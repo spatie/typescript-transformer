@@ -6,15 +6,16 @@ use Exception;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 
 class FakeTransformedType extends TransformedType
 {
-    public static function create(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false, string $keyword = 'type', bool $trailingSemicolon = true): TransformedType
+    public static function create(ReflectionClass $class, string $name, TranspilationResult $transformed, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false, string $keyword = 'type', bool $trailingSemicolon = true): TransformedType
     {
         throw new Exception("Fake type");
     }
 
-    public static function createInline(ReflectionClass $class, string $transformed, ?MissingSymbolsCollection $missingSymbols = null): TransformedType
+    public static function createInline(ReflectionClass $class, TranspilationResult $transformed, ?MissingSymbolsCollection $missingSymbols = null): TransformedType
     {
         throw new Exception("Fake type");
     }
@@ -26,7 +27,9 @@ class FakeTransformedType extends TransformedType
         return new self(
             FakeReflectionClass::create()->withName($name),
             $name,
-            'fake-transformed',
+            TranspilationResult::noDeps(
+                'fake-transformed'
+            ),
             new MissingSymbolsCollection(),
             false
         );
@@ -53,8 +56,11 @@ class FakeTransformedType extends TransformedType
         return $this;
     }
 
-    public function withTransformed(string $transformed): self
+    public function withTransformed(TranspilationResult|string $transformed): self
     {
+        if (is_string($transformed)) {
+            $transformed = TranspilationResult::noDeps($transformed);
+        }
         $this->transformed = $transformed;
 
         return $this;

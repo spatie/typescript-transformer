@@ -29,12 +29,17 @@ class TypeScriptTransformer
         if (($baseDir = $this->config->getSplitModulesBaseDir()) !== null) {
             (new TemporaryDirectory($baseDir))->delete();
 
-            $sumCollection = new TypesCollection();
-
             $typesCollections = (new ResolveSplitTypesCollectionsAction(
                 new Finder(),
                 $this->config,
             ))->execute();
+
+            $sumCollection = new TypesCollection();
+            foreach ($typesCollections as $namespace => $typesCollection) {
+                foreach ($typesCollection as $type) {
+                    $sumCollection[] = $type;
+                }
+            }
 
             foreach ($typesCollections as $namespace => $typesCollection) {
                 $outputFile = rtrim($baseDir, '/') . '/' . $namespace . '.ts';
@@ -42,13 +47,10 @@ class TypeScriptTransformer
                 (new PersistTypesCollectionAction(
                     $this->config,
                     $outputFile,
-                ))->execute($typesCollection);
+                ))->execute($typesCollection, $sumCollection);
 
                 (new FormatTypeScriptAction($this->config, $outputFile))->execute();
 
-                foreach ($typesCollection as $type) {
-                    $sumCollection[] = $type;
-                }
             }
 
             return $sumCollection;
@@ -58,7 +60,7 @@ class TypeScriptTransformer
                 $this->config,
             ))->execute();
 
-            (new PersistTypesCollectionAction($this->config, $this->config->getOutputFile()))->execute($typesCollection);
+            (new PersistTypesCollectionAction($this->config, $this->config->getOutputFile()))->execute($typesCollection, $typesCollection);
 
             (new FormatTypeScriptAction($this->config, $this->config->getOutputFile()))->execute();
 

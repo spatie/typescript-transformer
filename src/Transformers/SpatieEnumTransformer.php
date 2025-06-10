@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use Spatie\Enum\Enum;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class SpatieEnumTransformer implements Transformer
@@ -38,7 +39,9 @@ class SpatieEnumTransformer implements Transformer
         return TransformedType::create(
             $class,
             $name,
-            implode(', ', $options),
+            TranspilationResult::noDeps(
+                implode(', ', $options),
+            ),
             keyword: 'enum'
         );
     }
@@ -56,7 +59,9 @@ class SpatieEnumTransformer implements Transformer
         return TransformedType::create(
             $class,
             $name,
-            implode(' | ', $options)
+            TranspilationResult::noDeps(
+                implode(' | ', $options)
+            )
         );
     }
 }

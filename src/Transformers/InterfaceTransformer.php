@@ -6,6 +6,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 
 class InterfaceTransformer extends DtoTransformer implements Transformer
 {
@@ -25,13 +26,13 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
     protected function transformMethods(
         ReflectionClass $class,
         MissingSymbolsCollection $missingSymbols
-    ): string {
+    ): TranspilationResult {
         return array_reduce(
             $class->getMethods(ReflectionMethod::IS_PUBLIC),
-            function (string $carry, ReflectionMethod $method) use ($missingSymbols) {
+            function (TranspilationResult $carry, ReflectionMethod $method) use ($missingSymbols) {
                 $transformedParameters = \array_reduce(
                     $method->getParameters(),
-                    function (string $parameterCarry, \ReflectionParameter $parameter) use ($missingSymbols) {
+                    function (string $parameterCarry, \ReflectionParameter $parameter) use ($method, $missingSymbols) {
                         $type = $this->reflectionToTypeScript(
                             $parameter,
                             $missingSymbols,
@@ -44,9 +45,12 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
                             $output .= ', ';
                         }
 
-                        return "{$parameterCarry}{$output}{$parameter->getName()}: {$type}";
+                        return new TranspilationResult(
+                            $type->dependencies,
+                            "{$parameterCarry}{$output}{$parameter->getName()}: {$type}"
+                        );
                     },
-                    ''
+                    TranspilationResult::empty()
                 );
 
                 $returnType = 'any';
@@ -59,16 +63,16 @@ class InterfaceTransformer extends DtoTransformer implements Transformer
                     );
                 }
 
-                return "{$carry}{$method->getName()}({$transformedParameters}): {$returnType};" . PHP_EOL;
+                return TranspilationResult::noDeps("{$carry}{$method->getName()}({$transformedParameters}): {$returnType};" . PHP_EOL);
             },
-            ''
+            TranspilationResult::empty()
         );
     }
 
     protected function transformProperties(
         ReflectionClass $class,
         MissingSymbolsCollection $missingSymbols
-    ): string {
-        return '';
+    ): TranspilationResult {
+        return TranspilationResult::empty();
     }
 }

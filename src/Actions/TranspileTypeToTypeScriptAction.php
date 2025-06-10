@@ -21,7 +21,9 @@ use phpDocumentor\Reflection\Types\Static_;
 use phpDocumentor\Reflection\Types\String_;
 use phpDocumentor\Reflection\Types\This;
 use phpDocumentor\Reflection\Types\Void_;
+use SebastianBergmann\ObjectReflector\ObjectReflector;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 use Spatie\TypeScriptTransformer\Types\RecordType;
 use Spatie\TypeScriptTransformer\Types\StructType;
 use Spatie\TypeScriptTransformer\Types\TypeScriptType;
@@ -44,96 +46,144 @@ class TranspileTypeToTypeScriptAction
         $this->currentClass = $currentClass;
     }
 
-    public function execute(Type $type): string
-    {
-        return match (true) {
+    public function execute(Type $type): TranspilationResult {
+        $result = match (true) {
             $type instanceof Compound => $this->resolveCompoundType($type),
             $type instanceof AbstractList => $this->resolveListType($type),
             $type instanceof Nullable => $this->resolveNullableType($type),
             $type instanceof Object_ => $this->resolveObjectType($type),
             $type instanceof StructType => $this->resolveStructType($type),
             $type instanceof RecordType => $this->resolveRecordType($type),
-            $type instanceof TypeScriptType => (string) $type,
-            $type instanceof Boolean => 'boolean',
-            $type instanceof Float_, $type instanceof Integer => 'number',
-            $type instanceof String_, $type instanceof ClassString => 'string',
-            $type instanceof Null_ => 'null',
+            $type instanceof TypeScriptType => TranspilationResult::noDeps((string)$type),
+            $type instanceof Boolean => TranspilationResult::noDeps('boolean'),
+            $type instanceof Float_, $type instanceof Integer => TranspilationResult::noDeps('number'),
+            $type instanceof String_, $type instanceof ClassString => TranspilationResult::noDeps('string'),
+            $type instanceof Null_ => TranspilationResult::noDeps('null'),
             $type instanceof Self_, $type instanceof Static_, $type instanceof This => $this->resolveSelfReferenceType(),
-            $type instanceof Scalar => 'string|number|boolean',
-            $type instanceof Mixed_ => 'any',
-            $type instanceof Void_ => 'void',
+            $type instanceof Scalar => TranspilationResult::noDeps('string|number|boolean'),
+            $type instanceof Mixed_ => TranspilationResult::noDeps('any'),
+            $type instanceof Void_ => TranspilationResult::noDeps('void'),
             $type instanceof PseudoType => $this->execute($type->underlyingType()),
             default => throw new Exception("Could not transform type: {$type}")
         };
+        return new TranspilationResult(
+            array_merge(
+                (
+                    $type instanceof Object_
+                    && $type->__toString() !== 'object'
+                )
+                    ? [$type]
+                    : [],
+                $result->dependencies
+            ),
+            $result->typescript
+        );
     }
 
-    private function resolveCompoundType(Compound $compound): string
-    {
+    private function resolveCompoundType(Compound $compound): TranspilationResult {
         $transformed = array_map(
-            fn (Type $type) => $this->execute($type),
+            fn(Type $type) => $this->execute($type),
             iterator_to_array($compound->getIterator())
         );
 
-        return join(' | ', array_unique($transformed));
+        return new TranspilationResult(
+            array_reduce(
+                $transformed,
+                fn(array $carry, TranspilationResult $item) => array_merge(
+                    $carry,
+                    $item->dependencies
+                ),
+                []
+            ),
+            join(
+                ' | ',
+                array_unique(
+                    array_map(
+                        fn(TranspilationResult $result) => $result->typescript,
+                        $transformed
+                    )
+                )
+            )
+        );
     }
 
-    private function resolveListType(AbstractList $list): string
-    {
+    private function resolveListType(AbstractList $list): TranspilationResult {
+        $valueTransResult = $this->execute($list->getValueType());
         if ($this->isTypeScriptArray($list->getKeyType())) {
-            return "Array<{$this->execute($list->getValueType())}>";
+            return new TranspilationResult(
+                $valueTransResult->dependencies,
+                "Array<$valueTransResult->typescript>"
+            );
         }
 
-        return "{ [key: {$this->execute($list->getKeyType())}]: {$this->execute($list->getValueType())} }";
+        $keyTransResult = $this->execute($list->getKeyType());
+        $typescript = "{ [key: $keyTransResult->typescript]: {$valueTransResult->typescript} }";
+        return new TranspilationResult(
+            array_merge($valueTransResult->dependencies, $keyTransResult->dependencies),
+            $typescript
+        );
     }
 
-    private function resolveNullableType(Nullable $nullable): string
-    {
+    private function resolveNullableType(Nullable $nullable): TranspilationResult {
         if ($this->nullablesAreOptional) {
             return $this->execute($nullable->getActualType());
         }
 
-        return "{$this->execute($nullable->getActualType())} | null";
-    }
-
-    private function resolveObjectType(Object_ $object): string
-    {
-        if ($object->getFqsen() === null) {
-            return 'object';
-        }
-
-        return $this->missingSymbolsCollection->add(
-            (string) $object->getFqsen()
+        $transpilationResult = $this->execute($nullable->getActualType());
+        return new TranspilationResult(
+            $transpilationResult->dependencies,
+            "$transpilationResult->typescript | null"
         );
     }
 
-    private function resolveStructType(StructType $type): string
-    {
+    private function resolveObjectType(Object_ $object): TranspilationResult {
+        if ($object->getFqsen() === null) {
+            return TranspilationResult::noDeps('object');
+        }
+
+        return TranspilationResult::noDeps(
+            $this->missingSymbolsCollection->add(
+                (string)$object->getFqsen()
+            )
+        );
+    }
+
+    private function resolveStructType(StructType $type): TranspilationResult {
         $transformed = "{";
 
+        $dependencies = [];
         foreach ($type->getTypes() as $name => $type) {
-            $transformed .= "{$name}:{$this->execute($type)};";
+            $trRes = $this->execute($type);
+            $transformed .= "{$name}:{$trRes->typescript};";
+            foreach ($trRes->dependencies as $dependency) {
+                $dependencies[] = $dependency;
+            }
         }
 
-        return "{$transformed}}";
+        return new TranspilationResult($dependencies, "{$transformed}}");
     }
 
-    private function resolveRecordType(RecordType $type): string
-    {
-        return "Record<{$this->execute($type->getKeyType())}, {$this->execute($type->getValueType())}>";
+    private function resolveRecordType(RecordType $type): TranspilationResult {
+        $keyTr = $this->execute($type->getKeyType());
+        $valueTr = $this->execute($type->getValueType());
+        return new TranspilationResult(
+            array_merge($keyTr->dependencies, $valueTr->dependencies),
+            "Record<{$keyTr->typescript}, {$valueTr->typescript}>"
+        );
     }
 
-    private function resolveSelfReferenceType(): string
-    {
+    private function resolveSelfReferenceType(): TranspilationResult {
         if ($this->currentClass === null) {
-            return 'any';
+            return TranspilationResult::noDeps('any');
         }
 
-        return $this->missingSymbolsCollection->add($this->currentClass);
+        return TranspilationResult::noDeps(
+            $this->missingSymbolsCollection->add($this->currentClass)
+        );
     }
 
-    private function isTypeScriptArray(Type $keyType): bool
-    {
-        if (! $keyType instanceof Compound) {
+    private function isTypeScriptArray(Type $keyType): bool {
+        if (!$keyType instanceof Compound) {
             return false;
         }
 
@@ -141,7 +191,7 @@ class TranspileTypeToTypeScriptAction
             return false;
         }
 
-        if (! $keyType->contains(new String_()) || ! $keyType->contains(new Integer())) {
+        if (!$keyType->contains(new String_()) || !$keyType->contains(new Integer())) {
             return false;
         }
 

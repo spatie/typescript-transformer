@@ -14,20 +14,24 @@ class PersistTypesCollectionAction
         $this->config = $config;
     }
 
-    public function execute(TypesCollection $collection): void
+    public function execute(TypesCollection $moduleCollection, ?TypesCollection $totalCollection = null): void
     {
+        if ($totalCollection === null) {
+            $totalCollection = $moduleCollection;
+        }
         $this->ensureOutputFileExists();
 
         $writer = $this->config->getWriter();
 
-        (new ReplaceSymbolsInCollectionAction())->execute(
-            $collection,
+        (new ReplaceIntermoduleSymbolsInCollectionAction())->execute(
+            $moduleCollection,
+            $totalCollection,
             $writer->replacesSymbolsWithFullyQualifiedIdentifiers()
         );
 
         file_put_contents(
             $this->outputFile,
-            $writer->format($collection)
+            $writer->format($moduleCollection)
         );
     }
 

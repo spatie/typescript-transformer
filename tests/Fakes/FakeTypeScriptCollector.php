@@ -7,6 +7,7 @@ use ReflectionClass;
 use Spatie\TypeScriptTransformer\Collectors\Collector;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 
 class FakeTypeScriptCollector extends Collector
 {
@@ -20,7 +21,9 @@ class FakeTypeScriptCollector extends Collector
         return new TransformedType(
             $class,
             $class->getShortName(),
-            'fake-collected-class',
+            TranspilationResult::noDeps(
+                'fake-collected-class'
+            ),
             new MissingSymbolsCollection(),
             false
         );

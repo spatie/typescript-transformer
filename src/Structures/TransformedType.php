@@ -10,7 +10,7 @@ class TransformedType
 
     public ?string $name = null;
 
-    public string $transformed;
+    public TranspilationResult $transformed;
 
     public MissingSymbolsCollection $missingSymbols;
 
@@ -23,7 +23,7 @@ class TransformedType
     public static function create(
         ReflectionClass $class,
         string $name,
-        string $transformed,
+        TranspilationResult $transformed,
         ?MissingSymbolsCollection $missingSymbols = null,
         bool $inline = false,
         string $keyword = 'type',
@@ -34,7 +34,7 @@ class TransformedType
 
     public static function createInline(
         ReflectionClass $class,
-        string $transformed,
+        TranspilationResult $transformed,
         ?MissingSymbolsCollection $missingSymbols = null
     ): self {
         return new self($class, null, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), true);
@@ -43,7 +43,7 @@ class TransformedType
     public function __construct(
         ReflectionClass $class,
         ?string $name,
-        string $transformed,
+        TranspilationResult $transformed,
         MissingSymbolsCollection $missingSymbols,
         bool $isInline,
         string $keyword = 'type',
@@ -91,10 +91,10 @@ class TransformedType
     {
         $this->missingSymbols->remove($class);
 
-        $this->transformed = str_replace(
+        $this->transformed->typescript = str_replace(
             "{%{$class}%}",
             $replacement,
-            $this->transformed
+            $this->transformed->typescript
         );
     }
 

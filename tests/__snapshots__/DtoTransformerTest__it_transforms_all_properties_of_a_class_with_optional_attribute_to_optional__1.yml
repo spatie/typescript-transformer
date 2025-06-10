@@ -1,0 +1,6 @@
+dependencies: {  }
+typescript: |-
+    {
+    string?: string;
+    int?: number;
+    }
