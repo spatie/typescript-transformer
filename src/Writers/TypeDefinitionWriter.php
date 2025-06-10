@@ -3,11 +3,20 @@
 namespace Spatie\TypeScriptTransformer\Writers;
 
 use Spatie\TypeScriptTransformer\Actions\ReplaceSymbolsInCollectionAction;
+use Spatie\TypeScriptTransformer\Compactors\Compactor;
+use Spatie\TypeScriptTransformer\Compactors\ConfigCompactor;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class TypeDefinitionWriter implements Writer
 {
+    protected Compactor $compactor;
+
+    public function __construct(TypeScriptTransformerConfig $config) {
+        $this->compactor = new ConfigCompactor($config);
+    }
+
     public function format(TypesCollection $collection): string
     {
         (new ReplaceSymbolsInCollectionAction())->execute($collection);
@@ -18,6 +27,7 @@ class TypeDefinitionWriter implements Writer
 
         foreach ($namespaces as $namespace => $types) {
             asort($types);
+            $namespace = $this->compactor->removePrefix($namespace);
 
             $output .= "declare namespace {$namespace} {".PHP_EOL;
 

@@ -24,6 +24,7 @@ class FakeTypeScriptCollector extends Collector
             TranspilationResult::noDeps(
                 'fake-collected-class'
             ),
+            $this->compactor,
             new MissingSymbolsCollection(),
             false
         );

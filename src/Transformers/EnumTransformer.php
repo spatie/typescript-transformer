@@ -5,14 +5,18 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionEnum;
 use ReflectionEnumBackedCase;
+use Spatie\TypeScriptTransformer\Compactors\ConfigCompactor;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class EnumTransformer implements Transformer
 {
+    protected ConfigCompactor $compactor;
+
     public function __construct(protected TypeScriptTransformerConfig $config)
     {
+        $this->compactor = new ConfigCompactor($config);
     }
 
     public function transform(ReflectionClass $class, string $name): ?TransformedType
@@ -49,6 +53,7 @@ class EnumTransformer implements Transformer
             TranspilationResult::noDeps(
                 implode(', ', $options),
             ),
+            $this->compactor,
             keyword: 'enum'
         );
     }
@@ -65,7 +70,8 @@ class EnumTransformer implements Transformer
             $name,
             TranspilationResult::noDeps(
                 implode(' | ', $options)
-            )
+            ),
+            $this->compactor
         );
     }
 

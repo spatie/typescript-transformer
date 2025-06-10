@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Structures;
 
 use ReflectionClass;
+use Spatie\TypeScriptTransformer\Compactors\Compactor;
 
 class TransformedType
 {
@@ -14,6 +15,8 @@ class TransformedType
 
     public MissingSymbolsCollection $missingSymbols;
 
+    public Compactor $compactor;
+
     public bool $isInline;
 
     public string $keyword;
@@ -24,26 +27,29 @@ class TransformedType
         ReflectionClass $class,
         string $name,
         TranspilationResult $transformed,
+        Compactor $compactor,
         ?MissingSymbolsCollection $missingSymbols = null,
         bool $inline = false,
         string $keyword = 'type',
         bool $trailingSemicolon = true,
     ): self {
-        return new self($class, $name, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $keyword, $trailingSemicolon);
+        return new self($class, $compactor->removeSuffix($name), $transformed, $compactor, $missingSymbols ?? new MissingSymbolsCollection(), $inline, $keyword, $trailingSemicolon);
     }
 
     public static function createInline(
         ReflectionClass $class,
         TranspilationResult $transformed,
+        Compactor $compactor,
         ?MissingSymbolsCollection $missingSymbols = null
     ): self {
-        return new self($class, null, $transformed, $missingSymbols ?? new MissingSymbolsCollection(), true);
+        return new self($class, null, $transformed, $compactor, $missingSymbols ?? new MissingSymbolsCollection(), true);
     }
 
     public function __construct(
         ReflectionClass $class,
         ?string $name,
         TranspilationResult $transformed,
+        Compactor $compactor,
         MissingSymbolsCollection $missingSymbols,
         bool $isInline,
         string $keyword = 'type',
@@ -53,6 +59,7 @@ class TransformedType
         $this->name = $name;
         $this->transformed = $transformed;
         $this->missingSymbols = $missingSymbols;
+        $this->compactor = $compactor;
         $this->isInline = $isInline;
         $this->keyword = $keyword;
         $this->trailingSemicolon = $trailingSemicolon;
@@ -67,6 +74,12 @@ class TransformedType
         $namespace = $this->reflection->getNamespaceName();
 
         if (empty($namespace)) {
+            return [];
+        }
+
+        $namespace = $this->compactor->removePrefix($namespace);
+
+        if ($namespace === '') {
             return [];
         }
 

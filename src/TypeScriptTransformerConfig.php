@@ -27,6 +27,10 @@ class TypeScriptTransformerConfig
 
     private ?string $formatter = null;
 
+    private array $compactorPrefixes = [];
+
+    private array $compactorSuffixes = [];
+
     private bool $transformToNativeEnums = false;
 
     private bool $nullToOptional = false;
@@ -87,6 +91,34 @@ class TypeScriptTransformerConfig
         return $this;
     }
 
+    /**
+     * @param string[]|string $prefixes
+     * @return $this
+     */
+    public function compactorPrefixes(array|string $prefixes): self
+    {
+        if (!is_array($prefixes)) {
+            $prefixes = [$prefixes];
+        }
+        $this->compactorPrefixes = $prefixes;
+
+        return $this;
+    }
+
+    /**
+     * @param string[]|string $suffixes
+     * @return $this
+     */
+    public function compactorSuffixes(array|string $suffixes): self
+    {
+        if (!is_array($suffixes)) {
+            $suffixes = [$suffixes];
+        }
+        $this->compactorSuffixes = $suffixes;
+
+        return $this;
+    }
+
     public function transformToNativeEnums(bool $transformToNativeEnums = true): self
     {
         $this->transformToNativeEnums = $transformToNativeEnums;
@@ -131,7 +163,7 @@ class TypeScriptTransformerConfig
 
     public function getWriter(): Writer
     {
-        return new $this->writer;
+        return new $this->writer($this);
     }
 
     public function getOutputFile(): string
@@ -174,6 +206,22 @@ class TypeScriptTransformerConfig
         }
 
         return new $this->formatter;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getCompactorPrefixes(): array
+    {
+        return $this->compactorPrefixes ?? [];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getCompactorSuffixes(): array
+    {
+        return $this->compactorSuffixes ?? [];
     }
 
     public function shouldTransformToNativeEnums(): bool
