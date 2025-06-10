@@ -2,12 +2,22 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
+use Spatie\TypeScriptTransformer\Compactors\Compactor;
+use Spatie\TypeScriptTransformer\Compactors\ConfigCompactor;
 use Spatie\TypeScriptTransformer\Structures\NamespacedType;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class ModuleWriter implements Writer
 {
+
+    protected Compactor $compactor;
+
+    public function __construct(TypeScriptTransformerConfig $config) {
+        $this->compactor = new ConfigCompactor($config);
+    }
+
     public function format(TypesCollection $collection): string {
         $output = '';
 
@@ -18,7 +28,7 @@ class ModuleWriter implements Writer
             return strcmp($a->name, $b->name);
         });
 
-        $currentModuleNamespace = null;
+        $currentModuleTsNamespace = null;
         /** @var NamespacedType[] $typesByNamespace */
         $typesByNamespace = [];
         foreach ($iterator as $type) {
@@ -26,8 +36,15 @@ class ModuleWriter implements Writer
             if ($type->isInline) {
                 continue;
             }
-            if ($currentModuleNamespace === null) {
-                $currentModuleNamespace = trim(NamespacedType::namespace($type->reflection->name), '\\');
+
+            if ($currentModuleTsNamespace === null) {
+                $currentModuleTsNamespace =
+                    $this->compactor->removePrefix(
+                        trim(
+                            NamespacedType::namespace($type->reflection->name),
+                            '\\'
+                        )
+                    );
             }
 
             $output .= "export {$type->toString()}" . PHP_EOL;
@@ -42,8 +59,11 @@ class ModuleWriter implements Writer
 
         $import = '';
         foreach ($typesByNamespace as $namespace => $types) {
-            $namespace = trim($namespace, '\\');
-            if ($namespace === $currentModuleNamespace) {
+            $tsNamespace = $this->compactor->removePrefix(
+                trim($namespace, '\\')
+            );
+
+            if ($tsNamespace === $currentModuleTsNamespace) {
                 continue;
             }
             $import .= 'import {';
@@ -54,9 +74,9 @@ class ModuleWriter implements Writer
                     $types
                 )
             );
-            $commonPrefix = NamespacedType::commonPrefix($namespace, $currentModuleNamespace);
-            $thatRest = ltrim(substr($namespace, strlen($commonPrefix)), '\\');
-            $currentRest = ltrim(substr($currentModuleNamespace, strlen($commonPrefix)), '\\');
+            $commonPrefix = NamespacedType::commonPrefix($tsNamespace, $currentModuleTsNamespace);
+            $thatRest = ltrim(substr($tsNamespace, strlen($commonPrefix)), '\\');
+            $currentRest = ltrim(substr($currentModuleTsNamespace, strlen($commonPrefix)), '\\');
             $sourceModulePath =
                 join(
                     '/',
