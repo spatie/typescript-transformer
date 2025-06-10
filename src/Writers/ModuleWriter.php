@@ -75,17 +75,19 @@ class ModuleWriter implements Writer
                 )
             );
             $commonPrefix = NamespacedType::commonPrefix($tsNamespace, $currentModuleTsNamespace);
-            $thatRest = ltrim(substr($tsNamespace, strlen($commonPrefix)), '\\');
+            $importedRest = ltrim(substr($tsNamespace, strlen($commonPrefix)), '\\');
             $currentRest = ltrim(substr($currentModuleTsNamespace, strlen($commonPrefix)), '\\');
+            $backParts = array_fill(0, substr_count($currentRest, '\\'), '..');
             $sourceModulePath =
-                join(
-                    '/',
-                    array_fill(0, substr_count($currentRest, '\\') + 1, '..')
+                (
+                count($backParts) === 0
+                    ? '.'
+                    : join('/', $backParts)
                 )
                 . '/'
                 . join(
                     '/',
-                    explode('\\', $thatRest)
+                    explode('\\', $importedRest)
                 );
 
             $import .= '} from "' . $sourceModulePath . "\";\n";

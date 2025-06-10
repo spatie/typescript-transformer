@@ -1,5 +1,5 @@
-import {RegularEnum} from "../Enum";
-import {YetAnotherDto} from "../LevelUp";
+import {RegularEnum} from "./Enum";
+import {YetAnotherDto} from "./LevelUp";
 export type Dto = {
 string: string;
 nullbable: string | null;
