@@ -70,7 +70,7 @@ class ModuleWriter implements Writer
             $import .= join(
                 ', ',
                 array_map(
-                    fn(NamespacedType $type) => $type->shortName,
+                    fn(NamespacedType $type) => $this->compactor->removeSuffix($type->shortName),
                     $types
                 )
             );
@@ -79,16 +79,16 @@ class ModuleWriter implements Writer
             $currentRest = ltrim(substr($currentModuleTsNamespace, strlen($commonPrefix)), '\\');
             $backParts = array_fill(0, substr_count($currentRest, '\\'), '..');
             $sourceModulePath =
-                (
-                count($backParts) === 0
-                    ? '.'
-                    : join('/', $backParts)
-                )
-                . '/'
-                . join(
-                    '/',
-                    explode('\\', $importedRest)
-                );
+                    (
+                    count($backParts) === 0
+                        ? '.'
+                        : join('/', $backParts)
+                    )
+                    . '/'
+                    . join(
+                        '/',
+                        explode('\\', $importedRest)
+                    );
 
             $import .= '} from "' . $sourceModulePath . "\";\n";
         }
