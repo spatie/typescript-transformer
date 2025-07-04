@@ -69,9 +69,11 @@ class ModuleWriter implements Writer
             $import .= 'import {';
             $import .= join(
                 ', ',
-                array_map(
-                    fn(NamespacedType $type) => $this->compactor->removeSuffix($type->shortName),
-                    $types
+                array_unique(
+                    array_map(
+                        fn(NamespacedType $type) => $this->compactor->removeSuffix($type->shortName),
+                        $types
+                    )
                 )
             );
             $commonPrefix = NamespacedType::commonPrefix($tsNamespace, $currentModuleTsNamespace);
