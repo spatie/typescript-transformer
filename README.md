@@ -187,7 +187,7 @@ $config->transformer(new EnumTransformer(useNativeEnums: true)); // transformers
 ```
 
 Quick note: transformers are executed in the order they are registered in the configuration, when a transformer cannot
-transform a class, the next transformer is executed.
+transform a class, the next transformer is checked.
 
 Transformers work on PHP classes, we need to tell TypeScript transformer where to look for these classes. This can be
 done by adding a directory to the configuration:
@@ -369,7 +369,7 @@ class Types
 }
 ```
 
-As you an see, when an array value is typed correctly, it will also be typed correctly in TypeScript.
+As you can see, when an array value is typed correctly, it will also be typed correctly in TypeScript.
 
 It is also possible to use non-typical array key types, like an enum:
 
@@ -378,6 +378,16 @@ class Types
 {
     /** @var array<PostType, string> */
     public array $property; // Record<'news'|'blog', string>
+}
+```
+
+It is possible to define array shapes like this:
+
+```php
+class Types 
+{
+    /** @var array{age: int, name: string} */
+    public array $property; // { age: number, name: string }
 }
 ```
 
@@ -416,7 +426,7 @@ class Types
 }
 ```
 
-If an typed object is not transformed and thus we don't know how it will look like in TypeScript, it will be replaced
+If a typed object is not transformed and thus we don't know how it will look like in TypeScript, it will be replaced
 by `unknown`. It is possible to replace these unknown types with a TypeScript type, without transforming them, keep
 reading to learn how to do that.
 
@@ -579,7 +589,7 @@ $config->replaceType(DateTimeInterface::class, function (TypeReference $referenc
 Internally the package uses TypeScript nodes to represent TypeScript types, these nodes can be used to build complex
 types and it is possible to create your own nodes.
 
-For example, a TypeScript alias is representing a User object looks like this:
+For example, a TypeScript alias is representing a User object will look like this:
 
 ```php
 use Spatie\TypeScriptTransformer\TypeScriptNodes;
@@ -670,7 +680,7 @@ When a class cannot be transformed, the next transformer in the list will be exe
 Most of the time, transforming a class comes down to taking all the properties and transforming them to a TypeScript
 object with properties, the package provides an easy-to-extend class for this called `ClassTransformer`.
 
-You can create your own by extending the `ClassTransformer` and implementing the `shouldTransform` method:
+You can create your own version by extending the `ClassTransformer` and implementing the `shouldTransform` method:
 
 ```php
 use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
@@ -817,7 +827,8 @@ A `TypesProvider` implements the `TypeProvider` interface:
 ```php
 namespace Spatie\TypeScriptTransformer\TypeProviders;
 
-use Spatie\TypeScriptTransformer\Collections\TransformedCollection;use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 interface TypesProvider
 {
@@ -1196,7 +1207,7 @@ The steps look as following:
 6. Write those files to disk
 7. Format the files
 
-The two hooking points above can be used to run a visitor on the collection of Transformed types:
+The two hooking points below can be used to run a visitor on the collection of Transformed types:
 
 ```php
 use Spatie\TypeScriptTransformer\Visitor\VisitorClosureType;

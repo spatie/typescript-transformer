@@ -15,6 +15,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptFunction;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIntersection;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptLiteral;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNull;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
@@ -63,6 +64,67 @@ it('can transpile PHPStan doc types', function (
     yield [
         'integer',
         new TypeScriptNumber(),
+    ];
+    yield [
+        'positiveInt',
+        new TypeScriptNumber(),
+    ];
+
+    yield [
+        'negativeInt',
+        new TypeScriptNumber(),
+    ];
+
+    yield [
+        'nonPositiveInt',
+        new TypeScriptNumber(),
+    ];
+
+    yield [
+        'nonNegativeInt',
+        new TypeScriptNumber(),
+    ];
+
+    yield [
+        'nonZeroInt',
+        new TypeScriptNumber(),
+    ];
+
+    yield [
+        'intRange',
+        new TypeScriptNumber(),
+    ];
+
+    yield [
+        'intRangeMin',
+        new TypeScriptNumber(),
+    ];
+
+    yield [
+        'intRangeMax',
+        new TypeScriptNumber(),
+    ];
+
+    yield [
+        'numeric',
+        new TypeScriptNumber(),
+    ];
+
+    yield [
+        'scalar',
+        new TypeScriptUnion([
+            new TypeScriptNumber(),
+            new TypeScriptString(),
+            new TypeScriptBoolean(),
+        ]),
+    ];
+
+    yield [
+        'arrayKey',
+        new TypeScriptUnion([
+            new TypeScriptString(),
+            new TypeScriptNumber(),
+        ]),
     ];
 
     yield [
@@ -211,6 +273,32 @@ it('can transpile PHPStan doc types', function (
     ];
 
     yield [
+        'nonEmptyArrayGeneric',
+        new TypeScriptArray([new TypeScriptString()]),
+    ];
+
+    yield [
+        'nonEmptyArrayGenericWithKey',
+        new TypeScriptGeneric(
+            new TypeScriptIdentifier('Record'),
+            [
+                new TypeScriptString(),
+                new TypeScriptString(),
+            ]
+        ),
+    ];
+
+    yield [
+        'list',
+        new TypeScriptArray([new TypeScriptString()]),
+    ];
+
+    yield [
+        'nonEmptyList',
+        new TypeScriptArray([new TypeScriptString()]),
+    ];
+
+    yield [
         'typeArray',
         new TypeScriptArray([new TypeScriptString()]),
     ];
@@ -247,6 +335,96 @@ it('can transpile PHPStan doc types', function (
     ];
 
     yield [
+        'interfaceString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'interfaceStringGeneric',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'traitString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'traitStringGeneric',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'callableString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'callableStringGeneric',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'enumString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'enumStringGeneric',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'lowercaseString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'uppercaseString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'literalString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'numericString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'nonEmptyString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'nonEmptyLowercaseString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'nonEmptyUppercaseString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'truthyString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'nonFalsyString',
+        new TypeScriptString(),
+    ];
+
+    yield [
+        'nonEmptyLiteralString',
+        new TypeScriptString(),
+    ];
+
+    yield [
         'reference',
         new TypeReference(new ClassStringReference(Collection::class)),
     ];
@@ -266,4 +444,40 @@ it('can transpile PHPStan doc types', function (
             ]
         ),
     ];
+
+    yield [
+        'keyOfArrayConst',
+        new TypeScriptUnion([
+            new TypeScriptLiteral('script'),
+            new TypeScriptLiteral('type'),
+        ]),
+    ];
+
+    yield [
+        'valueOfArrayConst',
+        new TypeScriptUnion([
+            new TypeScriptLiteral(2),
+            new TypeScriptLiteral(1),
+        ]),
+    ];
+
+    //    yield [
+    //        'keyOfEnum',
+    //        new TypeScriptUnion([
+    //            new TypeScriptLiteral('john'),
+    //            new TypeScriptLiteral('paul'),
+    //            new TypeScriptLiteral('george'),
+    //            new TypeScriptLiteral('ringo'),
+    //        ])
+    //    ];
+    //
+    //    yield [
+    //        'valueOfEnum',
+    //        new TypeScriptUnion([
+    //            new TypeScriptLiteral('john'),
+    //            new TypeScriptLiteral('paul'),
+    //            new TypeScriptLiteral('george'),
+    //            new TypeScriptLiteral('ringo'),
+    //        ])
+    //    ];
 });

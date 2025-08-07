@@ -3,10 +3,16 @@
 namespace Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes;
 
 use Illuminate\Support\Collection;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
 use stdClass;
 
 class PhpDocTypesStub extends stdClass
 {
+    public const ARRAYCONST = [
+        'script' => 2,
+        'type' => 1,
+    ];
+
     /** @var string */
     public $string;
 
@@ -22,6 +28,33 @@ class PhpDocTypesStub extends stdClass
     /** @var int */
     public $integer;
 
+    /** @var positive-int */
+    public $positiveInt;
+
+    /** @var negative-int */
+    public $negativeInt;
+
+    /** @var non-positive-int */
+    public $nonPositiveInt;
+
+    /** @var non-negative-int */
+    public $nonNegativeInt;
+
+    /** @var non-zero-int */
+    public $nonZeroInt;
+
+    /** @var int<0, 100> */
+    public $intRange;
+
+    /** @var int<min, 100> */
+    public $intRangeMin;
+
+    /** @var int<0, max> */
+    public $intRangeMax;
+
+    /** @var numeric */
+    public $numeric;
+
     /** @var float */
     public $float;
 
@@ -30,6 +63,12 @@ class PhpDocTypesStub extends stdClass
 
     /** @var mixed */
     public $mixed;
+
+    /** @var scalar */
+    public $scalar;
+
+    /** @var array-key */
+    public $arrayKey;
 
     /** @var void */
     public $void;
@@ -88,6 +127,18 @@ class PhpDocTypesStub extends stdClass
     /** @var array<array-key, string> */
     public $arrayGenericWithArrayKey;
 
+    /** @var non-empty-array<string> */
+    public $nonEmptyArrayGeneric;
+
+    /** @var non-empty-array<string, string> */
+    public $nonEmptyArrayGenericWithKey;
+
+    /** @var list<string> */
+    public $list;
+
+    /** @var non-empty-list<string> */
+    public $nonEmptyList;
+
     /** @var string[] */
     public $typeArray;
 
@@ -103,6 +154,60 @@ class PhpDocTypesStub extends stdClass
     /** @var class-string<StdClass> */
     public $classStringGeneric;
 
+    /** @var interface-string */
+    public $interfaceString;
+
+    /** @var interface-string<self> */
+    public $interfaceStringGeneric;
+
+    /** @var trait-string */
+    public $traitString;
+
+    /** @var trait-string<self> */
+    public $traitStringGeneric;
+
+    /** @var callable-string */
+    public $callableString;
+
+    /** @var callable-string<self> */
+    public $callableStringGeneric;
+
+    /** @var enum-string */
+    public $enumString;
+
+    /** @var enum-string<StringBackedEnum> */
+    public $enumStringGeneric;
+
+    /** @var lowercase-string */
+    public $lowercaseString;
+
+    /** @var uppercase-string */
+    public $uppercaseString;
+
+    /** @var literal-string */
+    public $literalString;
+
+    /** @var numeric-string */
+    public $numericString;
+
+    /** @var non-empty-string */
+    public $nonEmptyString;
+
+    /** @var non-empty-lowercase-string */
+    public $nonEmptyLowercaseString;
+
+    /** @var non-empty-uppercase-string */
+    public $nonEmptyUppercaseString;
+
+    /** @var truthy-string */
+    public $truthyString;
+
+    /** @var non-falsy-string */
+    public $nonFalsyString;
+
+    /** @var non-empty-literal-string */
+    public $nonEmptyLiteralString;
+
     /** @var \Illuminate\Support\Collection */
     public $reference;
 
@@ -111,4 +216,16 @@ class PhpDocTypesStub extends stdClass
 
     /** @var Collection<int, string> */
     public $generic;
+
+    /** @var key-of<self::ARRAYCONST> */
+    public $keyOfArrayConst;
+
+    /** @var value-of<PhpDocTypesStub::ARRAYCONST> */
+    public $valueOfArrayConst;
+
+    /** @var key-of<StringBackedEnum> */
+    public $keyOfEnum;
+
+    /** @var value-of<StringBackedEnum> */
+    public $valueOfEnum;
 }

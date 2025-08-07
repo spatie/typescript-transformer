@@ -9,6 +9,7 @@ use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
+use PHPStan\PhpDocParser\ParserConfig;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpMethodNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
@@ -26,11 +27,13 @@ class DocTypeResolver
 
     public function __construct()
     {
-        $constExprParser = new ConstExprParser();
-        $this->typeParser = new TypeParser($constExprParser);
+        $config = new ParserConfig(usedAttributes: []);
 
-        $this->docParser = new PhpDocParser($this->typeParser, $constExprParser);
-        $this->lexer = new Lexer();
+        $constExprParser = new ConstExprParser($config);
+        $this->typeParser = new TypeParser($config, $constExprParser);
+
+        $this->docParser = new PhpDocParser($config, $this->typeParser, $constExprParser);
+        $this->lexer = new Lexer($config);
     }
 
     public function class(PhpClassNode $phpClassNode): ?ParsedClass

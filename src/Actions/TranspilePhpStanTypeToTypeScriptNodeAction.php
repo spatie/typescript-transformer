@@ -3,9 +3,12 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Exception;
+use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprStringNode;
+use PHPStan\PhpDocParser\Ast\ConstExpr\ConstFetchNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\ConstTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode;
@@ -24,6 +27,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptFunction;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIntersection;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptLiteral;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNull;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
@@ -65,16 +69,50 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             return new TypeScriptAny();
         }
 
-        if ($node->name === 'string' || $node->name === 'class-string') {
+        if ($node->name === 'string'
+            || $node->name === 'class-string'
+            || $node->name === 'interface-string'
+            || $node->name === 'trait-string'
+            || $node->name === 'callable-string'
+            || $node->name === 'enum-string'
+            || $node->name === 'lowercase-string'
+            || $node->name === 'uppercase-string'
+            || $node->name === 'literal-string'
+            || $node->name === 'numeric-string'
+            || $node->name === 'non-empty-string'
+            || $node->name === 'non-empty-lowercase-string'
+            || $node->name === 'non-empty-uppercase-string'
+            || $node->name === 'truthy-string'
+            || $node->name === 'non-falsy-string'
+            || $node->name === 'non-empty-literal-string'
+        ) {
             return new TypeScriptString();
         }
 
-        if ($node->name === 'float' || $node->name === 'double' || $node->name === 'int' || $node->name === 'integer') {
+        if ($node->name === 'float'
+            || $node->name === 'double'
+            || $node->name === 'int'
+            || $node->name === 'integer'
+            || $node->name === 'positive-int'
+            || $node->name === 'negative-int'
+            || $node->name === 'non-positive-int'
+            || $node->name === 'non-negative-int'
+            || $node->name === 'non-zero-int'
+            || $node->name === 'numeric'
+        ) {
             return new TypeScriptNumber();
         }
 
         if ($node->name === 'bool' || $node->name === 'boolean' || $node->name === 'true' || $node->name === 'false') {
             return new TypeScriptBoolean();
+        }
+
+        if ($node->name === 'scalar') {
+            return new TypeScriptUnion([
+                new TypeScriptNumber(),
+                new TypeScriptString(),
+                new TypeScriptBoolean(),
+            ]);
         }
 
         if ($node->name === 'void') {
@@ -93,10 +131,6 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             return new TypeScriptNull();
         }
 
-        if ($node->name === 'self' || $node->name === 'static') {
-            return new TypeReference(new ClassStringReference($phpClassNode->getName()));
-        }
-
         if ($node->name === 'object') {
             return new TypeScriptObject([]);
         }
@@ -108,24 +142,41 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             ]);
         }
 
-        if (class_exists($node->name) || interface_exists($node->name)) {
-            return new TypeReference(new ClassStringReference($node->name));
+        $className = $this->resolveClass($node->name, $phpClassNode);
+
+        if ($className) {
+            return new TypeReference(new ClassStringReference($className));
+        }
+
+        return new TypeScriptUnknown();
+    }
+
+    protected function resolveClass(
+        string $className,
+        ?PhpClassNode $phpClassNode
+    ): ?string {
+        if ($className === 'self' || $className === 'static' || $className === '$this') {
+            return $phpClassNode?->getName();
+        }
+
+        if (class_exists($className) || interface_exists($className)) {
+            return $className;
         }
 
         if ($phpClassNode === null) {
-            return new TypeScriptUnknown();
+            return null;
         }
 
         $referenced = $this->findClassNameFqcnAction->execute(
             $phpClassNode,
-            $node->name
+            $className
         );
 
         if (class_exists($referenced) || interface_exists($referenced)) {
-            return new TypeReference(new ClassStringReference($referenced));
+            return $referenced;
         }
 
-        return new TypeScriptUnknown();
+        return null;
     }
 
     protected function arrayTypeNode(
@@ -143,8 +194,13 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
     ): TypeScriptObject {
         return new TypeScriptObject(array_map(
             function (ArrayShapeItemNode|ObjectShapeItemNode $item) use ($phpClassNode) {
+                $name = match ($item->keyName::class) {
+                    IdentifierTypeNode::class => $item->keyName->name,
+                    ConstExprStringNode::class => $item->keyName->value,
+                };
+
                 return new TypeScriptProperty(
-                    (string) $item->keyName,
+                    $name,
                     $this->execute($item->valueType, $phpClassNode),
                     isOptional: $item->optional
                 );
@@ -194,26 +250,27 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         GenericTypeNode $node,
         ?PhpClassNode $phpClassNode
     ): TypeScriptNode {
-        if ($node->type->name === 'array' || $node->type->name === 'Array') {
+        if ($node->type->name === 'array'
+            || $node->type->name === 'Array'
+            || $node->type->name === 'non-empty-array'
+            || $node->type->name === 'list'
+            || $node->type->name === 'non-empty-list'
+        ) {
             return $this->genericArrayNode($node, $phpClassNode);
         }
 
-        $type = $this->execute($node->type, $phpClassNode);
-
-        if ($type instanceof TypeScriptString) {
-            return $type; // class-string<something> case
+        if ($node->type->name === 'int') {
+            return new TypeScriptNumber();
         }
 
-        return new TypeScriptGeneric(
-            $type,
-            array_map(
-                fn (TypeNode $type) => $this->execute($type, $phpClassNode),
-                $node->genericTypes
-            )
-        );
+        if ($node->type->name === 'key-of' || $node->type->name === 'value-of') {
+            return $this->keyOrValueOfGenericNode($node, $phpClassNode);
+        }
+
+        return $this->defaultGenericNode($node, $phpClassNode);
     }
 
-    private function genericArrayNode(GenericTypeNode $node, ?PhpClassNode $phpClassNode): TypeScriptGeneric|TypeScriptArray
+    protected function genericArrayNode(GenericTypeNode $node, ?PhpClassNode $phpClassNode): TypeScriptGeneric|TypeScriptArray
     {
         $genericTypes = count($node->genericTypes);
 
@@ -239,6 +296,59 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         return new TypeScriptGeneric(
             new TypeScriptIdentifier('Record'),
             [$key, $value,]
+        );
+    }
+
+    protected function keyOrValueOfGenericNode(GenericTypeNode $node, ?PhpClassNode $phpClassNode): TypeScriptNode
+    {
+        if (count($node->genericTypes) === 1
+            && $node->genericTypes[0] instanceof ConstTypeNode
+            && $node->genericTypes[0]->constExpr instanceof ConstFetchNode
+        ) {
+            return $this->keyOrValueOfArrayConstNode($node, $phpClassNode, $node->genericTypes[0]->constExpr);
+        }
+
+
+        return $this->defaultGenericNode($node, $phpClassNode);
+    }
+
+    protected function keyOrValueOfArrayConstNode(
+        GenericTypeNode $node,
+        ?PhpClassNode $phpClassNode,
+        ConstFetchNode $constFetchNode,
+    ): TypeScriptNode {
+        $class = $this->resolveClass($constFetchNode->className, $phpClassNode);
+
+        if ($class === null) {
+            return $this->defaultGenericNode($node, $phpClassNode);
+        }
+
+        $array = $class::{$constFetchNode->name};
+
+        $items = $node->type->name === 'key-of'
+            ? array_keys($array)
+            : array_values($array);
+
+        return new TypeScriptUnion(array_map(
+            fn (mixed $key) => new TypeScriptLiteral($key),
+            $items
+        ));
+    }
+
+    protected function defaultGenericNode(GenericTypeNode $node, ?PhpClassNode $phpClassNode): TypeScriptNode
+    {
+        $type = $this->execute($node->type, $phpClassNode);
+
+        if ($type instanceof TypeScriptString) {
+            return $type; // class-string<something> case
+        }
+
+        return new TypeScriptGeneric(
+            $type,
+            array_map(
+                fn (TypeNode $type) => $this->execute($type, $phpClassNode),
+                $node->genericTypes
+            )
         );
     }
 }
