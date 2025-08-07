@@ -11,20 +11,20 @@ use Spatie\TypeScriptTransformer\Writers\Writer;
 class TypeScriptTransformerConfig
 {
     /**
-     * @param array<class-string<TypesProvider> $typeProviders
+     * @param array<class-string<TypesProvider>|TypesProvider> $typeProviders
      * @param array<string> $directoriesToWatch
      * @param array<VisitorClosure> $providedVisitorClosures
      * @param array<VisitorClosure> $connectedVisitorClosures
      * @param array<Transformer> $transformers
      */
     public function __construct(
-        readonly public array $typeProviders,
-        readonly public Writer $writer,
-        readonly public ?Formatter $formatter,
-        readonly public array $directoriesToWatch = [],
-        readonly public array $providedVisitorClosures = [],
-        readonly public array $connectedVisitorClosures = [],
-        readonly public array $transformers = [],
+        public readonly array $typeProviders,
+        public readonly Writer $writer,
+        public readonly ?Formatter $formatter,
+        public readonly array $directoriesToWatch = [],
+        public readonly array $providedVisitorClosures = [],
+        public readonly array $connectedVisitorClosures = [],
+        public readonly array $transformers = [],
     ) {
     }
 }

@@ -20,19 +20,19 @@ class PhpClassNode
     ) {
     }
 
-    public static function fromClassString(string $classString): static
+    public static function fromClassString(string $classString): self
     {
         return self::fromReflection(new ReflectionClass($classString));
     }
 
-    public static function fromReflection(ReflectionClass|RoaveReflectionClass $reflection): static
+    public static function fromReflection(ReflectionClass|RoaveReflectionClass $reflection): self
     {
         if ($reflection instanceof RoaveReflectionEnum) {
             return new PhpEnumNode($reflection);
         }
 
         if ($reflection->isEnum()) {
-            return new PhpEnumNode(new ReflectionEnum($reflection->name));
+            return new PhpEnumNode(new ReflectionEnum($reflection->getName()));
         }
 
         return new self($reflection);

@@ -3,9 +3,9 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Exception;
+use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprIntegerNode;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprStringNode;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstFetchNode;
-use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\ConstTypeNode;
@@ -13,7 +13,6 @@ use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
-use PHPStan\PhpDocParser\Ast\Type\ObjectShapeItemNode;
 use PHPStan\PhpDocParser\Ast\Type\ObjectShapeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
@@ -192,21 +191,28 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         ArrayShapeNode|ObjectShapeNode $node,
         ?PhpClassNode $phpClassNode
     ): TypeScriptObject {
-        return new TypeScriptObject(array_map(
-            function (ArrayShapeItemNode|ObjectShapeItemNode $item) use ($phpClassNode) {
-                $name = match ($item->keyName::class) {
-                    IdentifierTypeNode::class => $item->keyName->name,
-                    ConstExprStringNode::class => $item->keyName->value,
-                };
+        $properties = [];
 
-                return new TypeScriptProperty(
-                    $name,
-                    $this->execute($item->valueType, $phpClassNode),
-                    isOptional: $item->optional
-                );
-            },
-            $node->items
-        ));
+        foreach ($node->items as $item) {
+            $name = match ($item->keyName::class) {
+                IdentifierTypeNode::class => $item->keyName->name,
+                ConstExprStringNode::class => $item->keyName->value,
+                ConstExprIntegerNode::class => (string) $item->keyName->value,
+                default => null,
+            };
+
+            if ($name === null) {
+                continue;
+            }
+
+            $properties[] = new TypeScriptProperty(
+                $name,
+                $this->execute($item->valueType, $phpClassNode),
+                isOptional: $item->optional
+            );
+        }
+
+        return new TypeScriptObject($properties);
     }
 
     protected function nullableNode(
@@ -301,22 +307,14 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
 
     protected function keyOrValueOfGenericNode(GenericTypeNode $node, ?PhpClassNode $phpClassNode): TypeScriptNode
     {
-        if (count($node->genericTypes) === 1
-            && $node->genericTypes[0] instanceof ConstTypeNode
-            && $node->genericTypes[0]->constExpr instanceof ConstFetchNode
+        if (count($node->genericTypes) !== 1
+            || ! $node->genericTypes[0] instanceof ConstTypeNode
+            || ! $node->genericTypes[0]->constExpr instanceof ConstFetchNode
         ) {
-            return $this->keyOrValueOfArrayConstNode($node, $phpClassNode, $node->genericTypes[0]->constExpr);
+            return $this->defaultGenericNode($node, $phpClassNode);
         }
 
-
-        return $this->defaultGenericNode($node, $phpClassNode);
-    }
-
-    protected function keyOrValueOfArrayConstNode(
-        GenericTypeNode $node,
-        ?PhpClassNode $phpClassNode,
-        ConstFetchNode $constFetchNode,
-    ): TypeScriptNode {
+        $constFetchNode = $node->genericTypes[0]->constExpr;
         $class = $this->resolveClass($constFetchNode->className, $phpClassNode);
 
         if ($class === null) {
@@ -341,6 +339,10 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
 
         if ($type instanceof TypeScriptString) {
             return $type; // class-string<something> case
+        }
+
+        if (! ($type instanceof TypeReference || $type instanceof TypeScriptIdentifier)) {
+            return new TypeScriptUnknown();
         }
 
         return new TypeScriptGeneric(

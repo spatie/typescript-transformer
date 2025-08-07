@@ -15,7 +15,7 @@ it('will only convert enums', function () {
     expect(transformSingle(DateTime::class, new EnumTransformer()))->toBeInstanceOf(Untransformable::class);
 });
 
-it('does not transform a unit enum when using union enums', function () {
+it('does not transform a unit enum when using unit enums', function () {
     expect(transformSingle(UnitEnum::class, new EnumTransformer()))->toBeInstanceOf(Untransformable::class);
 });
 

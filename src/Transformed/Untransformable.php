@@ -2,13 +2,15 @@
 
 namespace Spatie\TypeScriptTransformer\Transformed;
 
+use Spatie\TypeScriptTransformer\Support\Concerns\Instanceable;
+
 class Untransformable
 {
-    protected static ?self $self = null;
+    use Instanceable;
 
     public static function create(): self
     {
-        return static::$self ??= new static();
+        return self::instance();
     }
 
     private function __construct()

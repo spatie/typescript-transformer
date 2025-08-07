@@ -106,7 +106,7 @@ abstract class InterfaceTransformer implements Transformer
         TransformationContext $context,
         ?ParsedMethod $annotation
     ): TypeScriptNode {
-        if ($annotation->returnType) {
+        if ($annotation?->returnType) {
             return $this->transpilePhpStanTypeToTypeScriptTypeAction->execute(
                 $annotation->returnType,
                 $classNode

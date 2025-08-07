@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\References\Reference;
 class WritingContext
 {
     /**
-     * @param  callable(Reference):string  $referenceWriter
+     * @param Closure(Reference):string  $referenceWriter
      */
     public function __construct(
         public Closure $referenceWriter,

@@ -249,7 +249,7 @@ TS
         }, $collection->parameters));
     }
 
-    protected function parseRouteParameter(RouteParameter $parameter): TypeScriptNode
+    protected function parseRouteParameter(RouteParameter $parameter): TypeScriptProperty
     {
         return new TypeScriptProperty(
             $parameter->name,

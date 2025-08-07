@@ -75,10 +75,10 @@ abstract class ClassTransformer implements Transformer
             return $resolvedAttributeType;
         }
 
-        $classAnnotations = $this->docTypeResolver->class($phpClassNode)?->properties ?? [];
+        $classAnnotations = $this->docTypeResolver->class($phpClassNode)->properties ?? [];
 
         $constructorAnnotations = $phpClassNode->hasMethod('__construct')
-            ? $this->docTypeResolver->method($phpClassNode->getMethod('__construct'))?->parameters ?? []
+            ? $this->docTypeResolver->method($phpClassNode->getMethod('__construct'))->parameters ?? []
             : [];
 
         $properties = [];

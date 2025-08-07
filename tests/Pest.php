@@ -38,10 +38,10 @@ function transformSingle(
 
     $transformTypesAction = new TransformTypesAction();
 
-    [$transformed] = $transformTypesAction->execute(
+    $results = $transformTypesAction->execute(
         [$transformer],
         [PhpClassNode::fromClassString(is_string($class) ? $class : $class::class)],
     );
 
-    return $transformed ?? Untransformable::create();
+    return $results[0] ?? Untransformable::create();
 }

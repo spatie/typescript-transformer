@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vendor/bin/pest:*)",
+      "Bash(vendor/bin/phpstan analyse:*)"
+    ],
+    "deny": []
+  }
+}

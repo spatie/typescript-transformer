@@ -139,7 +139,7 @@ TS
 
                 if ($entity instanceof RouteController) {
                     return collect($entity->actions)
-                        ->filter(fn (RouteControllerAction $action) => $action->name)
+                        ->filter(fn (RouteControllerAction $action) => $action->name !== null)
                         ->values()
                         ->map($mappingFunction);
                 }
@@ -158,7 +158,7 @@ TS
         }, $collection->parameters));
     }
 
-    protected function parseRouteParameter(RouteParameter $parameter): TypeScriptNode
+    protected function parseRouteParameter(RouteParameter $parameter): TypeScriptProperty
     {
         return new TypeScriptProperty(
             $parameter->name,
@@ -183,7 +183,7 @@ TS
 
             if ($controller instanceof RouteController) {
                 return collect($controller->actions)
-                    ->filter(fn (RouteControllerAction $action) => $action->name)
+                    ->filter(fn (RouteControllerAction $action) => $action->name !== null)
                     ->values()
                     ->mapWithKeys($mappingFunction);
             }
@@ -192,7 +192,7 @@ TS
         });
 
         $closures = collect($collection->closures)
-            ->filter(fn (RouteClosure $closure) => $closure->name)
+            ->filter(fn (RouteClosure $closure) => $closure->name !== null)
             ->values()
             ->mapWithKeys(function (RouteClosure $closure) use ($mappingFunction) {
                 return $mappingFunction($closure);

@@ -119,12 +119,14 @@ class DocTypeResolver
     protected function parseDocComment(
         PhpClassNode|PhpMethodNode|PhpPropertyNode $phpNode
     ): ?PhpDocNode {
-        if ($phpNode->getDocComment() === false || $phpNode->getDocComment() === null) {
+        $docComment = $phpNode->getDocComment();
+
+        if ($docComment === null) {
             return null;
         }
 
         return $this->docParser->parse(
-            new TokenIterator($this->lexer->tokenize($phpNode->getDocComment()))
+            new TokenIterator($this->lexer->tokenize($docComment))
         );
     }
 }

@@ -33,13 +33,8 @@ class ImportLocation
         return null;
     }
 
-    public function toTypeScriptNode(): ?TypeScriptImport
+    public function toTypeScriptNode(): TypeScriptImport
     {
-        if ($this->relativePath === null) {
-            // current path
-            return null;
-        }
-
         return new TypeScriptImport($this->relativePath, $this->importNames);
     }
 }

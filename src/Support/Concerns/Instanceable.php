@@ -6,8 +6,8 @@ trait Instanceable
 {
     protected static ?self $instance = null;
 
-    public static function instance(): static
+    public static function instance(): self
     {
-        return static::$instance ??= new static();
+        return self::$instance ??= new self();
     }
 }

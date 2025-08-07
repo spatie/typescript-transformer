@@ -17,8 +17,8 @@ class TypeScriptGenericTypeVariable implements TypeScriptNode, TypeScriptVisitab
     public function write(WritingContext $context): string
     {
         return "{$this->identifier->write($context)}".
-            ($this->extends ? " extends {$this->extends?->write($context)}" : '').
-            ($this->default ? " = {$this->default?->write($context)}" : '');
+            ($this->extends ? " extends {$this->extends->write($context)}" : '').
+            ($this->default ? " = {$this->default->write($context)}" : '');
     }
 
     public function children(): array

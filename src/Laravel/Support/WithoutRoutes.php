@@ -19,7 +19,7 @@ class WithoutRoutes
 
     public static function satisfying(Closure $closure): self
     {
-        return new static($closure);
+        return new self($closure);
     }
 
     public static function named(string ...$names): self

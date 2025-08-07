@@ -17,17 +17,6 @@ class TypeScriptTransformerLog
         return new self(new WrappedNullConsole());
     }
 
-    public static function boot(WrappedConsole $console): self
-    {
-        var_dump(debug_backtrace());
-
-        if (self::$instance !== null) {
-            throw new \Exception('TypeScriptTransformerLog already booted');
-        }
-
-        return self::$instance = new self($console);
-    }
-
     public function info(string $message): self
     {
         $this->wrappedConsole->info($message);

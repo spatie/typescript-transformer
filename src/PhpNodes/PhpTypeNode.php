@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\PhpNodes;
 
+use InvalidArgumentException;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionType;
@@ -25,6 +26,7 @@ class PhpTypeNode
             ReflectionNamedType::class, RoaveReflectionNamedType::class => new PhpNamedTypeNode($reflection),
             ReflectionUnionType::class, RoaveReflectionUnionType::class => new PhpUnionTypeNode($reflection),
             ReflectionIntersectionType::class, RoaveReflectionIntersectionType::class => new PhpIntersectionTypeNode($reflection),
+            default => throw new InvalidArgumentException('Unsupported reflection type'),
         };
     }
 

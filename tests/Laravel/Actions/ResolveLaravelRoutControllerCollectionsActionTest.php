@@ -16,7 +16,11 @@ use Symfony\Component\HttpKernel\Controller\ErrorController;
 uses(LaravelTestCase::class)->in(__DIR__.'/../');
 
 it('can resolve all possible routes', function (Closure $route, Closure $expectations) {
-    $route(app(Router::class));
+    $router = app(Router::class);
+
+    $router->setRoutes(new \Illuminate\Routing\RouteCollection()); // Laravel registers a storage.local route by default, which we want to ignore in this test.
+
+    $route($router);
 
     $routes = app(ResolveLaravelRoutControllerCollectionsAction::class)->execute(null, true);
 
@@ -212,9 +216,13 @@ it('can filter out certain routes', function (
     WithoutRoutes $withoutRoutes,
     Closure $expectations
 ) {
-    app(Router::class)->get('simple', fn () => 'simple')->name('simple');
-    app(Router::class)->get('invokable', InvokableController::class)->name('invokable');
-    app(Router::class)->resource('resource', ResourceController::class);
+    $router = app(Router::class);
+
+    $router->setRoutes(new \Illuminate\Routing\RouteCollection()); // Laravel registers a storage.local route by default, which we want to ignore in this test.
+
+    $router->get('simple', fn () => 'simple')->name('simple');
+    $router->get('invokable', InvokableController::class)->name('invokable');
+    $router->resource('resource', ResourceController::class);
 
     $routes = app(ResolveLaravelRoutControllerCollectionsAction::class)->execute(null, true, [$withoutRoutes]);
 
