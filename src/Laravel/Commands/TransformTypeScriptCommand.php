@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Laravel\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\TypeScriptTransformer\Laravel\Support\WrappedLaravelConsole;
+use Spatie\TypeScriptTransformer\Laravel\Support\Logger;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -23,7 +23,7 @@ class TransformTypeScriptCommand extends Command
 
         TypeScriptTransformer::create(
             config: app(TypeScriptTransformerConfig::class),
-            console: new WrappedLaravelConsole($this)
+            console: new Logger($this)
         )->execute();
 
         $this->comment('All done');

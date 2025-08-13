@@ -20,11 +20,11 @@ class TransformationContext
     ): TransformationContext {
         $attribute = $node->getAttributes(TypeScript::class)[0] ?? null;
 
-        $name = $attribute && $attribute->hasArgument('name')
+        $name = $attribute && $attribute->hasArgument('name') && $attribute->getArgument('name') !== null
             ? $attribute->getArgument('name')
             : $node->getShortName();
 
-        $nameSpaceSegments = $attribute && $attribute->hasArgument('location')
+        $nameSpaceSegments = $attribute && $attribute->hasArgument('location') && $attribute->getArgument('location') !== null
             ? $attribute->getArgument('location')
             : explode('\\', $node->getNamespaceName());
 

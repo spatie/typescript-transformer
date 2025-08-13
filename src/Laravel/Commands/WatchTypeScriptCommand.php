@@ -3,7 +3,9 @@
 namespace Spatie\TypeScriptTransformer\Laravel\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\TypeScriptTransformer\Laravel\Support\WrappedLaravelConsole;
+use Spatie\TypeScriptTransformer\Laravel\Support\ConsoleLogger;
+use Spatie\TypeScriptTransformer\Support\Console\MultiLogger;
+use Spatie\TypeScriptTransformer\Support\Console\RayLogger;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -23,7 +25,10 @@ class WatchTypeScriptCommand extends Command
 
         TypeScriptTransformer::create(
             config: app(TypeScriptTransformerConfig::class),
-            console: new WrappedLaravelConsole($this),
+            console: new MultiLogger([
+                new RayLogger(),
+                new ConsoleLogger($this),
+            ]),
             watch: true
         )->execute();
 

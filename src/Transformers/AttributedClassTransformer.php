@@ -24,7 +24,7 @@ class AttributedClassTransformer extends ClassTransformer
         }
 
         /** @var TypeScript $attribute */
-        $attribute = $phpClassNode->getAttributes(TypeScript::class)[0]->getArguments();
+        $attribute = $phpClassNode->getAttributes(TypeScript::class)[0]->getRawArguments();
 
         if (($attribute['name'] ?? null) !== null) {
             $transformed->nameAs($attribute['name']);

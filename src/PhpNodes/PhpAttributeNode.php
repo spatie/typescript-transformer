@@ -8,7 +8,7 @@ use Roave\BetterReflection\Reflection\ReflectionAttribute as RoaveReflectionAttr
 
 class PhpAttributeNode
 {
-    protected ?array $arguments = null;
+    protected ?array $namedArguments = null;
 
     public function __construct(
         public readonly ReflectionAttribute|RoaveReflectionAttribute $reflection
@@ -20,27 +20,27 @@ class PhpAttributeNode
         return $this->reflection->getName();
     }
 
-    public function getArguments(): array
+    public function getRawArguments(): array
     {
         return $this->reflection->getArguments();
     }
 
     public function hasArgument(string $name): bool
     {
-        if ($this->arguments === null) {
-            $this->initializeArguments();
+        if ($this->namedArguments === null) {
+            $this->initializeNamedArguments();
         }
 
-        return array_key_exists($name, $this->arguments);
+        return array_key_exists($name, $this->namedArguments);
     }
 
     public function getArgument(string $name): mixed
     {
-        if ($this->arguments === null) {
-            $this->initializeArguments();
+        if ($this->namedArguments === null) {
+            $this->initializeNamedArguments();
         }
 
-        return $this->arguments[$name] ?? null;
+        return $this->namedArguments[$name] ?? null;
     }
 
     public function newInstance(): object
@@ -51,47 +51,59 @@ class PhpAttributeNode
 
         $className = $this->reflection->getName();
 
-        // TODO: maybe we can do a little better here
-        return (new $className())($this->reflection->getArguments());
+        $this->initializeNamedArguments();
+
+        return (new $className())(...$this->namedArguments);
     }
 
     /** @return array<string, mixed> */
-    protected function initializeArguments(): array
+    protected function initializeNamedArguments(): array
     {
-        // TODO: this is a quickly written thing, test it to be sure it works
-        if ($this->arguments !== null) {
-            return $this->arguments;
+        if ($this->namedArguments !== null) {
+            return $this->namedArguments;
         }
 
-        $this->arguments = [];
+        $this->namedArguments = [];
 
-        $values = $this->getArguments();
-
-        foreach ($values as $name => $value) {
-            if (is_string($name)) {
-                $this->arguments[$name] = $value;
-                unset($values[$name]);
-            }
-        }
-
-        if (count($values) === 0) {
-            return $this->arguments;
-        }
+        $values = $this->getRawArguments();
 
         $constructor = new ReflectionMethod($this->reflection->getName(), '__construct');
 
-        foreach ($constructor->getParameters() as $index => $param) {
-            if (array_key_exists($param->getName(), $this->arguments)) {
-                continue;
+        $parameters = $constructor->getParameters();
+
+        $namedParametersMap = array_flip(array_map(
+            fn ($param) => $param->getName(),
+            $parameters
+        ));
+
+        foreach ($values as $name => $value) {
+            if (is_int($name)) {
+                $parameter = $parameters[$name];
+
+                if ($parameter->isVariadic()) {
+                    $this->namedArguments[$parameter->name] = array_values(array_slice(
+                        $values,
+                        $name,
+                        null,
+                        true
+                    ));
+
+                    return $this->namedArguments;
+                }
+
+                $name = $parameters[$name]->getName();
             }
 
-            if (! array_key_exists($index, $values)) {
-                continue;
-            }
+            $this->namedArguments[$name] = $value;
 
-            $this->arguments[$param->getName()] = $values[$index];
+            unset($parameters[$namedParametersMap[$name]]);
         }
 
-        return $this->arguments;
+        foreach ($parameters as $parameter) {
+            $this->namedArguments[$parameter->getName()] = $parameter->getDefaultValue();
+        }
+
+
+        return $this->namedArguments;
     }
 }

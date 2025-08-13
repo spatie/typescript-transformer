@@ -2,38 +2,66 @@
 
 namespace Spatie\TypeScriptTransformer\Support;
 
-use Spatie\TypeScriptTransformer\Support\Console\WrappedConsole;
-use Spatie\TypeScriptTransformer\Support\Console\WrappedNullConsole;
+use RuntimeException;
+use Spatie\TypeScriptTransformer\Support\Console\Logger;
+use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
 
 class TypeScriptTransformerLog
 {
-    public function __construct(
-        protected WrappedConsole $wrappedConsole,
+    protected static $self;
+
+    protected function __construct(
+        protected Logger $logger,
     ) {
+    }
+
+    public static function create(Logger $logger): self
+    {
+        if (isset(static::$self)) {
+            throw new RuntimeException('TypeScriptTransformerLog instance already created.');
+        }
+
+        return static::$self = new static($logger);
+    }
+
+    public static function instance(): self
+    {
+        if (! isset(static::$self)) {
+            throw new RuntimeException('TypeScriptTransformerLog instance not created.');
+        }
+
+        return static::$self;
     }
 
     public static function createNullLog(): self
     {
-        return new self(new WrappedNullConsole());
+        return new self(new NullLogger());
     }
 
-    public function info(string $message): self
+    public function info(mixed $item, ?string $title = null): self
     {
-        $this->wrappedConsole->info($message);
+        $this->logger->info($item, $title);
 
         return $this;
     }
 
-    public function warning(string $message): self
+    public function warning(mixed $item, ?string $title = null): self
     {
-        $this->wrappedConsole->warn($message);
+        $this->logger->warn($item, $title);
 
         return $this;
     }
 
-    public function error(string $message): self
+    public function error(mixed $item, ?string $title = null): self
     {
-        $this->wrappedConsole->error($message);
+        $this->logger->error($item, $title);
+
+        return $this;
+    }
+
+    public function debug(mixed $item, ?string $title = null): self
+    {
+        $this->logger->debug($item, $title);
 
         return $this;
     }

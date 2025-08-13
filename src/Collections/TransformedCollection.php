@@ -7,6 +7,7 @@ use Generator;
 use IteratorAggregate;
 use Spatie\TypeScriptTransformer\References\FilesystemReference;
 use Spatie\TypeScriptTransformer\References\Reference;
+use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Traversable;
 
@@ -21,21 +22,30 @@ class TransformedCollection implements IteratorAggregate
     /** @var array<string, Transformed> */
     protected array $fileMapping = [];
 
+    protected bool $requireCompleteRewrite = false;
+
+    protected TypeScriptTransformerLog $log;
+
     public function __construct(
         array $items = [],
     ) {
         $this->add(...$items);
+        $this->log = TypeScriptTransformerLog::instance();
     }
 
     public function add(Transformed ...$transformed): self
     {
         foreach ($transformed as $item) {
+            $this->log->debug($item, 'Adding transformed');
+
             $this->items[$item->reference->getKey()] = $item;
 
             if ($item->reference instanceof FilesystemReference) {
                 $this->fileMapping[$this->cleanupFilePath($item->reference->getFilesystemOriginPath())] = $item;
             }
         }
+
+        ray($this);
 
         return $this;
     }
@@ -54,9 +64,14 @@ class TransformedCollection implements IteratorAggregate
     {
         $transformed = $this->get($reference);
 
+        $this->log->debug($reference, 'Removing reference');
+        $this->log->debug($transformed, 'Removing transformed');
+
         if ($transformed === null) {
             return;
         }
+
+        $this->log->debug($transformed->referencedBy, 'Marking references as missing');
 
         foreach (array_unique($transformed->referencedBy) as $referencedBy) {
             $referencedBy = $this->get($referencedBy);
@@ -72,6 +87,8 @@ class TransformedCollection implements IteratorAggregate
 
             unset($this->fileMapping[$path]);
         }
+
+        ray($this);
     }
 
     public function getIterator(): Traversable
@@ -113,6 +130,10 @@ class TransformedCollection implements IteratorAggregate
 
     public function hasChanges(): bool
     {
+        if ($this->requireCompleteRewrite) {
+            return true;
+        }
+
         foreach ($this->items as $item) {
             if ($item->changed) {
                 return true;
@@ -120,6 +141,16 @@ class TransformedCollection implements IteratorAggregate
         }
 
         return false;
+    }
+
+    public function requireCompleteRewrite(): void
+    {
+        $this->requireCompleteRewrite = true;
+    }
+
+    public function rewriteExecuted(): void
+    {
+        $this->requireCompleteRewrite = false;
     }
 
     protected function cleanupFilePath(string $path): string

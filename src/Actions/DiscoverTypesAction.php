@@ -28,7 +28,7 @@ class DiscoverTypesAction
         return array_values(array_filter(array_map(function (string $discovered) {
             try {
                 return PhpClassNode::fromReflection(new ReflectionClass($discovered));
-            } catch (\ReflectionException) {
+            } catch (\Throwable) {
                 return null;
             }
         }, $discovered)));

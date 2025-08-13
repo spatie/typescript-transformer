@@ -2,7 +2,7 @@
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Support\Console\WrappedArrayConsole;
+use Spatie\TypeScriptTransformer\Support\Console\ConsoleLogger;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularA;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularB;
@@ -78,7 +78,7 @@ it('will write to the log when a reference cannot be found', function () {
 
 
     $action = new ConnectReferencesAction(
-        new TypeScriptTransformerLog($console = new WrappedArrayConsole())
+        TypeScriptTransformerLog::create($console = new ConsoleLogger())
     );
 
     $action->execute($collection);

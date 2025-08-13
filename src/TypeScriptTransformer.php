@@ -11,8 +11,8 @@ use Spatie\TypeScriptTransformer\Actions\ProvideTypesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Support\Console\WrappedConsole;
-use Spatie\TypeScriptTransformer\Support\Console\WrappedNullConsole;
+use Spatie\TypeScriptTransformer\Support\Console\Logger;
+use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
 use Spatie\TypeScriptTransformer\Support\LoadPhpClassNodeAction;
 use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 
@@ -37,12 +37,12 @@ class TypeScriptTransformer
 
     public static function create(
         TypeScriptTransformerConfig|TypeScriptTransformerConfigFactory $config,
-        WrappedConsole $console = new WrappedNullConsole(),
+        Logger $console = new NullLogger(),
         bool $watch = false,
     ): self {
         $config = $config instanceof TypeScriptTransformerConfigFactory ? $config->get() : $config;
 
-        $log = new TypeScriptTransformerLog($console);
+        $log = TypeScriptTransformerLog::create($console);
 
         return new self(
             $config,
@@ -67,10 +67,12 @@ class TypeScriptTransformer
          * - Add interface implementation + tests -> OK
          * - Split off Laravel specific code and test
          * - Split off data specific code and test
-         * - Add support for watching files
+         * - Add support for watching files -> ok, maybe add docs and some tests
          * - Further write docs + check them -> only Laravel specific stuff
          * - Check old Laravel tests if we missed something
          * - Check in Flare whether everything is working as expected -> PR ready, needs fixing TS
+         * - Fix todos
+         * - Write some text arround refactoring in IDE and watcher, that IDE's useally take some time to write eveyrthing out so it can take up to 10 seconds before the watcher kicks in
          * - Make sure nullables can be exported as optional: https://github.com/spatie/typescript-transformer/pull/88/files
          * - Release
          */
@@ -108,6 +110,8 @@ class TypeScriptTransformer
         if (! $transformedCollection->hasChanges()) {
             return;
         }
+
+        $transformedCollection->rewriteExecuted();
 
         $writeableFiles = $this->config->writer->output($transformedCollection);
 

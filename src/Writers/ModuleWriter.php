@@ -10,7 +10,7 @@ use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 
-class ModuleWriter implements Writer
+class ModuleWriter implements Writer, MultipleFilesWriter
 {
     public function __construct(
         protected string $path,
@@ -27,16 +27,16 @@ class ModuleWriter implements Writer
 
         $writtenFiles = [];
 
-        // TODO: remove files which still exists due to previous run
-
         foreach ($locations as $location) {
             $writtenFiles[] = $this->writeLocation($location, $collection);
         }
 
-        // TODO: we probably can be a bit smarter about this
-        // -> only write files which have changed
-
         return $writtenFiles;
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
     }
 
     protected function writeLocation(

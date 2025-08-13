@@ -67,6 +67,10 @@ class Transformed
 
     public function prepareForWrite(): TypeScriptNode
     {
+        // TODO: could we when a node is not changed, keep a cached version when writing it?
+        // that way we don't have to write out the whole node when writing files if
+        // it hasn't changed.
+
         $this->changed = false;
 
         if ($this->export === false) {

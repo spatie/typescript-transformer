@@ -9,6 +9,7 @@ use Spatie\TypeScriptTransformer\Events\Watch\FileCreatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileUpdatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\WatchEvent;
+use Spatie\TypeScriptTransformer\Handlers\Watch\DirectoryDeletedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\FileDeletedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\FileUpdatedOrCreatedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\WatchEventHandler;
@@ -70,7 +71,7 @@ class FileSystemWatcher
             });
 
         try {
-            $this->typeScriptTransformer->log->info('Starting watcher');
+            $this->typeScriptTransformer->log->info('Now watching for changes ...');
 
             $watcher->start();
         } catch (CouldNotStartWatcher $e) {
@@ -82,8 +83,6 @@ class FileSystemWatcher
 
     protected function initializeHandlers(): void
     {
-        // TODO: handle directory deleted
-
         $this->handlers[FileCreatedWatchEvent::class] = new FileUpdatedOrCreatedWatchEventHandler(
             $this->typeScriptTransformer,
             $this->transformedCollection,
@@ -95,6 +94,11 @@ class FileSystemWatcher
         );
 
         $this->handlers[FileDeletedWatchEvent::class] = new FileDeletedWatchEventHandler(
+            $this->typeScriptTransformer,
+            $this->transformedCollection,
+        );
+
+        $this->handlers[DirectoryDeletedWatchEvent::class] = new DirectoryDeletedWatchEventHandler(
             $this->typeScriptTransformer,
             $this->transformedCollection,
         );
@@ -127,8 +131,6 @@ class FileSystemWatcher
         $this->typeScriptTransformer->outputTransformed(
             $this->transformedCollection,
         );
-
-        $this->typeScriptTransformer->log->info('Processed events');
     }
 
     protected function tryToConnectMissingReferencesWithNewTransformed(): void

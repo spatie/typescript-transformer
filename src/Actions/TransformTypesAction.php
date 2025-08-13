@@ -43,6 +43,7 @@ class TransformTypesAction
         if (count($node->getAttributes(Hidden::class)) > 0) {
             return null;
         }
+
         $transformationContext = TransformationContext::createFromPhpClass($node);
 
         foreach ($transformers as $transformer) {

@@ -6,6 +6,9 @@ use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Events\Watch\FileDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
+/**
+ * @implements  WatchEventHandler<FileDeletedWatchEvent>
+ */
 class FileDeletedWatchEventHandler implements WatchEventHandler
 {
     public function __construct(
@@ -14,11 +17,10 @@ class FileDeletedWatchEventHandler implements WatchEventHandler
     ) {
     }
 
-    /**
-     * @param FileDeletedWatchEvent $event
-     */
     public function handle($event): void
     {
+        $this->typeScriptTransformer->log->debug($event->path, 'File Deleted');
+
         $transformed = $this->transformedCollection->findTransformedByFile($event->path);
 
         if ($transformed === null) {

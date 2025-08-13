@@ -4,6 +4,8 @@ namespace Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors;
 
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use Spatie\LaravelData\Attributes\Hidden as DataHidden;
+use Spatie\LaravelData\Attributes\MapName;
+use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Optional;
 use Spatie\LaravelData\Support\DataConfig;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
@@ -11,6 +13,7 @@ use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 
@@ -41,12 +44,21 @@ class DataClassPropertyProcessor implements ClassPropertyProcessor
             return null;
         }
 
-        // TODO: somehow get mapping working here without dataconfig and dataproperty
-        //        $phpAttributeNodes = $phpPropertyNode->getAttributes(MapOutputName::class);
-        //
-        //        if ($phpAttributeNodes) {
-        //            $property->name = new TypeScriptIdentifier($dataProperty->outputMappedName);
-        //        }
+        $mapOutputNodes = $phpPropertyNode->getAttributes(MapOutputName::class);
+
+        if (! empty($mapOutputNodes)) {
+            $property->name = new TypeScriptIdentifier($mapOutputNodes[0]->getArgument('output'));
+        }
+
+        $mapNodes = $phpPropertyNode->getAttributes(MapName::class);
+
+        if (! empty($mapNodes)) {
+            $name = $mapNodes[0]->getArgument('output') === null
+                ? $mapNodes[0]->getArgument('input')
+                : $mapNodes[0]->getArgument('output');
+
+            $property->name = new TypeScriptIdentifier($$name);
+        }
 
         if (! $property->type instanceof TypeScriptUnion) {
             return $property;
