@@ -7,7 +7,6 @@ use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
-use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamespace;
 
 class NamespaceWriter implements Writer
@@ -42,7 +41,7 @@ class NamespaceWriter implements Writer
         foreach ($split as $splitConstruct) {
             if (count($splitConstruct->segments) === 0) {
                 foreach ($splitConstruct->transformed as $transformable) {
-                    $output .= $transformable->prepareForWrite()->write($writingContext) . PHP_EOL;
+                    $output .= $transformable->write($writingContext) . PHP_EOL;
                 }
 
                 continue;
@@ -50,10 +49,7 @@ class NamespaceWriter implements Writer
 
             $namespace = new TypeScriptNamespace(
                 $splitConstruct->segments,
-                array_map(
-                    fn (Transformed $transformable) => $transformable->prepareForWrite(),
-                    $splitConstruct->transformed,
-                ),
+                $splitConstruct->transformed
             );
 
             $output .= $namespace->write($writingContext) . PHP_EOL;

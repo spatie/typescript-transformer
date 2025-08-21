@@ -4,11 +4,13 @@ namespace Spatie\TypeScriptTransformer;
 
 use Exception;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\Events\Watch\DirectoryDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileCreatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileUpdatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\WatchEvent;
+use Spatie\TypeScriptTransformer\Handlers\Watch\ConfigUpdatedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\DirectoryDeletedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\FileDeletedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\FileUpdatedOrCreatedWatchEventHandler;
@@ -18,11 +20,13 @@ use Spatie\Watcher\Watch;
 
 class FileSystemWatcher
 {
+    public const EXIT_CODE_COMPLETE_REFRESH = 42;
+
     protected array $eventsBuffer = [];
 
     protected bool $processing = false;
 
-    /** @var array<class-string<WatchEvent>, WatchEventHandler> */
+    /** @var array<class-string<WatchEvent>, array<WatchEventHandler>> */
     protected array $handlers = [];
 
     public function __construct(
@@ -83,25 +87,36 @@ class FileSystemWatcher
 
     protected function initializeHandlers(): void
     {
-        $this->handlers[FileCreatedWatchEvent::class] = new FileUpdatedOrCreatedWatchEventHandler(
-            $this->typeScriptTransformer,
-            $this->transformedCollection,
-        );
+        $this->handlers[FileCreatedWatchEvent::class] = [
+            new FileUpdatedOrCreatedWatchEventHandler(
+                $this->typeScriptTransformer,
+                $this->transformedCollection,
+            ),
+        ];
 
-        $this->handlers[FileUpdatedWatchEvent::class] = new FileUpdatedOrCreatedWatchEventHandler(
-            $this->typeScriptTransformer,
-            $this->transformedCollection,
-        );
+        $this->handlers[FileUpdatedWatchEvent::class] = [
+            new FileUpdatedOrCreatedWatchEventHandler(
+                $this->typeScriptTransformer,
+                $this->transformedCollection,
+            ),
+            new ConfigUpdatedWatchEventHandler(
+                $this->typeScriptTransformer,
+            ),
+        ];
 
-        $this->handlers[FileDeletedWatchEvent::class] = new FileDeletedWatchEventHandler(
-            $this->typeScriptTransformer,
-            $this->transformedCollection,
-        );
+        $this->handlers[FileDeletedWatchEvent::class] = [
+            new FileDeletedWatchEventHandler(
+                $this->typeScriptTransformer,
+                $this->transformedCollection,
+            ),
+        ];
 
-        $this->handlers[DirectoryDeletedWatchEvent::class] = new DirectoryDeletedWatchEventHandler(
-            $this->typeScriptTransformer,
-            $this->transformedCollection,
-        );
+        $this->handlers[DirectoryDeletedWatchEvent::class] = [
+            new DirectoryDeletedWatchEventHandler(
+                $this->typeScriptTransformer,
+                $this->transformedCollection,
+            ),
+        ];
     }
 
     protected function processBuffer(): void
@@ -111,7 +126,15 @@ class FileSystemWatcher
         [$events, $this->eventsBuffer] = [$this->eventsBuffer, []];
 
         foreach ($events as $event) {
-            $this->handlers[$event::class]->handle($event);
+            foreach ($this->handlers[$event::class] as $handler) {
+                $result = $handler->handle($event);
+
+                if ($result instanceof WatchEventResult && $result->completeRefresh) {
+                    ray('Triggering complete refresh');
+
+                    exit(self::EXIT_CODE_COMPLETE_REFRESH);
+                }
+            }
         }
 
         $this->typeScriptTransformer->executeProvidedClosuresAction->execute(

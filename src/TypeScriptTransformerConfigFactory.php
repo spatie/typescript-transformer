@@ -10,6 +10,7 @@ use Spatie\TypeScriptTransformer\Support\Extensions\TypeScriptTransformerExtensi
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeProviders\TransformerTypesProvider;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
+use Spatie\TypeScriptTransformer\TypeProviders\WatchingTypesProvider;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
@@ -25,22 +26,24 @@ class TypeScriptTransformerConfigFactory
     /**
      * @param array<TypesProvider|string> $typeProviders
      * @param array<Transformer|string> $transformers
-     * @param array<string> $directoriesToWatch
+     * @param array<string> $directoriesToTransform
      * @param array<class-string|string, TypeScriptNode> $typeReplacements
      * @param array<class-string<TypeScriptTransformerExtension>, TypeScriptTransformerExtension> $extensions
      * @param array<VisitorClosure> $providedVisitorClosures
      * @param array<VisitorClosure> $connectedVisitorClosures
+     * @param array<string> $configPaths
      */
     public function __construct(
         protected array $typeProviders = [],
         protected string|Writer|null $writer = null,
         protected string|Formatter|null $formatter = null,
         protected array $transformers = [],
-        protected array $directoriesToWatch = [],
+        protected array $directoriesToTransform = [],
         protected array $typeReplacements = [],
         protected array $extensions = [],
         protected array $providedVisitorClosures = [],
         protected array $connectedVisitorClosures = [],
+        protected array $configPaths = [],
     ) {
     }
 
@@ -97,9 +100,9 @@ class TypeScriptTransformerConfigFactory
         return $this;
     }
 
-    public function watchDirectories(string ...$directories): self
+    public function transformDirectories(string ...$directories): self
     {
-        array_push($this->directoriesToWatch, ...$directories);
+        array_push($this->directoriesToTransform, ...$directories);
 
         return $this;
     }
@@ -197,6 +200,14 @@ class TypeScriptTransformerConfigFactory
         return $this;
     }
 
+    public function configPath(
+        string ...$paths
+    ): self {
+        $this->configPaths = $paths;
+
+        return $this;
+    }
+
     public function get(): TypeScriptTransformerConfig
     {
         $this->ensureConfigIsValid();
@@ -205,6 +216,17 @@ class TypeScriptTransformerConfigFactory
             fn (TypesProvider|string $typeProvider) => is_string($typeProvider) ? new $typeProvider() : $typeProvider,
             $this->typeProviders
         );
+
+        $directoriesToWatch = [
+            ...$this->directoriesToTransform,
+            ...$this->configPaths,
+        ];
+
+        foreach ($typeProviders as $typeProvider) {
+            if ($typeProvider instanceof WatchingTypesProvider) {
+                array_push($directoriesToWatch, ...$typeProvider->directoriesToWatch());
+            }
+        }
 
         $writer = $this->writer ?? new NamespaceWriter(__DIR__.'/js/typed.ts');
 
@@ -224,23 +246,24 @@ class TypeScriptTransformerConfigFactory
         );
 
         if (! empty($transformers)) {
-            $typeProviders[] = new TransformerTypesProvider($transformers, $this->directoriesToWatch);
+            $typeProviders[] = new TransformerTypesProvider($transformers, $this->directoriesToTransform);
         }
 
         return new TypeScriptTransformerConfig(
             $typeProviders,
             $writer,
             $formatter,
-            $this->directoriesToWatch,
+            $directoriesToWatch,
             $this->providedVisitorClosures,
             $this->connectedVisitorClosures,
             $transformers,
+            $this->configPaths
         );
     }
 
     protected function ensureConfigIsValid(): void
     {
-        if (! empty($this->transformers) && empty($this->directoriesToWatch)) {
+        if (! empty($this->transformers) && empty($this->directoriesToTransform)) {
             throw new \Exception('When using transformers, you must specify which directories to watch');
         }
     }

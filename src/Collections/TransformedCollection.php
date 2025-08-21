@@ -30,13 +30,13 @@ class TransformedCollection implements IteratorAggregate
         array $items = [],
     ) {
         $this->add(...$items);
-        $this->log = TypeScriptTransformerLog::instance();
+        //        $this->log = TypeScriptTransformerLog::instance();
     }
 
     public function add(Transformed ...$transformed): self
     {
         foreach ($transformed as $item) {
-            $this->log->debug($item, 'Adding transformed');
+            //            $this->log->debug($item, 'Adding transformed');
 
             $this->items[$item->reference->getKey()] = $item;
 
@@ -44,8 +44,6 @@ class TransformedCollection implements IteratorAggregate
                 $this->fileMapping[$this->cleanupFilePath($item->reference->getFilesystemOriginPath())] = $item;
             }
         }
-
-        ray($this);
 
         return $this;
     }
@@ -64,14 +62,14 @@ class TransformedCollection implements IteratorAggregate
     {
         $transformed = $this->get($reference);
 
-        $this->log->debug($reference, 'Removing reference');
-        $this->log->debug($transformed, 'Removing transformed');
+        //        $this->log->debug($reference, 'Removing reference');
+        //        $this->log->debug($transformed, 'Removing transformed');
 
         if ($transformed === null) {
             return;
         }
 
-        $this->log->debug($transformed->referencedBy, 'Marking references as missing');
+        //        $this->log->debug($transformed->referencedBy, 'Marking references as missing');
 
         foreach (array_unique($transformed->referencedBy) as $referencedBy) {
             $referencedBy = $this->get($referencedBy);

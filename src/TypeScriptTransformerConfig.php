@@ -16,6 +16,7 @@ class TypeScriptTransformerConfig
      * @param array<VisitorClosure> $providedVisitorClosures
      * @param array<VisitorClosure> $connectedVisitorClosures
      * @param array<Transformer> $transformers
+     * @param array<string> $configPaths
      */
     public function __construct(
         public readonly array $typeProviders,
@@ -25,6 +26,7 @@ class TypeScriptTransformerConfig
         public readonly array $providedVisitorClosures = [],
         public readonly array $connectedVisitorClosures = [],
         public readonly array $transformers = [],
+        public readonly array $configPaths = [],
     ) {
     }
 }

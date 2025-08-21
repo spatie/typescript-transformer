@@ -21,7 +21,7 @@ class DirectoryDeletedWatchEventHandler implements WatchEventHandler
     /**
      * @param WatchEvent $event
      */
-    public function handle($event): void
+    public function handle($event): int
     {
         $this->typeScriptTransformer->log->debug($event->path, 'Directory Deleted');
 
@@ -30,5 +30,7 @@ class DirectoryDeletedWatchEventHandler implements WatchEventHandler
         foreach ($transformedItems as $transformed) {
             $this->transformedCollection->remove($transformed->reference);
         }
+
+        return 0;
     }
 }

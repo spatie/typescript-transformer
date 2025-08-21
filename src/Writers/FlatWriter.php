@@ -30,7 +30,7 @@ class FlatWriter implements Writer
         });
 
         foreach ($collection as $transformed) {
-            $output .= $transformed->prepareForWrite()->write($writingContext).PHP_EOL;
+            $output .= $transformed->write($writingContext).PHP_EOL;
         }
 
         return [new WriteableFile($this->filename, $output)];

@@ -149,7 +149,7 @@ it('can remove a transformed item by reference and update references', function 
     $collection = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
             ->transformer(new AllClassTransformer())
-            ->watchDirectories(__DIR__.'/../Fakes/Circular')
+            ->transformDirectories(__DIR__.'/../Fakes/Circular')
     )->resolveTransformedCollection();
 
     foreach ($collection as $transformed) {

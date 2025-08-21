@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Transformed;
 
 use Spatie\TypeScriptTransformer\References\Reference;
+use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptForwardingNamedNode;
@@ -12,6 +13,8 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 class Transformed
 {
     protected ?string $name;
+
+    protected ?string $cached = null;
 
     public bool $changed = true;
 
@@ -65,23 +68,21 @@ class Transformed
         return $this;
     }
 
-    public function prepareForWrite(): TypeScriptNode
+    public function write(WritingContext $writingContext): string
     {
-        // TODO: could we when a node is not changed, keep a cached version when writing it?
-        // that way we don't have to write out the whole node when writing files if
-        // it hasn't changed.
+        if ($this->changed === false && $this->cached) {
+            return $this->cached;
+        }
 
         $this->changed = false;
 
-        if ($this->export === false) {
-            return $this->typeScriptNode;
+        $node = $this->typeScriptNode;
+
+        if ($this->export === true && ($node instanceof TypeScriptNamedNode || $node instanceof TypeScriptForwardingNamedNode)) {
+            $node = new TypeScriptExport($node);
         }
 
-        if (! $this->typeScriptNode instanceof TypeScriptNamedNode && ! $this->typeScriptNode instanceof TypeScriptForwardingNamedNode) {
-            return $this->typeScriptNode;
-        }
-
-        return new TypeScriptExport($this->typeScriptNode);
+        return $this->cached = $node->write($writingContext);
     }
 
     public function addMissingReference(
@@ -140,5 +141,64 @@ class Transformed
     public function markAsChanged(): void
     {
         $this->changed = true;
+    }
+
+    public function equals(Transformed $other): bool
+    {
+        $equals = $this->getName() === $other->getName();
+
+        if (! $equals) {
+            return false;
+        }
+
+        if (count($this->referencedBy) !== count($other->referencedBy)
+            || array_diff($this->referencedBy, $other->referencedBy) !== []
+            || array_diff($other->referencedBy, $this->referencedBy) !== []) {
+            return false;
+        }
+
+        if (! $this->compareTypeReferenceArrays($this->references, $other->references)) {
+            return false;
+        }
+
+        return $this->compareTypeReferenceArrays($this->missingReferences, $other->missingReferences);
+    }
+
+    /**
+     * @param array<string, TypeReference[]> $one
+     * @param array<string, TypeReference[]> $two
+     */
+    private function compareTypeReferenceArrays(array $one, array $two): bool
+    {
+        if (array_keys($one) !== array_keys($two)) {
+            return false;
+        }
+
+        foreach ($one as $key => $referencesOne) {
+            $referencesTwo = $two[$key];
+
+            if (count($referencesOne) !== count($referencesTwo)) {
+                return false;
+            }
+
+            $referenceKeysOne = array_map(
+                fn (TypeReference $typeReference) => $typeReference->reference->getKey(),
+                $referencesOne
+            );
+
+            $referenceKeysTwo = array_map(
+                fn (TypeReference $typeReference) => $typeReference->reference->getKey(),
+                $referencesTwo
+            );
+
+            sort($referenceKeysOne);
+            sort($referenceKeysTwo);
+
+            if ($referenceKeysOne !== $referenceKeysTwo) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

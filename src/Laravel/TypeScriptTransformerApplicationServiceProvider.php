@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Laravel;
 
 use Illuminate\Support\ServiceProvider;
+use ReflectionClass;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 
@@ -14,6 +15,8 @@ abstract class TypeScriptTransformerApplicationServiceProvider extends ServicePr
     {
         $this->app->singleton(TypeScriptTransformerConfig::class, function () {
             $builder = new TypeScriptTransformerConfigFactory();
+
+            $builder->configPath((new ReflectionClass($this))->getFileName());
 
             $this->configure($builder);
 

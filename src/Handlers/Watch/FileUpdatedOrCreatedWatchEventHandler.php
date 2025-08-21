@@ -26,7 +26,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
      *
      * @return void
      */
-    public function handle($event): void
+    public function handle($event): int
     {
         $this->typeScriptTransformer->log->debug(
             $event->path,
@@ -39,7 +39,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
             if ($classNode === null) {
                 $this->typeScriptTransformer->log->warning("Multiple class nodes found in {$event->path}");
 
-                return;
+                return 0;
             }
 
             if ($this->checkIfClassNodeIsInvalid($event->path, $classNode)) {
@@ -51,7 +51,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
                  * it is not matching the expected class name.
                  */
 
-                return;
+                return 0;
             }
 
             $newlyTransformed = $this->typeScriptTransformer->transformTypesAction->transformClassNode(
@@ -60,7 +60,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
             );
         } catch (Throwable $throwable) {
             if (str_starts_with($throwable::class, 'Roave\BetterReflection')) {
-                return;
+                return 0;
             }
 
             throw $throwable;
@@ -75,7 +75,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
 
             $this->transformedCollection->requireCompleteRewrite();
 
-            return;
+            return 0 ;
         }
 
         if ($originalTransformed && $newlyTransformed) {
@@ -92,6 +92,8 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
         if ($newlyTransformed) {
             $this->transformedCollection->add($newlyTransformed);
         }
+
+        return 0;
     }
 
     protected function checkIfClassNodeIsInvalid(

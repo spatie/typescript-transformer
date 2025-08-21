@@ -6,7 +6,6 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\TypeScriptTransformer\Laravel\Commands\InstallTypeScriptTransformerCommand;
 use Spatie\TypeScriptTransformer\Laravel\Commands\TransformTypeScriptCommand;
-use Spatie\TypeScriptTransformer\Laravel\Commands\WatchTypeScriptCommand;
 
 class TypeScriptTransformerServiceProvider extends PackageServiceProvider
 {
@@ -14,7 +13,6 @@ class TypeScriptTransformerServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('typescript-transformer')
-            ->hasCommand(WatchTypeScriptCommand::class)
             ->hasCommand(TransformTypeScriptCommand::class)
             ->hasCommand(InstallTypeScriptTransformerCommand::class);
     }

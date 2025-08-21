@@ -65,7 +65,7 @@ class ModuleWriter implements Writer, MultipleFilesWriter
         }
 
         foreach ($location->transformed as $transformedItem) {
-            $output .= $transformedItem->prepareForWrite()->write($writingContext).PHP_EOL;
+            $output .= $transformedItem->write($writingContext).PHP_EOL;
         }
 
         return new WriteableFile("{$this->resolvePath($location)}/index.ts", $output);

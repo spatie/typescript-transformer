@@ -3,11 +3,12 @@
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
 use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class TypeScriptNamespace implements TypeScriptNode
 {
     /**
-     * @param  array<TypeScriptNode>  $types
+     * @param  array<TypeScriptNode|Transformed>  $types
      */
     public function __construct(
         public array $namespaceSegments,

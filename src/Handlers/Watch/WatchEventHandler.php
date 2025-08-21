@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Handlers\Watch;
 
+use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\Events\Watch\WatchEvent;
 
 /**
@@ -12,5 +13,5 @@ interface WatchEventHandler
     /**
      * @param T $event
      */
-    public function handle($event): void;
+    public function handle($event): WatchEventResult|int;
 }

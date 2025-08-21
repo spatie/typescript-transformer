@@ -17,16 +17,18 @@ class FileDeletedWatchEventHandler implements WatchEventHandler
     ) {
     }
 
-    public function handle($event): void
+    public function handle($event): int
     {
         $this->typeScriptTransformer->log->debug($event->path, 'File Deleted');
 
         $transformed = $this->transformedCollection->findTransformedByFile($event->path);
 
         if ($transformed === null) {
-            return;
+            return 0;
         }
 
         $this->transformedCollection->remove($transformed->reference);
+
+        return 0;
     }
 }

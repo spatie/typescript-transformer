@@ -19,7 +19,7 @@ it('can handle the integration test with a flat file', function () {
     $config = TypeScriptTransformerConfigFactory::create()
         ->transformer(new EnumTransformer())
         ->transformer(new AllClassTransformer())
-        ->watchDirectories(__DIR__ . '/Fakes/Integration')
+        ->transformDirectories(__DIR__ . '/Fakes/Integration')
         ->replaceType(DateTime::class, 'string')
         ->writer(new FlatWriter($this->temporaryDirectory->path('flat.d.ts')));
 
@@ -32,7 +32,7 @@ it('can handle the integration test with a namespaced file', function () {
     $config = TypeScriptTransformerConfigFactory::create()
         ->transformer(new EnumTransformer())
         ->transformer(new AllClassTransformer())
-        ->watchDirectories(__DIR__ . '/Fakes/Integration')
+        ->transformDirectories(__DIR__ . '/Fakes/Integration')
         ->replaceType(DateTime::class, 'string')
         ->writer(new NamespaceWriter($this->temporaryDirectory->path('flat.d.ts')));
 
@@ -45,7 +45,7 @@ it('can handle the integration test with a module structure', function () {
     $config = TypeScriptTransformerConfigFactory::create()
         ->transformer(new EnumTransformer())
         ->transformer(new AllClassTransformer())
-        ->watchDirectories(__DIR__ . '/Fakes/Integration')
+        ->transformDirectories(__DIR__ . '/Fakes/Integration')
         ->replaceType(DateTime::class, 'string')
         ->writer(new ModuleWriter($this->temporaryDirectory->path()));
 
