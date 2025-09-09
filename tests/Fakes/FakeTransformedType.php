@@ -4,17 +4,19 @@ namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 
 use Exception;
 use ReflectionClass;
+use Spatie\TypeScriptTransformer\Compactors\Compactor;
+use Spatie\TypeScriptTransformer\Compactors\IdentityCompactor;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 
 class FakeTransformedType extends TransformedType
 {
-    public static function create(ReflectionClass $class, string $name, string $transformed, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false, string $keyword = 'type', bool $trailingSemicolon = true): TransformedType
+    public static function create(ReflectionClass $class, string $name, string $transformed, Compactor $compactor, ?MissingSymbolsCollection $missingSymbols = null, bool $inline = false, string $keyword = 'type', bool $trailingSemicolon = true): TransformedType
     {
         throw new Exception("Fake type");
     }
 
-    public static function createInline(ReflectionClass $class, string $transformed, ?MissingSymbolsCollection $missingSymbols = null): TransformedType
+    public static function createInline(ReflectionClass $class, string $transformed, Compactor $compactor, ?MissingSymbolsCollection $missingSymbols = null): TransformedType
     {
         throw new Exception("Fake type");
     }
@@ -27,6 +29,7 @@ class FakeTransformedType extends TransformedType
             FakeReflectionClass::create()->withName($name),
             $name,
             'fake-transformed',
+            new IdentityCompactor(),
             new MissingSymbolsCollection(),
             false
         );
