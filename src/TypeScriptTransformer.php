@@ -2,8 +2,10 @@
 
 namespace Spatie\TypeScriptTransformer;
 
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\FormatTypeScriptAction;
 use Spatie\TypeScriptTransformer\Actions\PersistTypesCollectionAction;
+use Spatie\TypeScriptTransformer\Actions\ResolveSplitTypesCollectionsAction;
 use Spatie\TypeScriptTransformer\Actions\ResolveTypesCollectionAction;
 use Spatie\TypeScriptTransformer\Structures\TypesCollection;
 use Symfony\Component\Finder\Finder;
@@ -24,15 +26,46 @@ class TypeScriptTransformer
 
     public function transform(): TypesCollection
     {
-        $typesCollection = (new ResolveTypesCollectionAction(
-            new Finder(),
-            $this->config,
-        ))->execute();
+        if (($baseDir = $this->config->getSplitModulesBaseDir()) !== null) {
+            (new TemporaryDirectory($baseDir))->delete();
 
-        (new PersistTypesCollectionAction($this->config))->execute($typesCollection);
+            $typesCollections = (new ResolveSplitTypesCollectionsAction(
+                new Finder(),
+                $this->config,
+            ))->execute();
 
-        (new FormatTypeScriptAction($this->config))->execute();
+            $sumCollection = new TypesCollection();
+            foreach ($typesCollections as $namespace => $typesCollection) {
+                foreach ($typesCollection as $type) {
+                    $sumCollection[] = $type;
+                }
+            }
 
-        return $typesCollection;
+            foreach ($typesCollections as $namespace => $typesCollection) {
+                $outputFile = rtrim($baseDir, '/') . '/' . $namespace . '.ts';
+
+                (new PersistTypesCollectionAction(
+                    $this->config,
+                    $outputFile,
+                ))->execute($typesCollection, $sumCollection);
+
+                (new FormatTypeScriptAction($this->config, $outputFile))->execute();
+
+            }
+
+            return $sumCollection;
+        } else {
+            $typesCollection = (new ResolveTypesCollectionAction(
+                new Finder(),
+                $this->config,
+            ))->execute();
+
+            (new PersistTypesCollectionAction($this->config, $this->config->getOutputFile()))->execute($typesCollection, $typesCollection);
+
+            (new FormatTypeScriptAction($this->config, $this->config->getOutputFile()))->execute();
+
+            return $typesCollection;
+        }
     }
+
 }

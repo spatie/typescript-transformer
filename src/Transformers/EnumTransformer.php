@@ -5,13 +5,18 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionEnum;
 use ReflectionEnumBackedCase;
+use Spatie\TypeScriptTransformer\Compactors\ConfigCompactor;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class EnumTransformer implements Transformer
 {
+    protected ConfigCompactor $compactor;
+
     public function __construct(protected TypeScriptTransformerConfig $config)
     {
+        $this->compactor = new ConfigCompactor($config);
     }
 
     public function transform(ReflectionClass $class, string $name): ?TransformedType
@@ -45,7 +50,10 @@ class EnumTransformer implements Transformer
         return TransformedType::create(
             $enum,
             $name,
-            implode(', ', $options),
+            TranspilationResult::noDeps(
+                implode(', ', $options),
+            ),
+            $this->compactor,
             keyword: 'enum'
         );
     }
@@ -60,16 +68,19 @@ class EnumTransformer implements Transformer
         return TransformedType::create(
             $enum,
             $name,
-            implode(' | ', $options)
+            TranspilationResult::noDeps(
+                implode(' | ', $options)
+            ),
+            $this->compactor
         );
     }
 
-    protected function toEnumValue(ReflectionEnumBackedCase $case): string
+    protected function toEnumValue(ReflectionEnumBackedCase $case): TranspilationResult
     {
         $value = $case->getBackingValue();
 
         if (! is_string($value)) {
-            return "{$value}";
+            return TranspilationResult::noDeps("{$value}");
         }
 
         $escaped = strtr($value, [
@@ -77,6 +88,6 @@ class EnumTransformer implements Transformer
             '\'' => '\\\'',
         ]);
 
-        return "'{$escaped}'";
+        return TranspilationResult::noDeps("'{$escaped}'");
     }
 }
