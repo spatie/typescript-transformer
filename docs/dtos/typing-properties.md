@@ -59,7 +59,7 @@ You can use one of the two attributes provided by the package to transform them 
 
 ## Using docblocks
 
-You can also use docblocks to type properties. You can find a more detailed overview of this [here](https://docs.phpdoc.org/latest/guides/types.html). While PHP's built-in typed properties are fine, docblocks allow for a bit more flexibility:
+You can also use docblocks to type properties. You can find a more detailed overview of this [here](https://docs.phpdoc.org/guide/guides/types.html). While PHP's built-in typed properties are fine, docblocks allow for a bit more flexibility:
 
 ```php
 class Dto
