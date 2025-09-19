@@ -1,0 +1,5 @@
+{
+name: string;
+type: 'users';
+links: {self: string};
+}

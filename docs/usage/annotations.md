@@ -267,6 +267,44 @@ export type FleetData = {
 }
 ```
 
+## Adding additional type information
+
+Sometimes you need to add additional type information to your TypeScript types, especially when working with specifications like JSON:API. You can use the `LiteralTypeScriptExtraTypes` attribute to add additional properties to your TypeScript types:
+
+```php
+use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptExtraTypes;
+
+#[TypeScript]
+#[LiteralTypeScriptExtraTypes([
+    'type' => "'users'",
+])]
+class UserData {
+    public string $name;
+}
+```
+
+This will generate the following TypeScript:
+
+```ts
+export type UserData = {
+    type: 'users';
+    name: string;
+};
+```
+
+You can add as many additional properties as you need:
+
+```php
+#[TypeScript]
+#[LiteralTypeScriptExtraTypes([
+    'type' => "'users'",
+    'links' => '{self: string}',
+])]
+class UserData {
+    public string $name;
+}
+```
+
 ## Selecting a transformer
 
 Want to define a specific transformer for the file? You can use the following annotation:

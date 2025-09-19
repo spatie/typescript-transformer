@@ -8,6 +8,7 @@ use function Spatie\Snapshots\assertMatchesTextSnapshot;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
+use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptExtraTypes;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Tests\FakeClasses\Enum\RegularEnum;
@@ -160,4 +161,39 @@ it('transforms nullable properties to optional ones according to config', functi
     );
 
     $this->assertMatchesSnapshot($type->transformed);
+});
+
+it('adds extra type information when using LiteralTypeScriptExtraTypes attribute', function () {
+    #[LiteralTypeScriptExtraTypes([
+        'type' => "'users'",
+    ])]
+    class DummyUserData
+    {
+        public string $name;
+    }
+
+    $type = $this->transformer->transform(
+        new ReflectionClass(DummyUserData::class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('adds multiple extra type information when using LiteralTypeScriptExtraTypes attribute', function () {
+    #[LiteralTypeScriptExtraTypes([
+        'type' => "'users'",
+        'links' => '{self: string}',
+    ])]
+    class DummyUserDataWithLinks
+    {
+        public string $name;
+    }
+
+    $type = $this->transformer->transform(
+        new ReflectionClass(DummyUserDataWithLinks::class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
 });

@@ -6,6 +6,7 @@ use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
+use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptExtraTypes;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
@@ -35,6 +36,7 @@ class DtoTransformer implements Transformer
             $this->transformProperties($class, $missingSymbols),
             $this->transformMethods($class, $missingSymbols),
             $this->transformExtra($class, $missingSymbols),
+            $this->transformLiteralTypeScriptExtraTypes($class, $missingSymbols),
         ]);
 
         return TransformedType::create(
@@ -103,6 +105,27 @@ class DtoTransformer implements Transformer
         MissingSymbolsCollection $missingSymbols
     ): string {
         return '';
+    }
+
+    protected function transformLiteralTypeScriptExtraTypes(
+        ReflectionClass $class,
+        MissingSymbolsCollection $missingSymbols
+    ): string {
+        $attributes = $class->getAttributes(LiteralTypeScriptExtraTypes::class);
+
+        if (empty($attributes)) {
+            return '';
+        }
+
+        $attribute = $attributes[0]->newInstance();
+        $extras = $attribute->getExtras();
+
+        $result = '';
+        foreach ($extras as $key => $value) {
+            $result .= "{$key}: {$value};" . PHP_EOL;
+        }
+
+        return $result;
     }
 
     protected function transformPropertyName(
