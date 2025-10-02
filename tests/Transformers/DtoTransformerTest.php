@@ -7,7 +7,7 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
-use Spatie\TypeScriptTransformer\Attributes\Nullable;
+use Spatie\TypeScriptTransformer\Attributes\NullableNotOptional;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
@@ -165,7 +165,7 @@ it('transforms nullable properties to optional ones according to config', functi
 
 it('transforms property with nullable attribute to union type', function () {
     $class = new class() {
-        #[Nullable]
+        #[NullableNotOptional]
         public ?string $prop;
     };
 
@@ -179,7 +179,7 @@ it('transforms property with nullable attribute to union type', function () {
 
 it('nullable attribute overrides nullToOptional config', function () {
     $class = new class() {
-        #[Nullable]
+        #[NullableNotOptional]
         public ?array $settings;
     };
 
@@ -194,7 +194,7 @@ it('nullable attribute overrides nullToOptional config', function () {
 
 it('properties without nullable attribute respect config', function () {
     $class = new class() {
-        #[Nullable]
+        #[NullableNotOptional]
         public ?string $withAttribute;
         public ?string $withoutAttribute;
     };
@@ -209,7 +209,7 @@ it('properties without nullable attribute respect config', function () {
 });
 
 it('class level nullable attribute affects all nullable properties', function () {
-    #[Nullable]
+    #[NullableNotOptional]
     class DummyNullableDto
     {
         public ?string $name;
@@ -226,7 +226,7 @@ it('class level nullable attribute affects all nullable properties', function ()
 
 it('nullable attribute on non-nullable property has no effect', function () {
     $class = new class() {
-        #[Nullable]
+        #[NullableNotOptional]
         public string $prop;
     };
 
@@ -240,7 +240,7 @@ it('nullable attribute on non-nullable property has no effect', function () {
 
 it('nullable attribute with literal typescript type uses literal type and is not optional', function () {
     $class = new class() {
-        #[Nullable]
+        #[NullableNotOptional]
         #[LiteralTypeScriptType('string | CustomType')]
         public ?string $prop;
     };

@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
-use Spatie\TypeScriptTransformer\Attributes\Nullable;
+use Spatie\TypeScriptTransformer\Attributes\NullableNotOptional;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
@@ -56,7 +56,7 @@ class DtoTransformer implements Transformer
         MissingSymbolsCollection $missingSymbols
     ): string {
         $isClassOptional = ! empty($class->getAttributes(Optional::class));
-        $isClassNullable = ! empty($class->getAttributes(Nullable::class));
+        $isClassNullable = ! empty($class->getAttributes(NullableNotOptional::class));
         $nullablesAreOptional = $this->config->shouldConsiderNullAsOptional();
 
         return array_reduce(
@@ -68,7 +68,7 @@ class DtoTransformer implements Transformer
                     return $carry;
                 }
 
-                $hasNullableAttribute = $isClassNullable || ! empty($property->getAttributes(Nullable::class));
+                $hasNullableAttribute = $isClassNullable || ! empty($property->getAttributes(NullableNotOptional::class));
                 $propertyNullablesAreOptional = $hasNullableAttribute ? false : $nullablesAreOptional;
 
                 $isOptional = $isClassOptional
