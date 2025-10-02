@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
+use Spatie\TypeScriptTransformer\Attributes\Nullable;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
@@ -55,25 +56,29 @@ class DtoTransformer implements Transformer
         MissingSymbolsCollection $missingSymbols
     ): string {
         $isClassOptional = ! empty($class->getAttributes(Optional::class));
+        $isClassNullable = ! empty($class->getAttributes(Nullable::class));
         $nullablesAreOptional = $this->config->shouldConsiderNullAsOptional();
 
         return array_reduce(
             $this->resolveProperties($class),
-            function (string $carry, ReflectionProperty $property) use ($isClassOptional, $missingSymbols, $nullablesAreOptional) {
+            function (string $carry, ReflectionProperty $property) use ($isClassOptional, $isClassNullable, $missingSymbols, $nullablesAreOptional) {
                 $isHidden = ! empty($property->getAttributes(Hidden::class));
 
                 if ($isHidden) {
                     return $carry;
                 }
 
+                $hasNullableAttribute = $isClassNullable || ! empty($property->getAttributes(Nullable::class));
+                $propertyNullablesAreOptional = $hasNullableAttribute ? false : $nullablesAreOptional;
+
                 $isOptional = $isClassOptional
                     || ! empty($property->getAttributes(Optional::class))
-                    || ($property->getType()?->allowsNull() && $nullablesAreOptional);
+                    || ($property->getType()?->allowsNull() && $propertyNullablesAreOptional);
 
                 $transformed = $this->reflectionToTypeScript(
                     $property,
                     $missingSymbols,
-                    $isOptional,
+                    $propertyNullablesAreOptional,
                     ...$this->typeProcessors()
                 );
 

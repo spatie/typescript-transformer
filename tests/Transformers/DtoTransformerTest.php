@@ -7,6 +7,7 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
+use Spatie\TypeScriptTransformer\Attributes\Nullable;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
@@ -160,4 +161,94 @@ it('transforms nullable properties to optional ones according to config', functi
     );
 
     $this->assertMatchesSnapshot($type->transformed);
+});
+
+it('transforms property with nullable attribute to union type', function () {
+    $class = new class() {
+        #[Nullable]
+        public ?string $prop;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('nullable attribute overrides nullToOptional config', function () {
+    $class = new class() {
+        #[Nullable]
+        public ?array $settings;
+    };
+
+    $config = TypeScriptTransformerConfig::create()->nullToOptional(true);
+    $type = (new DtoTransformer($config))->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('properties without nullable attribute respect config', function () {
+    $class = new class() {
+        #[Nullable]
+        public ?string $withAttribute;
+        public ?string $withoutAttribute;
+    };
+
+    $config = TypeScriptTransformerConfig::create()->nullToOptional(true);
+    $type = (new DtoTransformer($config))->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('class level nullable attribute affects all nullable properties', function () {
+    #[Nullable]
+    class DummyNullableDto
+    {
+        public ?string $name;
+        public ?int $age;
+    }
+
+    $type = $this->transformer->transform(
+        new ReflectionClass(DummyNullableDto::class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('nullable attribute on non-nullable property has no effect', function () {
+    $class = new class() {
+        #[Nullable]
+        public string $prop;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('nullable attribute with literal typescript type uses literal type and is not optional', function () {
+    $class = new class() {
+        #[Nullable]
+        #[LiteralTypeScriptType('string | CustomType')]
+        public ?string $prop;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
 });
