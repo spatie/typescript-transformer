@@ -1,0 +1,4 @@
+{
+name: string | null;
+age: number | null;
+}
