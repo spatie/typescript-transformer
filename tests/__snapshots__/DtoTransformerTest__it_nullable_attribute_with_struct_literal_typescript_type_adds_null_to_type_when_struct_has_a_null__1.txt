@@ -1,0 +1,3 @@
+{
+prop: {foo:string | null;bar:number;} | null;
+}

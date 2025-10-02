@@ -252,3 +252,125 @@ it('nullable attribute with literal typescript type uses literal type and is not
 
     assertMatchesSnapshot($type->transformed);
 });
+
+it('nullable attribute with simple literal typescript type adds null to type', function () {
+    $class = new class() {
+        #[NullableNotOptional]
+        #[LiteralTypeScriptType('CustomType')]
+        public ?string $prop;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('nullable attribute with struct literal typescript type adds null to type', function () {
+    $class = new class() {
+        #[NullableNotOptional]
+        #[LiteralTypeScriptType(['foo' => 'string', 'bar' => 'number'])]
+        public ?array $prop;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('class level nullable attribute with property literal typescript type adds null', function () {
+    #[NullableNotOptional]
+    class DummyNullableLiteralDto
+    {
+        #[LiteralTypeScriptType('CustomType')]
+        public ?string $prop;
+    }
+
+    $type = $this->transformer->transform(
+        new ReflectionClass(DummyNullableLiteralDto::class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('nullable attribute with non-nullable property and literal type does not add null', function () {
+    $class = new class() {
+        #[NullableNotOptional]
+        #[LiteralTypeScriptType('CustomType')]
+        public string $prop;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('nullable attribute with literal type already containing null does not duplicate null', function () {
+    $class = new class() {
+        #[NullableNotOptional]
+        #[LiteralTypeScriptType('string | null')]
+        public ?string $prop;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('nullable attribute with complex typescript literal type adds null', function () {
+    $class = new class() {
+        #[NullableNotOptional]
+        #[LiteralTypeScriptType('Array<string>')]
+        public mixed $prop = null;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('optional and nullable attributes with literal type create optional property with null in type', function () {
+    $class = new class() {
+        #[Optional]
+        #[NullableNotOptional]
+        #[LiteralTypeScriptType('CustomType')]
+        public ?string $prop;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
+
+it('nullable attribute with struct literal typescript type adds null to type when struct has a null', function () {
+    $class = new class() {
+        #[NullableNotOptional]
+        #[LiteralTypeScriptType(['foo' => 'string | null', 'bar' => 'number'])]
+        public ?array $prop;
+    };
+
+    $type = $this->transformer->transform(
+        new ReflectionClass($class),
+        'Typed'
+    );
+
+    assertMatchesSnapshot($type->transformed);
+});
