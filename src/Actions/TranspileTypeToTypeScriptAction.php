@@ -133,6 +133,10 @@ class TranspileTypeToTypeScriptAction
 
     private function isTypeScriptArray(Type $keyType): bool
     {
+        if ($keyType instanceof Integer) {
+            return true;
+        }
+
         if (! $keyType instanceof Compound) {
             return false;
         }
