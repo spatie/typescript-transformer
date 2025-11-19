@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Exception;
 use phpDocumentor\Reflection\PseudoType;
+use phpDocumentor\Reflection\PseudoTypes\ArrayShape;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\AbstractList;
 use phpDocumentor\Reflection\Types\Boolean;
@@ -51,6 +52,7 @@ class TranspileTypeToTypeScriptAction
             $type instanceof AbstractList => $this->resolveListType($type),
             $type instanceof Nullable => $this->resolveNullableType($type),
             $type instanceof Object_ => $this->resolveObjectType($type),
+            $type instanceof ArrayShape => $this->resolveArrayShapeType($type),
             $type instanceof StructType => $this->resolveStructType($type),
             $type instanceof RecordType => $this->resolveRecordType($type),
             $type instanceof TypeScriptType => (string) $type,
@@ -104,6 +106,18 @@ class TranspileTypeToTypeScriptAction
         return $this->missingSymbolsCollection->add(
             (string) $object->getFqsen()
         );
+    }
+
+    private function resolveArrayShapeType(ArrayShape $type): string
+    {
+        $transformed = "{";
+
+        foreach ($type->getItems() as $type) {
+            $q = $type->isOptional() ? '?' : '';
+            $transformed .= "{$type->getKey()}{$q}:{$this->execute($type->getValue())};";
+        }
+
+        return "{$transformed}}";
     }
 
     private function resolveStructType(StructType $type): string
