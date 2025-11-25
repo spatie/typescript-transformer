@@ -6,6 +6,7 @@ use ReflectionClass;
 use ReflectionProperty;
 use Spatie\TypeScriptTransformer\Attributes\Hidden;
 use Spatie\TypeScriptTransformer\Attributes\Optional;
+use Spatie\TypeScriptTransformer\Compactors\ConfigCompactor;
 use Spatie\TypeScriptTransformer\Structures\MissingSymbolsCollection;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
 use Spatie\TypeScriptTransformer\TypeProcessors\DtoCollectionTypeProcessor;
@@ -18,9 +19,12 @@ class DtoTransformer implements Transformer
 
     protected TypeScriptTransformerConfig $config;
 
+    protected ConfigCompactor $compactor;
+
     public function __construct(TypeScriptTransformerConfig $config)
     {
         $this->config = $config;
+        $this->compactor = new ConfigCompactor($config);
     }
 
     public function transform(ReflectionClass $class, string $name): ?TransformedType
@@ -30,7 +34,6 @@ class DtoTransformer implements Transformer
         }
 
         $missingSymbols = new MissingSymbolsCollection();
-
         $type = join([
             $this->transformProperties($class, $missingSymbols),
             $this->transformMethods($class, $missingSymbols),
@@ -41,6 +44,7 @@ class DtoTransformer implements Transformer
             $class,
             $name,
             "{" . PHP_EOL . $type . "}",
+            $this->compactor,
             $missingSymbols
         );
     }
