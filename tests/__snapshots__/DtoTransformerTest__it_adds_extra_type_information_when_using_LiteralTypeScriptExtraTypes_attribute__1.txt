@@ -1,0 +1,4 @@
+{
+name: string;
+type: 'users';
+}
