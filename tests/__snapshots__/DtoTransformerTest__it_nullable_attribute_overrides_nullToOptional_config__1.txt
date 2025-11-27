@@ -1,0 +1,3 @@
+{
+settings: Array<any> | null;
+}

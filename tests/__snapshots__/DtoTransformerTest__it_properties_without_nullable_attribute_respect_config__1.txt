@@ -1,0 +1,4 @@
+{
+withAttribute: string | null;
+withoutAttribute?: string;
+}

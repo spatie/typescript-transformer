@@ -77,7 +77,7 @@ abstract class TypeReflector
         /** @var \Spatie\TypeScriptTransformer\Attributes\TypeScriptTransformableAttribute $attribute */
         $attribute = current($attributes)->newInstance();
 
-        return $attribute->getType();
+        return $this->nullifyType($attribute->getType());
     }
 
     public function reflectFromDocblock(): ?Type
@@ -158,6 +158,15 @@ abstract class TypeReflector
                 iterator_to_array($type->getIterator()),
                 [new Null_()],
             ));
+        }
+
+        // Check if TypeScriptType already contains null in its literal string
+        if ($type instanceof TypeScriptType) {
+            $typeString = (string) $type;
+            // Match null as a standalone type or as part of a union (| null or null |)
+            if (preg_match('/(?:^|\|)\s*null\s*(?:\||$)/', $typeString)) {
+                return $type;
+            }
         }
 
         return new Nullable($type);

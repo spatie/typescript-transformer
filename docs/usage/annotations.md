@@ -267,6 +267,65 @@ export type FleetData = {
 }
 ```
 
+## Nullable types
+
+By default, nullable PHP properties are transformed to optional TypeScript properties. For example, `public ?string $name` becomes `name?: string`. However, sometimes you want to explicitly require a property that can be `null`, using TypeScript's union type syntax instead.
+
+You can use the `#[NullableNotOptional]` attribute to transform nullable properties to union types:
+
+```php
+use Spatie\TypeScriptTransformer\Attributes\NullableNotOptional;
+
+class DataObject extends Data
+{
+    public function __construct(
+        #[NullableNotOptional]
+        public ?string $name,
+        public int $id,
+    )
+    {
+    }
+}
+```
+
+This will be transformed into:
+
+```tsx
+{
+    name : string | null;
+    id : number;
+}
+```
+
+You can also transform all nullable properties in a class to union types by adding the attribute to the class:
+
+```php
+#[NullableNotOptional]
+class DataObject extends Data
+{
+    public function __construct(
+        public ?string $name,
+        public ?int $age,
+        public string $email,
+    )
+    {
+    }
+}
+```
+
+Now all nullable properties will use union type syntax:
+
+```tsx
+{
+    name : string | null;
+    age : number | null;
+    email : string;
+}
+```
+
+**Note:** The `#[NullableNotOptional]` attribute overrides the `transform_null_to_optional` configuration setting. It has no effect on non-nullable properties.
+
+
 ## Selecting a transformer
 
 Want to define a specific transformer for the file? You can use the following annotation:
