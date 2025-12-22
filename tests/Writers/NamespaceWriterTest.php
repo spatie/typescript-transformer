@@ -3,7 +3,7 @@
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\CustomReference;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
+use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -66,7 +66,7 @@ it('will reference correctly between namespaces', function () {
 
     $filename = 'types.ts';
 
-    (new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog()))->execute($transformedCollection);
+    (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
 
     $files = (new NamespaceWriter($filename))->output(
         $transformedCollection,

@@ -33,7 +33,7 @@ class Runner
 
         TypeScriptTransformer::create(
             config: $config,
-            console: $logger,
+            logger: $logger,
             watch: $watch
         )->execute();
 

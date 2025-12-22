@@ -3,7 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
+use Spatie\TypeScriptTransformer\Support\Console\Logger;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\Visitor\Visitor;
@@ -13,7 +13,7 @@ class ConnectReferencesAction
     protected Visitor $visitor;
 
     public function __construct(
-        protected TypeScriptTransformerLog $log,
+        protected Logger $log,
     ) {
         $this->visitor = $this->resolveVisitor();
     }
@@ -47,7 +47,7 @@ class ConnectReferencesAction
             if ($foundTransformed === null) {
                 $currentTransformed->addMissingReference($typeReference->reference, $typeReference);
 
-                $this->log->warning("Tried replacing reference to `{$typeReference->reference->humanFriendlyName()}` in `{$currentTransformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
+                $this->log->warn("Tried replacing reference to `{$typeReference->reference->humanFriendlyName()}` in `{$currentTransformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
 
                 return;
             }

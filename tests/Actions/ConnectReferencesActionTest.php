@@ -3,7 +3,7 @@
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\Console\ConsoleLogger;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
+use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularA;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularB;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
@@ -21,7 +21,7 @@ it('can connect references', function () {
         $transformedClass = transformSingle($class, new AllClassTransformer()),
     ]);
 
-    $action = new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog());
+    $action = new ConnectReferencesAction(new NullLogger());
 
     $action->execute($collection);
 
@@ -44,7 +44,7 @@ it('can connect two objects referencing each other', function () {
         $circularB = transformSingle(CircularB::class, new AllClassTransformer()),
     ]);
 
-    $action = new ConnectReferencesAction(TypeScriptTransformerLog::createNullLog());
+    $action = new ConnectReferencesAction(new NullLogger());
 
     $action->execute($collection);
 
@@ -78,7 +78,7 @@ it('will write to the log when a reference cannot be found', function () {
 
 
     $action = new ConnectReferencesAction(
-        TypeScriptTransformerLog::create($console = new ConsoleLogger())
+        $console = new ConsoleLogger()
     );
 
     $action->execute($collection);

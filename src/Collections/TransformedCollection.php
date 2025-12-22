@@ -7,7 +7,6 @@ use Generator;
 use IteratorAggregate;
 use Spatie\TypeScriptTransformer\References\FilesystemReference;
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Traversable;
 
@@ -24,13 +23,11 @@ class TransformedCollection implements IteratorAggregate
 
     protected bool $requireCompleteRewrite = false;
 
-    protected TypeScriptTransformerLog $log;
 
     public function __construct(
         array $items = [],
     ) {
         $this->add(...$items);
-        //        $this->log = TypeScriptTransformerLog::instance();
     }
 
     public function add(Transformed ...$transformed): self

@@ -14,13 +14,12 @@ use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\Console\Logger;
 use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
 use Spatie\TypeScriptTransformer\Support\LoadPhpClassNodeAction;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 
 class TypeScriptTransformer
 {
     public function __construct(
         public readonly TypeScriptTransformerConfig $config,
-        public readonly TypeScriptTransformerLog $log,
+        public readonly Logger $log,
         public readonly DiscoverTypesAction $discoverTypesAction,
         public readonly ProvideTypesAction $provideTypesAction,
         public readonly ExecuteProvidedClosuresAction $executeProvidedClosuresAction,
@@ -37,20 +36,20 @@ class TypeScriptTransformer
 
     public static function create(
         TypeScriptTransformerConfig|TypeScriptTransformerConfigFactory $config,
-        Logger $console = new NullLogger(),
+        ?Logger $logger = null,
         bool $watch = false,
     ): self {
         $config = $config instanceof TypeScriptTransformerConfigFactory ? $config->get() : $config;
 
-        $log = TypeScriptTransformerLog::create($console);
+        $logger ??= new NullLogger();
 
         return new self(
             $config,
-            $log,
+            $logger,
             new DiscoverTypesAction(),
             new ProvideTypesAction($config),
             new ExecuteProvidedClosuresAction($config),
-            new ConnectReferencesAction($log),
+            new ConnectReferencesAction($logger),
             new ExecuteConnectedClosuresAction($config),
             new WriteFilesAction($config),
             new FormatFilesAction($config),

@@ -4,7 +4,6 @@ use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
-use Spatie\TypeScriptTransformer\Support\TypeScriptTransformerLog;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
@@ -131,7 +130,7 @@ it('can mark a reference as missing', function () {
     );
 
     $connector = new ConnectReferencesAction(
-        TypeScriptTransformerLog::create(new NullLogger())
+        new NullLogger(),
     );
 
     $connector->execute(new TransformedCollection([$found, $transformed]));
