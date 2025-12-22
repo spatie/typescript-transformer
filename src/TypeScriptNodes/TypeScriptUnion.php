@@ -5,15 +5,19 @@ namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 use Closure;
 use Spatie\TypeScriptTransformer\Support\VisitorProfile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\UniqueTypeScriptNodes;
 
 class TypeScriptUnion implements TypeScriptNode, TypeScriptVisitableNode
 {
+    use UniqueTypeScriptNodes;
+
     /**
      * @param  array<TypeScriptNode>  $types
      */
     public function __construct(
         public array $types,
     ) {
+        $this->types = $this->uniqueNodes($this->types);
     }
 
     public function write(WritingContext $context): string

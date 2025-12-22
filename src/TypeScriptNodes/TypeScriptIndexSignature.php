@@ -15,7 +15,7 @@ class TypeScriptIndexSignature implements TypeScriptNode, TypeScriptVisitableNod
 
     public function write(WritingContext $context): string
     {
-        return "[{$this->name}: {$this->type->write($context)}]]";
+        return "[{$this->name}: {$this->type->write($context)}]";
     }
 
     public function visitorProfile(): VisitorProfile

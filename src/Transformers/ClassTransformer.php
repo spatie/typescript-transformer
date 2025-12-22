@@ -132,6 +132,7 @@ abstract class ClassTransformer implements Transformer
         return null;
     }
 
+    /** @return array<PhpPropertyNode> */
     protected function getProperties(PhpClassNode $phpClassNode): array
     {
         return array_filter(

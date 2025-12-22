@@ -289,6 +289,14 @@ it('can transpile PHPStan doc types', function (
     ];
 
     yield [
+        'unionTypeArray',
+        new TypeScriptArray([
+            new TypeScriptNumber(),
+            new TypeScriptString(),
+        ]),
+    ];
+
+    yield [
         'list',
         new TypeScriptArray([new TypeScriptString()]),
     ];

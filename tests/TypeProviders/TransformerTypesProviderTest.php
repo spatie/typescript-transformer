@@ -42,8 +42,20 @@ function getTestProvidedTypes(
 it('will find types and takes attributes into account', function () {
     $collection = getTestProvidedTypes();
 
-    expect($collection)->toHaveCount(5);
-    expect(iterator_to_array($collection))->sequence(
+    expect($collection)->toHaveCount(8);
+
+    $typesToCheck = array_values(array_filter(
+        iterator_to_array($collection),
+        fn (Transformed $transformed) => in_array($transformed->reference->classString, [
+            TypeScriptAttributedClass::class,
+            TypeScriptLocationAttributedClass::class,
+            OptionalAttributedClass::class,
+            ReadonlyClass::class,
+            SimpleClass::class,
+        ])
+    ));
+
+    expect($typesToCheck)->sequence(
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)
             ->getName()->toBe('JustAnotherName')

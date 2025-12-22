@@ -12,12 +12,15 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptConditional;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNull;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptOperator;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
@@ -44,18 +47,22 @@ class LaravelTypesProvider implements TypesProvider
                     [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
                 ),
                 new TypeScriptObject([
-                    new TypeScriptProperty('data', new TypeScriptGeneric(
-                        new TypeScriptIdentifier('Record'),
-                        [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
-                    ), ),
-                    new TypeScriptProperty('links', new TypeScriptObject([
+                    new TypeScriptProperty('data', new TypeScriptConditional(
+                        TypeScriptOperator::extends(new TypeScriptIdentifier('TKey'), new TypeScriptString()),
+                        new TypeScriptGeneric(
+                            new TypeScriptIdentifier('Record'),
+                            [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
+                        ),
+                        new TypeScriptArray([new TypeScriptIdentifier('TValue')]),
+                    )),
+                    new TypeScriptProperty('links', new TypeScriptArray([new TypeScriptObject([
                         new TypeScriptProperty('url', new TypeScriptUnion([
                             new TypeScriptIdentifier('string'),
                             new TypeScriptIdentifier('null'),
                         ])),
                         new TypeScriptProperty('label', new TypeScriptString()),
                         new TypeScriptProperty('active', new TypeScriptBoolean()),
-                    ])),
+                    ])])),
                     new TypeScriptProperty('meta', new TypeScriptObject([
                         new TypeScriptProperty('total', new TypeScriptNumber()),
                         new TypeScriptProperty('current_page', new TypeScriptNumber()),
@@ -117,18 +124,22 @@ class LaravelTypesProvider implements TypesProvider
                     [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
                 ),
                 new TypeScriptObject([
-                    new TypeScriptProperty('data', new TypeScriptGeneric(
-                        new TypeScriptIdentifier('Record'),
-                        [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
-                    ), ),
-                    new TypeScriptProperty('links', new TypeScriptObject([
+                    new TypeScriptProperty('data', new TypeScriptConditional(
+                        TypeScriptOperator::extends(new TypeScriptIdentifier('TKey'), new TypeScriptString()),
+                        new TypeScriptGeneric(
+                            new TypeScriptIdentifier('Record'),
+                            [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
+                        ),
+                        new TypeScriptArray([new TypeScriptIdentifier('TValue')]),
+                    )),
+                    new TypeScriptProperty('links', new TypeScriptArray([new TypeScriptObject([
                         new TypeScriptProperty('url', new TypeScriptUnion([
                             new TypeScriptIdentifier('string'),
                             new TypeScriptIdentifier('null'),
                         ])),
                         new TypeScriptProperty('label', new TypeScriptString()),
                         new TypeScriptProperty('active', new TypeScriptBoolean()),
-                    ])),
+                    ])])),
                     new TypeScriptProperty('meta', new TypeScriptObject([
                         new TypeScriptProperty('path', new TypeScriptString()),
                         new TypeScriptProperty('per_page', new TypeScriptNumber()),

@@ -1,7 +1,8 @@
 export type WriteableFile = {
-path: string
-contents: string
+readonly hash: string
+readonly path: string
+readonly contents: string
 };
 export type TestSingleTypeScriptTypeAttribute = {
-property: [WriteableFile]
+property: WriteableFile[]
 };

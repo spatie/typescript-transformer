@@ -133,6 +133,9 @@ class PhpDocTypesStub extends stdClass
     /** @var non-empty-array<string, string> */
     public $nonEmptyArrayGenericWithKey;
 
+    /** @var array<int | string> */
+    public $unionTypeArray;
+
     /** @var list<string> */
     public $list;
 

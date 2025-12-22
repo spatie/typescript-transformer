@@ -6,7 +6,7 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 
 class TypeScriptLiteral implements TypeScriptNode
 {
-    public function __construct(public int|string $value)
+    public function __construct(public int|string|bool $value)
     {
     }
 

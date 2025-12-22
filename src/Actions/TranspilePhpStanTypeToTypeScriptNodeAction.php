@@ -284,6 +284,15 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             return new TypeScriptArray([]);
         }
 
+        if ($genericTypes === 1
+            && $node->genericTypes[0] instanceof UnionTypeNode
+        ) {
+            return new TypeScriptArray(array_map(
+                fn (TypeNode $type) => $this->execute($type, $phpClassNode),
+                $node->genericTypes[0]->types
+            ));
+        }
+
         if ($genericTypes === 1) {
             return new TypeScriptArray([$this->execute($node->genericTypes[0], $phpClassNode)]);
         }
@@ -301,7 +310,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
 
         return new TypeScriptGeneric(
             new TypeScriptIdentifier('Record'),
-            [$key, $value,]
+            [$key, $value]
         );
     }
 

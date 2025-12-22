@@ -34,7 +34,10 @@ class LaravelDataTypesProvider implements TypesProvider
                     new TypeScriptIdentifier('PaginatedDataCollection'),
                     [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
                 ),
-                new TypeReference(new ClassStringReference(LengthAwarePaginator::class))
+                new TypeScriptGeneric(
+                    new TypeReference(new ClassStringReference(LengthAwarePaginator::class)),
+                    [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
+                ),
             ),
             new ClassStringReference(PaginatedDataCollection::class),
             ['Spatie', 'LaravelData'],
@@ -50,7 +53,10 @@ class LaravelDataTypesProvider implements TypesProvider
                     new TypeScriptIdentifier('CursorPaginatedDataCollection'),
                     [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
                 ),
-                new TypeReference(new ClassStringReference(CursorPaginator::class))
+                new TypeScriptGeneric(
+                    new TypeReference(new ClassStringReference(CursorPaginator::class)),
+                    [new TypeScriptIdentifier('TKey'), new TypeScriptIdentifier('TValue')],
+                ),
             ),
             new ClassStringReference(CursorPaginatedDataCollection::class),
             ['Spatie', 'LaravelData'],

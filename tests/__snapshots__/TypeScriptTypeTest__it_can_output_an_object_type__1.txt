@@ -1,6 +1,7 @@
 export type WriteableFile = {
-path: string
-contents: string
+readonly hash: string
+readonly path: string
+readonly contents: string
 };
 export type TestObjectTypeScriptTypeAttribute = {
 property: {
