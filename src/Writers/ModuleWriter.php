@@ -96,7 +96,7 @@ class ModuleWriter implements Writer
                     substr($currentModuleTsNamespace, strlen($commonPrefix)),
                     '\\'
                 );
-            $backParts = array_fill(0, substr_count($currentRest, '\\'), '..');
+            $backParts = array_fill(0, substr_count($currentRest, '\\') + 1, '..');
             $sourceModulePath =
                 (
                 count($backParts) === 0
