@@ -52,7 +52,7 @@ class TypeScriptTransformer
             }
 
             foreach ($typesCollections as $namespace => $typesCollection) {
-                $outputFile = rtrim($baseDir, '/') . '/' . $namespace . '.dto.ts';
+                $outputFile = rtrim($baseDir, '/') . '/' . $namespace . '/dto.ts';
 
                 (new PersistTypesCollectionAction(
                     $this->config,
