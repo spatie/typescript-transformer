@@ -5,11 +5,16 @@ namespace Spatie\TypeScriptTransformer\Tests\Fakes;
 use MyCLabs\Enum\Enum;
 use ReflectionClass;
 use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Structures\TranspilationResult;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 
 class FakeTypeScriptTransformer implements Transformer
 {
-    private string $transformed = 'fake';
+    private TranspilationResult $transformed;
+
+    public function __construct() {
+        $this->transformed = TranspilationResult::noDeps('fake');
+    }
 
     public static function create(): self
     {

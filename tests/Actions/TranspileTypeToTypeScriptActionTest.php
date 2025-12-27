@@ -62,7 +62,7 @@ it('can resolve a struct type', function () {
 it('can resolve pseudo types', function () {
     $transformed = $this->action->execute($this->typeResolver->resolve('array-key'));
 
-    expect($transformed)->toBe('string | number');
+    expect($transformed->typescript)->toBe('string | number');
 });
 
 it('does not add nullable unions to optional properties', function () {
