@@ -27,7 +27,17 @@ class TypeScriptTransformer
     public function transform(): TypesCollection
     {
         if (($baseDir = $this->config->getSplitModulesBaseDir()) !== null) {
-            (new TemporaryDirectory($baseDir))->delete();
+            // Delete all .dto.ts files in the directory
+            if (is_dir($baseDir)) {
+                $finder = (new Finder())
+                    ->files()
+                    ->in($baseDir)
+                    ->name('*.dto.ts');
+
+                foreach ($finder as $file) {
+                    unlink($file->getRealPath());
+                }
+            }
 
             $typesCollections = (new ResolveSplitTypesCollectionsAction(
                 new Finder(),
@@ -42,7 +52,7 @@ class TypeScriptTransformer
             }
 
             foreach ($typesCollections as $namespace => $typesCollection) {
-                $outputFile = rtrim($baseDir, '/') . '/' . $namespace . '.ts';
+                $outputFile = rtrim($baseDir, '/') . '/' . $namespace . '.dto.ts';
 
                 (new PersistTypesCollectionAction(
                     $this->config,
