@@ -49,10 +49,14 @@ class ModuleWriter implements Writer
 
             $output .= "export {$type->toString()}" . PHP_EOL;
 
-            if ($type->reflection->isUserDefined() && !$type->reflection->isInternal()) {
+            if (
+                $type->reflection->isUserDefined()
+                && !$type->reflection->isInternal()
+            ) {
                 foreach ($type->transformed->dependencies as $dependency) {
                     $namespacedType = new NamespacedType($dependency);
-                    $typesByNamespace[$namespacedType->namespace][] = $namespacedType;
+                    $typesByNamespace[$namespacedType->namespace][] =
+                        $namespacedType;
                 }
             }
         }
@@ -67,30 +71,44 @@ class ModuleWriter implements Writer
                 continue;
             }
             $import .= 'import {';
-            $import .= join(
-                ', ',
-                array_unique(
-                    array_map(
-                        fn(NamespacedType $type) => $this->compactor->removeSuffix($type->shortName),
-                        $types
+            $import .=
+                implode(
+                    ', ',
+                    array_unique(
+                        array_map(
+                            fn(NamespacedType $type
+                            ) => $this->compactor->removeSuffix(
+                                $type->shortName
+                            ),
+                            $types
+                        )
                     )
-                )
-            );
-            $commonPrefix = NamespacedType::commonPrefix($tsNamespace, $currentModuleTsNamespace);
-            $importedRest = ltrim(substr($tsNamespace, strlen($commonPrefix)), '\\');
-            $currentRest = ltrim(substr($currentModuleTsNamespace, strlen($commonPrefix)), '\\');
+                );
+            $commonPrefix =
+                NamespacedType::commonPrefix(
+                    $tsNamespace,
+                    $currentModuleTsNamespace
+                );
+            $importedRest =
+                ltrim(substr($tsNamespace, strlen($commonPrefix)), '\\');
+            $currentRest =
+                ltrim(
+                    substr($currentModuleTsNamespace, strlen($commonPrefix)),
+                    '\\'
+                );
             $backParts = array_fill(0, substr_count($currentRest, '\\'), '..');
             $sourceModulePath =
-                    (
-                    count($backParts) === 0
-                        ? '.'
-                        : join('/', $backParts)
-                    )
-                    . '/'
-                    . join(
-                        '/',
-                        explode('\\', $importedRest)
-                    );
+                (
+                count($backParts) === 0
+                    ? '.'
+                    : implode('/', $backParts)
+                )
+                . '/'
+                . implode(
+                    '/',
+                    explode('\\', $importedRest)
+                )
+                . '/dto.ts';
 
             $import .= '} from "' . $sourceModulePath . "\";\n";
         }
