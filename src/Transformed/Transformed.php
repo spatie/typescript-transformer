@@ -33,6 +33,8 @@ class Transformed
     public function __construct(
         public TypeScriptNode $typeScriptNode,
         public Reference $reference,
+        // TODO: location now depicts the path that the writer will output as namespace or file path
+        // we probably want a more complex structure for the routes helper so that we also can write out helper files
         public array $location,
         public bool $export = true,
     ) {

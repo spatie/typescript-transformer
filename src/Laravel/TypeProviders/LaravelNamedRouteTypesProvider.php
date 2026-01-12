@@ -1,9 +1,10 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Laravel;
+namespace Spatie\TypeScriptTransformer\Laravel\TypeProviders;
 
-use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Laravel\Actions\ResolveLaravelRoutControllerCollectionsAction;
+use Spatie\TypeScriptTransformer\Laravel\Actions\ResolveLaravelRouteControllerCollectionsAction;
+use Spatie\TypeScriptTransformer\Laravel\References\LaravelNamedRouteReference;
+use Spatie\TypeScriptTransformer\Laravel\RouteFilters\RouteFilter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteClosure;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteCollection;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteController;
@@ -11,10 +12,7 @@ use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
-use Spatie\TypeScriptTransformer\Laravel\Support\WithoutRoutes;
-use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptFunctionDefinition;
@@ -31,35 +29,35 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class LaravelNamedRouteTypesProvider implements TypesProvider
+class LaravelNamedRouteTypesProvider extends LaravelRouteTypesProvider
 {
     /**
-     * @param  array<string>  $location
-     * @param  array<WithoutRoutes>  $filters
+     * @param array<string> $location
+     * @param array<RouteFilter> $filters
      */
     public function __construct(
-        protected ResolveLaravelRoutControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRoutControllerCollectionsAction(),
+        ResolveLaravelRouteControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRouteControllerCollectionsAction(),
         protected array $location = ['App'],
-        protected array $filters = [],
+        array $filters = [],
     ) {
-    }
-
-    public function provide(TypeScriptTransformerConfig $config, TransformedCollection $types): void
-    {
-        $routeCollection = $this->resolveLaravelRoutControllerCollectionsAction->execute(
+        parent::__construct(
+            resolveLaravelRoutControllerCollectionsAction: $resolveLaravelRoutControllerCollectionsAction,
             defaultNamespace: null,
             includeRouteClosures: true,
-            filters: $this->filters,
+            filters: $filters
         );
+    }
 
+    /** @return Transformed[] */
+    protected function resolveTransformed(RouteCollection $routeCollection): array
+    {
         $transformedRoutes = new Transformed(
             new TypeScriptAlias(
                 new TypeScriptIdentifier('NamedRouteList'),
                 $this->parseRouteCollection($routeCollection),
             ),
-            $routesListReference = new CustomReference('laravel_named_routes', 'routes_list'),
+            $routesListReference = LaravelNamedRouteReference::list(),
             $this->location,
             true,
         );
@@ -109,12 +107,12 @@ return url;
 TS
                 )
             ),
-            new CustomReference('laravel_named_routes', 'route_function'),
+            LaravelNamedRouteReference::function(),
             $this->location,
             true,
         );
 
-        $types->add($transformedRoutes, $transformedRoute);
+        return [$transformedRoutes, $transformedRoute];
     }
 
     protected function parseRouteCollection(RouteCollection $collection): TypeScriptNode

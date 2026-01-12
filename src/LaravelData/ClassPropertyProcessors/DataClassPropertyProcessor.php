@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors;
+namespace Spatie\TypeScriptTransformer\LaravelData\ClassPropertyProcessors;
 
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use Spatie\LaravelData\Attributes\Hidden as DataHidden;
@@ -24,7 +24,9 @@ class DataClassPropertyProcessor implements ClassPropertyProcessor
         'Spatie\LaravelData\Support\Lazy\ClosureLazy',
         'Spatie\LaravelData\Support\Lazy\ConditionalLazy',
         'Spatie\LaravelData\Support\Lazy\DefaultLazy',
+        'Spatie\LaravelData\Support\Lazy\InertiaDeferred',
         'Spatie\LaravelData\Support\Lazy\InertiaLazy',
+        'Spatie\LaravelData\Support\Lazy\LivewireLostLazy',
         'Spatie\LaravelData\Support\Lazy\RelationalLazy',
     ];
 

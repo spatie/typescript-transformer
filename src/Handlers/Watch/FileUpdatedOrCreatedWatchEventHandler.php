@@ -28,7 +28,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
      */
     public function handle($event): int
     {
-        $this->typeScriptTransformer->log->debug(
+        $this->typeScriptTransformer->logger->debug(
             $event->path,
             $event instanceof FileCreatedWatchEvent ? 'File Created' : 'File Updated',
         );
@@ -37,7 +37,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
             $classNode = $this->typeScriptTransformer->loadPhpClassNodeAction->execute($event->path);
 
             if ($classNode === null) {
-                $this->typeScriptTransformer->log->warning("Multiple class nodes found in {$event->path}");
+                $this->typeScriptTransformer->logger->warning("Multiple class nodes found in {$event->path}");
 
                 return 0;
             }

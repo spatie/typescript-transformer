@@ -19,7 +19,7 @@ class TypeScriptTransformer
 {
     public function __construct(
         public readonly TypeScriptTransformerConfig $config,
-        public readonly Logger $log,
+        public readonly Logger $logger,
         public readonly DiscoverTypesAction $discoverTypesAction,
         public readonly ProvideTypesAction $provideTypesAction,
         public readonly ExecuteProvidedClosuresAction $executeProvidedClosuresAction,
@@ -97,7 +97,7 @@ class TypeScriptTransformer
 
     public function resolveTransformedCollection(): TransformedCollection
     {
-        $transformedCollection = $this->provideTypesAction->execute();
+        $transformedCollection = $this->provideTypesAction->execute($this->logger);
 
         $this->executeProvidedClosuresAction->execute($transformedCollection);
 

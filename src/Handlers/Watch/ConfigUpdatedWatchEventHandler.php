@@ -18,7 +18,7 @@ class ConfigUpdatedWatchEventHandler implements WatchEventHandler
             return 0;
         }
 
-        $this->typeScriptTransformer->log->info("Configuration file updated: {$event->path}, restarting worker...");
+        $this->typeScriptTransformer->logger->info("Configuration file updated: {$event->path}, restarting worker...");
 
         return WatchEventResult::completeRefresh();
     }

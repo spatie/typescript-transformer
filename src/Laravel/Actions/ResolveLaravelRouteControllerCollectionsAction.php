@@ -6,6 +6,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Spatie\TypeScriptTransformer\Laravel\RouteFilters\RouteFilter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteClosure;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteCollection;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteController;
@@ -13,12 +14,11 @@ use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
-use Spatie\TypeScriptTransformer\Laravel\Support\WithoutRoutes;
 
-class ResolveLaravelRoutControllerCollectionsAction
+class ResolveLaravelRouteControllerCollectionsAction
 {
     /**
-     * @param  array<WithoutRoutes>  $filters
+     * @param  array<RouteFilter>  $filters
      */
     public function execute(
         ?string $defaultNamespace,
@@ -32,7 +32,7 @@ class ResolveLaravelRoutControllerCollectionsAction
 
         foreach (app(Router::class)->getRoutes()->getRoutes() as $route) {
             foreach ($filters as $filter) {
-                if ($filter->shouldHide($route)) {
+                if ($filter->hide($route)) {
                     continue 2;
                 }
             }

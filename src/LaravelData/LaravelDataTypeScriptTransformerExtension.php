@@ -1,8 +1,9 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Laravel;
+namespace Spatie\TypeScriptTransformer\LaravelData;
 
-use Spatie\TypeScriptTransformer\Laravel\Transformers\DataClassTransformer;
+use Spatie\TypeScriptTransformer\Laravel\LaravelTypeScriptTransformerExtension;
+use Spatie\TypeScriptTransformer\LaravelData\Transformers\DataClassTransformer;
 use Spatie\TypeScriptTransformer\Support\Extensions\TypeScriptTransformerExtension;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 

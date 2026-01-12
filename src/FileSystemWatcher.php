@@ -15,6 +15,8 @@ use Spatie\TypeScriptTransformer\Handlers\Watch\DirectoryDeletedWatchEventHandle
 use Spatie\TypeScriptTransformer\Handlers\Watch\FileDeletedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\FileUpdatedOrCreatedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\WatchEventHandler;
+use Spatie\TypeScriptTransformer\Handlers\Watch\WatchingTypesProvidersHandler;
+use Spatie\TypeScriptTransformer\TypeProviders\WatchingTypesProvider;
 use Spatie\Watcher\Exceptions\CouldNotStartWatcher;
 use Spatie\Watcher\Watch;
 
@@ -75,7 +77,7 @@ class FileSystemWatcher
             });
 
         try {
-            $this->typeScriptTransformer->log->info('Now watching for changes ...');
+            $this->typeScriptTransformer->logger->info('Now watching for changes ...');
 
             $watcher->start();
         } catch (CouldNotStartWatcher $e) {
@@ -87,21 +89,33 @@ class FileSystemWatcher
 
     protected function initializeHandlers(): void
     {
-        $this->handlers[FileCreatedWatchEvent::class] = [
-            new FileUpdatedOrCreatedWatchEventHandler(
-                $this->typeScriptTransformer,
-                $this->transformedCollection,
+        $fileUpdatedOrCreatedHandler = new FileUpdatedOrCreatedWatchEventHandler(
+            $this->typeScriptTransformer,
+            $this->transformedCollection,
+        );
+
+        $watchingTypeProviders = array_values(array_map(
+            fn (WatchingTypesProvider $provider) => new WatchingTypesProvidersHandler(
+                $provider,
+                $this->transformedCollection
             ),
+            array_filter(
+                $this->typeScriptTransformer->config->typeProviders,
+                fn ($provider) => $provider instanceof WatchingTypesProvider
+            )
+        ));
+
+        $this->handlers[FileCreatedWatchEvent::class] = [
+            $fileUpdatedOrCreatedHandler,
+            ...$watchingTypeProviders,
         ];
 
         $this->handlers[FileUpdatedWatchEvent::class] = [
-            new FileUpdatedOrCreatedWatchEventHandler(
-                $this->typeScriptTransformer,
-                $this->transformedCollection,
-            ),
+            $fileUpdatedOrCreatedHandler,
             new ConfigUpdatedWatchEventHandler(
                 $this->typeScriptTransformer,
             ),
+            ...$watchingTypeProviders,
         ];
 
         $this->handlers[FileDeletedWatchEvent::class] = [
@@ -109,6 +123,7 @@ class FileSystemWatcher
                 $this->typeScriptTransformer,
                 $this->transformedCollection,
             ),
+            ...$watchingTypeProviders,
         ];
 
         $this->handlers[DirectoryDeletedWatchEvent::class] = [
@@ -116,12 +131,13 @@ class FileSystemWatcher
                 $this->typeScriptTransformer,
                 $this->transformedCollection,
             ),
+            ...$watchingTypeProviders,
         ];
     }
 
     protected function processBuffer(): void
     {
-        $this->typeScriptTransformer->log->info('Processing events');
+        $this->typeScriptTransformer->logger->info('Processing events');
 
         [$events, $this->eventsBuffer] = [$this->eventsBuffer, []];
 

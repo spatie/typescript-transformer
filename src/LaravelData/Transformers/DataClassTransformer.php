@@ -1,13 +1,13 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Laravel\Transformers;
+namespace Spatie\TypeScriptTransformer\LaravelData\Transformers;
 
 use Spatie\LaravelData\Contracts\BaseData;
 use Spatie\LaravelData\Support\DataConfig;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpTypeNodeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\Laravel\ClassPropertyProcessors\DataClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\LaravelData\ClassPropertyProcessors\DataClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;

@@ -1,19 +1,17 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Laravel;
+namespace Spatie\TypeScriptTransformer\Laravel\TypeProviders;
 
-use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Laravel\Actions\ResolveLaravelRoutControllerCollectionsAction;
+use Spatie\TypeScriptTransformer\Laravel\Actions\ResolveLaravelRouteControllerCollectionsAction;
+use Spatie\TypeScriptTransformer\Laravel\References\LaravelRouteActionReference;
+use Spatie\TypeScriptTransformer\Laravel\RouteFilters\RouteFilter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteCollection;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteControllerAction;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteInvokableController;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameter;
 use Spatie\TypeScriptTransformer\Laravel\Routes\RouteParameterCollection;
-use Spatie\TypeScriptTransformer\Laravel\Support\WithoutRoutes;
-use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
@@ -32,36 +30,35 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class LaravelRouteActionTypesProvider implements TypesProvider
+class LaravelRouteActionTypesProvider extends LaravelRouteTypesProvider
 {
     /**
-     * @param  array<string>  $location
-     * @param  array<WithoutRoutes>  $filters
+     * @param array<string> $location
+     * @param array<RouteFilter> $filters
      */
     public function __construct(
-        protected ResolveLaravelRoutControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRoutControllerCollectionsAction(),
+        ResolveLaravelRouteControllerCollectionsAction $resolveLaravelRoutControllerCollectionsAction = new ResolveLaravelRouteControllerCollectionsAction(),
         protected ?string $defaultNamespace = null,
         protected array $location = ['App'],
-        protected array $filters = [],
+        array $filters = [],
     ) {
-    }
-
-    public function provide(TypeScriptTransformerConfig $config, TransformedCollection $types): void
-    {
-        $routeCollection = $this->resolveLaravelRoutControllerCollectionsAction->execute(
+        parent::__construct(
+            resolveLaravelRoutControllerCollectionsAction: $resolveLaravelRoutControllerCollectionsAction,
             defaultNamespace: $this->defaultNamespace,
             includeRouteClosures: false,
-            filters: $this->filters,
+            filters: $filters
         );
+    }
 
+    protected function resolveTransformed(RouteCollection $routeCollection): array
+    {
         $transformedRoutes = new Transformed(
             new TypeScriptAlias(
                 new TypeScriptIdentifier('ActionRoutesList'),
                 $this->parseRouteCollection($routeCollection),
             ),
-            $routesListReference = new CustomReference('laravel_route_actions', 'routes_list'),
+            $routesListReference = LaravelRouteActionReference::list(),
             $this->location,
             true,
         );
@@ -94,7 +91,7 @@ class LaravelRouteActionTypesProvider implements TypesProvider
                     ])
                 )
             ),
-            $actionControllerReference = new CustomReference('laravel_route_actions', 'action_controller'),
+            $actionControllerReference = LaravelRouteActionReference::actionController(),
             $this->location,
             true,
         );
@@ -122,7 +119,7 @@ class LaravelRouteActionTypesProvider implements TypesProvider
                     ])
                 )
             ),
-            $actionParametersReference = new CustomReference('laravel_route_actions', 'action_parameters'),
+            $actionParametersReference = LaravelRouteActionReference::actionParameters(),
             $this->location,
             true,
         );
@@ -195,12 +192,17 @@ return url;
 TS
                 )
             ),
-            new CustomReference('laravel_route_actions', 'action_function'),
+            LaravelRouteActionReference::function(),
             $this->location,
             true,
         );
 
-        $types->add($transformedRoutes, $actionController, $actionParameters, $transformedAction);
+        return [
+            $transformedRoutes,
+            $actionController,
+            $actionParameters,
+            $transformedAction,
+        ];
     }
 
     protected function parseRouteCollection(RouteCollection $collection): TypeScriptNode
@@ -263,16 +265,16 @@ TS
         return collect($collection->controllers)
             ->map(
                 fn (RouteController|RouteInvokableController $controller) => $controller instanceof RouteInvokableController
-                ? [
-                    'url' => $controller->url,
-                    'methods' => array_values($controller->methods),
-                ]
-                : [
-                    'actions' => collect($controller->actions)->map(fn (RouteControllerAction $action) => [
-                        'url' => $action->url,
-                        'methods' => array_values($action->methods),
-                    ]),
-                ]
+                    ? [
+                        'url' => $controller->url,
+                        'methods' => array_values($controller->methods),
+                    ]
+                    : [
+                        'actions' => collect($controller->actions)->map(fn (RouteControllerAction $action) => [
+                            'url' => $action->url,
+                            'methods' => array_values($action->methods),
+                        ]),
+                    ]
             )
             ->toJson(JSON_UNESCAPED_SLASHES);
     }

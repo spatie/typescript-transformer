@@ -11,7 +11,7 @@ use Spatie\TypeScriptTransformer\Writers\Writer;
 class TypeScriptTransformerConfig
 {
     /**
-     * @param array<class-string<TypesProvider>|TypesProvider> $typeProviders
+     * @param array<TypesProvider> $typeProviders
      * @param array<string> $directoriesToWatch
      * @param array<VisitorClosure> $providedVisitorClosures
      * @param array<VisitorClosure> $connectedVisitorClosures

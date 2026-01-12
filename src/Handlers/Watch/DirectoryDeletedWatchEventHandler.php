@@ -23,7 +23,7 @@ class DirectoryDeletedWatchEventHandler implements WatchEventHandler
      */
     public function handle($event): int
     {
-        $this->typeScriptTransformer->log->debug($event->path, 'Directory Deleted');
+        $this->typeScriptTransformer->logger->debug($event->path, 'Directory Deleted');
 
         $transformedItems = $this->transformedCollection->findTransformedByDirectory($event->path);
 

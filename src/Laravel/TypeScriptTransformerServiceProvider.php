@@ -5,6 +5,7 @@ namespace Spatie\TypeScriptTransformer\Laravel;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\TypeScriptTransformer\Laravel\Commands\InstallTypeScriptTransformerCommand;
+use Spatie\TypeScriptTransformer\Laravel\Commands\RoutesDumpCommand;
 use Spatie\TypeScriptTransformer\Laravel\Commands\TransformTypeScriptCommand;
 
 class TypeScriptTransformerServiceProvider extends PackageServiceProvider
@@ -14,6 +15,7 @@ class TypeScriptTransformerServiceProvider extends PackageServiceProvider
         $package
             ->name('typescript-transformer')
             ->hasCommand(TransformTypeScriptCommand::class)
+            ->hasCommand(RoutesDumpCommand::class)
             ->hasCommand(InstallTypeScriptTransformerCommand::class);
     }
 
