@@ -35,6 +35,7 @@ class Transformed
         public Reference $reference,
         // TODO: location now depicts the path that the writer will output as namespace or file path
         // we probably want a more complex structure for the routes helper so that we also can write out helper files
+        // - where should it be put and which writer to use
         public array $location,
         public bool $export = true,
     ) {

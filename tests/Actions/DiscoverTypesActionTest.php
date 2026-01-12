@@ -19,7 +19,7 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\UnitEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\VariadicAttribute;
 
 it('can discover types', function () {
-    $types = app(DiscoverTypesAction::class)->execute([
+    $types = (new DiscoverTypesAction())->execute([
         __DIR__.'/../Fakes/TypesToProvide',
     ]);
 

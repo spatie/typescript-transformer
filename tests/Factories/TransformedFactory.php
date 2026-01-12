@@ -37,7 +37,7 @@ class TransformedFactory
     ): TransformedFactory {
         $reference = $reference ?? new CustomReference(
             'factory_alias',
-            ($location !== null ? implode('.', $location) : '').Str::slug($name)
+            ($location !== null ? implode('.', $location) : '').$name
         );
 
         return new self(
