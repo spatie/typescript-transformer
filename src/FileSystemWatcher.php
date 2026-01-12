@@ -146,7 +146,7 @@ class FileSystemWatcher
                 $result = $handler->handle($event);
 
                 if ($result instanceof WatchEventResult && $result->completeRefresh) {
-                    ray('Triggering complete refresh');
+                    $this->typeScriptTransformer->logger->info('Triggering complete refresh');
 
                     exit(self::EXIT_CODE_COMPLETE_REFRESH);
                 }

@@ -148,9 +148,20 @@ class Transformed
 
     public function equals(Transformed $other): bool
     {
-        $equals = $this->getName() === $other->getName();
+        if ($this->getName() !== $other->getName()) {
+            return false;
+        }
 
-        if (! $equals) {
+        if ($this->location !== $other->location) {
+            return false;
+        }
+
+        if ($this->export !== $other->export) {
+            return false;
+        }
+
+        // TODO: this comparison might need to be more complex
+        if ($this->typeScriptNode != $other->typeScriptNode) {
             return false;
         }
 

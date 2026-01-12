@@ -78,11 +78,8 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
             return 0 ;
         }
 
-        if ($originalTransformed && $newlyTransformed) {
-            // TODO: at the moment we replace the node when we see an update
-            // it could be that no changes are actually made
-            // and such a case nothing should be updated
-            // Ideally we check if two transformed items correspond
+        if ($originalTransformed && $newlyTransformed && $originalTransformed->equals($newlyTransformed)) {
+            return 0;
         }
 
         if ($originalTransformed !== null) {
