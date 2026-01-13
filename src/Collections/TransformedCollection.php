@@ -8,6 +8,7 @@ use IteratorAggregate;
 use Spatie\TypeScriptTransformer\References\FilesystemReference;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\Writers\Writer;
 use Traversable;
 
 /**
@@ -94,6 +95,22 @@ class TransformedCollection implements IteratorAggregate
     public function all(): array
     {
         return $this->items;
+    }
+
+    /**
+     * @return array<Transformed>
+     */
+    public function getTransformedForWriter(Writer $writer): array
+    {
+        $transformed = [];
+
+        foreach ($this->items as $item) {
+            if ($item->getWriter() === $writer) {
+                $transformed[] = $item;
+            }
+        }
+
+        return $transformed;
     }
 
     public function onlyChanged(): Generator

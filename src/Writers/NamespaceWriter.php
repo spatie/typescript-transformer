@@ -2,16 +2,21 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
+use Spatie\TypeScriptTransformer\Actions\CleanupReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\References\Reference;
+use Spatie\TypeScriptTransformer\Data\GlobalNamespaceReferenced;
+use Spatie\TypeScriptTransformer\Data\ImportedReferenced;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamespace;
 
 class NamespaceWriter implements Writer
 {
     protected SplitTransformedPerLocationAction $splitTransformedPerLocationAction;
+
+    protected CleanupReferencesAction $cleanupReferencesAction;
 
     public string $filename;
 
@@ -19,6 +24,7 @@ class NamespaceWriter implements Writer
         string $filename = 'types.d.ts',
     ) {
         $this->splitTransformedPerLocationAction = new SplitTransformedPerLocationAction();
+        $this->cleanupReferencesAction = new CleanupReferencesAction();
 
         $this->filename = $this->ensureDeclarationFileExtension($filename);
     }
@@ -31,23 +37,27 @@ class NamespaceWriter implements Writer
     }
 
     public function output(
+        array $transformed,
         TransformedCollection $collection,
     ): array {
         $split = $this->splitTransformedPerLocationAction->execute(
+            $transformed
+        );
+
+        [$imports, $nameMap] = $this->cleanupReferencesAction->execute(
+            $this,
+            $this->filename,
+            $transformed,
             $collection
         );
 
         $output = '';
 
-        $writingContext = new WritingContext(function (Reference $reference) use ($collection) {
-            $transformable = $collection->get($reference);
+        $writingContext = new WritingContext($nameMap);
 
-            if (empty($transformable->location)) {
-                return $transformable->getName();
-            }
-
-            return implode('.', $transformable->location).'.'.$transformable->getName();
-        });
+        foreach ($imports->getTypeScriptNodes() as $import) {
+            $output .= $import->write($writingContext).PHP_EOL;
+        }
 
         foreach ($split as $splitConstruct) {
             if (count($splitConstruct->segments) === 0) {
@@ -67,5 +77,12 @@ class NamespaceWriter implements Writer
         }
 
         return [new WriteableFile($this->filename, $output)];
+    }
+
+    public function resolveReferenced(Transformed $transformed): ImportedReferenced|GlobalNamespaceReferenced
+    {
+        $parts = [...$transformed->location, $transformed->getName()];
+
+        return new GlobalNamespaceReferenced(implode('.', $parts));
     }
 }

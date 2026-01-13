@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Transformed;
 
+use RuntimeException;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -9,10 +10,13 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptForwardingNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\Writers\Writer;
 
 class Transformed
 {
     protected ?string $name;
+
+    protected Writer $writer;
 
     protected ?string $cached = null;
 
@@ -28,14 +32,11 @@ class Transformed
     public array $missingReferences = [];
 
     /**
-     * @param array<string> $location
+     * @param array<string> $location Namespace/organizational segments (e.g., ['App', 'Models', 'Post'])
      */
     public function __construct(
         public TypeScriptNode $typeScriptNode,
         public Reference $reference,
-        // TODO: location now depicts the path that the writer will output as namespace or file path
-        // we probably want a more complex structure for the routes helper so that we also can write out helper files
-        // - where should it be put and which writer to use
         public array $location,
         public bool $export = true,
     ) {
@@ -69,6 +70,26 @@ class Transformed
         $this->name = $name;
 
         return $this;
+    }
+
+    public function setWriter(Writer $writer): self
+    {
+        if (isset($this->writer)) {
+            throw new RuntimeException('Writer can only be set once');
+        }
+
+        $this->writer = $writer;
+
+        return $this;
+    }
+
+    public function getWriter(): Writer
+    {
+        if (! isset($this->writer)) {
+            throw new RuntimeException('Writer not set yet');
+        }
+
+        return $this->writer;
     }
 
     public function write(WritingContext $writingContext): string

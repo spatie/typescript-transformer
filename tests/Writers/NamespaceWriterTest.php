@@ -24,6 +24,7 @@ it('can write a namespaced file', function () {
     $filename = 'types.ts';
 
     $files = (new NamespaceWriter($filename))->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 
@@ -69,6 +70,7 @@ it('will reference correctly between namespaces', function () {
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
 
     $files = (new NamespaceWriter($filename))->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 

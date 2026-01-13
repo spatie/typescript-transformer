@@ -2,28 +2,31 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
-use Spatie\TypeScriptTransformer\Actions\ResolveModuleImportsAction;
+use Spatie\TypeScriptTransformer\Actions\CleanupReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\References\Reference;
+use Spatie\TypeScriptTransformer\Data\GlobalNamespaceReferenced;
+use Spatie\TypeScriptTransformer\Data\ImportedReferenced;
 use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
-class ModuleWriter implements Writer, MultipleFilesWriter
+class ModuleWriter implements Writer
 {
     public function __construct(
         protected string $moduleFilename = 'index.ts',
         protected SplitTransformedPerLocationAction $transformedPerLocationAction = new SplitTransformedPerLocationAction(),
-        protected ResolveModuleImportsAction $resolveModuleImportsAction = new ResolveModuleImportsAction(),
+        protected CleanupReferencesAction $cleanupReferencesAction = new CleanupReferencesAction(),
     ) {
     }
 
     public function output(
+        array $transformed,
         TransformedCollection $collection,
     ): array {
         $locations = $this->transformedPerLocationAction->execute(
-            $collection
+            $transformed
         );
 
         $writtenFiles = [];
@@ -39,41 +42,45 @@ class ModuleWriter implements Writer, MultipleFilesWriter
         Location $location,
         TransformedCollection $collection,
     ): WriteableFile {
-        $imports = $this->resolveModuleImportsAction->execute($location, $collection);
+        $filePath = $this->resolveRelativePath($location->segments);
+
+        [$imports, $nameMap] = $this->cleanupReferencesAction->execute(
+            $this,
+            $filePath,
+            $location->transformed,
+            $collection
+        );
 
         $output = '';
 
-        $writingContext = new WritingContext(function (Reference $reference) use ($collection, $imports) {
-            if ($name = $imports->getAliasOrNameForReference($reference)) {
-                return $name;
-            }
-
-            // Type declared somewhere else in the module
-            return $collection->get($reference)->getName();
-        });
+        $writingContext = new WritingContext($nameMap);
 
         foreach ($imports->getTypeScriptNodes() as $import) {
             $output .= $import->write($writingContext).PHP_EOL;
-        }
-
-        if ($imports->isEmpty() === false) {
-            $output .= PHP_EOL;
         }
 
         foreach ($location->transformed as $transformedItem) {
             $output .= $transformedItem->write($writingContext).PHP_EOL;
         }
 
-        return new WriteableFile($this->resolveRelativePath($location), $output);
+        return new WriteableFile($filePath, $output);
     }
 
+    /** @param  array<string> $location */
     protected function resolveRelativePath(
-        Location $location,
+        array $location,
     ): string {
-        if (count($location->segments) === 0) {
+        if (count($location) === 0) {
             return $this->moduleFilename;
         }
 
-        return implode(DIRECTORY_SEPARATOR, $location->segments).DIRECTORY_SEPARATOR.$this->moduleFilename;
+        return implode(DIRECTORY_SEPARATOR, $location).DIRECTORY_SEPARATOR.$this->moduleFilename;
+    }
+    public function resolveReferenced(Transformed $transformed): ImportedReferenced|GlobalNamespaceReferenced
+    {
+        return new ImportedReferenced(
+            $transformed->getName(),
+            $this->resolveRelativePath($transformed->location)
+        );
     }
 }

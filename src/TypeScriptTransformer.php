@@ -7,10 +7,12 @@ use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\ExecuteConnectedClosuresAction;
 use Spatie\TypeScriptTransformer\Actions\ExecuteProvidedClosuresAction;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
+use Spatie\TypeScriptTransformer\Actions\ResolveFilesAction;
 use Spatie\TypeScriptTransformer\Actions\RunProvidersAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\Collections\WritersCollection;
 use Spatie\TypeScriptTransformer\Runners\Runner;
 use Spatie\TypeScriptTransformer\Support\Console\Logger;
 use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
@@ -22,10 +24,11 @@ class TypeScriptTransformer
         public readonly TypeScriptTransformerConfig $config,
         public readonly Logger $logger,
         public readonly DiscoverTypesAction $discoverTypesAction,
-        public readonly RunProvidersAction $provideTypesAction,
+        public readonly RunProvidersAction $runProvidersAction,
         public readonly ExecuteProvidedClosuresAction $executeProvidedClosuresAction,
         public readonly ConnectReferencesAction $connectReferencesAction,
         public readonly ExecuteConnectedClosuresAction $executeConnectedClosuresAction,
+        public readonly ResolveFilesAction $resolveFilesAction,
         public readonly WriteFilesAction $writeFilesAction,
         public readonly FormatFilesAction $formatFilesAction,
         public readonly TransformTypesAction $transformTypesAction,
@@ -52,6 +55,7 @@ class TypeScriptTransformer
             new ExecuteProvidedClosuresAction($config),
             new ConnectReferencesAction($logger),
             new ExecuteConnectedClosuresAction($config),
+            new ResolveFilesAction(),
             new WriteFilesAction($config),
             new FormatFilesAction($config),
             new TransformTypesAction(),
@@ -82,9 +86,9 @@ class TypeScriptTransformer
          * - Release
          */
 
-        $transformedCollection = $this->resolveTransformedCollection();
+        [$transformedCollection, $writersCollection] = $this->resolveState();
 
-        $this->outputTransformed($transformedCollection);
+        $this->outputTransformed($transformedCollection, $writersCollection);
 
         if ($this->watch) {
             $this->signalWorkerReady();
@@ -92,6 +96,7 @@ class TypeScriptTransformer
             $watcher = new FileSystemWatcher(
                 $this,
                 $transformedCollection,
+                $writersCollection,
             );
 
             $watcher->run();
@@ -103,9 +108,12 @@ class TypeScriptTransformer
         $this->logger->info(Runner::WORKER_READY_SIGNAL);
     }
 
-    public function resolveTransformedCollection(): TransformedCollection
+    /**
+     * @return array{TransformedCollection, WritersCollection}
+     */
+    public function resolveState(): array
     {
-        $transformedCollection = $this->provideTypesAction->execute($this->logger);
+        [$transformedCollection, $writersCollection] = $this->runProvidersAction->execute($this->logger);
 
         $this->executeProvidedClosuresAction->execute($transformedCollection);
 
@@ -113,11 +121,12 @@ class TypeScriptTransformer
 
         $this->executeConnectedClosuresAction->execute($transformedCollection);
 
-        return $transformedCollection;
+        return [$transformedCollection, $writersCollection];
     }
 
     public function outputTransformed(
         TransformedCollection $transformedCollection,
+        WritersCollection $writersCollection,
     ): void {
         if (! $transformedCollection->hasChanges()) {
             return;
@@ -125,7 +134,7 @@ class TypeScriptTransformer
 
         $transformedCollection->rewriteExecuted();
 
-        $writeableFiles = $this->config->writer->output($transformedCollection);
+        $writeableFiles = $this->resolveFilesAction->execute($transformedCollection, $writersCollection);
 
         $this->writeFilesAction->execute($writeableFiles);
 

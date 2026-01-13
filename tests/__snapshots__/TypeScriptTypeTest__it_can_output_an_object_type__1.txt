@@ -2,6 +2,7 @@ export type WriteableFile = {
 readonly hash: string
 readonly path: string
 readonly contents: string
+readonly changed: boolean
 };
 export type TestObjectTypeScriptTypeAttribute = {
 property: {

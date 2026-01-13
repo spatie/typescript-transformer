@@ -5,7 +5,6 @@ namespace Spatie\TypeScriptTransformer\Actions;
 use JsonException;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-use Spatie\TypeScriptTransformer\Writers\MultipleFilesWriter;
 
 class WriteFilesAction
 {
@@ -14,34 +13,38 @@ class WriteFilesAction
     ) {
     }
 
-    /** @param array<WriteableFile> $writeableFiles */
-    public function execute(
-        array $writeableFiles
-    ): void {
+    /**
+     * @param array<WriteableFile> $writeableFiles
+     */
+    public function execute(array &$writeableFiles): void
+    {
         $oldManifest = $this->fetchManifest();
 
-        foreach ($writeableFiles as $writeableFile) {
-            if ($oldManifest !== null
-                && array_key_exists($writeableFile->path, $oldManifest)
-                && $oldManifest[$writeableFile->path] === $writeableFile->hash
-            ) {
+        foreach ($writeableFiles as $index => $writeableFile) {
+            $hasChanged = $oldManifest === null
+                || ! array_key_exists($writeableFile->path, $oldManifest)
+                || $oldManifest[$writeableFile->path] !== $writeableFile->hash;
+
+            if (! $hasChanged) {
                 continue;
             }
 
             $this->writeFile($writeableFile);
-        }
 
-        $writer = $this->config->writer;
-
-        if (! $writer instanceof MultipleFilesWriter) {
-            return;
+            $writeableFiles[$index] = new WriteableFile(
+                $writeableFile->path,
+                $writeableFile->contents,
+                changed: true
+            );
         }
 
         $newManifest = $this->buildManifest($writeableFiles);
 
         $this->deleteOldFiles($oldManifest, $newManifest);
 
-        $this->storeManifest($newManifest);
+        if ($oldManifest !== $newManifest) {
+            $this->storeManifest($newManifest);
+        }
     }
 
     protected function writeFile(WriteableFile $file): void
@@ -60,12 +63,6 @@ class WriteFilesAction
     /** @return array<string, string>|null */
     protected function fetchManifest(): ?array
     {
-        $writer = $this->config->writer;
-
-        if (! $writer instanceof MultipleFilesWriter) {
-            return null;
-        }
-
         $manifestPath = $this->getManifestPath();
 
         if (! file_exists($manifestPath)) {
@@ -128,12 +125,11 @@ class WriteFilesAction
         }
     }
 
-    protected function storeManifest(
-        array $manifest,
-    ): void {
+    protected function storeManifest(array $manifest): void
+    {
         file_put_contents(
             $this->getManifestPath(),
-            json_encode($manifest)
+            json_encode($manifest, JSON_PRETTY_PRINT)
         );
     }
 

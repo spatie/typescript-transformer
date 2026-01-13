@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer;
 
 use Exception;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\Collections\WritersCollection;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\Events\Watch\DirectoryDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileCreatedWatchEvent;
@@ -34,6 +35,7 @@ class FileSystemWatcher
     public function __construct(
         protected TypeScriptTransformer $typeScriptTransformer,
         protected TransformedCollection $transformedCollection,
+        protected WritersCollection $writersCollection,
     ) {
         $this->initializeHandlers();
     }
@@ -169,6 +171,7 @@ class FileSystemWatcher
 
         $this->typeScriptTransformer->outputTransformed(
             $this->transformedCollection,
+            $this->writersCollection,
         );
     }
 

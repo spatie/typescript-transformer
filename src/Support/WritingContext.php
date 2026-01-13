@@ -2,16 +2,13 @@
 
 namespace Spatie\TypeScriptTransformer\Support;
 
-use Closure;
-use Spatie\TypeScriptTransformer\References\Reference;
-
 class WritingContext
 {
     /**
-     * @param Closure(Reference):string  $referenceWriter
+     * @param array<string, string> $nameMap Map of reference keys to resolved names
      */
     public function __construct(
-        public Closure $referenceWriter,
+        public array $nameMap,
     ) {
     }
 }

@@ -2,13 +2,15 @@
 
 namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
-use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 interface TransformedProvider
 {
+    /**
+     * @return array<Transformed>
+     */
     public function provide(
-        TypeScriptTransformerConfig $config,
-        TransformedCollection $types
-    ): void;
+        TypeScriptTransformerConfig $config
+    ): array;
 }

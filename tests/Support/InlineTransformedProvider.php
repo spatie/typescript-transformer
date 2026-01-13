@@ -2,7 +2,6 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Support;
 
-use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
@@ -25,10 +24,8 @@ class InlineTransformedProvider implements TransformedProvider
         }
     }
 
-    public function provide(TypeScriptTransformerConfig $config, TransformedCollection $types): void
+    public function provide(TypeScriptTransformerConfig $config): array
     {
-        foreach ($this->transformed as $transformed) {
-            $types->add($transformed);
-        }
+        return $this->transformed;
     }
 }

@@ -31,12 +31,11 @@ function getTestProvidedTypes(
         ]
     );
 
-    $provider->provide(
-        TypeScriptTransformerConfigFactory::create()->get(),
-        $collection = new TransformedCollection()
+    $transformed = $provider->provide(
+        TypeScriptTransformerConfigFactory::create()->get()
     );
 
-    return $collection;
+    return new TransformedCollection($transformed);
 }
 
 it('will find types and takes attributes into account', function () {

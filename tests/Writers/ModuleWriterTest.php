@@ -26,6 +26,7 @@ it('can write modules', function () {
     ]);
 
     $files = $this->writer->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 
@@ -54,7 +55,7 @@ it('can customize the module filename', function () {
 
     $transformedCollection = new TransformedCollection([$rootTransformed, $nestedTransformed]);
 
-    $files = $customWriter->output($transformedCollection);
+    $files = $customWriter->output($transformedCollection->all(), $transformedCollection);
 
     expect($files[0]->path)->toBe('custom.ts');
     expect($files[1]->path)->toBe('nested/custom.ts');
@@ -71,6 +72,7 @@ it('can reference other types within the module', function () {
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
 
     $files = $this->writer->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 
@@ -99,6 +101,7 @@ it('can reference other types within a nested module', function () {
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
 
     $files = $this->writer->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 
@@ -146,6 +149,7 @@ it('can combine imports from nested modules', function () {
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
 
     $files = $this->writer->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 
@@ -183,6 +187,7 @@ it('can import from root into a nested module', function () {
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
 
     $files = $this->writer->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 
@@ -215,6 +220,7 @@ it('can automatically alias imported types', function () {
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
 
     $files = $this->writer->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 

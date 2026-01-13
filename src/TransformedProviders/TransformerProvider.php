@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
-use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
@@ -21,15 +20,14 @@ class TransformerProvider implements TransformedProvider
     }
 
     public function provide(
-        TypeScriptTransformerConfig $config,
-        TransformedCollection $types
-    ): void {
+        TypeScriptTransformerConfig $config
+    ): array {
         $transformTypesAction = new TransformTypesAction();
         $discoverTypesAction = new DiscoverTypesAction();
 
-        $types->add(...$transformTypesAction->execute(
+        return $transformTypesAction->execute(
             $this->transformers,
             $discoverTypesAction->execute($this->directories),
-        ));
+        );
     }
 }

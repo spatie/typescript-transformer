@@ -21,7 +21,7 @@ class TypeScriptTransformerConfig
     public function __construct(
         public readonly string $outputDirectory,
         public readonly array $transformedProviders,
-        public readonly Writer $writer,
+        public readonly Writer $typesWriter,
         public readonly ?Formatter $formatter,
         public readonly array $directoriesToWatch = [],
         public readonly array $providedVisitorClosures = [],

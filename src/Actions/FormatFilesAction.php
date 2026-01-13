@@ -13,16 +13,26 @@ class FormatFilesAction
     }
 
     /**
-     * @param  array<WriteableFile>  $writtenFiles
+     * @param array<WriteableFile> $writeableFiles
      */
-    public function execute(array $writtenFiles): void
+    public function execute(array $writeableFiles): void
     {
         if ($this->config->formatter === null) {
             return;
         }
 
-        $this->config->formatter->format(
-            array_map(fn (WriteableFile $writtenFile) => $this->config->outputDirectory.DIRECTORY_SEPARATOR.$writtenFile->path, $writtenFiles)
-        );
+        $filePaths = [];
+
+        foreach ($writeableFiles as $writeableFile) {
+            if (! $writeableFile->changed) {
+                continue;
+            }
+
+            $filePaths[] = $this->config->outputDirectory.DIRECTORY_SEPARATOR.$writeableFile->path;
+        }
+
+        if (count($filePaths) > 0) {
+            $this->config->formatter->format($filePaths);
+        }
     }
 }

@@ -4,7 +4,6 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
-use Spatie\TypeScriptTransformer\Writers\ModuleWriter;
 
 beforeEach(function () {
     $this->temporaryDirectory = TemporaryDirectory::make();
@@ -18,7 +17,8 @@ it('can write files in a directory', function () {
         ->outputDirectory($this->temporaryDirectory->path())
         ->get();
 
-    (new WriteFilesAction($config))->execute([$fileA, $fileB]);
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
 
     expect(file_get_contents($this->temporaryDirectory->path('fileA.ts')))->toBe('fileA contents');
     expect(file_get_contents($this->temporaryDirectory->path('fileB.ts')))->toBe('fileB contents');
@@ -32,7 +32,8 @@ it('can write files in a directory with subdirectories', function () {
         ->outputDirectory($this->temporaryDirectory->path())
         ->get();
 
-    (new WriteFilesAction($config))->execute([$fileA, $fileB]);
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
 
     expect(file_get_contents($this->temporaryDirectory->path('sub/fileA.ts')))->toBe('fileA contents');
     expect(file_get_contents($this->temporaryDirectory->path('sub/sub2/fileB.ts')))->toBe('fileB contents');
@@ -44,10 +45,10 @@ it('will store a manifest file', function () {
 
     $config = TypeScriptTransformerConfigFactory::create()
         ->outputDirectory($this->temporaryDirectory->path())
-        ->writer(new ModuleWriter())
         ->get();
 
-    (new WriteFilesAction($config))->execute([$fileA, $fileB]);
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
 
     $manifestPath = $this->temporaryDirectory->path('typescript-transformer-manifest.json');
 
@@ -63,17 +64,18 @@ it('will not write files that have not changed', function () {
 
     $config = TypeScriptTransformerConfigFactory::create()
         ->outputDirectory($this->temporaryDirectory->path())
-        ->writer(new ModuleWriter())
         ->get();
 
-    (new WriteFilesAction($config))->execute([$fileA, $fileB]);
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
 
     $pathA = $this->temporaryDirectory->path('fileA.ts');
     unlink($pathA);
 
-    (new WriteFilesAction($config))->execute([$fileA, $fileB]);
+    $files2 = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files2);
 
-    expect(file_exists($pathA))->toBeFalse(); // Since we deleted it, it should not be written again
+    expect(file_exists($pathA))->toBeFalse();
 });
 
 it('will delete older files not present anymore in the manifest', function () {
@@ -82,15 +84,16 @@ it('will delete older files not present anymore in the manifest', function () {
 
     $config = TypeScriptTransformerConfigFactory::create()
         ->outputDirectory($this->temporaryDirectory->path())
-        ->writer(new ModuleWriter())
         ->get();
 
-    (new WriteFilesAction($config))->execute([$fileA, $fileB]);
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
 
     $pathA = $this->temporaryDirectory->path('fileA.ts');
-    unlink($pathA);
+    expect(file_exists($pathA))->toBeTrue();
 
-    (new WriteFilesAction($config))->execute([$fileB]);
+    $files2 = [$fileB];
+    (new WriteFilesAction($config))->execute($files2);
 
     expect(file_exists($pathA))->toBeFalse();
 });
@@ -101,11 +104,13 @@ it('will update the manifest file', function () {
 
     $config = TypeScriptTransformerConfigFactory::create()
         ->outputDirectory($this->temporaryDirectory->path())
-        ->writer(new ModuleWriter())
         ->get();
 
-    (new WriteFilesAction($config))->execute([$fileA, $fileB]);
-    (new WriteFilesAction($config))->execute([$fileA]);
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
+
+    $files2 = [$fileA];
+    (new WriteFilesAction($config))->execute($files2);
 
     $manifestPath = $this->temporaryDirectory->path('typescript-transformer-manifest.json');
 
@@ -116,7 +121,7 @@ it('will update the manifest file', function () {
         ->not->toHaveKey('fileB.ts');
 });
 
-it('will not use a manifest file when the writer does not support it', function () {
+it('will always create a manifest file', function () {
     $fileA = new WriteableFile('fileA.ts', 'fileA contents');
     $fileB = new WriteableFile('fileB.ts', 'fileB contents');
 
@@ -124,7 +129,39 @@ it('will not use a manifest file when the writer does not support it', function 
         ->outputDirectory($this->temporaryDirectory->path())
         ->get();
 
-    (new WriteFilesAction($config))->execute([$fileA, $fileB]);
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
 
-    expect(file_exists($this->temporaryDirectory->path('typescript-transformer-manifest.json')))->toBeFalse();
+    expect(file_exists($this->temporaryDirectory->path('typescript-transformer-manifest.json')))->toBeTrue();
+});
+
+it('marks only changed files in the array', function () {
+    $fileA = new WriteableFile('fileA.ts', 'fileA contents');
+    $fileB = new WriteableFile('fileB.ts', 'fileB contents');
+
+    $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
+        ->get();
+
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
+
+    expect($files[0]->changed)->toBeTrue();
+    expect($files[1]->changed)->toBeTrue();
+
+    $fileC = new WriteableFile('fileC.ts', 'fileC contents');
+    $files = [$fileA, $fileB, $fileC];
+    (new WriteFilesAction($config))->execute($files);
+
+    expect($files[0]->changed)->toBeFalse();
+    expect($files[1]->changed)->toBeFalse();
+    expect($files[2]->changed)->toBeTrue();
+
+    $fileAUpdated = new WriteableFile('fileA.ts', 'fileA updated contents');
+    $files = [$fileAUpdated, $fileB, $fileC];
+    (new WriteFilesAction($config))->execute($files);
+
+    expect($files[0]->changed)->toBeTrue();
+    expect($files[1]->changed)->toBeFalse();
+    expect($files[2]->changed)->toBeFalse();
 });

@@ -12,7 +12,7 @@ it('can write enums in all sorts of configs', function (
         $cases,
     );
 
-    expect($node->write(new WritingContext(fn () => '')))->toBe($expected);
+    expect($node->write(new WritingContext([])))->toBe($expected);
 })->with(function () {
     yield 'numeric enum without indexes' => [
         'cases' => [

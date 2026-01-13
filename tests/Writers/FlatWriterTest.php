@@ -29,6 +29,7 @@ it('can write everything in one flat file', function () {
     ]);
 
     [$file] = $this->writer->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 
@@ -61,6 +62,7 @@ it('can reference to other types in a flat file', function () {
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
 
     [$file] = $this->writer->output(
+        $transformedCollection->all(),
         $transformedCollection,
     );
 

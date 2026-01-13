@@ -25,7 +25,7 @@ function classesToTypeScript(
 
     $writer = new MemoryWriter();
 
-    ($writer)->output($collection);
+    ($writer)->output($collection->all(), $collection);
 
     return $writer->getOutput();
 }

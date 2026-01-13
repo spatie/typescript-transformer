@@ -16,7 +16,7 @@ it('can split per location', function () {
     ]);
 
     $split = (new SplitTransformedPerLocationAction())->execute(
-        $transformedCollection
+        $transformedCollection->all()
     );
 
     expect($split)->toHaveCount(3);
