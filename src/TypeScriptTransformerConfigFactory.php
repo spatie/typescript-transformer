@@ -7,10 +7,10 @@ use Exception;
 use Spatie\TypeScriptTransformer\Actions\ParseUserDefinedTypeAction;
 use Spatie\TypeScriptTransformer\Formatters\Formatter;
 use Spatie\TypeScriptTransformer\Support\Extensions\TypeScriptTransformerExtension;
+use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
+use Spatie\TypeScriptTransformer\TransformedProviders\TransformerProvider;
+use Spatie\TypeScriptTransformer\TransformedProviders\WatchingTransformedProvider;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
-use Spatie\TypeScriptTransformer\TypeProviders\TransformerTypesProvider;
-use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
-use Spatie\TypeScriptTransformer\TypeProviders\WatchingTypesProvider;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
@@ -24,7 +24,7 @@ use Throwable;
 class TypeScriptTransformerConfigFactory
 {
     /**
-     * @param array<TypesProvider|string> $typeProviders
+     * @param array<TransformedProvider|string> $transformedProviders
      * @param array<Transformer|string> $transformers
      * @param array<string> $directoriesToTransform
      * @param array<class-string|string, TypeScriptNode> $typeReplacements
@@ -35,7 +35,7 @@ class TypeScriptTransformerConfigFactory
      */
     public function __construct(
         protected string $outputDirectory = __DIR__.'/generated',
-        protected array $typeProviders = [],
+        protected array $transformedProviders = [],
         protected string|Writer|null $writer = null,
         protected string|Formatter|null $formatter = null,
         protected array $transformers = [],
@@ -53,15 +53,15 @@ class TypeScriptTransformerConfigFactory
         return new self();
     }
 
-    public function typesProvider(TypesProvider|string ...$typesProvider): self
+    public function provider(TransformedProvider|string ...$transformedProviders): self
     {
-        foreach ($typesProvider as $provider) {
-            if ($provider === TransformerTypesProvider::class || $provider instanceof TransformerTypesProvider) {
+        foreach ($transformedProviders as $transformedProvider) {
+            if ($transformedProvider === TransformerProvider::class || $transformedProvider instanceof TransformerProvider) {
                 throw new Exception("Please add transformers using the config's `transformer` method.");
             }
         }
 
-        array_push($this->typeProviders, ...$typesProvider);
+        array_push($this->transformedProviders, ...$transformedProviders);
 
         return $this;
     }
@@ -220,9 +220,9 @@ class TypeScriptTransformerConfigFactory
     {
         $this->ensureConfigIsValid();
 
-        $typeProviders = array_map(
-            fn (TypesProvider|string $typeProvider) => is_string($typeProvider) ? new $typeProvider() : $typeProvider,
-            $this->typeProviders
+        $transformedProviders = array_map(
+            fn (TransformedProvider|string $transformedProvider) => is_string($transformedProvider) ? new $transformedProvider() : $transformedProvider,
+            $this->transformedProviders
         );
 
         $directoriesToWatch = [
@@ -230,9 +230,9 @@ class TypeScriptTransformerConfigFactory
             ...$this->configPaths,
         ];
 
-        foreach ($typeProviders as $typeProvider) {
-            if ($typeProvider instanceof WatchingTypesProvider) {
-                array_push($directoriesToWatch, ...$typeProvider->directoriesToWatch());
+        foreach ($transformedProviders as $transformedProvider) {
+            if ($transformedProvider instanceof WatchingTransformedProvider) {
+                array_push($directoriesToWatch, ...$transformedProvider->directoriesToWatch());
             }
         }
 
@@ -254,12 +254,12 @@ class TypeScriptTransformerConfigFactory
         );
 
         if (! empty($transformers)) {
-            $typeProviders[] = new TransformerTypesProvider($transformers, $this->directoriesToTransform);
+            $transformedProviders[] = new TransformerProvider($transformers, $this->directoriesToTransform);
         }
 
         return new TypeScriptTransformerConfig(
             rtrim($this->outputDirectory, DIRECTORY_SEPARATOR),
-            $typeProviders,
+            $transformedProviders,
             $writer,
             $formatter,
             $directoriesToWatch,

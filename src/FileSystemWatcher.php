@@ -15,8 +15,8 @@ use Spatie\TypeScriptTransformer\Handlers\Watch\DirectoryDeletedWatchEventHandle
 use Spatie\TypeScriptTransformer\Handlers\Watch\FileDeletedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\FileUpdatedOrCreatedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Handlers\Watch\WatchEventHandler;
-use Spatie\TypeScriptTransformer\Handlers\Watch\WatchingTypesProvidersHandler;
-use Spatie\TypeScriptTransformer\TypeProviders\WatchingTypesProvider;
+use Spatie\TypeScriptTransformer\Handlers\Watch\WatchingTransformedProvidersHandler;
+use Spatie\TypeScriptTransformer\TransformedProviders\WatchingTransformedProvider;
 use Spatie\Watcher\Exceptions\CouldNotStartWatcher;
 use Spatie\Watcher\Watch;
 
@@ -94,20 +94,20 @@ class FileSystemWatcher
             $this->transformedCollection,
         );
 
-        $watchingTypeProviders = array_values(array_map(
-            fn (WatchingTypesProvider $provider) => new WatchingTypesProvidersHandler(
+        $watchingTransformedProviders = array_values(array_map(
+            fn (WatchingTransformedProvider $provider) => new WatchingTransformedProvidersHandler(
                 $provider,
                 $this->transformedCollection
             ),
             array_filter(
-                $this->typeScriptTransformer->config->typeProviders,
-                fn ($provider) => $provider instanceof WatchingTypesProvider
+                $this->typeScriptTransformer->config->transformedProviders,
+                fn ($provider) => $provider instanceof WatchingTransformedProvider
             )
         ));
 
         $this->handlers[FileCreatedWatchEvent::class] = [
             $fileUpdatedOrCreatedHandler,
-            ...$watchingTypeProviders,
+            ...$watchingTransformedProviders,
         ];
 
         $this->handlers[FileUpdatedWatchEvent::class] = [
@@ -115,7 +115,7 @@ class FileSystemWatcher
             new ConfigUpdatedWatchEventHandler(
                 $this->typeScriptTransformer,
             ),
-            ...$watchingTypeProviders,
+            ...$watchingTransformedProviders,
         ];
 
         $this->handlers[FileDeletedWatchEvent::class] = [
@@ -123,7 +123,7 @@ class FileSystemWatcher
                 $this->typeScriptTransformer,
                 $this->transformedCollection,
             ),
-            ...$watchingTypeProviders,
+            ...$watchingTransformedProviders,
         ];
 
         $this->handlers[DirectoryDeletedWatchEvent::class] = [
@@ -131,7 +131,7 @@ class FileSystemWatcher
                 $this->typeScriptTransformer,
                 $this->transformedCollection,
             ),
-            ...$watchingTypeProviders,
+            ...$watchingTransformedProviders,
         ];
     }
 

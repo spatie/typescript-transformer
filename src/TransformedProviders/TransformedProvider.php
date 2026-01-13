@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\TypeProviders;
+namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-interface TypesProvider
+interface TransformedProvider
 {
     public function provide(
         TypeScriptTransformerConfig $config,

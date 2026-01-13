@@ -3,7 +3,7 @@
 use Carbon\Carbon;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\Tests\Support\InlineTypesProvider;
+use Spatie\TypeScriptTransformer\Tests\Support\InlineTransformedProvider;
 use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
@@ -22,7 +22,7 @@ it('can replace types', function (
     TypeScriptNode $expected,
 ) {
     $config = TypeScriptTransformerConfigFactory::create()
-        ->typesProvider(new InlineTypesProvider(TransformedFactory::alias(
+        ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
                 new TypeScriptProperty('datetime', new TypeReference(new ClassStringReference(DateTime::class))),
@@ -89,7 +89,7 @@ it('can replace types', function (
 
 it('will replace inherited types', function () {
     $config = TypeScriptTransformerConfigFactory::create()
-        ->typesProvider(new InlineTypesProvider(TransformedFactory::alias(
+        ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
                 new TypeScriptProperty('datetime', new TypeReference(new ClassStringReference(Carbon::class))),
@@ -111,7 +111,7 @@ it('will replace inherited types', function () {
 
 it('will replace implemented types', function () {
     $config = TypeScriptTransformerConfigFactory::create()
-        ->typesProvider(new InlineTypesProvider(TransformedFactory::alias(
+        ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
                 new TypeScriptProperty('datetime', new TypeReference(new ClassStringReference(Carbon::class))),

@@ -4,10 +4,10 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\Console\Logger;
-use Spatie\TypeScriptTransformer\TypeProviders\LoggingTypesProvider;
+use Spatie\TypeScriptTransformer\TransformedProviders\LoggingTransformedProvider;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class ProvideTypesAction
+class RunProvidersAction
 {
     public function __construct(
         protected TypeScriptTransformerConfig $config,
@@ -19,12 +19,12 @@ class ProvideTypesAction
     ): TransformedCollection {
         $collection = new TransformedCollection();
 
-        foreach ($this->config->typeProviders as $typeProvider) {
-            if ($typeProvider instanceof LoggingTypesProvider) {
-                $typeProvider->setLogger($logger);
+        foreach ($this->config->transformedProviders as $transformedProvider) {
+            if ($transformedProvider instanceof LoggingTransformedProvider) {
+                $transformedProvider->setLogger($logger);
             }
 
-            $typeProvider->provide(
+            $transformedProvider->provide(
                 $this->config,
                 $collection
             );

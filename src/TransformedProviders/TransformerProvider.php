@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\TypeProviders;
+namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class TransformerTypesProvider implements TypesProvider
+class TransformerProvider implements TransformedProvider
 {
     /**
      * @param array<Transformer> $transformers

@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\TypeProviders;
+namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
 use Spatie\TypeScriptTransformer\Support\Console\Logger;
 
-interface LoggingTypesProvider
+interface LoggingTransformedProvider
 {
     public function setLogger(Logger $logger): void;
 }

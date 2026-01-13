@@ -822,21 +822,21 @@ class RemoveAllStrings implements ClassPropertyProcessor
 }
 ```
 
-## Creating a TypesProvider
+## Creating a TransformedProvider
 
 Until now we've only taken a look at transforming PHP classes to TypeScript, but what if you want to transform something
-else? This is where the `TypesProvider` comes in, it is a class that provides TypeScript types. The transformers
-we've seen before are actually bundled in a default `TypesProvider` provided by the package.
+else? This is where the `TransformedProvider` comes in, it is a class that provides TypeScript types and other structures. 
+The transformers we've seen before are actually bundled in a default `TransformerProvider` provided by the package.
 
-A `TypesProvider` implements the `TypeProvider` interface:
+A `TransformedProvider` implements the `TransformedProvider` interface:
 
 ```php
-namespace Spatie\TypeScriptTransformer\TypeProviders;
+namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-interface TypesProvider
+interface TransformedProvider
 {
     public function provide(
         TypeScriptTransformerConfig $config,
@@ -849,7 +849,7 @@ The `provide` method is called when the TypeScript transformer is executed, it s
 collection provided. We could for example add a generic type which transforms Laravel collections:
 
 ```php
-class AddLaravelCollectionProvider implements TypesProvider
+class AddLaravelCollectionProvider implements TransformedProvider
 {
     public function provide(
         TypeScriptTransformerConfig $config,
@@ -1205,7 +1205,7 @@ in between some of these steps.
 
 The steps look as following:
 
-1. Running of the TypeProviders creating a collection of Transformed types
+1. Running of the TransformedProviders creating a collection of Transformed types
 2. Possible hooking point: `providedVisitorHook`
 3. Connecting references between Transformed types
 4. Possible hooking point: `connectedVisitorHook`

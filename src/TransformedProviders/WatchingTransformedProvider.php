@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\TypeProviders;
+namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\Events\Watch\WatchEvent;
 
-interface WatchingTypesProvider
+interface WatchingTransformedProvider
 {
     /** @return array<string> */
     public function directoriesToWatch(): array;

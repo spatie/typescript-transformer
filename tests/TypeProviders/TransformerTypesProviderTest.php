@@ -12,8 +12,8 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptAttributed
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptLocationAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\TransformedProviders\TransformerProvider;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
-use Spatie\TypeScriptTransformer\TypeProviders\TransformerTypesProvider;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
@@ -24,7 +24,7 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 function getTestProvidedTypes(
     array $transformers = [new AllClassTransformer()],
 ): TransformedCollection {
-    $provider = new TransformerTypesProvider(
+    $provider = new TransformerProvider(
         $transformers,
         [
             __DIR__.'/../Fakes/TypesToProvide',

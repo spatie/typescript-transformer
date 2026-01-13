@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\ExecuteConnectedClosuresAction;
 use Spatie\TypeScriptTransformer\Actions\ExecuteProvidedClosuresAction;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
-use Spatie\TypeScriptTransformer\Actions\ProvideTypesAction;
+use Spatie\TypeScriptTransformer\Actions\RunProvidersAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
@@ -22,7 +22,7 @@ class TypeScriptTransformer
         public readonly TypeScriptTransformerConfig $config,
         public readonly Logger $logger,
         public readonly DiscoverTypesAction $discoverTypesAction,
-        public readonly ProvideTypesAction $provideTypesAction,
+        public readonly RunProvidersAction $provideTypesAction,
         public readonly ExecuteProvidedClosuresAction $executeProvidedClosuresAction,
         public readonly ConnectReferencesAction $connectReferencesAction,
         public readonly ExecuteConnectedClosuresAction $executeConnectedClosuresAction,
@@ -48,7 +48,7 @@ class TypeScriptTransformer
             $config,
             $logger,
             new DiscoverTypesAction(),
-            new ProvideTypesAction($config),
+            new RunProvidersAction($config),
             new ExecuteProvidedClosuresAction($config),
             new ConnectReferencesAction($logger),
             new ExecuteConnectedClosuresAction($config),
@@ -79,7 +79,6 @@ class TypeScriptTransformer
          * - Write some text arround refactoring in IDE and watcher, that IDE's useally take some time to write eveyrthing out so it can take up to 10 seconds before the watcher kicks in
          * - Make sure nullables can be exported as optional: https://github.com/spatie/typescript-transformer/pull/88/files
          * - In order to write Laravel routes we require a .ts file and not a .d.ts. file this is actually not that complicated and since we now what to write to files we can mark nodes with runnable code with a interface. If a file contains such a node it will be written to a .ts file instead of a .d.ts file. This way we can also write the Laravel routes to a .ts file instead of a .d.ts file.
-         * - Is typeprovider still correct? Since we add a lot more than types?
          * - Release
          */
 

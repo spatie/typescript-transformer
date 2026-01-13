@@ -22,7 +22,7 @@ class FormatFilesAction
         }
 
         $this->config->formatter->format(
-            array_map(fn (WriteableFile $writtenFile) => $writtenFile->path, $writtenFiles)
+            array_map(fn (WriteableFile $writtenFile) => $this->config->outputDirectory.DIRECTORY_SEPARATOR.$writtenFile->path, $writtenFiles)
         );
     }
 }

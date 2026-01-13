@@ -5,10 +5,10 @@ namespace Spatie\TypeScriptTransformer\Tests\Support;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\TypeProviders\TypesProvider;
+use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class InlineTypesProvider implements TypesProvider
+class InlineTransformedProvider implements TransformedProvider
 {
     /** @var Transformed[] */
     protected array $transformed;

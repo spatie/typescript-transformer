@@ -4,18 +4,18 @@ namespace Spatie\TypeScriptTransformer\Handlers\Watch;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
-use Spatie\TypeScriptTransformer\TypeProviders\WatchingTypesProvider;
+use Spatie\TypeScriptTransformer\TransformedProviders\WatchingTransformedProvider;
 
-class WatchingTypesProvidersHandler implements WatchEventHandler
+class WatchingTransformedProvidersHandler implements WatchEventHandler
 {
     public function __construct(
-        protected WatchingTypesProvider $typeProvider,
+        protected WatchingTransformedProvider $transformedProvider,
         protected TransformedCollection $transformedCollection,
     ) {
     }
 
     public function handle($event): WatchEventResult|int
     {
-        return $this->typeProvider->handleWatchEvent($event, $this->transformedCollection);
+        return $this->transformedProvider->handleWatchEvent($event, $this->transformedCollection);
     }
 }
