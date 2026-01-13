@@ -4,7 +4,6 @@ namespace Spatie\TypeScriptTransformer\Handlers\Watch;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Events\Watch\DirectoryDeletedWatchEvent;
-use Spatie\TypeScriptTransformer\Events\Watch\WatchEvent;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
 /**
@@ -18,9 +17,6 @@ class DirectoryDeletedWatchEventHandler implements WatchEventHandler
     ) {
     }
 
-    /**
-     * @param WatchEvent $event
-     */
     public function handle($event): int
     {
         $this->typeScriptTransformer->logger->debug($event->path, 'Directory Deleted');

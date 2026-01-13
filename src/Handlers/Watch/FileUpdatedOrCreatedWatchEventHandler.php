@@ -5,7 +5,6 @@ namespace Spatie\TypeScriptTransformer\Handlers\Watch;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Events\Watch\FileCreatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\Watch\FileUpdatedWatchEvent;
-use Spatie\TypeScriptTransformer\Events\Watch\WatchEvent;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Throwable;
@@ -21,11 +20,6 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
     ) {
     }
 
-    /**
-     * @param WatchEvent $event
-     *
-     * @return void
-     */
     public function handle($event): int
     {
         $this->typeScriptTransformer->logger->debug(
@@ -37,7 +31,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
             $classNode = $this->typeScriptTransformer->loadPhpClassNodeAction->execute($event->path);
 
             if ($classNode === null) {
-                $this->typeScriptTransformer->logger->warning("Multiple class nodes found in {$event->path}");
+                $this->typeScriptTransformer->logger->warn("Multiple class nodes found in {$event->path}");
 
                 return 0;
             }
@@ -78,7 +72,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
             return 0 ;
         }
 
-        if ($originalTransformed && $newlyTransformed && $originalTransformed->equals($newlyTransformed)) {
+        if ($originalTransformed && $originalTransformed->equals($newlyTransformed)) {
             return 0;
         }
 

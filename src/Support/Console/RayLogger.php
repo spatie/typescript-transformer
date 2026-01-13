@@ -29,6 +29,7 @@ class RayLogger implements Logger
         ?string $title,
         string $color,
     ) {
+        /** @phpstan-ignore-next-line */
         $ray = ray($item)->color($color);
 
         if ($title) {

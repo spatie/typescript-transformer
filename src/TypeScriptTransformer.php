@@ -64,13 +64,13 @@ class TypeScriptTransformer
     {
         /**
          * TODO:
-         * - Add interface implementation + tests -> OK
-         * - Split off Laravel specific code and test
+         * - Test Laracvel specific stuff
          * - Split off data specific code and test
          * - Add support for watching files -> ok, maybe add docs and some tests
          * - Further write docs + check them -> only Laravel specific stuff
          * - Further build out the double process watching infrastructure
          * - Make sure we wire up WatchingTypeProvider::handleWatchEvent
+         * - Hookup SummarizedWatchEvent
          * - Test the config factory
          * - Add docs for the runner, check that we don't mention the typescript:watch command in the docs
          * - Check old Laravel tests if we missed something

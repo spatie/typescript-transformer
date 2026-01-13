@@ -4,7 +4,8 @@
       "Bash(vendor/bin/pest:*)",
       "Bash(vendor/bin/phpstan analyse:*)",
       "Read(//Users/ruben/Spatie/laravel-typescript-transformer/src/**)",
-      "Read(//Users/ruben/Spatie/laravel-typescript-transformer/**)"
+      "Read(//Users/ruben/Spatie/laravel-typescript-transformer/**)",
+      "Bash(composer analyse:*)"
     ],
     "deny": []
   }

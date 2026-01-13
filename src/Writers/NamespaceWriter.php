@@ -25,7 +25,7 @@ class NamespaceWriter implements Writer
 
     protected function ensureDeclarationFileExtension(string $filename): string
     {
-        $baseName = explode('.', $filename)[0] ?? 'types';
+        $baseName = explode('.', $filename)[0];
 
         return "{$baseName}.d.ts";
     }

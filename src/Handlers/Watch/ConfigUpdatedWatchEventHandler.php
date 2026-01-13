@@ -3,8 +3,13 @@
 namespace Spatie\TypeScriptTransformer\Handlers\Watch;
 
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
+use Spatie\TypeScriptTransformer\Events\Watch\FileCreatedWatchEvent;
+use Spatie\TypeScriptTransformer\Events\Watch\FileUpdatedWatchEvent;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
+/**
+ * @implements WatchEventHandler<FileCreatedWatchEvent|FileUpdatedWatchEvent>
+ */
 class ConfigUpdatedWatchEventHandler implements WatchEventHandler
 {
     public function __construct(

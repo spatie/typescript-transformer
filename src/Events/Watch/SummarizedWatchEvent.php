@@ -4,8 +4,18 @@ namespace Spatie\TypeScriptTransformer\Events\Watch;
 
 class SummarizedWatchEvent extends WatchEvent
 {
-    public function __construct()
-    {
+    /**
+     * @param array<string> $createdFiles
+     * @param array<string> $updatedFiles
+     * @param array<string> $deletedFiles
+     * @param array<string> $deletedDirectories
+     */
+    public function __construct(
+        public array $createdFiles,
+        public array $updatedFiles,
+        public array $deletedFiles,
+        public array $deletedDirectories,
+    ) {
 
     }
 }
