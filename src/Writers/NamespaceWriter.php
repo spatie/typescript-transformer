@@ -13,10 +13,21 @@ class NamespaceWriter implements Writer
 {
     protected SplitTransformedPerLocationAction $splitTransformedPerLocationAction;
 
+    public string $filename;
+
     public function __construct(
-        public string $filename,
+        string $filename = 'types.d.ts',
     ) {
         $this->splitTransformedPerLocationAction = new SplitTransformedPerLocationAction();
+
+        $this->filename = $this->ensureDeclarationFileExtension($filename);
+    }
+
+    protected function ensureDeclarationFileExtension(string $filename): string
+    {
+        $baseName = explode('.', $filename)[0] ?? 'types';
+
+        return "{$baseName}.d.ts";
     }
 
     public function output(
@@ -41,7 +52,7 @@ class NamespaceWriter implements Writer
         foreach ($split as $splitConstruct) {
             if (count($splitConstruct->segments) === 0) {
                 foreach ($splitConstruct->transformed as $transformable) {
-                    $output .= $transformable->write($writingContext) . PHP_EOL;
+                    $output .= $transformable->write($writingContext).PHP_EOL;
                 }
 
                 continue;
@@ -52,7 +63,7 @@ class NamespaceWriter implements Writer
                 $splitConstruct->transformed
             );
 
-            $output .= $namespace->write($writingContext) . PHP_EOL;
+            $output .= $namespace->write($writingContext).PHP_EOL;
         }
 
         return [new WriteableFile($this->filename, $output)];

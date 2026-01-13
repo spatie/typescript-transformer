@@ -13,9 +13,9 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\Writers\FlatWriter;
 
 beforeEach(function () {
-    $this->path = '/some/path';
+    $this->filename = 'types.ts';
 
-    $this->writer = new FlatWriter($this->path);
+    $this->writer = new FlatWriter($this->filename);
 });
 
 
@@ -34,7 +34,7 @@ it('can write everything in one flat file', function () {
 
     expect($file)
         ->toBeInstanceOf(WriteableFile::class)
-        ->path->toBe($this->path)
+        ->path->toBe($this->filename)
         ->contents->toBe(<<<TS
 export type RootType = string;
 export type RootType2 = string;
@@ -66,7 +66,7 @@ it('can reference to other types in a flat file', function () {
 
     expect($file)
         ->toBeInstanceOf(WriteableFile::class)
-        ->path->toBe($this->path)
+        ->path->toBe($this->filename)
         ->contents->toBe(<<<TS
 export type A = string;
 export type B = string;

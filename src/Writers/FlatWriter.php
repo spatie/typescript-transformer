@@ -10,7 +10,7 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class FlatWriter implements Writer
 {
     public function __construct(
-        public string $filename,
+        public string $filename = 'types.ts',
     ) {
     }
 

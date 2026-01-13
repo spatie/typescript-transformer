@@ -13,14 +13,15 @@ use Spatie\TypeScriptTransformer\Support\WritingContext;
 class ModuleWriter implements Writer, MultipleFilesWriter
 {
     public function __construct(
-        protected string $path,
+        protected string $moduleFilename = 'index.ts',
         protected SplitTransformedPerLocationAction $transformedPerLocationAction = new SplitTransformedPerLocationAction(),
         protected ResolveModuleImportsAction $resolveModuleImportsAction = new ResolveModuleImportsAction(),
     ) {
     }
 
-    public function output(TransformedCollection $collection): array
-    {
+    public function output(
+        TransformedCollection $collection,
+    ): array {
         $locations = $this->transformedPerLocationAction->execute(
             $collection
         );
@@ -32,11 +33,6 @@ class ModuleWriter implements Writer, MultipleFilesWriter
         }
 
         return $writtenFiles;
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
     }
 
     protected function writeLocation(
@@ -68,18 +64,16 @@ class ModuleWriter implements Writer, MultipleFilesWriter
             $output .= $transformedItem->write($writingContext).PHP_EOL;
         }
 
-        return new WriteableFile("{$this->resolvePath($location)}/index.ts", $output);
+        return new WriteableFile($this->resolveRelativePath($location), $output);
     }
 
-    protected function resolvePath(
+    protected function resolveRelativePath(
         Location $location,
     ): string {
-        $basePath = rtrim($this->path, '/');
-
         if (count($location->segments) === 0) {
-            return $basePath;
+            return $this->moduleFilename;
         }
 
-        return $basePath.'/'.implode('/', $location->segments);
+        return implode(DIRECTORY_SEPARATOR, $location->segments).DIRECTORY_SEPARATOR.$this->moduleFilename;
     }
 }

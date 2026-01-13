@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(vendor/bin/pest:*)",
-      "Bash(vendor/bin/phpstan analyse:*)"
+      "Bash(vendor/bin/phpstan analyse:*)",
+      "Read(//Users/ruben/Spatie/laravel-typescript-transformer/src/**)",
+      "Read(//Users/ruben/Spatie/laravel-typescript-transformer/**)"
     ],
     "deny": []
   }

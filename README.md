@@ -215,10 +215,16 @@ declare namespace App.Enums {
 }
 ```
 
-You can configure this writer and where it should put the file as such:
+You can configure this writer as such:
 
 ```php
-$config->writeTypes(new NamespaceWriter(resource_path('types/generated.d.ts'))); 
+$config->writeTypes(new NamespaceWriter()); 
+```
+
+The directory where the types should be written to needs to be configured as well:
+
+```php
+$config->outputDirectory(__DIR__.'/types');
 ```
 
 If you want a file per namespace, then you can use the `ModuleWriter`, it will write a structure like this:
@@ -241,7 +247,7 @@ export type PostType = 'news' | 'blog';
 You can configure it like this:
 
 ```php
-$config->writeTypes(new ModuleWriter(resource_path('types'))); 
+$config->writeTypes(new ModuleWriter()); 
 ```
 
 That's it! You're now ready to transform your PHP classes to TypeScript types. If you've configured
@@ -1265,7 +1271,7 @@ interface Writer
 ```
 
 In the end the `write` method should return an array of `WriteableFile` objects, these objects contain the TypeScript
-code and the location where it should be written to.
+code and the path relative to the output directory where the file should be stored.
 
 In the writer you should loop over each `Transformed` object in the collection, decide in which file it should be stored
 and transform the TypeScript node to a string:
@@ -1280,7 +1286,7 @@ The `prepareForWrite` method will make sure that a TypeScript node is exported w
 transform the TypeScript node to a string and requires a `WritingContext` object with information about the writing
 context.
 
-For now the `WritingContext` consists of a Closure returning a string referencing other TypeScript types. We recommend
+The `WritingContext` consists of a Closure returning a string referencing other TypeScript types. We recommend
 you to take a look at the `FlatWriter` to see how this is implemented.
 
 ## Testing

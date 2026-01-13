@@ -34,6 +34,7 @@ class TypeScriptTransformerConfigFactory
      * @param array<string> $configPaths
      */
     public function __construct(
+        protected string $outputDirectory = __DIR__.'/generated',
         protected array $typeProviders = [],
         protected string|Writer|null $writer = null,
         protected string|Formatter|null $formatter = null,
@@ -208,6 +209,13 @@ class TypeScriptTransformerConfigFactory
         return $this;
     }
 
+    public function outputDirectory(string $directory): self
+    {
+        $this->outputDirectory = $directory;
+
+        return $this;
+    }
+
     public function get(): TypeScriptTransformerConfig
     {
         $this->ensureConfigIsValid();
@@ -250,6 +258,7 @@ class TypeScriptTransformerConfigFactory
         }
 
         return new TypeScriptTransformerConfig(
+            rtrim($this->outputDirectory, DIRECTORY_SEPARATOR),
             $typeProviders,
             $writer,
             $formatter,

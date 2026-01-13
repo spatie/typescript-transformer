@@ -21,11 +21,11 @@ function classesToTypeScript(
         $collection->add(transformSingle($class, $transformer));
     }
 
-    $referenceMap = (new ConnectReferencesAction(new NullLogger()))->execute($collection);
+    (new ConnectReferencesAction(new NullLogger()))->execute($collection);
 
     $writer = new MemoryWriter();
 
-    ($writer)->output($collection, $referenceMap);
+    ($writer)->output($collection);
 
     return $writer->getOutput();
 }

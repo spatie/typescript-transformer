@@ -41,18 +41,20 @@ class WriteFilesAction
 
         $this->deleteOldFiles($oldManifest, $newManifest);
 
-        $this->storeManifest($writer, $newManifest);
+        $this->storeManifest($newManifest);
     }
 
     protected function writeFile(WriteableFile $file): void
     {
-        $directory = dirname($file->path);
+        $fullPath = $this->config->outputDirectory.DIRECTORY_SEPARATOR.$file->path;
+
+        $directory = dirname($fullPath);
 
         if (is_dir($directory) === false) {
             mkdir($directory, recursive: true);
         }
 
-        file_put_contents($file->path, $file->contents);
+        file_put_contents($fullPath, $file->contents);
     }
 
     /** @return array<string, string>|null */
@@ -64,7 +66,7 @@ class WriteFilesAction
             return null;
         }
 
-        $manifestPath = $this->getManifestPath($writer);
+        $manifestPath = $this->getManifestPath();
 
         if (! file_exists($manifestPath)) {
             return null;
@@ -117,25 +119,26 @@ class WriteFilesAction
             $newManifest,
         ));
 
-        foreach ($filesToDelete as $fileToDelete) {
-            if (file_exists($fileToDelete)) {
-                unlink($fileToDelete);
+        foreach ($filesToDelete as $relativePath) {
+            $fullPath = $this->config->outputDirectory.DIRECTORY_SEPARATOR.$relativePath;
+
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
             }
         }
     }
 
     protected function storeManifest(
-        MultipleFilesWriter $writer,
         array $manifest,
     ): void {
         file_put_contents(
-            $this->getManifestPath($writer),
+            $this->getManifestPath(),
             json_encode($manifest)
         );
     }
 
-    protected function getManifestPath(MultipleFilesWriter $writer): string
+    protected function getManifestPath(): string
     {
-        return "{$writer->getPath()}/typescript-transformer-manifest.json";
+        return $this->config->outputDirectory.DIRECTORY_SEPARATOR.'typescript-transformer-manifest.json';
     }
 }

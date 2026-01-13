@@ -34,7 +34,7 @@ it('can write a namespaced file', function () {
     $file = $files[0];
 
     expect($file)
-        ->path->toBe($filename)
+        ->path->toBe('types.d.ts')
         ->contents->toEqual(
             <<<TS
     export type RootType = string;
@@ -79,7 +79,7 @@ it('will reference correctly between namespaces', function () {
     $file = $files[0];
 
     expect($file)
-        ->path->toBe($filename)
+        ->path->toBe('types.d.ts')
         ->contents->toEqual(<<<TS
 export type C = {
 a: nested.A

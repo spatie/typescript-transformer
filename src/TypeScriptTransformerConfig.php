@@ -19,6 +19,7 @@ class TypeScriptTransformerConfig
      * @param array<string> $configPaths
      */
     public function __construct(
+        public readonly string $outputDirectory,
         public readonly array $typeProviders,
         public readonly Writer $writer,
         public readonly ?Formatter $formatter,
