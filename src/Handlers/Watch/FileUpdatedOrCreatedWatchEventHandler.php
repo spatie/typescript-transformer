@@ -52,6 +52,8 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
                 $this->typeScriptTransformer->config->transformers,
                 $classNode
             );
+
+            $newlyTransformed->setWriter($this->typeScriptTransformer->config->typesWriter);
         } catch (Throwable $throwable) {
             if (str_starts_with($throwable::class, 'Roave\BetterReflection')) {
                 return 0;
