@@ -2,8 +2,8 @@
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Support\Console\ConsoleLogger;
-use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
+use Spatie\TypeScriptTransformer\Support\Loggers\ArrayLogger;
+use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularA;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularB;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
@@ -78,7 +78,7 @@ it('will write to the log when a reference cannot be found', function () {
 
 
     $action = new ConnectReferencesAction(
-        $console = new ConsoleLogger()
+        $console = new ArrayLogger()
     );
 
     $action->execute($collection);

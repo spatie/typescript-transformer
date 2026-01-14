@@ -3,7 +3,7 @@
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\CustomReference;
-use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
+use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;

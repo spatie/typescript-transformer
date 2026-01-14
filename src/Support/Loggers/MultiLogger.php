@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Support\Console;
+namespace Spatie\TypeScriptTransformer\Support\Loggers;
 
 class MultiLogger implements Logger
 {

@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
-use Spatie\TypeScriptTransformer\Support\Console\Logger;
+use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 
 interface LoggingTransformedProvider
 {

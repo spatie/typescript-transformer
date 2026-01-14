@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\Runners;
 use Closure;
 use Spatie\TypeScriptTransformer\Enums\RunnerMode;
 use Spatie\TypeScriptTransformer\FileSystemWatcher;
-use Spatie\TypeScriptTransformer\Support\Console\Logger;
+use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -15,21 +15,24 @@ class Runner
 {
     public const WORKER_READY_SIGNAL = '[TYPESCRIPT_TRANSFORMER_READY]';
 
-    /**
-     * @param Closure(bool $watch):string $workerCommand
-     */
+    /** @var Closure(bool):string|null */
+    protected ?Closure $workerCommand = null;
+
     public function __construct(
-        protected Closure $workerCommand,
         protected int $workerStartupTimeoutSeconds = 30,
     ) {
     }
 
+    /**
+     * @param Closure(bool $watch):string|null $workerCommand Required when mode is Master
+     */
     public function run(
         Logger $logger,
         TypeScriptTransformerConfig $config,
         RunnerMode $mode,
+        ?Closure $workerCommand = null,
     ): int {
-        // Todo review all of this
+        $this->workerCommand = $workerCommand;
 
         return match ($mode) {
             RunnerMode::Master => $this->runAsMaster($logger),
@@ -40,6 +43,10 @@ class Runner
 
     protected function runAsMaster(Logger $logger): int
     {
+        if ($this->workerCommand === null) {
+            throw new \InvalidArgumentException('Worker command is required when running in Master mode');
+        }
+
         $currentWorker = null;
         $errorShownForFailedWorker = false;
 

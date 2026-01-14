@@ -44,6 +44,9 @@ The `Languages` enum will be converted to:
 export type Languages = 'typescript' | 'php';
 ```
 
+And that's just the beginning! TypeScript transformer can handle complex types, generics and even allows you to create
+TypeScript functions.
+
 ## Support us
 
 [<img src="https://github-ads.s3.eu-central-1.amazonaws.com/typescript-transformer.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/typescript-transformer)
@@ -79,6 +82,8 @@ Within Symphony, for example, you can create a command like this:
 ```php
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
+use Spatie\TypeScriptTransformer\Runners\Runner;
+use Spatie\TypeScriptTransformer\Support\Loggers\SymfonyConsoleLogger;
 
 class GenerateTypeScriptCommand extends Command
 {
@@ -91,12 +96,20 @@ class GenerateTypeScriptCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $runner = new Runner();
+        
         $config = TypeScriptTransformerConfigFactory::create(); // We'll come back to this in a minute
 
-        TypeScriptTransformer::create($config)->execute();
+        return $runner->run(
+            logger: new SymfonyConsoleLogger($output),
+            config: $config,
+            mode: match RunnerMode::Direct
+        );
     }
 }
 ```
+
+We dive further into configuring runners later on.
 
 When you've registered the command, it can be executed as such:
 
@@ -109,35 +122,13 @@ continue with the next section to learn how to configure TypeScript transformer.
 
 ### Laravel
 
-When using Laravel, first install the specific `TypeScriptTransformerServiceProvider`:
+To set up TypeScript transformer within Laravel, you'll need to install A Laravel specific package.
 
-```bash
-php artisan typescript:install
-```
+You can read all about it
+here: [laravel-typescript-transformer](https://github.com/spatie/laravel-typescript-transformer).
 
-This command will create a `TypeScriptTransformerServiceProvider` in your `app/Providers` directory. Which looks like
-this:
-
-```php
-class TypeScriptTransformerServiceProvider extends BaseTypeScriptTransformerServiceProvider
-{
-    protected function configure(TypeScriptTransformerConfigFactory $config): void
-    {
-        $config; // We'll come back to this in a minute
-    }
-}
-```
-
-And it will also register the service provider in your `bootstrap/providers.php` file (when running Laravel 11 or
-above). Or in your `config/app.php` file when running Laravel 10 or below.
-
-Now you can transform types as such:
-
-```bash
-php artisan typescript:transform
-```
-
-Since we haven't configured TypeScript transformer yet, this command won't do anything. Let's do that now.
+After you've installed the package, please continue reading the next section to learn how to configure TypeScript
+transformer.
 
 ## Running TypeScript Transformer for the first time
 
@@ -167,9 +158,13 @@ By default, the package comes with a few transformers:
 
 - `EnumTransformer`: Transforms PHP enums to TypeScript enums
 - `ClassTransformer`: Transforms PHP classes with its properties to TypeScript types (abstract, read on for more info)
-- `AttributedClassTransformer`: A special version of the `ClassTransformer` that only transforms classes with
-  the `#[TypeScript]` attribute
-- `LaravelClassTransformer`: A special version of the `ClassTransformer` with some goodies for Laravel users
+- `AttributedClassTransformer`: A special version of the `ClassTransformer` that only transforms classes with the
+  `#[TypeScript]` attribute
+- `InterfaceTransformer`: Transforms PHP interfaces to TypeScript interfaces
+
+If you're using our Laravel package, you also get access to:
+
+- `LaravelAttributedClassTransformer`: A special version of the `ClassTransformer` with some goodies for Laravel users
 
 You're free to mix and match these transformers to your needs, or even create your own transformers.
 
@@ -218,13 +213,13 @@ declare namespace App.Enums {
 You can configure this writer as such:
 
 ```php
-$config->writeTypes(new NamespaceWriter()); 
+$config->writer(new NamespaceWriter()); 
 ```
 
 The directory where the types should be written to needs to be configured as well:
 
 ```php
-$config->outputDirectory(__DIR__.'/types');
+$config->outputDirectory(__DIR__.'/generated');
 ```
 
 If you want a file per namespace, then you can use the `ModuleWriter`, it will write a structure like this:
@@ -251,8 +246,18 @@ $config->writeTypes(new ModuleWriter());
 ```
 
 That's it! You're now ready to transform your PHP classes to TypeScript types. If you've configured
-the `EnumTransformer` then, every enum should be transformed to TypeScript. When using the `AttributedClassTransformer`,
-be sure to add the `#[TypeScript]` attribute to classes you want transformed.
+the `EnumTransformer` then running following command:
+
+```
+// on Symphony
+php bin/console typescript:transform
+
+// on Laravel
+php artisan typescript:transform 
+```
+
+Should transform every enum into TypeScript. When using the `AttributedClassTransformer`, be sure to add the
+`#[TypeScript]` attribute to classes you want transformed.
 
 ### Special attributes
 
@@ -301,6 +306,8 @@ declare namespace Data.Users {
     };
 }
 ```
+
+By default, the location is based on the namespace of the PHP class.
 
 It is possible to completely remove a class from the TypeScript output by using the `#[Hidden]` attribute:
 
@@ -519,7 +526,7 @@ class Types
 }
 ```
 
-Also, this attribute can be used to type an object, but this time the types can be PHP types:
+This attribute also can be used to type an object, but this time the types can be PHP types:
 
 ```php
 class Types 
@@ -534,7 +541,7 @@ class Types
 
 ## Replacing common types
 
-Some PHP classes should be transformed into a TypeScript object, an example of this is the `DateTime` class. When you
+Some PHP classes should be transformed into something atypical, an example of this is the `DateTime` class. When you
 send such an object to the front it will be represented by a string rather than an object. TypeScript transformer allows
 you to replace these kinds types with an appropriate TypeScript type.
 
@@ -634,7 +641,7 @@ TypeScript type. A transformer implements the `Transformer` interface:
 ```php
 interface Transformer
 {
-    public function transform(ReflectionClass $reflectionClass, TransformationContext $context): Transformed|Untransformable;
+    public function transform(PhpClassNode $phpClassNode, TransformationContext $context): Transformed|Untransformable;
 }
 ```
 
@@ -661,7 +668,7 @@ use Spatie\TypeScriptTransformer\References\ClassStringReference;
 new Transformed(
     // The TypeScript node representing the transformed class
     typeScriptNode: $typeScriptNode,
-    // A unique name for the transformed class 
+    // A unique name for the transformed class for internal package use
     reference: new ClassStringReference($reflectionClass->getName()),
     // A location where the class should be written to
     // By default, this is the namespace of the class and the $nameSpaceSegments from the TransformationContext can be used
@@ -693,7 +700,7 @@ use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
 
 class MyTransformer extends ClassTransformer
 {
-    protected function shouldTransform(ReflectionClass $reflection): bool
+    protected function shouldTransform(PhpClassNode $phpClassNode): bool
     {
         return $reflection->implementsInterface(\Spatie\LaravelData\Data::class);
     }
@@ -710,9 +717,9 @@ By default, all public non-static properties of a class are transformed, but you
 to change this:
 
 ```php
-protected function getProperties(ReflectionClass $reflection): array
+protected function getProperties(PhpClassNode $phpClassNode): array
 {
-    return $reflection->getProperties(ReflectionProperty::IS_PUBLIC|ReflectionProperty::IS_PROTECTED);
+    return $phpClassNode->getProperties(ReflectionProperty::IS_PUBLIC|ReflectionProperty::IS_PROTECTED);
 }
 ```
 
@@ -722,12 +729,12 @@ It is possible to make a property optional in TypeScript by overwriting the `isP
 
 ```php
 protected function isPropertyOptional(
-    ReflectionProperty $reflectionProperty,
-    ReflectionClass $reflectionClass,
+    PhpPropertyNode $phpPropertyNode,
+    PhpClassNode $phpClassNode,
     TypeScriptNode $type,
     TransformationContext $context,
 ): bool {
-    return str_starts_with($reflectionProperty->getName(), '_');
+    return str_starts_with($phpPropertyNode->getName(), '_');
 }
 ```
 
@@ -739,11 +746,11 @@ You can make a property readonly by overwriting the `isPropertyReadonly` method:
 
 ```php
 protected function isPropertyReadonly(
-    ReflectionProperty $reflectionProperty,
-    ReflectionClass $reflectionClass,
+    PhpPropertyNode $phpPropertyNode,
+    PhpClassNode $phpClassNode,
     TypeScriptNode $type,
 ): bool {
-   return str_ends_with($reflectionProperty->getName(), 'Read');
+   return str_ends_with($phpPropertyNode->getName(), 'Read');
 }
 ```
 
@@ -755,11 +762,11 @@ It is possible to completely hide a property from the TypeScript object by overw
 
 ```php
 protected function isPropertyHidden(
-    ReflectionProperty $reflectionProperty,
-    ReflectionClass $reflectionClass,
+    PhpPropertyNode $phpPropertyNode,
+    PhpClassNode $phpClassNode,
     TypeScriptProperty $property,
 ): bool {
-    return count($reflectionProperty->getAttributes(Hidden::class)) > 0;
+    return count($phpPropertyNode->getAttributes(Hidden::class)) > 0;
 }
 ```
 
@@ -777,7 +784,7 @@ use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPrope
 class RemoveNullProcessor implements ClassPropertyProcessor
 {
     public function execute(
-        ReflectionProperty $reflection,
+        PhpPropertyNode $phpPropertyNode,
         ?TypeNode $annotation,
         TypeScriptProperty $property
     ): ?TypeScriptProperty {
@@ -809,7 +816,7 @@ A class property processor can also be used to remove properties from the TypeSc
 class RemoveAllStrings implements ClassPropertyProcessor
 {
     public function execute(
-        ReflectionProperty $reflection,
+        PhpPropertyNode $phpPropertyNode,
         ?TypeNode $annotation,
         TypeScriptProperty $property
     ): ?TypeScriptProperty {
@@ -825,8 +832,8 @@ class RemoveAllStrings implements ClassPropertyProcessor
 ## Creating a TransformedProvider
 
 Until now we've only taken a look at transforming PHP classes to TypeScript, but what if you want to transform something
-else? This is where the `TransformedProvider` comes in, it is a class that provides TypeScript types and other structures. 
-The transformers we've seen before are actually bundled in a default `TransformerProvider` provided by the package.
+else? This is where the `TransformedProvider` comes into play, it is a class that provides TypeScript types and other
+structures. The transformers we've seen before are actually bundled in a default `TransformerProvider` provided by the package.
 
 A `TransformedProvider` implements the `TransformedProvider` interface:
 
@@ -838,24 +845,26 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 interface TransformedProvider
 {
+    /**
+     * @return array<Transformed>
+     */
     public function provide(
         TypeScriptTransformerConfig $config,
-        TransformedCollection $types
-    ): void;
+    ): array;
 }
 ```
 
-The `provide` method is called when the TypeScript transformer is executed, it should add `Transformed` objects to the
-collection provided. We could for example add a generic type which transforms Laravel collections:
+The `provide` method is called when the TypeScript transformer is executed, it should return `Transformed` objects. 
+
+We could for example add a generic type which transforms Laravel collections:
 
 ```php
 class AddLaravelCollectionProvider implements TransformedProvider
 {
     public function provide(
         TypeScriptTransformerConfig $config,
-        TransformedCollection $types
-    ): void {
-        $types->add(new Transformed(
+    ): array {
+        $type = new Transformed(
             typeScriptNode: new TypeScriptAlias(
                 new TypeScriptGeneric(
                     new TypeScriptIdentifier('Collection'),
@@ -869,6 +878,8 @@ class AddLaravelCollectionProvider implements TransformedProvider
             reference: new ClassStringReference(Collection::class),
             location: ['Illuminate', 'Support']
         ));
+        
+        return [$type];
     }
 }
 ```
@@ -876,7 +887,7 @@ class AddLaravelCollectionProvider implements TransformedProvider
 When we register the provider as such in the configuration:
 
 ```php
-$config->addProvider(new AddLaravelCollectionProvider());
+$config->provider(new AddLaravelCollectionProvider());
 ```
 
 Our transformed TypeScript will have the following type:
@@ -904,6 +915,14 @@ export type Data = {
     collection: Illuminate.Support.Collection<string>;
 }
 ```
+
+### Logging in providers
+
+TODO
+
+### Standalone writing providers
+
+TODO
 
 ## Referencing types
 
@@ -1009,12 +1028,6 @@ interface Formatter
 ```
 
 The `$files` array contains the TypeScript files that need to be formatted, you can format them in any way you like.
-
-## Laravel
-
-### Getting routes as TypeScript
-
-## Watching changes and live updating TypeScript
 
 ## Advanced concepts
 
@@ -1205,13 +1218,14 @@ in between some of these steps.
 
 The steps look as following:
 
-1. Running of the TransformedProviders creating a collection of Transformed types
-2. Possible hooking point: `providedVisitorHook`
-3. Connecting references between Transformed types
-4. Possible hooking point: `connectedVisitorHook`
-5. Create a collection of WriteableFiles
-6. Write those files to disk
-7. Format the files
+1. Running of the TransformedProviders creating a collection of Transformed objects
+2. Running other providers to add extra Transformed objects
+3. Possible hooking point: `providedVisitorHook`
+4. Connecting references between Transformed objects
+5. Possible hooking point: `connectedVisitorHook`
+6. Create a collection of WriteableFiles
+7. Write those files to disk
+8. Format the files
 
 The two hooking points below can be used to run a visitor on the collection of Transformed types:
 
@@ -1249,10 +1263,12 @@ $config->connectedVisitorHook(
 
 ### Building your own Writer
 
+TODO
+
 Writers are responsible for writing out the TypeScript types, the package comes with three writers:
 
-- `NamespaceWriter`: Writes all types to a single TypeScript file with namespaces
-- `ModuleWriter`: Writes all types to a file per namespace
+- `GlobalNamespaceWriter`: Writes all types to a single TypeScript file which exports the types to the global namespace based upon the location
+- `ModuleWriter`: Writes all types to a file per location 
 - `FlatWriter`: Writes all types to a single TypeScript file without namespaces
 
 It is possible to create your own writer by implementing the `Writer` interface:
@@ -1262,16 +1278,24 @@ use Spatie\TypeScriptTransformer\Support\WriteableFile;
 
 interface Writer
 {
-    /** @return array<WriteableFile> */
-    public function write(
-        TransformedCollection $collection,
-        ReferenceMap $referenceMap,
-    ): void;
+/**
+     * @param array<Transformed> $transformed
+     *
+     * @return array<WriteableFile>
+     */
+    public function output(
+        array $transformed,
+        TransformedCollection $transformedCollection,
+    ): array;
+
+    public function resolveReference(Transformed $transformed): ModuleImportResolvedReference|GlobalNamespaceResolvedReference;
 }
 ```
 
-In the end the `write` method should return an array of `WriteableFile` objects, these objects contain the TypeScript
+In the end the `output` method should return an array of `WriteableFile` objects, these objects contain the TypeScript
 code and the path relative to the output directory where the file should be stored.
+
+As input you'll might be receiving two 
 
 In the writer you should loop over each `Transformed` object in the collection, decide in which file it should be stored
 and transform the TypeScript node to a string:
@@ -1288,6 +1312,22 @@ context.
 
 The `WritingContext` consists of a Closure returning a string referencing other TypeScript types. We recommend
 you to take a look at the `FlatWriter` to see how this is implemented.
+
+## Watching changes and live updating TypeScript
+
+TODO
+
+### Letting a provider hook into watch events
+
+TODO
+
+## The runner and its cycles
+
+TODO
+
+### Loggers
+
+TODO
 
 ## Testing
 

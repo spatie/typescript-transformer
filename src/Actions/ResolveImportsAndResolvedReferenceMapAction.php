@@ -69,6 +69,10 @@ class ResolveImportsAndResolvedReferenceMapAction
                     continue;
                 }
 
+                if ($referenced->export === false) {
+                    continue;
+                }
+
                 $relativePath = $this->resolveRelativePathAction->execute(
                     $currentPath,
                     $resolvedReference->path

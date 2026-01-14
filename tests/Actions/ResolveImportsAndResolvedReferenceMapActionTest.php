@@ -316,3 +316,92 @@ it('will add global namespace references to the reference map but not import the
 
     expect($imports->getImports())->toBeEmpty();
 });
+
+it('will not import a type that is not exported', function () {
+    $transformedCollection = new TransformedCollection([
+        $nonExportedReference = TransformedFactory::alias(
+            name: 'NonExported',
+            typeScriptNode: new TypeScriptString(),
+            location: ['nested'],
+            export: false,
+            writer: $this->writer
+        )->build(),
+    ]);
+
+    [$imports, $referenceMap] = $this->action->execute(
+        'index.ts',
+        [
+            TransformedFactory::alias(
+                name: 'LocalType',
+                typeScriptNode: new TypeScriptString(),
+                references: [$nonExportedReference],
+                writer: $this->writer
+            )->build(),
+        ],
+        $transformedCollection
+    );
+
+    expect($referenceMap)->toBeEmpty();
+    expect($imports->getImports())->toBeEmpty();
+});
+
+it('will still resolve non-exported types within the same module', function () {
+    $transformedCollection = new TransformedCollection([
+        $nonExportedReference = TransformedFactory::alias(
+            name: 'NonExported',
+            typeScriptNode: new TypeScriptString(),
+            export: false,
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'LocalType',
+            typeScriptNode: new TypeScriptString(),
+            references: [$nonExportedReference],
+            writer: $this->writer
+        )->build(),
+    ]);
+
+    [$imports, $referenceMap] = $this->action->execute(
+        'index.ts',
+        $transformedCollection->all(),
+        $transformedCollection
+    );
+
+    expect($referenceMap)->toEqual([
+        $nonExportedReference->reference->getKey() => 'NonExported',
+    ]);
+    expect($imports->getImports())->toBeEmpty();
+});
+
+it('will still resolve non-exported types from a global namespace writer', function () {
+    $globalWriter = new GlobalNamespaceWriter();
+
+    $transformedCollection = new TransformedCollection([
+        $nonExportedGlobalReference = TransformedFactory::alias(
+            name: 'NonExportedGlobal',
+            typeScriptNode: new TypeScriptString(),
+            location: ['App', 'Models'],
+            export: false,
+            writer: $globalWriter
+        )->build(),
+    ]);
+
+    [$imports, $referenceMap] = $this->action->execute(
+        'index.ts',
+        [
+            TransformedFactory::alias(
+                name: 'LocalType',
+                typeScriptNode: new TypeScriptString(),
+                references: [$nonExportedGlobalReference],
+                writer: $this->writer
+            )->build(),
+        ],
+        $transformedCollection
+    );
+
+    // Global namespace types are always accessible (ambient declarations)
+    expect($referenceMap)->toEqual([
+        $nonExportedGlobalReference->reference->getKey() => 'App.Models.NonExportedGlobal',
+    ]);
+    expect($imports->getImports())->toBeEmpty();
+});

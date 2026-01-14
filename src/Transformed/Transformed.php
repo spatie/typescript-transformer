@@ -181,7 +181,6 @@ class Transformed
             return false;
         }
 
-        // TODO: this comparison might need to be more complex
         if ($this->typeScriptNode != $other->typeScriptNode) {
             return false;
         }

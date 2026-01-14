@@ -3,8 +3,8 @@
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use Spatie\TypeScriptTransformer\Actions\RunProvidersAction;
-use Spatie\TypeScriptTransformer\Support\Console\Logger;
-use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
+use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
+use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Tests\Support\ArrayLogger;
 use Spatie\TypeScriptTransformer\Tests\Support\InlineTransformedProvider;

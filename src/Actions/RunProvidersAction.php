@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Collections\WritersCollection;
-use Spatie\TypeScriptTransformer\Support\Console\Logger;
+use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 use Spatie\TypeScriptTransformer\TransformedProviders\LoggingTransformedProvider;
 use Spatie\TypeScriptTransformer\TransformedProviders\StandaloneWritingTransformedProvider;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;

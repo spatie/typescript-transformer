@@ -1,8 +1,8 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Support\Console;
+namespace Spatie\TypeScriptTransformer\Support\Loggers;
 
-class ConsoleLogger implements Logger
+class ArrayLogger implements Logger
 {
     /** @var array<array{message: string, title: string|null, level: "error"|"info"|"warning"}> */
     public array $messages = [];

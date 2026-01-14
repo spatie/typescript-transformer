@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Support;
 
-use Spatie\TypeScriptTransformer\Support\Console\Logger;
+use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 
 class ArrayLogger implements Logger
 {

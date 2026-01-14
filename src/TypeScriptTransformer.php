@@ -14,9 +14,9 @@ use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Collections\WritersCollection;
 use Spatie\TypeScriptTransformer\Runners\Runner;
-use Spatie\TypeScriptTransformer\Support\Console\Logger;
-use Spatie\TypeScriptTransformer\Support\Console\NullLogger;
 use Spatie\TypeScriptTransformer\Support\LoadPhpClassNodeAction;
+use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
+use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 
 class TypeScriptTransformer
 {
@@ -69,20 +69,12 @@ class TypeScriptTransformer
         /**
          * TODO:
          * - Test Laracvel specific stuff
-         * - Split off data specific code and test
          * - Add support for watching files -> ok, maybe add docs and some tests
-         * - Further write docs + check them -> only Laravel specific stuff
-         * - Further build out the double process watching infrastructure
+         * - Write some text arround refactoring in IDE and watcher, that IDE's useally take some time to write eveyrthing out so it can take up to 10 seconds before the watcher kicks in
+         * - Further write docs + check them -> check TODO's
          * - Make sure we wire up WatchingTypeProvider::handleWatchEvent
          * - Hookup SummarizedWatchEvent
-         * - Test the config factory
-         * - Add docs for the runner, check that we don't mention the typescript:watch command in the docs
          * - Check old Laravel tests if we missed something
-         * - Check in Flare whether everything is working as expected -> PR ready, needs fixing TS
-         * - Fix todos
-         * - Write some text arround refactoring in IDE and watcher, that IDE's useally take some time to write eveyrthing out so it can take up to 10 seconds before the watcher kicks in
-         * - Make sure nullables can be exported as optional: https://github.com/spatie/typescript-transformer/pull/88/files
-         * - In order to write Laravel routes we require a .ts file and not a .d.ts. file this is actually not that complicated and since we now what to write to files we can mark nodes with runnable code with a interface. If a file contains such a node it will be written to a .ts file instead of a .d.ts file. This way we can also write the Laravel routes to a .ts file instead of a .d.ts file.
          * - Release
          */
 

@@ -2,11 +2,11 @@
 
 // Example usage of ProcessRunner with real-time logging
 
-use Spatie\TypeScriptTransformer\Support\Console\ConsoleLogger;
+use Spatie\TypeScriptTransformer\Support\Loggers\ArrayLogger;
 use Spatie\TypeScriptTransformer\Support\ProcessRunner;
 
 // Create a logger (you can use any logger implementation)
-$logger = new ConsoleLogger();
+$logger = new ArrayLogger();
 
 // Create process runner
 $processRunner = new ProcessRunner($logger);
