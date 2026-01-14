@@ -4,8 +4,21 @@ namespace Spatie\TypeScriptTransformer\Actions;
 
 class ResolveRelativePathAction
 {
-    public function execute(array $from, array $to): ?string
+    public function execute(string $from, string $to): ?string
     {
+        $from = $this->toSegments($from);
+        $to = $this->toSegments($to);
+
+        if ($from === $to) {
+            return null;
+        }
+
+        array_pop($from);
+
+        if ($to[array_key_last($to)] === 'index') {
+            array_pop($to);
+        }
+
         if ($from === $to) {
             return null;
         }
@@ -26,6 +39,10 @@ class ResolveRelativePathAction
             $relativeSegments[] = '..';
         }
 
+        if (count($relativeSegments) === 0 && $commonDepth < count($to)) {
+            $relativeSegments[] = '.';
+        }
+
         $hasSuffixedSegments = false;
 
         for ($i = $commonDepth; $i < count($to); $i++) {
@@ -37,5 +54,17 @@ class ResolveRelativePathAction
         $relativePath = implode('/', $relativeSegments);
 
         return $hasSuffixedSegments ? $relativePath : $relativePath.'/';
+    }
+
+    /** @return array<int, string> */
+    protected function toSegments(string $path): array
+    {
+        $segments = explode(DIRECTORY_SEPARATOR, $path);
+
+        $lastIndex = array_key_last($segments);
+
+        $segments[$lastIndex] = pathinfo($segments[$lastIndex], PATHINFO_FILENAME);
+
+        return $segments;
     }
 }

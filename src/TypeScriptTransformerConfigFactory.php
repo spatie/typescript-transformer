@@ -17,7 +17,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
 use Spatie\TypeScriptTransformer\Visitor\Common\ReplaceTypesVisitorClosure;
 use Spatie\TypeScriptTransformer\Visitor\VisitorClosure;
 use Spatie\TypeScriptTransformer\Visitor\VisitorClosureType;
-use Spatie\TypeScriptTransformer\Writers\NamespaceWriter;
+use Spatie\TypeScriptTransformer\Writers\GlobalNamespaceWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 use Throwable;
 
@@ -236,7 +236,7 @@ class TypeScriptTransformerConfigFactory
             }
         }
 
-        $writer = $this->writer ?? new NamespaceWriter(__DIR__.'/js/typed.ts');
+        $writer = $this->writer ?? new GlobalNamespaceWriter(__DIR__.'/js/typed.ts');
 
         if (is_string($writer)) {
             $writer = new $writer();

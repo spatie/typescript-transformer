@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Data;
 
-class GlobalNamespaceReferenced
+class GlobalNamespaceResolvedReference
 {
     public function __construct(
         public string $qualifiedName,

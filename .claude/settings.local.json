@@ -6,7 +6,8 @@
       "Read(//Users/ruben/Spatie/laravel-typescript-transformer/src/**)",
       "Read(//Users/ruben/Spatie/laravel-typescript-transformer/**)",
       "Bash(composer analyse:*)",
-      "Bash(echo \"Exit code: $?\")"
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(./vendor/bin/pest:*)"
     ],
     "deny": []
   }

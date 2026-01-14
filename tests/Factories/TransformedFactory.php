@@ -9,6 +9,7 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\Writers\Writer;
 
 class TransformedFactory
 {
@@ -23,6 +24,7 @@ class TransformedFactory
         public ?bool $export = null,
         public ?array $references = null,
         public ?array $referencedBy = null,
+        public ?Writer $writer = null,
     ) {
     }
 
@@ -34,6 +36,7 @@ class TransformedFactory
         bool $export = true,
         ?array $references = null,
         ?array $referencedBy = null,
+        ?Writer $writer = null,
     ): TransformedFactory {
         $reference = $reference ?? new CustomReference(
             'factory_alias',
@@ -46,7 +49,8 @@ class TransformedFactory
             location: $location,
             export: $export,
             references: $references,
-            referencedBy: $referencedBy
+            referencedBy: $referencedBy,
+            writer: $writer
         );
     }
 
@@ -69,6 +73,10 @@ class TransformedFactory
 
         foreach ($this->referencedBy ?? [] as $reference) {
             $transformed->referencedBy[] = $reference->reference->getKey();
+        }
+
+        if ($this->writer !== null) {
+            $transformed->setWriter($this->writer);
         }
 
         return $transformed;

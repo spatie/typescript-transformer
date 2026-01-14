@@ -2,11 +2,11 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
-use Spatie\TypeScriptTransformer\Actions\CleanupReferencesAction;
+use Spatie\TypeScriptTransformer\Actions\ResolveImportsAndResolvedReferenceMapAction;
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Data\GlobalNamespaceReferenced;
-use Spatie\TypeScriptTransformer\Data\ImportedReferenced;
+use Spatie\TypeScriptTransformer\Data\GlobalNamespaceResolvedReference;
+use Spatie\TypeScriptTransformer\Data\ModuleImportResolvedReference;
 use Spatie\TypeScriptTransformer\Support\Location;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
@@ -15,15 +15,16 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 class ModuleWriter implements Writer
 {
     public function __construct(
+        protected ?string $path = 'types',
         protected string $moduleFilename = 'index.ts',
         protected SplitTransformedPerLocationAction $transformedPerLocationAction = new SplitTransformedPerLocationAction(),
-        protected CleanupReferencesAction $cleanupReferencesAction = new CleanupReferencesAction(),
+        protected ResolveImportsAndResolvedReferenceMapAction $cleanupReferencesAction = new ResolveImportsAndResolvedReferenceMapAction(),
     ) {
     }
 
     public function output(
         array $transformed,
-        TransformedCollection $collection,
+        TransformedCollection $transformedCollection,
     ): array {
         $locations = $this->transformedPerLocationAction->execute(
             $transformed
@@ -32,7 +33,7 @@ class ModuleWriter implements Writer
         $writtenFiles = [];
 
         foreach ($locations as $location) {
-            $writtenFiles[] = $this->writeLocation($location, $collection);
+            $writtenFiles[] = $this->writeLocation($location, $transformedCollection);
         }
 
         return $writtenFiles;
@@ -40,20 +41,19 @@ class ModuleWriter implements Writer
 
     protected function writeLocation(
         Location $location,
-        TransformedCollection $collection,
+        TransformedCollection $transformedCollection,
     ): WriteableFile {
         $filePath = $this->resolveRelativePath($location->segments);
 
-        [$imports, $nameMap] = $this->cleanupReferencesAction->execute(
-            $this,
+        [$imports, $resolvedReferenceMap] = $this->cleanupReferencesAction->execute(
             $filePath,
             $location->transformed,
-            $collection
+            $transformedCollection
         );
 
         $output = '';
 
-        $writingContext = new WritingContext($nameMap);
+        $writingContext = new WritingContext($resolvedReferenceMap);
 
         foreach ($imports->getTypeScriptNodes() as $import) {
             $output .= $import->write($writingContext).PHP_EOL;
@@ -66,19 +66,22 @@ class ModuleWriter implements Writer
         return new WriteableFile($filePath, $output);
     }
 
-    /** @param  array<string> $location */
-    protected function resolveRelativePath(
-        array $location,
-    ): string {
-        if (count($location) === 0) {
+    /** @param array<string> $location */
+    protected function resolveRelativePath(array $location): string
+    {
+        $segments = $this->path !== null
+            ? [$this->path, ...$location]
+            : $location;
+
+        if (count($segments) === 0) {
             return $this->moduleFilename;
         }
 
-        return implode(DIRECTORY_SEPARATOR, $location).DIRECTORY_SEPARATOR.$this->moduleFilename;
+        return implode(DIRECTORY_SEPARATOR, $segments).DIRECTORY_SEPARATOR.$this->moduleFilename;
     }
-    public function resolveReferenced(Transformed $transformed): ImportedReferenced|GlobalNamespaceReferenced
+    public function resolveReference(Transformed $transformed): ModuleImportResolvedReference|GlobalNamespaceResolvedReference
     {
-        return new ImportedReferenced(
+        return new ModuleImportResolvedReference(
             $transformed->getName(),
             $this->resolveRelativePath($transformed->location)
         );

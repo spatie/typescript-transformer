@@ -2,11 +2,11 @@
 
 namespace Spatie\TypeScriptTransformer\Data;
 
-class ImportedReferenced
+class ModuleImportResolvedReference
 {
     public function __construct(
         public string $name,
-        public string $outputPath,
+        public string $path,
     ) {
     }
 }

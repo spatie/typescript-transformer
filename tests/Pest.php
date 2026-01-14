@@ -25,6 +25,10 @@ function classesToTypeScript(
 
     $writer = new MemoryWriter();
 
+    foreach ($collection as $transformed) {
+        $transformed->setWriter($writer);
+    }
+
     ($writer)->output($collection->all(), $collection);
 
     return $writer->getOutput();

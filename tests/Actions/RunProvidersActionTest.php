@@ -14,7 +14,7 @@ use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
-use Spatie\TypeScriptTransformer\Writers\FlatWriter;
+use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
 use Spatie\TypeScriptTransformer\Writers\ModuleWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
@@ -82,7 +82,7 @@ it('sets writers correctly on transformed objects', function () {
     $standaloneProvider = new class () implements TransformedProvider, StandaloneWritingTransformedProvider {
         public function getWriter(): Writer
         {
-            return new FlatWriter('standalone.ts');
+            return new FlatModuleWriter('standalone.ts');
         }
 
         public function provide(TypeScriptTransformerConfig $config): array
@@ -111,5 +111,5 @@ it('sets writers correctly on transformed objects', function () {
     expect($typesArray[0]->getWriter())->toBeInstanceOf(ModuleWriter::class);
 
     expect($typesArray[1]->getName())->toBe('Standalone');
-    expect($typesArray[1]->getWriter())->toBeInstanceOf(FlatWriter::class);
+    expect($typesArray[1]->getWriter())->toBeInstanceOf(FlatModuleWriter::class);
 });

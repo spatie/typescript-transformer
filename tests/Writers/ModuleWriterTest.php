@@ -10,19 +10,44 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
+use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
+use Spatie\TypeScriptTransformer\Writers\GlobalNamespaceWriter;
 use Spatie\TypeScriptTransformer\Writers\ModuleWriter;
 
 beforeEach(function () {
-    $this->writer = new ModuleWriter();
+    $this->writer = new ModuleWriter(path: null);
 });
 
 it('can write modules', function () {
     $transformedCollection = new TransformedCollection([
-        TransformedFactory::alias('RootType', new TypeScriptString())->build(),
-        TransformedFactory::alias('RootType2', new TypeScriptString())->build(),
-        TransformedFactory::alias('Level1Type', new TypeScriptString(), location: ['level1'])->build(),
-        TransformedFactory::alias('Level1Type2', new TypeScriptString(), location: ['level1'])->build(),
-        TransformedFactory::alias('Level2Type', new TypeScriptString(), location: ['level1', 'level2'])->build(),
+        TransformedFactory::alias(
+            name: 'RootType',
+            typeScriptNode: new TypeScriptString(),
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'RootType2',
+            typeScriptNode: new TypeScriptString(),
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'Level1Type',
+            typeScriptNode: new TypeScriptString(),
+            location: ['level1'],
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'Level1Type2',
+            typeScriptNode: new TypeScriptString(),
+            location: ['level1'],
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'Level2Type',
+            typeScriptNode: new TypeScriptString(),
+            location: ['level1', 'level2'],
+            writer: $this->writer
+        )->build(),
     ]);
 
     $files = $this->writer->output(
@@ -48,10 +73,19 @@ it('can write modules', function () {
 });
 
 it('can customize the module filename', function () {
-    $rootTransformed = TransformedFactory::alias('Type', new TypeScriptString())->build();
-    $nestedTransformed = TransformedFactory::alias('Type', new TypeScriptString(), location: ['nested'])->build();
+    $customWriter = new ModuleWriter(path: null, moduleFilename: 'custom.ts');
 
-    $customWriter = new ModuleWriter('custom.ts');
+    $rootTransformed = TransformedFactory::alias(
+        name: 'Type',
+        typeScriptNode: new TypeScriptString(),
+        writer: $customWriter
+    )->build();
+    $nestedTransformed = TransformedFactory::alias(
+        name: 'Type',
+        typeScriptNode: new TypeScriptString(),
+        location: ['nested'],
+        writer: $customWriter
+    )->build();
 
     $transformedCollection = new TransformedCollection([$rootTransformed, $nestedTransformed]);
 
@@ -65,8 +99,17 @@ it('can reference other types within the module', function () {
     $reference = new CustomReference('test', 'A');
 
     $transformedCollection = new TransformedCollection([
-        TransformedFactory::alias('A', new TypeScriptString(), reference: $reference)->build(),
-        TransformedFactory::alias('B', new TypeReference($reference))->build(),
+        TransformedFactory::alias(
+            name: 'A',
+            typeScriptNode: new TypeScriptString(),
+            reference: $reference,
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'B',
+            typeScriptNode: new TypeReference($reference),
+            writer: $this->writer
+        )->build(),
     ]);
 
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
@@ -90,12 +133,28 @@ it('can reference other types within a nested module', function () {
     $referenceB = new CustomReference('test', 'B');
 
     $transformedCollection = new TransformedCollection([
-        TransformedFactory::alias('A', new TypeScriptString(), reference: $referenceA, location: ['nested'])->build(),
-        TransformedFactory::alias('B', new TypeScriptString(), reference: $referenceB, location: ['nested', 'subNested'])->build(),
-        TransformedFactory::alias('C', new TypeScriptObject([
-            new TypeScriptProperty('a', new TypeReference($referenceA)),
-            new TypeScriptProperty('b', new TypeReference($referenceB)),
-        ]))->build(),
+        TransformedFactory::alias(
+            name: 'A',
+            typeScriptNode: new TypeScriptString(),
+            reference: $referenceA,
+            location: ['nested'],
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'B',
+            typeScriptNode: new TypeScriptString(),
+            reference: $referenceB,
+            location: ['nested', 'subNested'],
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'C',
+            typeScriptNode: new TypeScriptObject([
+                new TypeScriptProperty('a', new TypeReference($referenceA)),
+                new TypeScriptProperty('b', new TypeReference($referenceB)),
+            ]),
+            writer: $this->writer
+        )->build(),
     ]);
 
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
@@ -113,9 +172,8 @@ it('can reference other types within a nested module', function () {
         ->path->toBe('index.ts')
         ->contents->toBe(
             <<<'TypeScript'
-import { A } from 'nested';
-import { B } from 'nested/subNested';
-
+import { A } from './nested';
+import { B } from './nested/subNested';
 export type C = {
 a: A
 b: B
@@ -138,12 +196,28 @@ it('can combine imports from nested modules', function () {
     $referenceB = new CustomReference('test', 'B');
 
     $transformedCollection = new TransformedCollection([
-        TransformedFactory::alias('A', new TypeScriptString(), reference: $referenceA, location: ['nested'])->build(),
-        TransformedFactory::alias('B', new TypeScriptString(), reference: $referenceB, location: ['nested'])->build(),
-        TransformedFactory::alias('C', new TypeScriptObject([
-            new TypeScriptProperty('a', new TypeReference($referenceA)),
-            new TypeScriptProperty('b', new TypeReference($referenceB)),
-        ]))->build(),
+        TransformedFactory::alias(
+            name: 'A',
+            typeScriptNode: new TypeScriptString(),
+            reference: $referenceA,
+            location: ['nested'],
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'B',
+            typeScriptNode: new TypeScriptString(),
+            reference: $referenceB,
+            location: ['nested'],
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'C',
+            typeScriptNode: new TypeScriptObject([
+                new TypeScriptProperty('a', new TypeReference($referenceA)),
+                new TypeScriptProperty('b', new TypeReference($referenceB)),
+            ]),
+            writer: $this->writer
+        )->build(),
     ]);
 
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
@@ -161,8 +235,7 @@ it('can combine imports from nested modules', function () {
         ->path->toBe('index.ts')
         ->contents->toBe(
             <<<'TypeScript'
-import { A, B } from 'nested';
-
+import { A, B } from './nested';
 export type C = {
 a: A
 b: B
@@ -180,8 +253,18 @@ it('can import from root into a nested module', function () {
     $reference = new CustomReference('test', 'A');
 
     $transformedCollection = new TransformedCollection([
-        TransformedFactory::alias('A', new TypeScriptString(), reference: $reference)->build(),
-        TransformedFactory::alias('B', new TypeReference($reference), location: ['nested'])->build(),
+        TransformedFactory::alias(
+            name: 'A',
+            typeScriptNode: new TypeScriptString(),
+            reference: $reference,
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'B',
+            typeScriptNode: new TypeReference($reference),
+            location: ['nested'],
+            writer: $this->writer
+        )->build(),
     ]);
 
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
@@ -203,7 +286,6 @@ it('can import from root into a nested module', function () {
         ->path->toBe('nested/index.ts')
         ->contents->toBe(<<<'TypeScript'
 import { A } from '../';
-
 export type B = A;
 
 TypeScript);
@@ -213,8 +295,18 @@ it('can automatically alias imported types', function () {
     $reference = new CustomReference('test', 'A');
 
     $transformedCollection = new TransformedCollection([
-        TransformedFactory::alias('A', new TypeScriptString(), reference: $reference)->build(),
-        TransformedFactory::alias('A', new TypeReference($reference), location: ['nested'])->build(),
+        TransformedFactory::alias(
+            name: 'A',
+            typeScriptNode: new TypeScriptString(),
+            reference: $reference,
+            writer: $this->writer
+        )->build(),
+        TransformedFactory::alias(
+            name: 'A',
+            typeScriptNode: new TypeReference($reference),
+            location: ['nested'],
+            writer: $this->writer
+        )->build(),
     ]);
 
     (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
@@ -236,8 +328,125 @@ it('can automatically alias imported types', function () {
         ->path->toBe('nested/index.ts')
         ->contents->toBe(<<<'TypeScript'
 import { A as AImport } from '../';
-
 export type A = AImport;
 
 TypeScript);
+});
+
+it('can reference types from another module writer', function () {
+    $writerA = new ModuleWriter(path: null);
+    $writerB = new ModuleWriter(path: 'prefixed');
+
+    $transformedCollection = new TransformedCollection([
+        $referencedType = TransformedFactory::alias(
+            name: 'ReferencedType',
+            typeScriptNode: new TypeScriptString(),
+            location: ['models'],
+            writer: $writerA
+        )->build(),
+        $localType = TransformedFactory::alias(
+            name: 'LocalType',
+            typeScriptNode: new TypeScriptObject([
+                new TypeScriptProperty('referenced', new TypeReference($referencedType->reference)),
+            ]),
+            references: [$referencedType],
+            location: ['services'],
+            writer: $writerB
+        )->build(),
+    ]);
+
+    (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
+
+    $filesA = $writerA->output(
+        [$referencedType],
+        $transformedCollection,
+    );
+
+    expect($filesA)
+        ->toHaveCount(1)
+        ->each->toBeInstanceOf(WriteableFile::class);
+
+    expect($filesA[0])
+        ->path->toBe('models/index.ts')
+        ->contents->toEqual(
+            <<<TS
+export type ReferencedType = string;
+
+TS
+        );
+
+    $filesB = $writerB->output(
+        [$localType],
+        $transformedCollection,
+    );
+
+    expect($filesB)
+        ->toHaveCount(1)
+        ->each->toBeInstanceOf(WriteableFile::class);
+
+    expect($filesB[0])
+        ->path->toBe('prefixed/services/index.ts')
+        ->contents->toEqual(
+            <<<TS
+import { ReferencedType } from '../../models';
+export type LocalType = {
+referenced: ReferencedType
+};
+
+TS
+        );
+});
+
+it('can reference types from a flat module writer and global namespace writer', function () {
+    $moduleWriter = new ModuleWriter(path: null);
+    $flatWriter = new FlatModuleWriter('flat-types.ts');
+    $globalWriter = new GlobalNamespaceWriter('global-types.ts');
+
+    $transformedCollection = new TransformedCollection([
+        $flatType = TransformedFactory::alias(
+            name: 'FlatType',
+            typeScriptNode: new TypeScriptString(),
+            writer: $flatWriter
+        )->build(),
+        $globalType = TransformedFactory::alias(
+            name: 'GlobalType',
+            typeScriptNode: new TypeScriptString(),
+            location: ['App', 'Models'],
+            writer: $globalWriter
+        )->build(),
+        $moduleType = TransformedFactory::alias(
+            name: 'ModuleType',
+            typeScriptNode: new TypeScriptObject([
+                new TypeScriptProperty('flat', new TypeReference($flatType->reference)),
+                new TypeScriptProperty('global', new TypeReference($globalType->reference)),
+            ]),
+            references: [$flatType, $globalType],
+            location: ['services'],
+            writer: $moduleWriter
+        )->build(),
+    ]);
+
+    (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
+
+    $moduleFiles = $moduleWriter->output(
+        [$moduleType],
+        $transformedCollection,
+    );
+
+    expect($moduleFiles)
+        ->toHaveCount(1)
+        ->each->toBeInstanceOf(WriteableFile::class);
+
+    expect($moduleFiles[0])
+        ->path->toBe('services/index.ts')
+        ->contents->toEqual(
+            <<<TS
+import { FlatType } from '../flat-types';
+export type ModuleType = {
+flat: FlatType
+global: App.Models.GlobalType
+};
+
+TS
+        );
 });

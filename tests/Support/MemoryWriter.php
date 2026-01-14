@@ -3,11 +3,11 @@
 namespace Spatie\TypeScriptTransformer\Tests\Support;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Data\GlobalNamespaceReferenced;
-use Spatie\TypeScriptTransformer\Data\ImportedReferenced;
+use Spatie\TypeScriptTransformer\Data\GlobalNamespaceResolvedReference;
+use Spatie\TypeScriptTransformer\Data\ModuleImportResolvedReference;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
-use Spatie\TypeScriptTransformer\Writers\FlatWriter;
+use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
 class MemoryWriter implements Writer
@@ -17,10 +17,10 @@ class MemoryWriter implements Writer
 
     public static TransformedCollection $collection;
 
-    public function output(array $transformed, TransformedCollection $collection): array
+    public function output(array $transformed, TransformedCollection $transformedCollection): array
     {
         static::$transformed = $transformed;
-        static::$collection = $collection;
+        static::$collection = $transformedCollection;
 
         return [];
     }
@@ -36,16 +36,16 @@ class MemoryWriter implements Writer
 
     public function getOutput(): string
     {
-        $writer = new FlatWriter('test.ts');
+        $writer = new FlatModuleWriter('memory.ts');
 
         [$writeableFile] = $writer->output(static::$transformed, static::$collection);
 
         return $writeableFile->contents;
     }
 
-    public function resolveReferenced(Transformed $transformed): ImportedReferenced|GlobalNamespaceReferenced
+    public function resolveReference(Transformed $transformed): ModuleImportResolvedReference|GlobalNamespaceResolvedReference
     {
-        return new ImportedReferenced(
+        return new ModuleImportResolvedReference(
             $transformed->getName(),
             'memory.ts'
         );

@@ -7,9 +7,9 @@ use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
-use Spatie\TypeScriptTransformer\Writers\FlatWriter;
+use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
+use Spatie\TypeScriptTransformer\Writers\GlobalNamespaceWriter;
 use Spatie\TypeScriptTransformer\Writers\ModuleWriter;
-use Spatie\TypeScriptTransformer\Writers\NamespaceWriter;
 
 beforeEach(function () {
     $this->temporaryDirectory = TemporaryDirectory::make();
@@ -21,7 +21,7 @@ it('can handle the integration test with a flat file', function () {
         ->transformer(new AllClassTransformer())
         ->transformDirectories(__DIR__.'/Fakes/Integration')
         ->replaceType(DateTime::class, 'string')
-        ->writer(new FlatWriter($this->temporaryDirectory->path('flat.d.ts')));
+        ->writer(new FlatModuleWriter($this->temporaryDirectory->path('flat.d.ts')));
 
     TypeScriptTransformer::create($config)->execute();
 
@@ -34,7 +34,7 @@ it('can handle the integration test with a namespaced file', function () {
         ->transformer(new AllClassTransformer())
         ->transformDirectories(__DIR__.'/Fakes/Integration')
         ->replaceType(DateTime::class, 'string')
-        ->writer(new NamespaceWriter($this->temporaryDirectory->path('flat.d.ts')));
+        ->writer(new GlobalNamespaceWriter($this->temporaryDirectory->path('flat.d.ts')));
 
     TypeScriptTransformer::create($config)->execute();
 

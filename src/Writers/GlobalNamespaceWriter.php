@@ -2,58 +2,55 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
-use Spatie\TypeScriptTransformer\Actions\CleanupReferencesAction;
+use Spatie\TypeScriptTransformer\Actions\ResolveImportsAndResolvedReferenceMapAction;
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Data\GlobalNamespaceReferenced;
-use Spatie\TypeScriptTransformer\Data\ImportedReferenced;
+use Spatie\TypeScriptTransformer\Data\GlobalNamespaceResolvedReference;
+use Spatie\TypeScriptTransformer\Data\ModuleImportResolvedReference;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamespace;
 
-class NamespaceWriter implements Writer
+class GlobalNamespaceWriter implements Writer
 {
-    protected SplitTransformedPerLocationAction $splitTransformedPerLocationAction;
-
-    protected CleanupReferencesAction $cleanupReferencesAction;
-
-    public string $filename;
-
     public function __construct(
-        string $filename = 'types.d.ts',
+        protected string $path = 'types.d.ts',
+        protected SplitTransformedPerLocationAction $splitTransformedPerLocationAction = new SplitTransformedPerLocationAction(),
+        protected ResolveImportsAndResolvedReferenceMapAction $resolveImportsAndResolvedReferenceMapAction = new ResolveImportsAndResolvedReferenceMapAction(),
     ) {
-        $this->splitTransformedPerLocationAction = new SplitTransformedPerLocationAction();
-        $this->cleanupReferencesAction = new CleanupReferencesAction();
-
-        $this->filename = $this->ensureDeclarationFileExtension($filename);
+        $this->path = $this->ensureDeclarationFileExtension($path);
     }
 
-    protected function ensureDeclarationFileExtension(string $filename): string
+    protected function ensureDeclarationFileExtension(string $path): string
     {
-        $baseName = explode('.', $filename)[0];
+        $directory = pathinfo($path, PATHINFO_DIRNAME);
+        $filename = pathinfo($path, PATHINFO_FILENAME);
+
+        $baseName = $directory === '.'
+            ? $filename
+            : $directory.DIRECTORY_SEPARATOR.$filename;
 
         return "{$baseName}.d.ts";
     }
 
     public function output(
         array $transformed,
-        TransformedCollection $collection,
+        TransformedCollection $transformedCollection,
     ): array {
         $split = $this->splitTransformedPerLocationAction->execute(
             $transformed
         );
 
-        [$imports, $nameMap] = $this->cleanupReferencesAction->execute(
-            $this,
-            $this->filename,
+        [$imports, $resolvedReferenceMap] = $this->resolveImportsAndResolvedReferenceMapAction->execute(
+            $this->path,
             $transformed,
-            $collection
+            $transformedCollection
         );
 
         $output = '';
 
-        $writingContext = new WritingContext($nameMap);
+        $writingContext = new WritingContext($resolvedReferenceMap);
 
         foreach ($imports->getTypeScriptNodes() as $import) {
             $output .= $import->write($writingContext).PHP_EOL;
@@ -76,13 +73,13 @@ class NamespaceWriter implements Writer
             $output .= $namespace->write($writingContext).PHP_EOL;
         }
 
-        return [new WriteableFile($this->filename, $output)];
+        return [new WriteableFile($this->path, $output)];
     }
 
-    public function resolveReferenced(Transformed $transformed): ImportedReferenced|GlobalNamespaceReferenced
+    public function resolveReference(Transformed $transformed): ModuleImportResolvedReference|GlobalNamespaceResolvedReference
     {
         $parts = [...$transformed->location, $transformed->getName()];
 
-        return new GlobalNamespaceReferenced(implode('.', $parts));
+        return new GlobalNamespaceResolvedReference(implode('.', $parts));
     }
 }

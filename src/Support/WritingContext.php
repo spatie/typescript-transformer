@@ -5,10 +5,10 @@ namespace Spatie\TypeScriptTransformer\Support;
 class WritingContext
 {
     /**
-     * @param array<string, string> $nameMap Map of reference keys to resolved names
+     * @param array<string, string> $resolvedReferenceMap
      */
     public function __construct(
-        public array $nameMap,
+        public array $resolvedReferenceMap,
     ) {
     }
 }

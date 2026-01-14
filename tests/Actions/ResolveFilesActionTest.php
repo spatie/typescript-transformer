@@ -5,14 +5,14 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Collections\WritersCollection;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
-use Spatie\TypeScriptTransformer\Writers\FlatWriter;
+use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
 
 it('correctly divides transformed objects between writers', function () {
     $collection = new TransformedCollection();
 
-    $writerA = new FlatWriter('a.d.ts');
-    $writerB = new FlatWriter('b.d.ts');
-    $writerC = new FlatWriter('c.d.ts');
+    $writerA = new FlatModuleWriter('a.d.ts');
+    $writerB = new FlatModuleWriter('b.d.ts');
+    $writerC = new FlatModuleWriter('c.d.ts');
 
     $transformedA1 = transformSingle(new #[TypeScript] class () {
         public string $propertyA1;

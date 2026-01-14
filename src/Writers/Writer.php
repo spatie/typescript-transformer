@@ -3,8 +3,8 @@
 namespace Spatie\TypeScriptTransformer\Writers;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Data\GlobalNamespaceReferenced;
-use Spatie\TypeScriptTransformer\Data\ImportedReferenced;
+use Spatie\TypeScriptTransformer\Data\GlobalNamespaceResolvedReference;
+use Spatie\TypeScriptTransformer\Data\ModuleImportResolvedReference;
 use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
@@ -17,8 +17,8 @@ interface Writer
      */
     public function output(
         array $transformed,
-        TransformedCollection $collection,
+        TransformedCollection $transformedCollection,
     ): array;
 
-    public function resolveReferenced(Transformed $transformed): ImportedReferenced|GlobalNamespaceReferenced;
+    public function resolveReference(Transformed $transformed): ModuleImportResolvedReference|GlobalNamespaceResolvedReference;
 }
