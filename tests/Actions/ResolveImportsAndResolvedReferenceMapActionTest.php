@@ -71,7 +71,7 @@ it('will import a type from another module', function () {
     ]);
 
     [$imports, $referenceMap] = $this->action->execute(
-        'parent/level/index.ts',
+        implode(DIRECTORY_SEPARATOR, ['parent', 'level', 'index.ts']),
         [
             TransformedFactory::alias(
                 name: 'Type',

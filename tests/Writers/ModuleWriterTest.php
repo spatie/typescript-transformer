@@ -64,11 +64,11 @@ it('can write modules', function () {
         ->contents->toBe('export type RootType = string;'.PHP_EOL.'export type RootType2 = string;'.PHP_EOL);
 
     expect($files[1])
-        ->path->toBe('level1/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['level1', 'index.ts']))
         ->contents->toBe('export type Level1Type = string;'.PHP_EOL.'export type Level1Type2 = string;'.PHP_EOL);
 
     expect($files[2])
-        ->path->toBe('level1/level2/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['level1', 'level2', 'index.ts']))
         ->contents->toBe('export type Level2Type = string;'.PHP_EOL);
 });
 
@@ -92,7 +92,7 @@ it('can customize the module filename', function () {
     $files = $customWriter->output($transformedCollection->all(), $transformedCollection);
 
     expect($files[0]->path)->toBe('custom.ts');
-    expect($files[1]->path)->toBe('nested/custom.ts');
+    expect($files[1]->path)->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'custom.ts']));
 });
 
 it('can reference other types within the module', function () {
@@ -183,11 +183,11 @@ TypeScript
         );
 
     expect($files[1])
-        ->path->toBe('nested/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'index.ts']))
         ->contents->toBe('export type A = string;'.PHP_EOL);
 
     expect($files[2])
-        ->path->toBe('nested/subNested/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'subNested', 'index.ts']))
         ->contents->toBe('export type B = string;'.PHP_EOL);
 });
 
@@ -245,7 +245,7 @@ TypeScript
         );
 
     expect($files[1])
-        ->path->toBe('nested/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'index.ts']))
         ->contents->toBe('export type A = string;'.PHP_EOL.'export type B = string;'.PHP_EOL);
 });
 
@@ -283,7 +283,7 @@ it('can import from root into a nested module', function () {
         ->contents->toBe('export type A = string;'.PHP_EOL);
 
     expect($files[1])
-        ->path->toBe('nested/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'index.ts']))
         ->contents->toBe(<<<'TypeScript'
 import { A } from '../';
 export type B = A;
@@ -325,7 +325,7 @@ it('can automatically alias imported types', function () {
         ->contents->toBe('export type A = string;'.PHP_EOL);
 
     expect($files[1])
-        ->path->toBe('nested/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'index.ts']))
         ->contents->toBe(<<<'TypeScript'
 import { A as AImport } from '../';
 export type A = AImport;
@@ -367,7 +367,7 @@ it('can reference types from another module writer', function () {
         ->each->toBeInstanceOf(WriteableFile::class);
 
     expect($filesA[0])
-        ->path->toBe('models/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['models', 'index.ts']))
         ->contents->toEqual(
             <<<TS
 export type ReferencedType = string;
@@ -385,7 +385,7 @@ TS
         ->each->toBeInstanceOf(WriteableFile::class);
 
     expect($filesB[0])
-        ->path->toBe('prefixed/services/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['prefixed', 'services', 'index.ts']))
         ->contents->toEqual(
             <<<TS
 import { ReferencedType } from '../../models';
@@ -438,7 +438,7 @@ it('can reference types from a flat module writer and global namespace writer', 
         ->each->toBeInstanceOf(WriteableFile::class);
 
     expect($moduleFiles[0])
-        ->path->toBe('services/index.ts')
+        ->path->toBe(implode(DIRECTORY_SEPARATOR, ['services', 'index.ts']))
         ->contents->toEqual(
             <<<TS
 import { FlatType } from '../flat-types';
