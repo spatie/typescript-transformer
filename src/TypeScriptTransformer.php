@@ -67,14 +67,12 @@ class TypeScriptTransformer
     public function execute(): void
     {
         /**
-         * TODO:
-         * - Add support for watching files
-         * - Make sure WatchingTransformedProvidersHandler only will subscribe to events where the files are part of their directoriesToWatch
-         *
          * Laravel
          * - Check old Laravel tests if we missed something
          * - Further write docs + check them -> check TODO's
          * - Test Laravel specific stuff
+         *
+         *- Fix
          * - Release
          */
 

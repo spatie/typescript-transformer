@@ -169,4 +169,5 @@ it('can remove a transformed item by reference and update references', function 
         ->toBeArray()
         ->each()
         ->toBeInstanceOf(TypeReference::class);
+    expect($transformedB->referencedBy)->not->toContain($referenceA->getKey());
 });

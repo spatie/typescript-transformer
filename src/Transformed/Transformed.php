@@ -159,6 +159,13 @@ class Transformed
 
         $this->missingReferences[$key] = $typeReferences;
 
+        if (in_array($key, $this->referencedBy)) {
+            $this->referencedBy = array_values(array_filter(
+                $this->referencedBy,
+                fn ($referencedByKey) => $referencedByKey !== $key
+            ));
+        }
+
         $this->markAsChanged();
     }
 

@@ -1,0 +1,6 @@
+export type CircularB = {
+a: CircularA
+};
+export type CircularA = {
+b: CircularB
+};

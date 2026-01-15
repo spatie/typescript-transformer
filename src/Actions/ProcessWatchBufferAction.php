@@ -36,12 +36,12 @@ class ProcessWatchBufferAction
     /**
      * @param array<WatchEvent> $events
      */
-    public function execute(array $events): WatchEventResult
+    public function execute(array $events): ?WatchEventResult
     {
         $this->typeScriptTransformer->logger->info('Processing events');
 
         if (count($events) === 0) {
-            return WatchEventResult::continue();
+            return null;
         }
 
         $summarizedEvent = new SummarizedWatchEvent();
@@ -81,7 +81,7 @@ class ProcessWatchBufferAction
             $this->writersCollection,
         );
 
-        return WatchEventResult::continue();
+        return null;
     }
 
     protected function initializeHandlers(): void

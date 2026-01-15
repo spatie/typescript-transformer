@@ -13,7 +13,12 @@ class TypeScriptIdentifier implements TypeScriptNamedNode, TypeScriptNode
 
     public function write(WritingContext $context): string
     {
-        return (str_contains($this->name, '.') || str_contains($this->name, '\\')) ? "'{$this->name}'" : $this->name;
+        return $this->isValidIdentifier($this->name) ? $this->name : "'$this->name'";
+    }
+
+    private function isValidIdentifier(string $name): bool
+    {
+        return preg_match('/^[a-zA-Z_$][a-zA-Z0-9_$]*$/', $name) === 1;
     }
 
     public function getName(): string
