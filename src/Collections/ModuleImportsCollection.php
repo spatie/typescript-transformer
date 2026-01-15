@@ -102,7 +102,10 @@ class ModuleImportsCollection
     public function getTypeScriptNodes(): array
     {
         return array_values(array_map(
-            fn (array $import) => new TypeScriptImport($import['path'], $import['segments']),
+            fn (array $import) => new TypeScriptImport(
+                str_replace(DIRECTORY_SEPARATOR, '/', $import['path']),
+                $import['segments']
+            ),
             $this->imports,
         ));
     }
