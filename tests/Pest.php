@@ -1,5 +1,7 @@
 <?php
 
+pest()->project()->github('spatie/typescript-transformer');
+
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
