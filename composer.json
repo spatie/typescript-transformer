@@ -20,12 +20,10 @@
         "roave/better-reflection": "^6.41",
         "spatie/file-system-watcher": "^1.1",
         "spatie/php-structure-discoverer": "^2.2",
-        "spatie/temporary-directory": "^2.1",
         "symfony/process" : "^7.0|^8.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.0",
-        "laravel/pint": "^1.0",
         "pestphp/pest": "^3.0|^4.0",
         "pestphp/pest-plugin-arch": "^3.0|^4.0",
         "phpstan/extension-installer": "^1.1",
@@ -33,7 +31,8 @@
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan" : "^2.0",
         "spatie/pest-plugin-snapshots": "^2.1",
-        "spatie/ray": "^1.41"
+        "spatie/ray": "^1.41",
+        "spatie/temporary-directory": "^2.1"
     },
     "autoload": {
         "psr-4": {
