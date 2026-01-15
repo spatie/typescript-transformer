@@ -46,6 +46,7 @@ it('returns continue when there are no events', function () {
 
 it('processes file created events and adds transformed items', function () {
     $factory = new FakeFileStructureFactory();
+    $temporaryDirectory = TemporaryDirectory::make();
 
     $factory->writeFile('Models/User.php', '<?php
 namespace App\Models;
@@ -61,6 +62,7 @@ class User {
         TypeScriptTransformerConfigFactory::create()
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())
+            ->outputDirectory($temporaryDirectory->path())
             ->writer($writer)
             ->get()
     );
@@ -90,6 +92,7 @@ class User {
 
 it('processes file updated events and updates transformed items', function () {
     $factory = new FakeFileStructureFactory();
+    $temporaryDirectory = TemporaryDirectory::make();
 
     $factory->writeFile('Models/User.php', '<?php
 namespace App\Models;
@@ -105,6 +108,7 @@ class User {
         TypeScriptTransformerConfigFactory::create()
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())
+            ->outputDirectory($temporaryDirectory->path())
             ->writer($writer)
             ->get()
     );
@@ -186,6 +190,7 @@ it('processes file deleted events and removes transformed items', function () {
 
 it('processes directory deleted events and removes all transformed items in directory', function () {
     $factory = new FakeFileStructureFactory();
+    $temporaryDirectory = TemporaryDirectory::make();
     $writer = new FlatModuleWriter();
 
     $parentDirTransformed = transformSingle(
@@ -215,6 +220,7 @@ it('processes directory deleted events and removes all transformed items in dire
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($temporaryDirectory->path())
             ->writer($writer)
             ->get()
     );
@@ -294,6 +300,7 @@ class User {
 
 it('calls watching transformed providers with summarized event at the end', function () {
     $factory = new FakeFileStructureFactory();
+    $temporaryDirectory = TemporaryDirectory::make();
 
     $factory->writeFile('Models/User.php', '<?php
 namespace App\Models;
@@ -313,6 +320,7 @@ class User {
         TypeScriptTransformerConfigFactory::create()
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())
+            ->outputDirectory($temporaryDirectory->path())
             ->provider($watchingProvider)
             ->writer($writer)
             ->get()
