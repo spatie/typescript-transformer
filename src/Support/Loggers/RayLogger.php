@@ -14,7 +14,7 @@ class RayLogger implements Logger
         $this->sendToRay($item, $title, 'blue');
     }
 
-    public function warn(mixed $item, ?string $title = null): void
+    public function warning(mixed $item, ?string $title = null): void
     {
         $this->sendToRay($item, $title, 'orange');
     }

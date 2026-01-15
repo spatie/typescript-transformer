@@ -14,7 +14,7 @@ class NullLogger implements Logger
 
     }
 
-    public function warn(mixed $item, ?string $title = null): void
+    public function warning(mixed $item, ?string $title = null): void
     {
 
     }

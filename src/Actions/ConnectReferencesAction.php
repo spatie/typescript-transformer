@@ -47,7 +47,7 @@ class ConnectReferencesAction
             if ($foundTransformed === null) {
                 $currentTransformed->addMissingReference($typeReference->reference, $typeReference);
 
-                $this->log->warn("Tried replacing reference to `{$typeReference->reference->humanFriendlyName()}` in `{$currentTransformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
+                $this->log->warning("Tried replacing reference to `{$typeReference->reference->humanFriendlyName()}` in `{$currentTransformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
 
                 return;
             }

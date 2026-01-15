@@ -10,6 +10,9 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class ResolveImportsAndResolvedReferenceMapAction
 {
+    /**
+     * @param Closure(string, array<string>):string|null $moduleImportNameResolver
+     */
     public function __construct(
         protected ResolveRelativePathAction $resolveRelativePathAction = new ResolveRelativePathAction(),
         protected ?Closure $moduleImportNameResolver = null,
@@ -84,6 +87,7 @@ class ResolveImportsAndResolvedReferenceMapAction
 
         $importsCollection->aliasDuplicates(
             $usedNamesWithinModule,
+            $this->moduleImportNameResolver,
         );
 
         $referenceMap = [...$referenceMap, ...$importsCollection->getReferenceMap()];

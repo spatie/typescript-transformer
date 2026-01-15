@@ -80,30 +80,33 @@ generate TypeScript types.
 Within Symphony, for example, you can create a command like this:
 
 ```php
-use Spatie\TypeScriptTransformer\TypeScriptTransformer;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
+use Spatie\TypeScriptTransformer\Enums\RunnerMode;
 use Spatie\TypeScriptTransformer\Runners\Runner;
-use Spatie\TypeScriptTransformer\Support\Loggers\SymfonyConsoleLogger;
+use Spatie\TypeScriptTransformer\Support\Console\SymfonyConsoleLogger;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerateTypeScriptCommand extends Command
 {
     protected static $defaultName = 'typescript:transform';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Transform TypeScript types');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $runner = new Runner();
-        
-        $config = TypeScriptTransformerConfigFactory::create(); // We'll come back to this in a minute
+
+        $config = TypeScriptTransformerConfigFactory::create()->get(); // We'll come back to this in a minute
 
         return $runner->run(
             logger: new SymfonyConsoleLogger($output),
             config: $config,
-            mode: match RunnerMode::Direct
+            mode: RunnerMode::Direct,
         );
     }
 }
@@ -833,7 +836,8 @@ class RemoveAllStrings implements ClassPropertyProcessor
 
 Until now we've only taken a look at transforming PHP classes to TypeScript, but what if you want to transform something
 else? This is where the `TransformedProvider` comes into play, it is a class that provides TypeScript types and other
-structures. The transformers we've seen before are actually bundled in a default `TransformerProvider` provided by the package.
+structures. The transformers we've seen before are actually bundled in a default `TransformerProvider` provided by the
+package.
 
 A `TransformedProvider` implements the `TransformedProvider` interface:
 
@@ -854,7 +858,7 @@ interface TransformedProvider
 }
 ```
 
-The `provide` method is called when the TypeScript transformer is executed, it should return `Transformed` objects. 
+The `provide` method is called when the TypeScript transformer is executed, it should return `Transformed` objects.
 
 We could for example add a generic type which transforms Laravel collections:
 
@@ -916,13 +920,87 @@ export type Data = {
 }
 ```
 
-### Logging in providers
-
-TODO
-
 ### Standalone writing providers
 
-TODO
+Currently, TypeScript transformer will output all transformed objects using the default writer configured. While most of
+the time this is sufficient, there are cases where you might want to have more control over how certain transformed
+objects are written down.
+
+For example, in the Laravel package all types from classes, enums, and interfaces are written to a single file using
+namespaces. Yet the package also provide some helper functions allowing you to generate URLs for your routes. These
+helper functions are best written to a separate file without namespaces.
+
+A standalone writing providers allows you to set a different writer for the transformed objects provided by the
+provider.
+
+You can create such a provider by implementing the `StandaloneWritingTransformedProvider` interface:
+
+```php
+use Spatie\TypeScriptTransformer\TransformedProviders\StandaloneWritingTransformedProvider;
+use Spatie\TypeScriptTransformer\Writers\ModuleWriter;
+
+class RouteHelpersProvider implements StandaloneWritingTransformedProvider, TransformedProvider
+{
+    public function provide(
+        TypeScriptTransformerConfig $config,
+    ): array {
+        // Create transformed objects
+    }
+
+    public function getWriter(): ModuleWriter
+    {
+        return new ModuleWriter();
+    }
+}
+```
+
+In these providers it is still possible to reference transformed objects written down by writers from other providers or
+the default writer, TypeScript transformer will take care of linking them together and generating the correct import
+statements.
+
+### Logging in providers
+
+TypeScript transformer provides a logging mechanism that can be used within providers to log messages during the
+transformation process. This is particularly useful for debugging and tracking the transformation flow and displaying
+errors or other important
+information.
+
+When implementing the `LoggingTransformedProvider` interface, the `setLogger` method receives a `Logger` instance as an
+additional parameter:
+
+```php
+use Spatie\TypeScriptTransformer\TransformedProviders\LoggingTransformedProvider;
+use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
+
+class CustomTransformedProvider implements LoggingTransformedProvider, TransformedProvider
+{
+    protected Logger $logger;
+
+    public function setLogger(Logger $logger): void
+    {
+        $this->logger = $logger;
+    }
+
+    public function provide(
+        TypeScriptTransformerConfig $config,
+    ): array {
+        $this->logger->info('Starting transformation process in CustomTransformedProvider.');
+
+        // Some of 
+
+        $this->logger->info('Finished transformation process in CustomTransformedProvider.');
+    }
+}
+```
+
+A log always exists of an item which can be any type which is JSON encodable and an optional title for context:
+
+```php
+$this->logger->debug($transfomed->reference, 'Transformed reference details');
+$this->logger->info($transfomed->typeScriptNode, 'TypeScript node details');
+$this->logger->warning($transfomed->getName(), 'Potential issue with transformed item');
+$this->logger->error($transfomed->changed, 'Error encountered during transformation');
+```
 
 ## Referencing types
 
@@ -1227,7 +1305,7 @@ The steps look as following:
 7. Write those files to disk
 8. Format the files
 
-The two hooking points below can be used to run a visitor on the collection of Transformed types:
+The two hooking points below can be used to run a visitor on the collection of Transformed objects:
 
 ```php
 use Spatie\TypeScriptTransformer\Visitor\VisitorClosureType;
@@ -1263,13 +1341,23 @@ $config->connectedVisitorHook(
 
 ### Building your own Writer
 
-TODO
-
 Writers are responsible for writing out the TypeScript types, the package comes with three writers:
 
-- `GlobalNamespaceWriter`: Writes all types to a single TypeScript file which exports the types to the global namespace based upon the location
-- `ModuleWriter`: Writes all types to a file per location 
-- `FlatWriter`: Writes all types to a single TypeScript file without namespaces
+**GlobalNamespaceWriter**
+
+Generates a single TypeScript file which exports all types to the global namespace. That namespace is based upon the
+location of the type. The GlobalNamespaceWriter will always generate a declation TypeScript file with a `.d.ts`
+extension which
+means that only types are allowed in this file and executable code is prohibited.
+
+**FlatModuleWriter**
+
+Creates one module for all transformed objects in a single TypeScript file. The file will contain all transformed
+objects (types & executable code) without any namespaces.
+
+**ModuleWriter**
+An extension of the FlatModuleWriter which creates a file per location. Each file will contain all transformed objects (
+types & executable code) for that location without any namespaces.
 
 It is possible to create your own writer by implementing the `Writer` interface:
 
@@ -1292,42 +1380,232 @@ interface Writer
 }
 ```
 
-In the end the `output` method should return an array of `WriteableFile` objects, these objects contain the TypeScript
-code and the path relative to the output directory where the file should be stored.
+The `output` method should return an array of `WriteableFile` objects, these objects contain the TypeScript
+code and the path relative to the configured output directory where the file should be stored.
 
-As input you'll might be receiving two 
+The parameters for output are an array of `Transformed` objects and the full `TransformedCollection` while intuitively
+these structures seem similar, the array of `Transformed` objects only contains the objects that need to be written by
+this writer, while the`TransformedCollection` contains all transformed objects being handled by the package. This comes
+in handy when needing to resolve references to other transformed objects not being written by this writer.
 
-In the writer you should loop over each `Transformed` object in the collection, decide in which file it should be stored
-and transform the TypeScript node to a string:
+In order to reference to other transformed objects you'll need an identifier to be used within the TypeScript code. For
+the GlobalNamespaceWriter this will be a fully qualified name like 'App.Models.User' while for the ModuleWriter this
+will be an import statement like `import { User } from '../models/User'` and then an identifier like `User`.
+
+In order to resolve these references we strongly recommend you to use the `ResolveImportsAndResolvedReferenceMapAction`
+which takes the current path the writer is currently writing to, the array of transformed objects to be written by
+this writer in the current file and the full transformed collection:
 
 ```php
-foreach ($collection as $transformed) {
-    $output .= $transformed->prepareForWrite()->write($writingContext) . PHP_EOL;
-}
+use Spatie\TypeScriptTransformer\Actions\ResolveImportsAndResolvedReferenceMapAction;
+
+[$imports, $resolvedReferenceMap] = (new ResolveImportsAndResolvedReferenceMapAction())->execute(
+    currentPath: $currentPath, // e.g. 'app/models/index.ts'
+    transformed: $transformed,
+    transformedCollection: $transformedCollection,
+);
 ```
 
-The `prepareForWrite` method will make sure that a TypeScript node is exported when required. The `write` method will
-transform the TypeScript node to a string and requires a `WritingContext` object with information about the writing
-context.
+The action returns a tuple containing, the collection of imports needed for the current file which can be transformed
+into TypeScript import nodes like this:
 
-The `WritingContext` consists of a Closure returning a string referencing other TypeScript types. We recommend
-you to take a look at the `FlatWriter` to see how this is implemented.
+```php
+$imports->getTypeScriptNodes()
+```
+
+The action also returns a resolved reference map which is a mapping of the transformed reference key to their TypeScript
+identifier, this map should be provided to the `WritingContext` a structure required for writing TypeScript nodes.
+
+We now can write out the imports and transformed objects like this:
+
+```php
+$output = '';
+
+foreach ($imports->getTypeScriptNodes() as $import) {
+    $output .= $import->write($writingContext).PHP_EOL;
+}
+
+foreach ($location->transformed as $transformedItem) {
+    $output .= $transformedItem->write($writingContext).PHP_EOL;
+}
+
+$writeableFile = new WriteableFile($filePath, $output);
+```
+
+In the end the writer then should return an array of all the `WriteableFile` objects it created.
+
+### Configuring TypeScript identifier name resolution
+
+The `ResolveImportsAndResolvedReferenceMapAction` uses a default strategy to resolve TypeScript identifiers from all the
+transformed references. It works like this:
+
+1. If the identifier was written by a GlobalNamespaceWriter, the fully qualified name is used as the identifier.
+2. If no identifier in the module exists with the same name, the transformed name is used as the identifier.
+3. If an identifier in the module already exists with the same name, a Import suffix is added to the transformed name.
+4. If the Import suffix name also exists, a numeric suffix is added until a unique name is found.
+
+It is possible to customize this strategy by providing a Closure returning a unique identifier for the current
+identifier to be used:
+
+```php
+new ResolveImportsAndResolvedReferenceMapAction(
+    moduleImportNameResolver: fn(string $identifier, array $usedIdentifiers): string => $identifier . uniqid(),
+);
+```
+
+The first parameter is the identifier that would be used by default and the second parameter is an array of already used
+identifiers within the current module. Every time the closure is called the array of used identifiers is updated with
+the previously returned identifiers.
 
 ## Watching changes and live updating TypeScript
 
-TODO
+TypeScript transformer can run in a watch mode where it will watch for changes in your PHP files and automatically
+regenerate the TypeScript files when a change is detected.
+
+> While this is possibly one of the coolest features of the package it is still heavily experimental and might not work
+> in all
+> environments and not always as expected. Feel free to open issues when you encounter problems with a demo project and
+> an
+> exact plan of steps to reproduce the issue.
+
+### How does it work?
+
+In order to be able to watch for changes, the package uses chokidar, a package that is able to watch for file changes in
+a
+cross-platform way. You'll need to install it as such:
+
+```bash
+npm install chokidar
+```
+
+Or using yarn:
+
+```bash
+yarn add chokidar
+```
+
+When running the package in watch mode, it will start a master process which will start a worker process, the idea here
+is that the master process always keeps running while the worker process can be restarted when a change is detected
+which requires a full application reload.
+
+In order to not always having to reload the full application (and thus starting a new worker) on every file change, the
+worker process will smartly swap the Reflection instances used throughout TypeScript transformer when a file change is
+detected.
+
+This is the reason why we don't provide Reflection* instances throughout the package, but rather wrapper classes around
+these instances. The initial data is loaded by PHP's Reflection API, but afterwards the `roave/better-reflection`
+package is used to create in-memory representations of the changed classes.
+
+To make it easy to swap these different types of Reflection instance the package provides Php*Node wrapper classes like:
+
+- PhpClassNode
+- PhpPropertyNode
+- PhpMethodNode
+- PhpParameterNode
+- And more...
+
+When your provider however needs something else than the reflection instances provided by these wrapper classes, for
+example, checking the container for an instance or the router for the current application routes, you'll need to restart
+the worker process in order to get the updated state of your application. We'll come back to this later.
+
+### Watching changes in a Laravel project
+
+When you're using Laravel you can run the following command to start watching for changes:
+
+```bash
+php artisan typescript:transform --watch
+```
+
+### Setting up the runner for watching changes
+
+Laravel users can skip the following section as the Laravel package already has built-in support for watching changes.
+
+In the beginning of this documentation we saw how to create a command using a runner to transform TypeScript types. In
+order to enable watching changes we'll need to set up the runner a bit differently:
+
+```php
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class GenerateTypeScriptCommand extends Command
+{
+    protected static $defaultName = 'typescript:transform';
+
+    protected function configure(): void
+    {
+        $this
+            ->setDescription('Transform TypeScript types')
+            ->addOption('watch', 'w', InputOption::VALUE_NONE, 'Watch for file changes')
+            ->addOption('worker', null, InputOption::VALUE_NONE, 'Run as worker process');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $runner = new Runner();
+
+        $config = TypeScriptTransformerConfigFactory::create()->get();
+
+        return $runner->run(
+            logger: new SymfonyConsoleLogger($output),
+            config: $config,
+            mode: match ([$input->getOption('watch'), $input->getOption('worker')]) {
+                [false, false] => RunnerMode::Direct,
+                [true, false] => RunnerMode::Master,
+                [true, true] => RunnerMode::Worker,
+                default => throw new \Exception('A worker only needs to be started in watch mode.'),
+            },
+            workerCommand: fn (bool $watch) => 'bin/console typescript:transform --worker '.($watch ? '--watch ' : ''),
+        );
+    }
+}
+```
+
+The command above adds two options: `--watch` and `--worker`. The `--watch` option is used to start the master process
+which watches for file changes, the `--worker` option is used internally by the master process to start the worker
+process.
+
+Feel free to adjust the `workerCommand` closure to your own command structure so that the master process can start the
+worker correctly.
 
 ### Letting a provider hook into watch events
 
 TODO
 
-## The runner and its cycles
-
-TODO
-
 ### Loggers
 
-TODO
+The package provides some loggers that can be used to log messages during the transformation process, out of the box the
+package provides the following loggers:
+
+- `ArrayLogger`: Logs messages to an array which can be retrieved later
+- `SymfonyConsoleLogger`: Logs messages to the Symfony Console output
+- `NullLogger`: A logger that logs nothing
+- `RayLogger`: Logs messages to Ray (https://spatie.be/docs/ray)
+- `MultiLogger`: A logger that logs messages to multiple loggers
+
+The Laravel package provides an additional logger:
+
+- `LaravelConsoleLogger`: Logs messages to the Laravel console output
+
+A logger can be configured when constructing the `Runner`.
+
+Implementing your own logger is possible by implementing the `Logger` interface:
+
+```php
+namespace Spatie\TypeScriptTransformer\Support\Loggers;
+
+interface Logger
+{
+    public function debug(mixed $item, ?string $title = null): void;
+
+    public function info(mixed $item, ?string $title = null): void;
+
+    public function warning(mixed $item, ?string $title = null): void;
+
+    public function error(mixed $item, ?string $title = null): void;
+}
+```
 
 ## Testing
 

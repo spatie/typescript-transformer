@@ -26,10 +26,10 @@ class MultiLogger implements Logger
         }
     }
 
-    public function warn(mixed $item, ?string $title = null): void
+    public function warning(mixed $item, ?string $title = null): void
     {
         foreach ($this->loggers as $logger) {
-            $logger->warn($item, $title);
+            $logger->warning($item, $title);
         }
     }
 

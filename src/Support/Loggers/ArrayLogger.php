@@ -17,7 +17,7 @@ class ArrayLogger implements Logger
         $this->messages[] = ['message' => $this->mixedToString($item), 'title' => $title, 'level' => 'info'];
     }
 
-    public function warn(mixed $item, ?string $title = null): void
+    public function warning(mixed $item, ?string $title = null): void
     {
         $this->messages[] = ['message' => $this->mixedToString($item), 'title' => $title, 'level' => 'warning'];
     }

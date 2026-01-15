@@ -24,7 +24,7 @@ class FlatModuleWriter implements Writer
         array $transformed,
         TransformedCollection $transformedCollection,
     ): array {
-        [$imports, $referenceMap] = $this->resolveImportsAndResolvedReferenceMapAction->execute(
+        [$imports, $resolvedReferenceMap] = $this->resolveImportsAndResolvedReferenceMapAction->execute(
             $this->path,
             $transformed,
             $transformedCollection
@@ -32,7 +32,7 @@ class FlatModuleWriter implements Writer
 
         $output = '';
 
-        $writingContext = new WritingContext($referenceMap);
+        $writingContext = new WritingContext($resolvedReferenceMap);
 
         foreach ($imports->getTypeScriptNodes() as $import) {
             $output .= $import->write($writingContext).PHP_EOL;

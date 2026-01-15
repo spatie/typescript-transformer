@@ -25,7 +25,7 @@ class SymfonyConsoleLogger extends ArrayLogger
         $this->output->writeln("<info>{$message}</info>");
     }
 
-    public function warn(mixed $item, ?string $title = null): void
+    public function warning(mixed $item, ?string $title = null): void
     {
         $message = $this->formatMessage($item, $title);
 
