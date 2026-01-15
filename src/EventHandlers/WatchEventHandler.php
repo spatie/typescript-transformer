@@ -13,5 +13,5 @@ interface WatchEventHandler
     /**
      * @param T $event
      */
-    public function handle($event): WatchEventResult|int;
+    public function handle($event): ?WatchEventResult;
 }

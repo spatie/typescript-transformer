@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Collections;
 
 use ArrayIterator;
+use Countable;
 use Generator;
 use IteratorAggregate;
 use Spatie\TypeScriptTransformer\References\FilesystemReference;
@@ -14,7 +15,7 @@ use Traversable;
 /**
  * @implements IteratorAggregate<Transformed>
  */
-class TransformedCollection implements IteratorAggregate
+class TransformedCollection implements IteratorAggregate, Countable
 {
     /** @var array<string, Transformed> */
     protected array $items = [];
@@ -34,7 +35,17 @@ class TransformedCollection implements IteratorAggregate
     public function add(Transformed ...$transformed): self
     {
         foreach ($transformed as $item) {
-            //            $this->log->debug($item, 'Adding transformed');
+            $reference = $item->reference->getKey();
+
+            $alreadyHasReference = $this->has($reference);
+
+            if ($alreadyHasReference && $this->get($reference)->equals($item)) {
+                continue;
+            }
+
+            if ($alreadyHasReference) {
+                $this->remove($reference);
+            }
 
             $this->items[$item->reference->getKey()] = $item;
 
@@ -161,5 +172,10 @@ class TransformedCollection implements IteratorAggregate
     protected function cleanupFilePath(string $path): string
     {
         return realpath($path);
+    }
+
+    public function count(): int
+    {
+        return count($this->items);
     }
 }

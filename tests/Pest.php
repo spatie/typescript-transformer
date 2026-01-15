@@ -4,6 +4,7 @@ use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
@@ -36,7 +37,8 @@ function classesToTypeScript(
 
 function transformSingle(
     string|object $class,
-    ?Transformer $transformer = null
+    ?Transformer $transformer = null,
+    ?Reference $reference = null,
 ): Transformed|Untransformable {
     $transformer ??= new AllClassTransformer();
 
@@ -47,5 +49,11 @@ function transformSingle(
         [PhpClassNode::fromClassString(is_string($class) ? $class : $class::class)],
     );
 
-    return $results[0] ?? Untransformable::create();
+    $result = $results[0] ?? Untransformable::create();
+
+    if ($reference !== null && $result instanceof Transformed) {
+        $result->reference = $reference;
+    }
+
+    return $result;
 }

@@ -9,8 +9,11 @@ use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
 use Spatie\TypeScriptTransformer\TransformedProviders\WatchingTransformedProvider;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
-class InlineWatchingTransformedProvider implements TransformedProvider, WatchingTransformedProvider
+class FakeWatchingTransformedProvider implements TransformedProvider, WatchingTransformedProvider
 {
+    /** @var array<WatchEvent> */
+    public array $receivedEvents = [];
+
     /**
      * @param array $transformed
      * @param array<string> $directoriesToWatch
@@ -31,8 +34,10 @@ class InlineWatchingTransformedProvider implements TransformedProvider, Watching
         return $this->directoriesToWatch;
     }
 
-    public function handleWatchEvent(WatchEvent $watchEvent, TransformedCollection $transformedCollection): int|WatchEventResult
+    public function handleWatchEvent(WatchEvent $watchEvent, TransformedCollection $transformedCollection): ?WatchEventResult
     {
-        return 0;
+        $this->receivedEvents[] = $watchEvent;
+
+        return null;
     }
 }

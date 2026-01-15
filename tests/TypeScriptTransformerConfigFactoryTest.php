@@ -1,7 +1,7 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Tests\Support\FakeExtension;
-use Spatie\TypeScriptTransformer\Tests\Support\InlineWatchingTransformedProvider;
+use Spatie\TypeScriptTransformer\Tests\Support\FakeWatchingTransformedProvider;
 use Spatie\TypeScriptTransformer\Tests\Support\UntransformableTransformer;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformerProvider;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
@@ -123,7 +123,7 @@ it('cannot add a TransformerProvider instance as provider', function () {
 })->throws(Exception::class, "Please add transformers using the config's `transformer` method.");
 
 it('watches directories from transform directories, config paths, and WatchingTransformedProviders', function () {
-    $watchingProvider = new InlineWatchingTransformedProvider(
+    $watchingProvider = new FakeWatchingTransformedProvider(
         transformed: [],
         directoriesToWatch: ['/watched/dir']
     );

@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\EventHandlers;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\Events\DirectoryDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
@@ -17,7 +18,7 @@ class DirectoryDeletedWatchEventHandler implements WatchEventHandler
     ) {
     }
 
-    public function handle($event): int
+    public function handle($event): ?WatchEventResult
     {
         $this->typeScriptTransformer->logger->debug($event->path, 'Directory Deleted');
 
@@ -27,6 +28,6 @@ class DirectoryDeletedWatchEventHandler implements WatchEventHandler
             $this->transformedCollection->remove($transformed->reference);
         }
 
-        return 0;
+        return null;
     }
 }

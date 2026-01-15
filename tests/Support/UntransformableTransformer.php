@@ -12,6 +12,6 @@ class UntransformableTransformer implements Transformer
 {
     public function transform(PhpClassNode $phpClassNode, TransformationContext $context): Transformed|Untransformable
     {
-        return new Untransformable();
+        return Untransformable::create();
     }
 }

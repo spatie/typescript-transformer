@@ -17,10 +17,10 @@ class ConfigUpdatedWatchEventHandler implements WatchEventHandler
     ) {
     }
 
-    public function handle($event): WatchEventResult|int
+    public function handle($event): ?WatchEventResult
     {
         if (! in_array($event->path, $this->typeScriptTransformer->config->configPaths)) {
-            return 0;
+            return null;
         }
 
         $this->typeScriptTransformer->logger->info("Configuration file updated: {$event->path}, restarting worker...");

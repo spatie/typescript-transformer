@@ -11,5 +11,5 @@ interface WatchingTransformedProvider
     /** @return array<string> */
     public function directoriesToWatch(): array;
 
-    public function handleWatchEvent(WatchEvent $watchEvent, TransformedCollection $transformedCollection): int|WatchEventResult;
+    public function handleWatchEvent(WatchEvent $watchEvent, TransformedCollection $transformedCollection): ?WatchEventResult;
 }

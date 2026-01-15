@@ -68,12 +68,13 @@ class TypeScriptTransformer
     {
         /**
          * TODO:
-         * - Test Laravel specific stuff
-         * - Add support for watching files -> ok, maybe add docs and some tests
-         * - Further write docs + check them -> check TODO's
-         * - Make sure we wire up WatchingTypeProvider::handleWatchEvent
-         * - Hookup SummarizedWatchEvent
+         * - Add support for watching files
+         * - Make sure WatchingTransformedProvidersHandler only will subscribe to events where the files are part of their directoriesToWatch
+         *
+         * Laravel
          * - Check old Laravel tests if we missed something
+         * - Further write docs + check them -> check TODO's
+         * - Test Laravel specific stuff
          * - Release
          */
 

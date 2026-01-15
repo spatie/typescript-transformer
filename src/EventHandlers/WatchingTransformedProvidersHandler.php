@@ -14,7 +14,7 @@ class WatchingTransformedProvidersHandler implements WatchEventHandler
     ) {
     }
 
-    public function handle($event): WatchEventResult|int
+    public function handle($event): ?WatchEventResult
     {
         return $this->transformedProvider->handleWatchEvent($event, $this->transformedCollection);
     }

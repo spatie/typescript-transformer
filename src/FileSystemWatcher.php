@@ -3,21 +3,13 @@
 namespace Spatie\TypeScriptTransformer;
 
 use Exception;
+use Spatie\TypeScriptTransformer\Actions\ProcessWatchBufferAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Collections\WritersCollection;
-use Spatie\TypeScriptTransformer\Data\WatchEventResult;
-use Spatie\TypeScriptTransformer\EventHandlers\ConfigUpdatedWatchEventHandler;
-use Spatie\TypeScriptTransformer\EventHandlers\DirectoryDeletedWatchEventHandler;
-use Spatie\TypeScriptTransformer\EventHandlers\FileDeletedWatchEventHandler;
-use Spatie\TypeScriptTransformer\EventHandlers\FileUpdatedOrCreatedWatchEventHandler;
-use Spatie\TypeScriptTransformer\EventHandlers\WatchEventHandler;
-use Spatie\TypeScriptTransformer\EventHandlers\WatchingTransformedProvidersHandler;
 use Spatie\TypeScriptTransformer\Events\DirectoryDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\FileCreatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\FileDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\FileUpdatedWatchEvent;
-use Spatie\TypeScriptTransformer\Events\WatchEvent;
-use Spatie\TypeScriptTransformer\TransformedProviders\WatchingTransformedProvider;
 use Spatie\Watcher\Exceptions\CouldNotStartWatcher;
 use Spatie\Watcher\Watch;
 
@@ -29,15 +21,18 @@ class FileSystemWatcher
 
     protected bool $processing = false;
 
-    /** @var array<class-string<WatchEvent>, array<WatchEventHandler>> */
-    protected array $handlers = [];
+    protected ProcessWatchBufferAction $processWatchBufferAction;
 
     public function __construct(
         protected TypeScriptTransformer $typeScriptTransformer,
         protected TransformedCollection $transformedCollection,
         protected WritersCollection $writersCollection,
     ) {
-        $this->initializeHandlers();
+        $this->processWatchBufferAction = new ProcessWatchBufferAction(
+            $this->typeScriptTransformer,
+            $this->transformedCollection,
+            $this->writersCollection,
+        );
     }
 
     public function run(): void
@@ -89,106 +84,16 @@ class FileSystemWatcher
         }
     }
 
-    protected function initializeHandlers(): void
-    {
-        $fileUpdatedOrCreatedHandler = new FileUpdatedOrCreatedWatchEventHandler(
-            $this->typeScriptTransformer,
-            $this->transformedCollection,
-        );
-
-        $watchingTransformedProviders = array_values(array_map(
-            fn (WatchingTransformedProvider $provider) => new WatchingTransformedProvidersHandler(
-                $provider,
-                $this->transformedCollection
-            ),
-            array_filter(
-                $this->typeScriptTransformer->config->transformedProviders,
-                fn ($provider) => $provider instanceof WatchingTransformedProvider
-            )
-        ));
-
-        $this->handlers[FileCreatedWatchEvent::class] = [
-            $fileUpdatedOrCreatedHandler,
-            ...$watchingTransformedProviders,
-        ];
-
-        $this->handlers[FileUpdatedWatchEvent::class] = [
-            $fileUpdatedOrCreatedHandler,
-            new ConfigUpdatedWatchEventHandler(
-                $this->typeScriptTransformer,
-            ),
-            ...$watchingTransformedProviders,
-        ];
-
-        $this->handlers[FileDeletedWatchEvent::class] = [
-            new FileDeletedWatchEventHandler(
-                $this->typeScriptTransformer,
-                $this->transformedCollection,
-            ),
-            ...$watchingTransformedProviders,
-        ];
-
-        $this->handlers[DirectoryDeletedWatchEvent::class] = [
-            new DirectoryDeletedWatchEventHandler(
-                $this->typeScriptTransformer,
-                $this->transformedCollection,
-            ),
-            ...$watchingTransformedProviders,
-        ];
-    }
-
     protected function processBuffer(): void
     {
-        $this->typeScriptTransformer->logger->info('Processing events');
-
         [$events, $this->eventsBuffer] = [$this->eventsBuffer, []];
 
-        foreach ($events as $event) {
-            foreach ($this->handlers[$event::class] as $handler) {
-                $result = $handler->handle($event);
+        $result = $this->processWatchBufferAction->execute($events);
 
-                if ($result instanceof WatchEventResult && $result->completeRefresh) {
-                    $this->typeScriptTransformer->logger->info('Triggering complete refresh');
+        if ($result?->completeRefresh) {
+            $this->typeScriptTransformer->logger->info('Triggering complete refresh');
 
-                    exit(self::EXIT_CODE_COMPLETE_REFRESH);
-                }
-            }
-        }
-
-        $this->typeScriptTransformer->executeProvidedClosuresAction->execute(
-            $this->transformedCollection->onlyChanged()
-        );
-
-        $this->typeScriptTransformer->connectReferencesAction->execute(
-            $this->transformedCollection
-        );
-
-        $this->tryToConnectMissingReferencesWithNewTransformed();
-
-        $this->typeScriptTransformer->executeConnectedClosuresAction->execute(
-            $this->transformedCollection->onlyChanged()
-        );
-
-        $this->typeScriptTransformer->outputTransformed(
-            $this->transformedCollection,
-            $this->writersCollection,
-        );
-    }
-
-    protected function tryToConnectMissingReferencesWithNewTransformed(): void
-    {
-        foreach ($this->transformedCollection as $currentTransformed) {
-            foreach ($currentTransformed->missingReferences as $missingReference => $typeReferences) {
-                $foundTransformed = $this->transformedCollection->get($missingReference);
-
-                if ($foundTransformed === null) {
-                    continue;
-                }
-
-                $currentTransformed->markMissingReferenceFound($foundTransformed);
-
-                break;
-            }
+            exit(self::EXIT_CODE_COMPLETE_REFRESH);
         }
     }
 }

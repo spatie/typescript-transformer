@@ -13,10 +13,10 @@ A few noticeable changes are:
 - Laravel installs now need to configure the package in a service provider instead of config file
 - The package requires PHP 8.2
 - If you're using Laravel, v10 is minimally required
-- Collectors were removed in favour of Transformers which decide whether a type should be transformed or not
+- Collectors were removed in favor of Transformers which decide whether a type should be transformed or not
 - The transformer should now return a `Transformed` object when it can transform a type
 - The transformer interface now should return `Untransformable` when it cannot transform the type
-- The `DtoTransformer` was removed in favour of a more flexible transformer system where you can create your own transformers
+- The `DtoTransformer` was removed in favor of a more flexible transformer system where you can create your own transformers
 - The `EnumTransformer` was rewritten to allow multiple types of enums to be transformed and multiple output structures
 - All other enum transformers were removed
 - The concept of `TypeProcessors` was removed, `ClassPropertyProcessor` is a kinda replacement for this
@@ -26,8 +26,13 @@ A few noticeable changes are:
 - The `RecordTypeScriptType` attribute was removed since deduction of these kinds of types is now done by the transformer
 - The `TypeScriptTransformer` attribute was removed
 - If you were implementing your own `Formatter`, please update the `format` method to now work on an array of files
+- Instead of Reflection objects being passed around now `Php*Node` objects should be used to infer
+- The PHPDocumentor was replaced by the PHPStan type inferrer
+- A watch mode was added which means your transformers might be running multiple times in the same process
+- Writers were changed to support linking between multiple files and writers
 
-And so much more. Please read the docs for more information.
+And so much more. We suggest you completely reread the docs and try to implement the new package instead of trying to
+upgrade your existing implementation.
 
 ## Upgrading to v2
 
