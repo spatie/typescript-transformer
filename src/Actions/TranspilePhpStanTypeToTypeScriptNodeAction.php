@@ -330,7 +330,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             return $this->defaultGenericNode($node, $phpClassNode);
         }
 
-        $array = $class::{$constFetchNode->name};
+        $array = constant("{$class}::{$constFetchNode->name}");
 
         $items = $node->type->name === 'key-of'
             ? array_keys($array)
