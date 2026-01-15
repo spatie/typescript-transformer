@@ -43,7 +43,7 @@ it('will find types and takes attributes into account', function () {
 
     expect($collection)->toHaveCount(8);
 
-    $typesToCheck = array_values(array_filter(
+    $typesToCheck = array_filter(
         iterator_to_array($collection),
         fn (Transformed $transformed) => in_array($transformed->reference->classString, [
             TypeScriptAttributedClass::class,
@@ -52,33 +52,11 @@ it('will find types and takes attributes into account', function () {
             ReadonlyClass::class,
             SimpleClass::class,
         ])
-    ));
+    );
+
+    usort($typesToCheck, fn (Transformed $a, Transformed $b) => $a->reference->classString <=> $b->reference->classString);
 
     expect($typesToCheck)->sequence(
-        fn (Expectation $transformed) => $transformed
-            ->toBeInstanceOf(Transformed::class)
-            ->getName()->toBe('JustAnotherName')
-            ->typeScriptNode->toEqual(new TypeScriptAlias(
-                new TypeScriptIdentifier('JustAnotherName'),
-                new TypeScriptObject([
-                    new TypeScriptProperty('property', new TypeScriptString()),
-                ])
-            ))
-            ->reference->toBeInstanceOf(PhpClassReference::class)
-            ->reference->classString->toBe(TypeScriptAttributedClass::class)
-            ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
-        fn (Expectation $transformed) => $transformed
-            ->toBeInstanceOf(Transformed::class)
-            ->getName()->toBe('TypeScriptLocationAttributedClass')
-            ->typeScriptNode->toEqual(new TypeScriptAlias(
-                new TypeScriptIdentifier('TypeScriptLocationAttributedClass'),
-                new TypeScriptObject([
-                    new TypeScriptProperty('property', new TypeScriptString()),
-                ])
-            ))
-            ->reference->toBeInstanceOf(PhpClassReference::class)
-            ->reference->classString->toBe(TypeScriptLocationAttributedClass::class)
-            ->location->toBe(['App', 'Here']),
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)
             ->getName()->toBe('OptionalAttributedClass')
@@ -116,6 +94,30 @@ it('will find types and takes attributes into account', function () {
             ->reference->toBeInstanceOf(PhpClassReference::class)
             ->reference->classString->toBe(SimpleClass::class)
             ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
+        fn (Expectation $transformed) => $transformed
+            ->toBeInstanceOf(Transformed::class)
+            ->getName()->toBe('JustAnotherName')
+            ->typeScriptNode->toEqual(new TypeScriptAlias(
+                new TypeScriptIdentifier('JustAnotherName'),
+                new TypeScriptObject([
+                    new TypeScriptProperty('property', new TypeScriptString()),
+                ])
+            ))
+            ->reference->toBeInstanceOf(PhpClassReference::class)
+            ->reference->classString->toBe(TypeScriptAttributedClass::class)
+            ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
+        fn (Expectation $transformed) => $transformed
+            ->toBeInstanceOf(Transformed::class)
+            ->getName()->toBe('TypeScriptLocationAttributedClass')
+            ->typeScriptNode->toEqual(new TypeScriptAlias(
+                new TypeScriptIdentifier('TypeScriptLocationAttributedClass'),
+                new TypeScriptObject([
+                    new TypeScriptProperty('property', new TypeScriptString()),
+                ])
+            ))
+            ->reference->toBeInstanceOf(PhpClassReference::class)
+            ->reference->classString->toBe(TypeScriptLocationAttributedClass::class)
+            ->location->toBe(['App', 'Here']),
     );
 });
 

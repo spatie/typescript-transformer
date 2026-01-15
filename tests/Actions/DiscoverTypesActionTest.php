@@ -23,7 +23,7 @@ it('can discover types', function () {
         __DIR__.'/../Fakes/TypesToProvide',
     ]);
 
-    expect($types)->toEqual([
+    expect($types)->toEqualCanonicalizing([
         new PhpEnumNode(new ReflectionEnum(StringBackedEnum::class)),
         new PhpClassNode(new ReflectionClass(HiddenAttributedClass::class)),
         new PhpClassNode(new ReflectionClass(TypeScriptAttributedClass::class)),

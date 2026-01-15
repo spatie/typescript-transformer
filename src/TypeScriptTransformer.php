@@ -72,7 +72,7 @@ class TypeScriptTransformer
          * - Further write docs + check them -> check TODO's
          * - Test Laravel specific stuff
          *
-         *- Fix
+         * - Fix
          * - Release
          */
 

@@ -122,9 +122,13 @@ it('can transpile php types', function (
     //        new TypeReference(new ClassStringReference(PhpTypesStub::class)),
     //    ];
 
+    // PHP 8.5+ resolves 'parent' to the actual class name instead of literal 'parent'
+    // See: https://github.com/php/php-src/issues/18373
     yield [
         'parent',
-        new TypeScriptUnknown(),
+        version_compare(PHP_VERSION, '8.5.0', '>=')
+            ? new TypeReference(new ClassStringReference(\stdClass::class))
+            : new TypeScriptUnknown(),
     ];
 
     yield [
