@@ -2,8 +2,8 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Support\VisitorProfile;
-use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\UniqueTypeScriptNodes;
 
 class TypeScriptArray implements TypeScriptNode, TypeScriptVisitableNode

@@ -4,8 +4,8 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
+use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\Formatters\PrettierFormatter;
-use Spatie\TypeScriptTransformer\Support\WriteableFile;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 
 beforeEach(function () {

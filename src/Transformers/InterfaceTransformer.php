@@ -4,11 +4,11 @@ namespace Spatie\TypeScriptTransformer\Transformers;
 
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpStanTypeToTypeScriptNodeAction;
 use Spatie\TypeScriptTransformer\Actions\TranspilePhpTypeNodeToTypeScriptNodeAction;
+use Spatie\TypeScriptTransformer\Data\TransformationContext;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpMethodNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpParameterNode;
 use Spatie\TypeScriptTransformer\References\PhpClassReference;
-use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedMethod;

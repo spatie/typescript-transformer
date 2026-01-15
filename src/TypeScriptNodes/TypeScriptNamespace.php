@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class TypeScriptNamespace implements TypeScriptNode

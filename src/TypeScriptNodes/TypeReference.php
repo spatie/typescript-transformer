@@ -2,9 +2,9 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
+use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class TypeReference implements TypeScriptNamedNode, TypeScriptNode

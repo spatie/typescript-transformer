@@ -2,7 +2,7 @@
 
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
-use Spatie\TypeScriptTransformer\Support\WriteableFile;
+use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 
 beforeEach(function () {

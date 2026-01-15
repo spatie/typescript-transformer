@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Handlers\Watch;
+namespace Spatie\TypeScriptTransformer\EventHandlers;
 
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
-use Spatie\TypeScriptTransformer\Events\Watch\FileCreatedWatchEvent;
-use Spatie\TypeScriptTransformer\Events\Watch\FileUpdatedWatchEvent;
+use Spatie\TypeScriptTransformer\Events\FileCreatedWatchEvent;
+use Spatie\TypeScriptTransformer\Events\FileUpdatedWatchEvent;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
 /**

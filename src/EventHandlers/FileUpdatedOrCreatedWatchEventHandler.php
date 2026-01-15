@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Handlers\Watch;
+namespace Spatie\TypeScriptTransformer\EventHandlers;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Events\Watch\FileCreatedWatchEvent;
-use Spatie\TypeScriptTransformer\Events\Watch\FileUpdatedWatchEvent;
+use Spatie\TypeScriptTransformer\Events\FileCreatedWatchEvent;
+use Spatie\TypeScriptTransformer\Events\FileUpdatedWatchEvent;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Throwable;

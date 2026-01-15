@@ -3,8 +3,8 @@
 namespace Spatie\TypeScriptTransformer\Transformed;
 
 use RuntimeException;
+use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\Support\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptForwardingNamedNode;

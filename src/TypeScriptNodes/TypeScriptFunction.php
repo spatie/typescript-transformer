@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\Data\WritingContext;
 
 class TypeScriptFunction implements TypeScriptNode
 {

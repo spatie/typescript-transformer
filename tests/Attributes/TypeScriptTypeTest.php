@@ -3,7 +3,7 @@
 use function Spatie\Snapshots\assertMatchesSnapshot;
 
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
-use Spatie\TypeScriptTransformer\Support\WriteableFile;
+use Spatie\TypeScriptTransformer\Data\WriteableFile;
 
 it('can output a single type', closure: function () {
     class TestSingleTypeScriptTypeAttribute

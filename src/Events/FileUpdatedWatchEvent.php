@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Events\Watch;
+namespace Spatie\TypeScriptTransformer\Events;
 
 class FileUpdatedWatchEvent extends WatchEvent
 {

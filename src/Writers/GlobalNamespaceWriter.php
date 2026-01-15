@@ -7,8 +7,8 @@ use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\GlobalNamespaceResolvedReference;
 use Spatie\TypeScriptTransformer\Data\ModuleImportResolvedReference;
-use Spatie\TypeScriptTransformer\Support\WriteableFile;
-use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\Data\WriteableFile;
+use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamespace;
 

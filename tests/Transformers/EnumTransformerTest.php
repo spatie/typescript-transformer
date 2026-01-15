@@ -1,7 +1,7 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Data\TransformationContext;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
-use Spatie\TypeScriptTransformer\Support\TransformationContext;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\EmptyEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\IntBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;

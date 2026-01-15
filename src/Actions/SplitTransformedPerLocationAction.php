@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use Spatie\TypeScriptTransformer\Support\Location;
+use Spatie\TypeScriptTransformer\Data\Location;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class SplitTransformedPerLocationAction

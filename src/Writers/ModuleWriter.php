@@ -6,10 +6,10 @@ use Spatie\TypeScriptTransformer\Actions\ResolveImportsAndResolvedReferenceMapAc
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\GlobalNamespaceResolvedReference;
+use Spatie\TypeScriptTransformer\Data\Location;
 use Spatie\TypeScriptTransformer\Data\ModuleImportResolvedReference;
-use Spatie\TypeScriptTransformer\Support\Location;
-use Spatie\TypeScriptTransformer\Support\WriteableFile;
-use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\Data\WriteableFile;
+use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class ModuleWriter implements Writer

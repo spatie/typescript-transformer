@@ -60,14 +60,9 @@ class TransformedCollection implements IteratorAggregate
     {
         $transformed = $this->get($reference);
 
-        //        $this->log->debug($reference, 'Removing reference');
-        //        $this->log->debug($transformed, 'Removing transformed');
-
         if ($transformed === null) {
             return;
         }
-
-        //        $this->log->debug($transformed->referencedBy, 'Marking references as missing');
 
         foreach (array_unique($transformed->referencedBy) as $referencedBy) {
             $referencedBy = $this->get($referencedBy);
@@ -83,8 +78,6 @@ class TransformedCollection implements IteratorAggregate
 
             unset($this->fileMapping[$path]);
         }
-
-        ray($this);
     }
 
     public function getIterator(): Traversable

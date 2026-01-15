@@ -136,6 +136,11 @@ class PhpClassNode
         return $this->reflection->hasMethod($name);
     }
 
+    public function getReflection(string $className): bool
+    {
+        return $this->reflection->isSubclassOf($className);
+    }
+
     public function getMethod(string $name): ?PhpMethodNode
     {
         $method = $this->reflection->getMethod($name);

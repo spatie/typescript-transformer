@@ -7,6 +7,7 @@ use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\ExecuteConnectedClosuresAction;
 use Spatie\TypeScriptTransformer\Actions\ExecuteProvidedClosuresAction;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
+use Spatie\TypeScriptTransformer\Actions\LoadPhpClassNodeAction;
 use Spatie\TypeScriptTransformer\Actions\ResolveFilesAction;
 use Spatie\TypeScriptTransformer\Actions\RunProvidersAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
@@ -14,7 +15,6 @@ use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Collections\WritersCollection;
 use Spatie\TypeScriptTransformer\Runners\Runner;
-use Spatie\TypeScriptTransformer\Support\LoadPhpClassNodeAction;
 use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 
@@ -68,9 +68,8 @@ class TypeScriptTransformer
     {
         /**
          * TODO:
-         * - Test Laracvel specific stuff
+         * - Test Laravel specific stuff
          * - Add support for watching files -> ok, maybe add docs and some tests
-         * - Write some text arround refactoring in IDE and watcher, that IDE's useally take some time to write eveyrthing out so it can take up to 10 seconds before the watcher kicks in
          * - Further write docs + check them -> check TODO's
          * - Make sure we wire up WatchingTypeProvider::handleWatchEvent
          * - Hookup SummarizedWatchEvent

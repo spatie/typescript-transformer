@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Support\VisitorProfile;
+use Spatie\TypeScriptTransformer\Data\VisitorProfile;
 
 interface TypeScriptVisitableNode
 {

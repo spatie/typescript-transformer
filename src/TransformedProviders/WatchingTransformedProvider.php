@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
-use Spatie\TypeScriptTransformer\Events\Watch\WatchEvent;
+use Spatie\TypeScriptTransformer\Events\WatchEvent;
 
 interface WatchingTransformedProvider
 {

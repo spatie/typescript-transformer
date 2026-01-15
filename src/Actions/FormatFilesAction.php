@@ -2,7 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
-use Spatie\TypeScriptTransformer\Support\WriteableFile;
+use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class FormatFilesAction

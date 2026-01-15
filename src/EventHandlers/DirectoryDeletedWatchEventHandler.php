@@ -1,9 +1,9 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Handlers\Watch;
+namespace Spatie\TypeScriptTransformer\EventHandlers;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Events\Watch\DirectoryDeletedWatchEvent;
+use Spatie\TypeScriptTransformer\Events\DirectoryDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
 /**

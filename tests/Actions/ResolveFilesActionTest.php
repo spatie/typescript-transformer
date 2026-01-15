@@ -4,7 +4,7 @@ use Spatie\TypeScriptTransformer\Actions\ResolveFilesAction;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Collections\WritersCollection;
-use Spatie\TypeScriptTransformer\Support\WriteableFile;
+use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
 
 it('correctly divides transformed objects between writers', function () {

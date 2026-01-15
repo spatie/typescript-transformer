@@ -1118,7 +1118,7 @@ The package comes with a lot of TypeScript nodes, but sometimes it might be nece
 A TypeScript node is a regular PHP class that implements the `TypeScriptNode` interface:
 
 ```php
-use Spatie\TypeScriptTransformer\Support\WritingContext;
+use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
@@ -1339,6 +1339,58 @@ $config->connectedVisitorHook(
 );
 ```
 
+### Using the EnumTransformer
+
+The package ships with a built-in EnumTransformer which can transform PHP enums to TypeScript enums or union types.
+
+It is possible to configure this transformer to generate enums for other types of enums than the native PHP enums by
+implementing a custom `EnumProvider`:
+
+```php
+use Spatie\TypeScriptTransformer\Transformers\EnumProviders\EnumProvider;
+
+use Spatie\Enum\Enum;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+
+class SpatieEnumProvider implements EnumProvider
+{
+    public function isEnum(PhpClassNode $phpClassNode): bool
+    {
+        return $phpClassNode->reflection->isSubclassOf(Enum::class);
+    }
+
+    public function isValidUnion(PhpClassNode $phpClassNode): bool
+    {
+        return true;
+    }
+
+    public function resolveCases(PhpClassNode $phpClassNode): array
+    {
+        /** @var class-string<Enum> $className */
+        $className = $phpClassNode->getName();
+
+        return array_map(
+            fn (Enum $enum) => [
+                'name' => $enum->value,
+                'value' => $enum->value,
+            ],
+            $className::cases()
+        );
+    }
+}
+```
+
+The `isEnum` method should return whether the provided class node is an enum, the `isValidUnion` method should return
+whether the enum can be transformed to a union type rather than a TypeScript enum. The `resolveCases` method should
+return an array of cases for the enum which is a mapping of case names to their values.
+
+Within your configuration you can register the transformer as such:
+
+```php
+$config->transformer(
+    new EnumTransformer(enumProvider: new SpatieEnumProvider())
+);
+```
 ### Building your own Writer
 
 Writers are responsible for writing out the TypeScript types, the package comes with three writers:
@@ -1362,7 +1414,7 @@ types & executable code) for that location without any namespaces.
 It is possible to create your own writer by implementing the `Writer` interface:
 
 ```php
-use Spatie\TypeScriptTransformer\Support\WriteableFile;
+use Spatie\TypeScriptTransformer\Data\WriteableFile;
 
 interface Writer
 {
@@ -1515,6 +1567,15 @@ When you're using Laravel you can run the following command to start watching fo
 ```bash
 php artisan typescript:transform --watch
 ```
+
+### Refactoring with an IDE or AI Agent
+
+When running multiple changes throughout your codebase in multiple files at once like refactoring a class name in
+PHPStorm or letting Claude code make multiple changes, the watcher might not be able to pick up these changes
+up to ten seconds after they were made. This is due to the fact that most IDEs and AI Agents make changes in a temporary
+file and then move the temporary file to the original file location.
+
+In the end TypeScript transformer will pick up these changes, but it might take a bit longer than expected.
 
 ### Setting up the runner for watching changes
 

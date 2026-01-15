@@ -1,9 +1,9 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Handlers\Watch;
+namespace Spatie\TypeScriptTransformer\EventHandlers;
 
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
-use Spatie\TypeScriptTransformer\Events\Watch\WatchEvent;
+use Spatie\TypeScriptTransformer\Events\WatchEvent;
 
 /**
  * @template T of WatchEvent
