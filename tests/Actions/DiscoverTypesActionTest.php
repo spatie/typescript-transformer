@@ -23,20 +23,27 @@ it('can discover types', function () {
         __DIR__.'/../Fakes/TypesToProvide',
     ]);
 
-    expect($types)->toEqualCanonicalizing([
-        new PhpEnumNode(new ReflectionEnum(StringBackedEnum::class)),
-        new PhpClassNode(new ReflectionClass(HiddenAttributedClass::class)),
-        new PhpClassNode(new ReflectionClass(TypeScriptAttributedClass::class)),
-        new PhpClassNode(new ReflectionClass(SimpleAttribute::class)),
-        new PhpClassNode(new ReflectionClass(VariadicAttribute::class)),
-        new PhpClassNode(new ReflectionClass(SimpleInterface::class)),
-        new PhpClassNode(new ReflectionClass(TypeScriptLocationAttributedClass::class)),
-        new PhpClassNode(new ReflectionClass(OptionalAttributedClass::class)),
-        new PhpEnumNode(new ReflectionEnum(EmptyEnum::class)),
-        new PhpClassNode(new ReflectionClass(ReadonlyClass::class)),
-        new PhpClassNode(new ReflectionClass(SimpleClass::class)),
-        new PhpEnumNode(new ReflectionEnum(UnitEnum::class)),
-        new PhpEnumNode(new ReflectionEnum(IntBackedEnum::class)),
+    usort(
+        $types,
+        fn (PhpClassNode|PhpEnumNode $a, PhpClassNode|PhpEnumNode $b) => $a->getName() <=> $b->getName()
+    );
+
+    $expected = [
         new PhpClassNode(new ReflectionClass(ComplexAttribute::class)),
-    ]);
+        new PhpEnumNode(new ReflectionEnum(EmptyEnum::class)),
+        new PhpClassNode(new ReflectionClass(HiddenAttributedClass::class)),
+        new PhpEnumNode(new ReflectionEnum(IntBackedEnum::class)),
+        new PhpClassNode(new ReflectionClass(OptionalAttributedClass::class)),
+        new PhpClassNode(new ReflectionClass(ReadonlyClass::class)),
+        new PhpClassNode(new ReflectionClass(SimpleAttribute::class)),
+        new PhpClassNode(new ReflectionClass(SimpleClass::class)),
+        new PhpClassNode(new ReflectionClass(SimpleInterface::class)),
+        new PhpEnumNode(new ReflectionEnum(StringBackedEnum::class)),
+        new PhpClassNode(new ReflectionClass(TypeScriptAttributedClass::class)),
+        new PhpClassNode(new ReflectionClass(TypeScriptLocationAttributedClass::class)),
+        new PhpEnumNode(new ReflectionEnum(UnitEnum::class)),
+        new PhpClassNode(new ReflectionClass(VariadicAttribute::class)),
+    ];
+
+    expect($types)->toEqual($expected);
 });
