@@ -5,7 +5,6 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\ProcessWatchBufferAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Collections\WritersCollection;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\Events\DirectoryDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\FileCreatedWatchEvent;
@@ -31,13 +30,12 @@ use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
 it('returns continue when there are no events', function () {
     $collection = new TransformedCollection();
     $writer = new FlatModuleWriter();
-    $writersCollection = new WritersCollection($writer);
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()->writer($writer)->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection, $writersCollection);
+    $action = new ProcessWatchBufferAction($transformer, $collection);
 
     $result = $action->execute([]);
 
@@ -56,7 +54,6 @@ class User {
 
     $collection = new TransformedCollection();
     $writer = new FlatModuleWriter();
-    $writersCollection = new WritersCollection($writer);
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
@@ -67,7 +64,7 @@ class User {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection, $writersCollection);
+    $action = new ProcessWatchBufferAction($transformer, $collection);
 
     $result = $action->execute([
         new FileCreatedWatchEvent($factory->path('Models/User.php')),
@@ -102,7 +99,6 @@ class User {
 
     $collection = new TransformedCollection();
     $writer = new FlatModuleWriter();
-    $writersCollection = new WritersCollection($writer);
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
@@ -113,7 +109,7 @@ class User {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection, $writersCollection);
+    $action = new ProcessWatchBufferAction($transformer, $collection);
 
     $action->execute([
         new FileCreatedWatchEvent($factory->path('Models/User.php')),
@@ -170,7 +166,6 @@ it('processes file deleted events and removes transformed items', function () {
 
     $collection = new TransformedCollection([$deletedFileTransformed]);
     $writer = new FlatModuleWriter();
-    $writersCollection = new WritersCollection($writer);
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
@@ -178,7 +173,7 @@ it('processes file deleted events and removes transformed items', function () {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection, $writersCollection);
+    $action = new ProcessWatchBufferAction($transformer, $collection);
 
     $result = $action->execute([
         new FileDeletedWatchEvent($factory->path('Models/User.php')),
@@ -216,7 +211,6 @@ it('processes directory deleted events and removes all transformed items in dire
         $subDirTransformed,
         $otherDirTransformed,
     ]);
-    $writersCollection = new WritersCollection($writer);
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
@@ -225,7 +219,7 @@ it('processes directory deleted events and removes all transformed items in dire
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection, $writersCollection);
+    $action = new ProcessWatchBufferAction($transformer, $collection);
 
     $result = $action->execute([
         new DirectoryDeletedWatchEvent($factory->path('Models')),
@@ -243,7 +237,6 @@ it('returns complete refresh when config file is updated', function () {
 
     $collection = new TransformedCollection();
     $writer = new FlatModuleWriter();
-    $writersCollection = new WritersCollection($writer);
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
@@ -252,7 +245,7 @@ it('returns complete refresh when config file is updated', function () {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection, $writersCollection);
+    $action = new ProcessWatchBufferAction($transformer, $collection);
 
     $result = $action->execute([
         new FileUpdatedWatchEvent($configPath),
@@ -275,7 +268,6 @@ class User {
 
     $collection = new TransformedCollection();
     $writer = new FlatModuleWriter();
-    $writersCollection = new WritersCollection($writer);
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
@@ -286,7 +278,7 @@ class User {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection, $writersCollection);
+    $action = new ProcessWatchBufferAction($transformer, $collection);
 
     $result = $action->execute([
         new FileUpdatedWatchEvent($configPath),
@@ -314,7 +306,6 @@ class User {
 
     $collection = new TransformedCollection();
     $writer = new FlatModuleWriter();
-    $writersCollection = new WritersCollection($writer);
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
@@ -326,7 +317,7 @@ class User {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection, $writersCollection);
+    $action = new ProcessWatchBufferAction($transformer, $collection);
 
     $result = $action->execute([
         new FileCreatedWatchEvent($factory->path('Models/User.php')),
@@ -368,8 +359,7 @@ it('can delete and create a referenced transformed and it will reconnect referen
     );
 
     $collection = new TransformedCollection();
-    $writersCollection = new WritersCollection($writer);
-    $action = new ProcessWatchBufferAction($transformer, $collection, $writersCollection);
+    $action = new ProcessWatchBufferAction($transformer, $collection);
 
     $action->execute([
         new FileCreatedWatchEvent($circularAPath),

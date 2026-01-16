@@ -72,6 +72,11 @@ class Transformed
         return $this;
     }
 
+    public function hasWriter(): bool
+    {
+        return isset($this->writer);
+    }
+
     public function setWriter(Writer $writer): self
     {
         if (isset($this->writer)) {

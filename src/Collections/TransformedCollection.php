@@ -117,6 +117,35 @@ class TransformedCollection implements IteratorAggregate, Countable
         return $transformed;
     }
 
+    public function ensureEachTransformedHasAWriter(
+        Writer $defaultWriter,
+    ): void {
+        foreach ($this->items as $item) {
+            if (! $item->hasWriter()) {
+                $item->setWriter($defaultWriter);
+            }
+        }
+    }
+
+    /**
+     * @return array<int, Writer>
+     */
+    public function getUniqueWriters(): array
+    {
+        $writers = [];
+
+        foreach ($this->items as $item) {
+            $writer = $item->getWriter();
+            $hash = spl_object_hash($writer);
+
+            if (! array_key_exists($hash, $writers)) {
+                $writers[$hash] = $writer;
+            }
+        }
+
+        return array_values($writers);
+    }
+
     public function onlyChanged(): Generator
     {
         foreach ($this->items as $item) {

@@ -3,21 +3,26 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Collections\WritersCollection;
 use Spatie\TypeScriptTransformer\Data\WriteableFile;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class ResolveFilesAction
 {
+    public function __construct(
+        protected TypeScriptTransformerConfig $config,
+    ) {
+    }
+
     /**
      * @return array<WriteableFile>
      */
-    public function execute(
-        TransformedCollection $collection,
-        WritersCollection $writersCollection,
-    ): array {
+    public function execute(TransformedCollection $collection): array
+    {
         $writeableFiles = [];
 
-        foreach ($writersCollection as $writer) {
+        $collection->ensureEachTransformedHasAWriter($this->config->typesWriter);
+
+        foreach ($collection->getUniqueWriters() as $writer) {
             $transformed = $collection->getTransformedForWriter($writer);
 
             array_push($writeableFiles, ...$writer->output($transformed, $collection));

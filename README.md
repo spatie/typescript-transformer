@@ -920,7 +920,7 @@ export type Data = {
 }
 ```
 
-### Standalone writing providers
+### Using different writers in providers
 
 Currently, TypeScript transformer will output all transformed objects using the default writer configured. While most of
 the time this is sufficient, there are cases where you might want to have more control over how certain transformed
@@ -930,33 +930,18 @@ For example, in the Laravel package all types from classes, enums, and interface
 namespaces. Yet the package also provide some helper functions allowing you to generate URLs for your routes. These
 helper functions are best written to a separate file without namespaces.
 
-A standalone writing providers allows you to set a different writer for the transformed objects provided by the
-provider.
-
-You can create such a provider by implementing the `StandaloneWritingTransformedProvider` interface:
+In order to achieve this, TypeScript transformer allows you to use different writers per transformed object, you can
+set a writer on a transformed object as such:
 
 ```php
-use Spatie\TypeScriptTransformer\TransformedProviders\StandaloneWritingTransformedProvider;
-use Spatie\TypeScriptTransformer\Writers\ModuleWriter;
-
-class RouteHelpersProvider implements StandaloneWritingTransformedProvider, TransformedProvider
-{
-    public function provide(
-        TypeScriptTransformerConfig $config,
-    ): array {
-        // Create transformed objects
-    }
-
-    public function getWriter(): ModuleWriter
-    {
-        return new ModuleWriter();
-    }
-}
+$transformed->setWriter(new ModuleWriter());
 ```
 
-In these providers it is still possible to reference transformed objects written down by writers from other providers or
-the default writer, TypeScript transformer will take care of linking them together and generating the correct import
-statements.
+Please notice that you can only set writers on a transformed object once and we advise you for performance reasons
+to create a writer in the constructor of your provider and reuse it for all transformed objects within that provider.
+
+It is still possible to reference transformed objects written down by writers from other providers or the default
+writer, TypeScript transformer will take care of linking them together and generating the correct import statements.
 
 ### Logging in providers
 
@@ -1728,7 +1713,8 @@ Allows you to find all transformed objects within a given directory.
 **public function requireCompleteRewrite(): void**
 
 While we try to cache the output of transformed objects as much as possible, only invalidating changed objects and the
-objects that reference changed objects, sometimes a complete rewrite is necessary. You can request such a complete rewrite
+objects that reference changed objects, sometimes a complete rewrite is necessary. You can request such a complete
+rewrite
 by calling this method.
 
 ### Loggers

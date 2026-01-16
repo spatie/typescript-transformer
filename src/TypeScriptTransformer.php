@@ -13,7 +13,6 @@ use Spatie\TypeScriptTransformer\Actions\RunProvidersAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Collections\WritersCollection;
 use Spatie\TypeScriptTransformer\Runners\Runner;
 use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
@@ -55,7 +54,7 @@ class TypeScriptTransformer
             new ExecuteProvidedClosuresAction($config),
             new ConnectReferencesAction($logger),
             new ExecuteConnectedClosuresAction($config),
-            new ResolveFilesAction(),
+            new ResolveFilesAction($config),
             new WriteFilesAction($config),
             new FormatFilesAction($config),
             new TransformTypesAction(),
@@ -66,17 +65,9 @@ class TypeScriptTransformer
 
     public function execute(): void
     {
-        /**
-         * Laravel
-         * - Further write docs + check them -> check TODO's
-         * - Test Laravel specific stuff
-         *
-         * - Release
-         */
+        $transformedCollection = $this->resolveState();
 
-        [$transformedCollection, $writersCollection] = $this->resolveState();
-
-        $this->outputTransformed($transformedCollection, $writersCollection);
+        $this->outputTransformed($transformedCollection);
 
         if ($this->watch) {
             $this->signalWorkerReady();
@@ -84,7 +75,6 @@ class TypeScriptTransformer
             $watcher = new FileSystemWatcher(
                 $this,
                 $transformedCollection,
-                $writersCollection,
             );
 
             $watcher->run();
@@ -96,12 +86,9 @@ class TypeScriptTransformer
         $this->logger->info(Runner::WORKER_READY_SIGNAL);
     }
 
-    /**
-     * @return array{TransformedCollection, WritersCollection}
-     */
-    public function resolveState(): array
+    public function resolveState(): TransformedCollection
     {
-        [$transformedCollection, $writersCollection] = $this->runProvidersAction->execute($this->logger);
+        $transformedCollection = $this->runProvidersAction->execute($this->logger);
 
         $this->executeProvidedClosuresAction->execute($transformedCollection);
 
@@ -109,20 +96,18 @@ class TypeScriptTransformer
 
         $this->executeConnectedClosuresAction->execute($transformedCollection);
 
-        return [$transformedCollection, $writersCollection];
+        return $transformedCollection;
     }
 
-    public function outputTransformed(
-        TransformedCollection $transformedCollection,
-        WritersCollection $writersCollection,
-    ): void {
+    public function outputTransformed(TransformedCollection $transformedCollection): void
+    {
         if (! $transformedCollection->hasChanges()) {
             return;
         }
 
         $transformedCollection->rewriteExecuted();
 
-        $writeableFiles = $this->resolveFilesAction->execute($transformedCollection, $writersCollection);
+        $writeableFiles = $this->resolveFilesAction->execute($transformedCollection);
 
         $this->writeFilesAction->execute($writeableFiles);
 

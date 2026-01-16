@@ -27,8 +27,6 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
             $classNode = $this->typeScriptTransformer->loadPhpClassNodeAction->execute($event->path);
 
             if ($classNode === null) {
-                $this->typeScriptTransformer->logger->warning("Multiple class nodes found in {$event->path}");
-
                 return null;
             }
 
@@ -48,10 +46,6 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
                 $this->typeScriptTransformer->config->transformers,
                 $classNode
             );
-
-            if ($newlyTransformed !== null) {
-                $newlyTransformed->setWriter($this->typeScriptTransformer->config->typesWriter);
-            }
         } catch (Throwable $throwable) {
             if (str_starts_with($throwable::class, 'Roave\BetterReflection')) {
                 return null;

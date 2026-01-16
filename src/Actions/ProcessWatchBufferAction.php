@@ -3,7 +3,6 @@
 namespace Spatie\TypeScriptTransformer\Actions;
 
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Collections\WritersCollection;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\EventHandlers\ConfigUpdatedWatchEventHandler;
 use Spatie\TypeScriptTransformer\EventHandlers\DirectoryDeletedWatchEventHandler;
@@ -28,7 +27,6 @@ class ProcessWatchBufferAction
     public function __construct(
         protected TypeScriptTransformer $typeScriptTransformer,
         protected TransformedCollection $transformedCollection,
-        protected WritersCollection $writersCollection,
     ) {
         $this->initializeHandlers();
     }
@@ -78,7 +76,6 @@ class ProcessWatchBufferAction
 
         $this->typeScriptTransformer->outputTransformed(
             $this->transformedCollection,
-            $this->writersCollection,
         );
 
         return null;
