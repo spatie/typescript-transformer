@@ -1,4 +1,4 @@
-# TypeScript Transformer
+# Transform PHP to TypeScript
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
 [![Tests](https://img.shields.io/github/actions/workflow/status/spatie/typescript-transformer/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/spatie/typescript-transformer/actions/workflows/run-tests.yml)
@@ -6,7 +6,7 @@
 
 **These docs are for the (currently in beta) v3 release of the package, you'll find the v2 docs [here](https://spatie.be/docs/typescript-transformer/v2/introduction).** 
 
-This package allows you to convert PHP classes to TypeScript.
+This package allows you to convert PHP classes & more to TypeScript.
 
 This class...
 
