@@ -68,11 +68,9 @@ class TypeScriptTransformer
     {
         /**
          * Laravel
-         * - Check old Laravel tests if we missed something
          * - Further write docs + check them -> check TODO's
          * - Test Laravel specific stuff
          *
-         * - Fix
          * - Release
          */
 

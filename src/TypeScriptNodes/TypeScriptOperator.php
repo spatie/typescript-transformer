@@ -53,6 +53,13 @@ class TypeScriptOperator implements TypeScriptNode, TypeScriptVisitableNode
         return new self('extends', $parent, $child);
     }
 
+    public static function as(
+        TypeScriptNode $expression,
+        TypeScriptNode $type,
+    ): self {
+        return new self('as', $type, $expression);
+    }
+
     public function write(WritingContext $context): string
     {
         if ($this->left === null) {

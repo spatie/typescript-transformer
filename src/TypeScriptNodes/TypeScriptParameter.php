@@ -11,6 +11,8 @@ class TypeScriptParameter implements TypeScriptNode, TypeScriptVisitableNode
         public string $name,
         public TypeScriptNode $type,
         public bool $isOptional = false,
+        public ?TypeScriptNode $defaultValue = null,
+        public bool $isSpread = false,
     ) {
     }
 
@@ -20,13 +22,17 @@ class TypeScriptParameter implements TypeScriptNode, TypeScriptVisitableNode
             ? "'{$this->name}'"
             : $this->name;
 
-        return $this->isOptional
-            ? "{$name}?: {$this->type->write($context)}"
-            : "{$name}: {$this->type->write($context)}";
+        $spread = $this->isSpread ? '...' : '';
+        $optional = $this->isOptional ? '?' : '';
+        $default = $this->defaultValue !== null
+            ? " = {$this->defaultValue->write($context)}"
+            : '';
+
+        return "{$spread}{$name}{$optional}: {$this->type->write($context)}{$default}";
     }
 
     public function visitorProfile(): VisitorProfile
     {
-        return VisitorProfile::create()->single('type');
+        return VisitorProfile::create()->single('type', 'defaultValue');
     }
 }
