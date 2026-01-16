@@ -12,7 +12,7 @@ beforeEach(function () {
     $this->temporaryDirectory = (new TemporaryDirectory())->create();
 
     $this->outputFile = $this->temporaryDirectory->path('types.d.ts');
-});
+})->skipOnWindows();
 
 it('can format an generated file with prettier', function () {
     $contentA = "export type Enum='yes'|'no';export type OtherDto={name:string}";
