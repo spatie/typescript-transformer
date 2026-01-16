@@ -1,0 +1,30 @@
+<?php
+
+namespace Spatie\TypeScriptTransformer\EventHandlers;
+
+use Spatie\TypeScriptTransformer\Data\WatchEventResult;
+use Spatie\TypeScriptTransformer\Events\FileCreatedWatchEvent;
+use Spatie\TypeScriptTransformer\Events\FileUpdatedWatchEvent;
+use Spatie\TypeScriptTransformer\TypeScriptTransformer;
+
+/**
+ * @implements WatchEventHandler<FileCreatedWatchEvent|FileUpdatedWatchEvent>
+ */
+class ConfigUpdatedWatchEventHandler implements WatchEventHandler
+{
+    public function __construct(
+        private TypeScriptTransformer $typeScriptTransformer,
+    ) {
+    }
+
+    public function handle($event): ?WatchEventResult
+    {
+        if (! in_array($event->path, $this->typeScriptTransformer->config->configPaths)) {
+            return null;
+        }
+
+        $this->typeScriptTransformer->logger->info("Configuration file updated: {$event->path}, restarting worker...");
+
+        return WatchEventResult::completeRefresh();
+    }
+}

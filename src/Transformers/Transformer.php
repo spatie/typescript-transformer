@@ -2,10 +2,12 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use ReflectionClass;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
+use Spatie\TypeScriptTransformer\Data\TransformationContext;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 
 interface Transformer
 {
-    public function transform(ReflectionClass $class, string $name): ?TransformedType;
+    public function transform(PhpClassNode $phpClassNode, TransformationContext $context): Transformed|Untransformable;
 }

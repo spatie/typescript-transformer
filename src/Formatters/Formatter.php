@@ -4,5 +4,5 @@ namespace Spatie\TypeScriptTransformer\Formatters;
 
 interface Formatter
 {
-    public function format(string $file): void;
+    public function format(array $files): void;
 }

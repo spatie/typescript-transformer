@@ -1,0 +1,6 @@
+export type TestObjectLiteralTypeScriptTypeAttribute = {
+property: {
+label: string
+value: string
+}
+};

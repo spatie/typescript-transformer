@@ -5,26 +5,29 @@ on:
     paths:
       - '**.php'
       - 'phpstan.neon.dist'
+      - 'phpstan-baseline.neon'
   pull_request:
     paths:
       - '**.php'
       - 'phpstan.neon.dist'
+      - 'phpstan-baseline.neon'
 
 jobs:
   phpstan:
     name: phpstan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.5'
           coverage: none
 
-      - name: Install composer dependencies
-        uses: ramsey/composer-install@v2
+      - name: Install dependencies
+        run: |
+          composer update --prefer-dist --no-interaction --no-suggest
 
       - name: Run PHPStan
         run: ./vendor/bin/phpstan --error-format=github

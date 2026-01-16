@@ -1,145 +1,82 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Transformers;
-
-use DateTime;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertFalse;
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertNull;
-use function PHPUnit\Framework\assertTrue;
-use ReflectionClass;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\IntBackedEnum;
-use Spatie\TypeScriptTransformer\Tests\FakeClasses\StringBackedEnum;
+use Spatie\TypeScriptTransformer\Data\TransformationContext;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\EmptyEnum;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\IntBackedEnum;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\UnitEnum;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-use UnitEnum;
 
 it('will only convert enums', function () {
-    $transformer = new EnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
-    );
-
-    assertNotNull($transformer->transform(
-        new ReflectionClass(StringBackedEnum::class),
-        'Enum',
-    ));
-
-    assertNull($transformer->transform(
-        new ReflectionClass(DateTime::class),
-        'Enum',
-    ));
+    expect(transformSingle(StringBackedEnum::class, new EnumTransformer()))->toBeInstanceOf(Transformed::class);
+    expect(transformSingle(DateTime::class, new EnumTransformer()))->toBeInstanceOf(Untransformable::class);
 });
 
-it('does not transform a unit enum', function () {
-    $transformer = new EnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
-    );
-
-    $type = $transformer->transform(
-        new ReflectionClass(UnitEnum::class),
-        'Enum'
-    );
-
-    assertNull($type);
+it('does not transform a unit enum when using unit enums', function () {
+    expect(transformSingle(UnitEnum::class, new EnumTransformer()))->toBeInstanceOf(Untransformable::class);
 });
 
-it('can transform a backed enum into enum', function () {
-    $transformer = new EnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
-    );
+it('can transform an unit backed enum into a native enum', function () {
+    expect(classesToTypeScript([UnitEnum::class], new EnumTransformer(useUnionEnums: false)))
+        ->toBe(<<<TS
+export enum UnitEnum {
+    JOHN,
+    PAUL,
+    GEORGE,
+    RINGO,
+}
 
-    $type = $transformer->transform(
-        new ReflectionClass(StringBackedEnum::class),
-        'Enum'
-    );
-
-    assertEquals("JS = 'js', PHP = 'php', BackslashesTest = 'backslashes\\\\test'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
-    assertFalse($type->isInline);
-    assertEquals('enum', $type->keyword);
+TS);
 });
 
-it('can transform a backed enum into a union', function () {
-    $transformer = new EnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
-    );
-
-    $type = $transformer->transform(
-        new ReflectionClass(StringBackedEnum::class),
-        'Enum'
-    );
-
-    assertEquals("'js' | 'php' | 'backslashes\\\\test'", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
-    assertFalse($type->isInline);
-    assertEquals('type', $type->keyword);
+it('can transform an int backed enum into a union enum', function () {
+    expect(classesToTypeScript([IntBackedEnum::class], new EnumTransformer()))
+        ->toBe('export type IntBackedEnum = 1 | 2 | 3 | 4;'.PHP_EOL);
 });
 
-it('can transform a backed enum with integers into an enum', function () {
-    $transformer = new EnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
-    );
+it('can transform an int backed enum into a native enum', function () {
+    expect(classesToTypeScript([IntBackedEnum::class], new EnumTransformer(useUnionEnums: false)))
+        ->toBe(<<<TS
+export enum IntBackedEnum {
+    John = 1,
+    Paul = 2,
+    George = 3,
+    Ringo = 4,
+}
 
-    $type = $transformer->transform(
-        new ReflectionClass(IntBackedEnum::class),
-        'Enum'
-    );
-
-    assertEquals("JS = 1, PHP = 2", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
-    assertFalse($type->isInline);
-    assertEquals('enum', $type->keyword);
+TS);
 });
 
-it('can transform a backed enum with integers into a union', function () {
-    $transformer = new EnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
-    );
-
-    $type = $transformer->transform(
-        new ReflectionClass(IntBackedEnum::class),
-        'Enum'
-    );
-
-    assertEquals("1 | 2", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
-    assertFalse($type->isInline);
-    assertEquals('type', $type->keyword);
+it('can transform a string backed enum into a union enum', function () {
+    expect(classesToTypeScript([StringBackedEnum::class], new EnumTransformer()))
+        ->toBe('export type StringBackedEnum = "john" | "paul" | "george" | "ringo";' . PHP_EOL);
 });
 
-it('can transform a backed enum with strings with single-quotes into a enum', function () {
-    enum TestStringBackedEnumWithSingleQuotes: string
-    {
-        case NO_QUOTE = 'no quote';
-        case HAS_QUOTE = 'has quote \'';
-    }
+it('can transform a string backed enum into a native enum', function () {
+    expect(classesToTypeScript([StringBackedEnum::class], new EnumTransformer(useUnionEnums: false)))
+        ->toBe(
+            <<<TS
+export enum StringBackedEnum {
+    John = 'john',
+    Paul = 'paul',
+    George = 'george',
+    Ringo = 'ringo',
+}
 
-    $transformer = new EnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(true)
+TS
+        );
+});
+
+it('will not transform empty enums', function () {
+    $transformer = new EnumTransformer();
+
+    $transformed = $transformer->transform(
+        $enum = PhpClassNode::fromClassString(EmptyEnum::class),
+        TransformationContext::createFromPhpClass($enum),
     );
 
-    $type = $transformer->transform(
-        new ReflectionClass(TestStringBackedEnumWithSingleQuotes::class),
-        'Enum'
-    );
-
-    assertEquals("NO_QUOTE = 'no quote', HAS_QUOTE = 'has quote \''", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
-    assertFalse($type->isInline);
-    assertEquals('enum', $type->keyword);
-
-    $transformer = new EnumTransformer(
-        TypeScriptTransformerConfig::create()->transformToNativeEnums(false)
-    );
-
-    $type = $transformer->transform(
-        new ReflectionClass(TestStringBackedEnumWithSingleQuotes::class),
-        'Enum'
-    );
-
-    assertEquals("'no quote' | 'has quote \''", $type->transformed);
-    assertTrue($type->missingSymbols->isEmpty());
-    assertFalse($type->isInline);
-    assertEquals('type', $type->keyword);
+    expect($transformed)->toBeInstanceOf(Untransformable::class);
 });

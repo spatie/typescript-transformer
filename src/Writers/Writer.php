@@ -2,11 +2,23 @@
 
 namespace Spatie\TypeScriptTransformer\Writers;
 
-use Spatie\TypeScriptTransformer\Structures\TypesCollection;
+use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\Data\GlobalNamespaceResolvedReference;
+use Spatie\TypeScriptTransformer\Data\ModuleImportResolvedReference;
+use Spatie\TypeScriptTransformer\Data\WriteableFile;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 interface Writer
 {
-    public function format(TypesCollection $collection): string;
+    /**
+     * @param array<Transformed> $transformed
+     *
+     * @return array<WriteableFile>
+     */
+    public function output(
+        array $transformed,
+        TransformedCollection $transformedCollection,
+    ): array;
 
-    public function replacesSymbolsWithFullyQualifiedIdentifiers(): bool;
+    public function resolveReference(Transformed $transformed): ModuleImportResolvedReference|GlobalNamespaceResolvedReference;
 }

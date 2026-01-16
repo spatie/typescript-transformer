@@ -2,81 +2,75 @@
 
 namespace Spatie\TypeScriptTransformer\Transformers;
 
-use ReflectionClass;
-use ReflectionEnum;
-use ReflectionEnumBackedCase;
-use Spatie\TypeScriptTransformer\Structures\TransformedType;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Data\TransformationContext;
+use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
+use Spatie\TypeScriptTransformer\References\PhpClassReference;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
+use Spatie\TypeScriptTransformer\Transformed\Untransformable;
+use Spatie\TypeScriptTransformer\Transformers\EnumProviders\EnumProvider;
+use Spatie\TypeScriptTransformer\Transformers\EnumProviders\PhpEnumProvider;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptEnum;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptLiteral;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 
 class EnumTransformer implements Transformer
 {
-    public function __construct(protected TypeScriptTransformerConfig $config)
-    {
+    public function __construct(
+        public bool $useUnionEnums = true,
+        public EnumProvider $enumProvider = new PhpEnumProvider()
+    ) {
     }
 
-    public function transform(ReflectionClass $class, string $name): ?TransformedType
-    {
-        if (! $class->isEnum()) {
-            return null;
+    public function transform(
+        PhpClassNode $phpClassNode,
+        TransformationContext $context
+    ): Transformed|Untransformable {
+        if (! $this->enumProvider->isEnum($phpClassNode)) {
+            return Untransformable::create();
         }
 
-        $enum = (new ReflectionEnum($class->getName()));
-
-        if (! $enum->isBacked()) {
-            return null;
+        if ($this->useUnionEnums === true && ! $this->enumProvider->isValidUnion($phpClassNode)) {
+            return Untransformable::create();
         }
 
-        if (empty($enum->getCases())) {
-            return null;
+        $cases = $this->enumProvider->resolveCases($phpClassNode);
+
+        if (count($cases) === 0) {
+            return Untransformable::create();
         }
 
-        return $this->config->shouldTransformToNativeEnums()
-            ? $this->toEnum($enum, $name)
-            : $this->toType($enum, $name);
-    }
-
-    protected function toEnum(ReflectionEnum $enum, string $name): TransformedType
-    {
-        $options = array_map(
-            fn (ReflectionEnumBackedCase $case) => "{$case->getName()} = {$this->toEnumValue($case)}",
-            $enum->getCases()
-        );
-
-        return TransformedType::create(
-            $enum,
-            $name,
-            implode(', ', $options),
-            keyword: 'enum'
+        return new Transformed(
+            $this->useUnionEnums
+                ? $this->transformAsUnion($context->name, $cases)
+                : $this->transformAsNativeEnum($context->name, $cases),
+            new PhpClassReference($phpClassNode),
+            $context->nameSpaceSegments,
+            true,
         );
     }
 
-    protected function toType(ReflectionEnum $enum, string $name): TransformedType
-    {
-        $options = array_map(
-            fn (ReflectionEnumBackedCase $case) => $this->toEnumValue($case),
-            $enum->getCases(),
-        );
-
-        return TransformedType::create(
-            $enum,
-            $name,
-            implode(' | ', $options)
-        );
+    protected function transformAsNativeEnum(
+        string $name,
+        array $cases
+    ): TypeScriptNode {
+        return new TypeScriptEnum($name, $cases);
     }
 
-    protected function toEnumValue(ReflectionEnumBackedCase $case): string
-    {
-        $value = $case->getBackingValue();
-
-        if (! is_string($value)) {
-            return "{$value}";
-        }
-
-        $escaped = strtr($value, [
-            '\\' => '\\\\',
-            '\'' => '\\\'',
-        ]);
-
-        return "'{$escaped}'";
+    protected function transformAsUnion(
+        string $name,
+        array $cases
+    ): TypeScriptNode {
+        return new TypeScriptAlias(
+            new TypeScriptIdentifier($name),
+            new TypeScriptUnion(
+                array_map(
+                    fn (array $case) => new TypeScriptLiteral($case['value']),
+                    $cases,
+                ),
+            ),
+        );
     }
 }

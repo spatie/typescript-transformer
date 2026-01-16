@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vendor/bin/pest:*)",
+      "Bash(vendor/bin/phpstan analyse:*)",
+      "Read(//Users/ruben/Spatie/laravel-typescript-transformer/src/**)",
+      "Read(//Users/ruben/Spatie/laravel-typescript-transformer/**)",
+      "Bash(composer analyse:*)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(./vendor/bin/pest:*)"
+    ],
+    "deny": []
+  }
+}

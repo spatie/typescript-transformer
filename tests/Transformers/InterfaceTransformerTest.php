@@ -1,38 +1,12 @@
 <?php
 
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertNull;
-use function Spatie\Snapshots\assertMatchesTextSnapshot;
+use function Spatie\Snapshots\assertMatchesSnapshot;
 
-use Spatie\TypeScriptTransformer\Tests\Fakes\FakeInterface;
-use Spatie\TypeScriptTransformer\Transformers\InterfaceTransformer;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleInterface;
+use Spatie\TypeScriptTransformer\Tests\Support\AllInterfaceTransformer;
 
-it('will only convert interfaces', function () {
-    $transformer = new InterfaceTransformer(
-        TypeScriptTransformerConfig::create()
-    );
+it('transforms methods in interfaces', function () {
+    $transformed = classesToTypeScript([SimpleInterface::class], new AllInterfaceTransformer());
 
-    assertNotNull($transformer->transform(
-        new ReflectionClass(DateTimeInterface::class),
-        'State',
-    ));
-
-    assertNull($transformer->transform(
-        new ReflectionClass(DateTime::class),
-        'State',
-    ));
-});
-
-it('will replace methods', function () {
-    $transformer = new InterfaceTransformer(
-        TypeScriptTransformerConfig::create()
-    );
-
-    $type = $transformer->transform(
-        new ReflectionClass(FakeInterface::class),
-        'State',
-    );
-
-    assertMatchesTextSnapshot($type->transformed);
+    assertMatchesSnapshot($transformed);
 });

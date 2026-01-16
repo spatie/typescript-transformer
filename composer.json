@@ -1,6 +1,6 @@
 {
     "name": "spatie/typescript-transformer",
-    "description": "Transform your PHP structures to TypeScript types",
+    "description": "This is my package typescript-transformer",
     "keywords": [
         "spatie",
         "typescript-transformer"
@@ -11,50 +11,51 @@
         {
             "name": "Ruben Van Assche",
             "email": "ruben@spatie.be",
-            "homepage": "https://spatie.be",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.1",
-        "nikic/php-parser": "^4.18|^5.0",
-        "phpdocumentor/type-resolver": "^1.6.2",
-        "symfony/process": "^5.2|^6.0|^7.0|^8.0"
+        "php": "^8.2",
+        "phpstan/phpdoc-parser": "^2.0",
+        "roave/better-reflection": "^6.41",
+        "spatie/file-system-watcher": "^1.1",
+        "spatie/php-structure-discoverer": "^2.2",
+        "symfony/process" : "^7.0|^8.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.40",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "pestphp/pest": "^3.0|^4.0",
+        "pestphp/pest-plugin-arch": "^3.0|^4.0",
         "phpstan/extension-installer": "^1.1",
-        "larapack/dd": "^1.1",
-        "myclabs/php-enum": "^1.7",
-        "pestphp/pest": "^1.22",
-        "phpunit/phpunit": "^9.0",
-        "spatie/data-transfer-object": "^2.0",
-        "spatie/enum": "^3.0",
-        "spatie/pest-plugin-snapshots": "^1.1",
-        "spatie/temporary-directory": "^1.2|^2.0"
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan" : "^2.0",
+        "spatie/pest-plugin-snapshots": "^2.1",
+        "spatie/ray": "^1.41",
+        "spatie/temporary-directory": "^2.1"
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\TypeScriptTransformer\\": "src"
+            "Spatie\\TypeScriptTransformer\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\TypeScriptTransformer\\Tests\\": "tests"
+            "Spatie\\TypeScriptTransformer\\Tests\\": "tests/"
         }
     },
     "scripts": {
-        "analyse" : "vendor/bin/phpstan analyse",
+        "analyse": "vendor/bin/phpstan analyse",
+        "baseline": "vendor/bin/phpstan analyse --generate-baseline",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
-        "psalm": "./vendor/bin/psalm -c psalm.xml",
-        "format": "./vendor/bin/php-cs-fixer fix --allow-risky=yes"
+        "format": "vendor/bin/pint"
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "phpstan/extension-installer": false
+            "phpstan/extension-installer": true
         }
     },
     "minimum-stability": "dev",

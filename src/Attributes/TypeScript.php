@@ -7,10 +7,12 @@ use Attribute;
 #[Attribute]
 class TypeScript
 {
-    public ?string $name;
-
-    public function __construct(?string $name = null)
-    {
-        $this->name = $name;
+    /**
+     * @param  array<string>|null  $location
+     */
+    public function __construct(
+        public ?string $name = null,
+        public ?array $location = null,
+    ) {
     }
 }
