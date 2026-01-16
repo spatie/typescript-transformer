@@ -20,7 +20,7 @@ use Spatie\TypeScriptTransformer\Events\WatchEvent;
 use Spatie\TypeScriptTransformer\TransformedProviders\WatchingTransformedProvider;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 
-class LProcessWatchBufferAction
+class ProcessWatchBufferAction
 {
     /** @var array<class-string<WatchEvent>, array<WatchEventHandler>> */
     protected array $handlers = [];
