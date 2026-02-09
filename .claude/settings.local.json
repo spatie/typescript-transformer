@@ -7,7 +7,11 @@
       "Read(//Users/ruben/Spatie/laravel-typescript-transformer/**)",
       "Bash(composer analyse:*)",
       "Bash(echo \"Exit code: $?\")",
-      "Bash(./vendor/bin/pest:*)"
+      "Bash(./vendor/bin/pest:*)",
+      "Bash(grep:*)",
+      "Bash(composer test:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
