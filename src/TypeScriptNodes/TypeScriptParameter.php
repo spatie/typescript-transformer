@@ -2,15 +2,17 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptParameter implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptParameter implements TypeScriptNode
 {
     public function __construct(
         public string $name,
+        #[NodeVisitable]
         public TypeScriptNode $type,
         public bool $isOptional = false,
+        #[NodeVisitable]
         public ?TypeScriptNode $defaultValue = null,
         public bool $isSpread = false,
     ) {
@@ -29,10 +31,5 @@ class TypeScriptParameter implements TypeScriptNode, TypeScriptVisitableNode
             : '';
 
         return "{$spread}{$name}{$optional}: {$this->type->write($context)}{$default}";
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->single('type', 'defaultValue');
     }
 }

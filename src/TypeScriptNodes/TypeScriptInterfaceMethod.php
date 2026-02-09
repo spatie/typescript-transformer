@@ -2,17 +2,19 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptInterfaceMethod implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptInterfaceMethod implements TypeScriptNode
 {
     /**
      * @param  array<TypeScriptParameter>  $parameters
      */
     public function __construct(
         public string $name,
+        #[NodeVisitable]
         public array $parameters,
+        #[NodeVisitable]
         public TypeScriptNode $returnType,
     ) {
     }
@@ -25,10 +27,5 @@ class TypeScriptInterfaceMethod implements TypeScriptNode, TypeScriptVisitableNo
         ));
 
         return "{$this->name}({$parameters}): {$this->returnType->write($context)};";
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->iterable('parameters')->single('returnType');
     }
 }

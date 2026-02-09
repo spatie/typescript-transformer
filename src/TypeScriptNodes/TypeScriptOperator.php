@@ -2,14 +2,16 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptOperator implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptOperator implements TypeScriptNode
 {
     public function __construct(
         public string $operator,
+        #[NodeVisitable]
         public TypeScriptNode $right,
+        #[NodeVisitable]
         public ?TypeScriptNode $left = null,
     ) {
     }
@@ -67,10 +69,5 @@ class TypeScriptOperator implements TypeScriptNode, TypeScriptVisitableNode
         }
 
         return "{$this->left->write($context)} {$this->operator} {$this->right->write($context)}";
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->single('left', 'right');
     }
 }

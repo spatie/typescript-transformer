@@ -2,16 +2,18 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptGeneric implements TypeScriptForwardingNamedNode, TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptGeneric implements TypeScriptForwardingNamedNode, TypeScriptNode
 {
     /**
      * @param  array<TypeScriptNode>  $genericTypes
      */
     public function __construct(
+        #[NodeVisitable]
         public TypeScriptIdentifier|TypeReference $type,
+        #[NodeVisitable]
         public array $genericTypes,
     ) {
     }
@@ -24,11 +26,6 @@ class TypeScriptGeneric implements TypeScriptForwardingNamedNode, TypeScriptNode
         ));
 
         return "{$this->type->write($context)}<{$generics}>";
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->single('type')->iterable('genericTypes');
     }
 
     public function getForwardedNamedNode(): TypeScriptNamedNode|TypeScriptForwardingNamedNode

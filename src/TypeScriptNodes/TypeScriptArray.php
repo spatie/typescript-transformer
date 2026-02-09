@@ -2,11 +2,11 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\UniqueTypeScriptNodes;
 
-class TypeScriptArray implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptArray implements TypeScriptNode
 {
     use UniqueTypeScriptNodes;
 
@@ -14,6 +14,7 @@ class TypeScriptArray implements TypeScriptNode, TypeScriptVisitableNode
      * @param TypeScriptNode[] $types
      */
     public function __construct(
+        #[NodeVisitable]
         public array $types
     ) {
         $this->types = $this->uniqueNodes($this->types);
@@ -31,10 +32,5 @@ class TypeScriptArray implements TypeScriptNode, TypeScriptVisitableNode
         }
 
         return "{$types}[]";
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->iterable('types');
     }
 }

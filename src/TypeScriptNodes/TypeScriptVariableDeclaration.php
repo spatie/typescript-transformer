@@ -2,17 +2,20 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptVariableDeclaration implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptVariableDeclaration implements TypeScriptNode
 {
+    #[NodeVisitable]
     public TypeScriptIdentifier $name;
 
     public function __construct(
         public string $kind,
         TypeScriptIdentifier|string $name,
+        #[NodeVisitable]
         public TypeScriptNode $initializer,
+        #[NodeVisitable]
         public ?TypeScriptNode $type = null,
     ) {
         $this->name = is_string($name) ? new TypeScriptIdentifier($name) : $name;
@@ -49,10 +52,5 @@ class TypeScriptVariableDeclaration implements TypeScriptNode, TypeScriptVisitab
             : '';
 
         return "{$this->kind} {$this->name->write($context)}{$typeAnnotation} = {$this->initializer->write($context)}";
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->single('name', 'initializer', 'type');
     }
 }

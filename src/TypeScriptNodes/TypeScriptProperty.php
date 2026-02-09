@@ -2,15 +2,17 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptProperty implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptProperty implements TypeScriptNode
 {
+    #[NodeVisitable]
     public TypeScriptIdentifier|TypeScriptIndexSignature $name;
 
     public function __construct(
         TypeScriptIdentifier|TypeScriptIndexSignature|string $name,
+        #[NodeVisitable]
         public TypeScriptNode $type,
         public bool $isOptional = false,
         public bool $isReadonly = false,
@@ -29,10 +31,5 @@ class TypeScriptProperty implements TypeScriptNode, TypeScriptVisitableNode
     public function children(): array
     {
         return [$this->name, $this->type];
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->single('name', 'type');
     }
 }

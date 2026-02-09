@@ -2,15 +2,16 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptTuple implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptTuple implements TypeScriptNode
 {
     /**
      * @param  TypeScriptNode[]  $types
      */
     public function __construct(
+        #[NodeVisitable]
         public array $types
     ) {
     }
@@ -23,10 +24,5 @@ class TypeScriptTuple implements TypeScriptNode, TypeScriptVisitableNode
         ));
 
         return "[$types]";
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->iterable('types');
     }
 }

@@ -2,14 +2,17 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptGenericTypeVariable implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptGenericTypeVariable implements TypeScriptNode
 {
     public function __construct(
+        #[NodeVisitable]
         public TypeScriptNode $identifier,
+        #[NodeVisitable]
         public ?TypeScriptNode $extends = null,
+        #[NodeVisitable]
         public ?TypeScriptNode $default = null,
     ) {
     }
@@ -28,10 +31,5 @@ class TypeScriptGenericTypeVariable implements TypeScriptNode, TypeScriptVisitab
             $this->extends,
             $this->default,
         ]);
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->single('identifier', 'extends', 'default');
     }
 }

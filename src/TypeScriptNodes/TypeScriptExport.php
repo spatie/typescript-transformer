@@ -2,12 +2,13 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptExport implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptExport implements TypeScriptNode
 {
     public function __construct(
+        #[NodeVisitable]
         public (TypeScriptNamedNode&TypeScriptNode)|TypeScriptForwardingNamedNode $node,
     ) {
     }
@@ -15,10 +16,5 @@ class TypeScriptExport implements TypeScriptNode, TypeScriptVisitableNode
     public function write(WritingContext $context): string
     {
         return "export {$this->node->write($context)}";
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->single('node');
     }
 }

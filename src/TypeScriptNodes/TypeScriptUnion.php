@@ -3,11 +3,11 @@
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
 use Closure;
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\UniqueTypeScriptNodes;
 
-class TypeScriptUnion implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptUnion implements TypeScriptNode
 {
     use UniqueTypeScriptNodes;
 
@@ -15,6 +15,7 @@ class TypeScriptUnion implements TypeScriptNode, TypeScriptVisitableNode
      * @param  array<TypeScriptNode>  $types
      */
     public function __construct(
+        #[NodeVisitable]
         public array $types,
     ) {
         $this->types = $this->uniqueNodes($this->types);
@@ -37,10 +38,5 @@ class TypeScriptUnion implements TypeScriptNode, TypeScriptVisitableNode
         }
 
         return false;
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->iterable('types');
     }
 }

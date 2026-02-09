@@ -2,18 +2,21 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptInterface implements TypeScriptForwardingNamedNode, TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptInterface implements TypeScriptForwardingNamedNode, TypeScriptNode
 {
     /**
      * @param  array<TypeScriptProperty>  $properties
      * @param  array<TypeScriptInterfaceMethod>  $methods
      */
     public function __construct(
+        #[NodeVisitable]
         public TypeScriptIdentifier $name,
+        #[NodeVisitable]
         public array $properties,
+        #[NodeVisitable]
         public array $methods,
     ) {
     }
@@ -29,14 +32,6 @@ class TypeScriptInterface implements TypeScriptForwardingNamedNode, TypeScriptNo
         );
 
         return "interface {$this->name->write($context)} {{$items}}";
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()
-            ->single('name')
-            ->iterable('properties')
-            ->iterable('methods');
     }
 
     public function getForwardedNamedNode(): TypeScriptNamedNode|TypeScriptForwardingNamedNode

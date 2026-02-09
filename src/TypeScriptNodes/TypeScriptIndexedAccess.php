@@ -2,16 +2,18 @@
 
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
-use Spatie\TypeScriptTransformer\Data\VisitorProfile;
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptIndexedAccess implements TypeScriptNode, TypeScriptVisitableNode
+class TypeScriptIndexedAccess implements TypeScriptNode
 {
     /**
      * @param  array<TypeScriptNode>  $segments
      */
     public function __construct(
+        #[NodeVisitable]
         public TypeScriptIdentifier|TypeReference $node,
+        #[NodeVisitable]
         public array $segments,
     ) {
     }
@@ -24,10 +26,5 @@ class TypeScriptIndexedAccess implements TypeScriptNode, TypeScriptVisitableNode
         );
 
         return "{$this->node->write($context)}".implode('', $segments);
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->single('node')->iterable('segments');
     }
 }

@@ -3,9 +3,8 @@
 namespace Spatie\TypeScriptTransformer\Visitor;
 
 use Closure;
-use Exception;
+use Spatie\TypeScriptTransformer\TypeScriptNodeRegistry;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptVisitableNode;
 
 class Visitor
 {
@@ -70,32 +69,24 @@ class Visitor
             }
         }
 
-        if ($node instanceof TypeScriptVisitableNode) {
-            $profile = $node->visitorProfile();
+        foreach (TypeScriptNodeRegistry::resolve($node) as $propertyName) {
+            $value = $node->$propertyName;
 
-            foreach ($profile->singleNodes as $singleNodeName) {
-                $subNode = $node->$singleNodeName;
-
-                if ($subNode === null) {
-                    continue;
-                }
-
-                $visited = $this->execute($subNode, $metadata);
-
-                try {
-                    $node->$singleNodeName = $visited;
-                } catch (Exception $e) {
-                    throw new Exception("Tried setting $singleNodeName on ".get_class($node).' to '.get_class($visited).' but failed.');
-                }
+            if ($value === null) {
+                continue;
             }
 
-            foreach ($profile->iterableNodes as $iterableNodeName) {
-                foreach ($node->$iterableNodeName as $key => $subNode) {
-                    $node->$iterableNodeName[$key] = $this->execute($subNode, $metadata);
-                }
+            if (! is_array($value)) {
+                $node->$propertyName = $this->execute($value, $metadata);
 
-                $node->$iterableNodeName = array_values(array_filter($node->$iterableNodeName));
+                continue;
             }
+
+            foreach ($value as $key => $subNode) {
+                $value[$key] = $this->execute($subNode, $metadata);
+            }
+
+            $node->$propertyName = array_values(array_filter($value));
         }
 
         foreach ($this->closures as $closure) {
