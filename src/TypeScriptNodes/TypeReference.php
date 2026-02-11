@@ -36,7 +36,7 @@ class TypeReference implements TypeScriptNamedNode, TypeScriptNode
             return 'undefined';
         }
 
-        return $context->resolvedReferenceMap[$this->reference->getKey()] ?? 'undefined';
+        return $context->resolveReference($this->reference->getKey());
     }
 
     public function getName(): string

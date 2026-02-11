@@ -186,6 +186,110 @@ TS
         );
 });
 
+it('avoids shadowed namespace names in references', function () {
+    $writer = new GlobalNamespaceWriter('types.ts');
+
+    $transformedCollection = new TransformedCollection([
+        TransformedFactory::alias(
+            name: 'ErrorData',
+            typeScriptNode: new TypeScriptString(),
+            reference: $errorDataRef = new CustomReference('test', 'ErrorData'),
+            location: ['App', 'Domain', 'Data'],
+            writer: $writer,
+        )->build(),
+        TransformedFactory::alias(
+            name: 'ShowViewModel',
+            typeScriptNode: new TypeScriptObject([
+                new TypeScriptProperty('error', new TypeReference($errorDataRef)),
+            ]),
+            location: ['App', 'Http', 'App', 'ViewModels'],
+            writer: $writer,
+        )->build(),
+    ]);
+
+    (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
+
+    $files = $writer->output(
+        $transformedCollection->all(),
+        $transformedCollection,
+    );
+
+    expect($files[0])
+        ->path->toBe('types.d.ts')
+        ->contents->toEqual(
+            <<<TS
+declare namespace App {
+namespace Domain {
+namespace Data {
+export type ErrorData = string;
+}
+}
+namespace Http {
+namespace App {
+namespace ViewModels {
+export type ShowViewModel = {
+error: Domain.Data.ErrorData
+};
+}
+}
+}
+}
+
+TS
+        );
+});
+
+it('avoids deeply shadowed namespace names in references', function () {
+    $writer = new GlobalNamespaceWriter('types.ts');
+
+    $transformedCollection = new TransformedCollection([
+        TransformedFactory::alias(
+            name: 'SomeType',
+            typeScriptNode: new TypeScriptString(),
+            reference: $someTypeRef = new CustomReference('test', 'SomeType'),
+            location: ['App', 'Scope', 'Data'],
+            writer: $writer,
+        )->build(),
+        TransformedFactory::alias(
+            name: 'TestType',
+            typeScriptNode: new TypeScriptObject([
+                new TypeScriptProperty('value', new TypeReference($someTypeRef)),
+            ]),
+            location: ['App', 'Scope', 'Controllers', 'Scope'],
+            writer: $writer,
+        )->build(),
+    ]);
+
+    (new ConnectReferencesAction(new NullLogger()))->execute($transformedCollection);
+
+    $files = $writer->output(
+        $transformedCollection->all(),
+        $transformedCollection,
+    );
+
+    expect($files[0])
+        ->path->toBe('types.d.ts')
+        ->contents->toEqual(
+            <<<TS
+declare namespace App {
+namespace Scope {
+namespace Controllers {
+namespace Scope {
+export type TestType = {
+value: App.Scope.Data.SomeType
+};
+}
+}
+namespace Data {
+export type SomeType = string;
+}
+}
+}
+
+TS
+        );
+});
+
 it('can reference types from a module writer', function () {
     $moduleWriter = new ModuleWriter(path: null);
     $flatModuleWriter = new FlatModuleWriter('flat-types.ts');

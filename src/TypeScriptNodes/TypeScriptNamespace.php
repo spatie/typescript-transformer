@@ -28,6 +28,8 @@ class TypeScriptNamespace implements TypeScriptNode
 
         $output = "{$prefix} {$this->name} {".PHP_EOL;
 
+        $context->pushNamespace($this->name);
+
         foreach ($this->types as $type) {
             $output .= $type->write($context).PHP_EOL;
         }
@@ -35,6 +37,8 @@ class TypeScriptNamespace implements TypeScriptNode
         foreach ($this->children as $child) {
             $output .= $child->write($context).PHP_EOL;
         }
+
+        $context->popNamespace();
 
         $output .= '}';
 
