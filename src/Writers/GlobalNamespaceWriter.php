@@ -6,6 +6,7 @@ use Spatie\TypeScriptTransformer\Actions\ResolveImportsAndResolvedReferenceMapAc
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\GlobalNamespaceResolvedReference;
+use Spatie\TypeScriptTransformer\Data\Location;
 use Spatie\TypeScriptTransformer\Data\ModuleImportResolvedReference;
 use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
@@ -38,7 +39,7 @@ class GlobalNamespaceWriter implements Writer
         array $transformed,
         TransformedCollection $transformedCollection,
     ): array {
-        $split = $this->splitTransformedPerLocationAction->execute(
+        $root = $this->splitTransformedPerLocationAction->execute(
             $transformed
         );
 
@@ -56,24 +57,33 @@ class GlobalNamespaceWriter implements Writer
             $output .= $import->write($writingContext).PHP_EOL;
         }
 
-        foreach ($split as $splitConstruct) {
-            if (count($splitConstruct->segments) === 0) {
-                foreach ($splitConstruct->transformed as $transformable) {
-                    $output .= $transformable->write($writingContext).PHP_EOL;
-                }
+        foreach ($root->transformed as $transformable) {
+            $output .= $transformable->write($writingContext).PHP_EOL;
+        }
 
-                continue;
-            }
-
-            $namespace = new TypeScriptNamespace(
-                $splitConstruct->segments,
-                $splitConstruct->transformed
-            );
+        foreach ($root->children as $child) {
+            $namespace = $this->buildNamespace($child, declare: true);
 
             $output .= $namespace->write($writingContext).PHP_EOL;
         }
 
         return [new WriteableFile($this->path, $output)];
+    }
+
+    protected function buildNamespace(Location $location, bool $declare): TypeScriptNamespace
+    {
+        $children = [];
+
+        foreach ($location->children as $child) {
+            $children[] = $this->buildNamespace($child, declare: false);
+        }
+
+        return new TypeScriptNamespace(
+            $location->name,
+            $location->transformed,
+            $children,
+            declare: $declare,
+        );
     }
 
     public function resolveReference(Transformed $transformed): ModuleImportResolvedReference|GlobalNamespaceResolvedReference

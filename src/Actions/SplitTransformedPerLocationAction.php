@@ -7,33 +7,52 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
 class SplitTransformedPerLocationAction
 {
-    /**
-     * @param array<Transformed> $transformed
-     *
-     * @return array<Location>
-     */
-    public function execute(array $transformed): array
+    /** @param array<Transformed> $transformed */
+    public function execute(array $transformed): Location
     {
-        $split = [];
+        $pointer = ['transformed' => [], 'children' => []];
 
         foreach ($transformed as $item) {
-            $splitKey = count($item->location) > 0
-                ? implode('.', $item->location)
-                : '';
+            $current = &$pointer;
 
-            if (! array_key_exists($splitKey, $split)) {
-                $split[$splitKey] = new Location($item->location, []);
+            foreach ($item->location as $segment) {
+                if (! array_key_exists($segment, $current['children'])) {
+                    $current['children'][$segment] = ['transformed' => [], 'children' => []];
+                }
+
+                $current = &$current['children'][$segment];
             }
 
-            $split[$splitKey]->transformed[] = $item;
+            $current['transformed'][] = $item;
         }
 
-        ksort($split);
+        return $this->buildLocation('', [], $pointer);
+    }
 
-        foreach ($split as $splitConstruct) {
-            usort($splitConstruct->transformed, fn (Transformed $a, Transformed $b) => $a->getName() <=> $b->getName());
-        }
+    /**
+     * @param array<string> $path
+     * @param array{
+     *     transformed: array<Transformed>,
+     *     children: array<string, array>,
+     * } $node
+     */
+    private function buildLocation(string $name, array $path, array $node): Location
+    {
+        $transformed = $node['transformed'];
+        $childNames = array_keys($node['children']);
 
-        return array_values($split);
+        usort($transformed, fn (Transformed $a, Transformed $b) => $a->getName() <=> $b->getName());
+        sort($childNames);
+
+        $children = array_map(
+            fn (string $childName) => $this->buildLocation(
+                $childName,
+                [...$path, $childName],
+                $node['children'][$childName],
+            ),
+            $childNames,
+        );
+
+        return new Location($name, $path, $transformed, $children);
     }
 }

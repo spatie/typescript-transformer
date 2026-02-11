@@ -26,24 +26,37 @@ class ModuleWriter implements Writer
         array $transformed,
         TransformedCollection $transformedCollection,
     ): array {
-        $locations = $this->transformedPerLocationAction->execute(
+        $root = $this->transformedPerLocationAction->execute(
             $transformed
         );
 
-        $writtenFiles = [];
+        $writableFiles = [];
 
-        foreach ($locations as $location) {
-            $writtenFiles[] = $this->writeLocation($location, $transformedCollection);
+        $this->resolveFiles($root, $transformedCollection, $writableFiles);
+
+        return $writableFiles;
+    }
+
+    /** @param array<WriteableFile> $writeableFiles */
+    protected function resolveFiles(
+        Location $location,
+        TransformedCollection $transformedCollection,
+        array &$writeableFiles,
+    ): void {
+        if (count($location->transformed) > 0) {
+            $writeableFiles[] = $this->writeLocation($location, $transformedCollection);
         }
 
-        return $writtenFiles;
+        foreach ($location->children as $child) {
+            $this->resolveFiles($child, $transformedCollection, $writeableFiles);
+        }
     }
 
     protected function writeLocation(
         Location $location,
         TransformedCollection $transformedCollection,
     ): WriteableFile {
-        $filePath = $this->resolveRelativePath($location->segments);
+        $filePath = $this->resolveRelativePath($location->path);
 
         [$imports, $resolvedReferenceMap] = $this->cleanupReferencesAction->execute(
             $filePath,
@@ -79,6 +92,7 @@ class ModuleWriter implements Writer
 
         return implode(DIRECTORY_SEPARATOR, $segments).DIRECTORY_SEPARATOR.$this->moduleFilename;
     }
+
     public function resolveReference(Transformed $transformed): ModuleImportResolvedReference|GlobalNamespaceResolvedReference
     {
         return new ModuleImportResolvedReference(

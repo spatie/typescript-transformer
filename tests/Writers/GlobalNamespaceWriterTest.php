@@ -42,12 +42,12 @@ it('can write a namespaced file', function () {
             <<<TS
     export type RootType = string;
     export type RootType2 = string;
-    declare namespace level1{
+    declare namespace level1 {
     export type Level1Type = string;
     export type Level1Type2 = string;
-    }
-    declare namespace level1.level2{
+    namespace level2 {
     export type Level2Type = string;
+    }
     }
 
     TS
@@ -108,11 +108,11 @@ export type C = {
 a: nested.A
 b: nested.subNested.B
 };
-declare namespace nested{
+declare namespace nested {
 export type A = string;
-}
-declare namespace nested.subNested{
+namespace subNested {
 export type B = string;
+}
 }
 
 TS
@@ -156,8 +156,10 @@ it('can reference types from another global namespace writer', function () {
         ->path->toBe('types-a.d.ts')
         ->contents->toEqual(
             <<<TS
-declare namespace App.Models{
+declare namespace App {
+namespace Models {
 export type ReferencedType = string;
+}
 }
 
 TS

@@ -6,7 +6,7 @@ use Spatie\TypeScriptTransformer\Data\Location;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 
-it('can split per location', function () {
+it('can split per location into a tree', function () {
     $transformedCollection = new TransformedCollection([
         $level11 = TransformedFactory::alias('Level1Type', new TypeScriptString(), location: ['level1'])->build(),
         $root1 = TransformedFactory::alias('RootType', new TypeScriptString())->build(),
@@ -15,24 +15,35 @@ it('can split per location', function () {
         $root2 = TransformedFactory::alias('RootType2', new TypeScriptString())->build(),
     ]);
 
-    $split = (new SplitTransformedPerLocationAction())->execute(
+    $root = (new SplitTransformedPerLocationAction())->execute(
         $transformedCollection->all()
     );
 
-    expect($split)->toHaveCount(3);
-
-    expect($split[0])
+    expect($root)
         ->toBeInstanceOf(Location::class)
-        ->segments->toBeEmpty()
+        ->name->toBe('')
+        ->path->toBeEmpty()
         ->transformed->toEqual([$root1, $root2]);
 
-    expect($split[1])
+    expect($root->children)->toHaveCount(1);
+
+    $level1 = $root->children[0];
+
+    expect($level1)
         ->toBeInstanceOf(Location::class)
-        ->segments->toBe(['level1'])
+        ->name->toBe('level1')
+        ->path->toBe(['level1'])
         ->transformed->toEqual([$level11, $level12]);
 
-    expect($split[2])
+    expect($level1->children)->toHaveCount(1);
+
+    $level2Node = $level1->children[0];
+
+    expect($level2Node)
         ->toBeInstanceOf(Location::class)
-        ->segments->toBe(['level1', 'level2'])
+        ->name->toBe('level2')
+        ->path->toBe(['level1', 'level2'])
         ->transformed->toEqual([$level2]);
+
+    expect($level2Node->children)->toBeEmpty();
 });

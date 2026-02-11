@@ -1940,9 +1940,11 @@ new TypeScriptExport(new TypeScriptAlias('Name', new TypeScriptString()))
 new TypeScriptImport('./types', [['name' => 'User', 'alias' => 'AppUser']])
 ```
 
-**TypeScriptNamespace** — `declare namespace App.Models { ... }` or `namespace App.Models { ... }`
+**TypeScriptNamespace** — `declare namespace App { namespace Models { ... } }` or `namespace Models { ... }`
 ```php
-new TypeScriptNamespace(['App', 'Models'], [$typeNode], declare: false)
+new TypeScriptNamespace('App', [$typeNode], children: [
+    new TypeScriptNamespace('Models', [$otherTypeNode], declare: false)
+])
 ```
 
 #### Expressions

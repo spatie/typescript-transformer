@@ -9,12 +9,15 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 class TypeScriptNamespace implements TypeScriptNode
 {
     /**
-     * @param  array<TypeScriptNode|Transformed>  $types
+     * @param array<TypeScriptNode|Transformed> $types
+     * @param array<TypeScriptNamespace> $children
      */
     public function __construct(
-        public array $namespaceSegments,
+        public string $name,
         #[NodeVisitable]
         public array $types,
+        #[NodeVisitable]
+        public array $children = [],
         public bool $declare = true,
     ) {
     }
@@ -23,10 +26,14 @@ class TypeScriptNamespace implements TypeScriptNode
     {
         $prefix = $this->declare ? 'declare namespace' : 'namespace';
 
-        $output = $prefix.' '.implode('.', $this->namespaceSegments).'{'.PHP_EOL;
+        $output = "{$prefix} {$this->name} {".PHP_EOL;
 
         foreach ($this->types as $type) {
             $output .= $type->write($context).PHP_EOL;
+        }
+
+        foreach ($this->children as $child) {
+            $output .= $child->write($context).PHP_EOL;
         }
 
         $output .= '}';
