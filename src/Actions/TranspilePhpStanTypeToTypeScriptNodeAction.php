@@ -16,6 +16,8 @@ use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\ObjectShapeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
+use ReflectionEnum;
+use ReflectionEnumBackedCase;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -316,14 +318,23 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
 
     protected function keyOrValueOfGenericNode(GenericTypeNode $node, ?PhpClassNode $phpClassNode): TypeScriptNode
     {
-        if (count($node->genericTypes) !== 1
-            || ! $node->genericTypes[0] instanceof ConstTypeNode
-            || ! $node->genericTypes[0]->constExpr instanceof ConstFetchNode
+        if (count($node->genericTypes) !== 1) {
+            return $this->defaultGenericNode($node, $phpClassNode);
+        }
+
+        $genericType = $node->genericTypes[0];
+
+        if ($genericType instanceof IdentifierTypeNode) {
+            return $this->keyOrValueOfEnum($node, $genericType, $phpClassNode);
+        }
+
+        if (! $genericType instanceof ConstTypeNode
+            || ! $genericType->constExpr instanceof ConstFetchNode
         ) {
             return $this->defaultGenericNode($node, $phpClassNode);
         }
 
-        $constFetchNode = $node->genericTypes[0]->constExpr;
+        $constFetchNode = $genericType->constExpr;
         $class = $this->resolveClass($constFetchNode->className, $phpClassNode);
 
         if ($class === null) {
@@ -339,6 +350,30 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         return new TypeScriptUnion(array_map(
             fn (mixed $key) => new TypeScriptLiteral($key),
             $items
+        ));
+    }
+
+    protected function keyOrValueOfEnum(GenericTypeNode $node, IdentifierTypeNode $identifierNode, ?PhpClassNode $phpClassNode): TypeScriptNode
+    {
+        $class = $this->resolveClass($identifierNode->name, $phpClassNode);
+
+        if ($class === null || ! enum_exists($class)) {
+            return $this->defaultGenericNode($node, $phpClassNode);
+        }
+
+        // TODO: we will not update this in watch mode ... since we're using reflection something for v4 maybe
+        // We could also if the enum was transformed by us reference that but then it should be an
+        $reflection = new ReflectionEnum($class);
+
+        if (! $reflection->isBacked()) {
+            return $this->defaultGenericNode($node, $phpClassNode);
+        }
+
+        $cases = $reflection->getCases();
+
+        return new TypeScriptUnion(array_map(
+            fn (ReflectionEnumBackedCase $case) => new TypeScriptLiteral($node->type->name === 'key-of' ? $case->getName() : $case->getBackingValue()),
+            $cases
         ));
     }
 

@@ -469,23 +469,23 @@ it('can transpile PHPStan doc types', function (
         ]),
     ];
 
-    //    yield [
-    //        'keyOfEnum',
-    //        new TypeScriptUnion([
-    //            new TypeScriptLiteral('john'),
-    //            new TypeScriptLiteral('paul'),
-    //            new TypeScriptLiteral('george'),
-    //            new TypeScriptLiteral('ringo'),
-    //        ])
-    //    ];
-    //
-    //    yield [
-    //        'valueOfEnum',
-    //        new TypeScriptUnion([
-    //            new TypeScriptLiteral('john'),
-    //            new TypeScriptLiteral('paul'),
-    //            new TypeScriptLiteral('george'),
-    //            new TypeScriptLiteral('ringo'),
-    //        ])
-    //    ];
+    yield [
+        'keyOfEnum',
+        new TypeScriptUnion([
+            new TypeScriptLiteral('John'),
+            new TypeScriptLiteral('Paul'),
+            new TypeScriptLiteral('George'),
+            new TypeScriptLiteral('Ringo'),
+        ]),
+    ];
+
+    yield [
+        'valueOfEnum',
+        new TypeScriptUnion([
+            new TypeScriptLiteral('john'),
+            new TypeScriptLiteral('paul'),
+            new TypeScriptLiteral('george'),
+            new TypeScriptLiteral('ringo'),
+        ]),
+    ];
 });
