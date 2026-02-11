@@ -9,7 +9,7 @@ int: number
 boolean: boolean
 float: number
 object: object
-array: []
+array: Array<any>
 mixed: any
 none: unknown
 var_annotated: string

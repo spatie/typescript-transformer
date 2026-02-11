@@ -22,6 +22,10 @@ class TypeScriptArray implements TypeScriptNode
 
     public function write(WritingContext $context): string
     {
+        if (count($this->types) === 0) {
+            return 'Array<any>';
+        }
+
         $types = implode('| ', array_map(
             fn (TypeScriptNode $type) => $type->write($context),
             $this->types

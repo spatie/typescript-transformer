@@ -11,7 +11,13 @@
       "Bash(grep:*)",
       "Bash(composer test:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "WebSearch",
+      "Bash(ls:*)",
+      "Bash(xargs basename:*)",
+      "Bash(git -C /Users/ruben/Spatie/typescript-transformer diff)",
+      "Bash(git -C /Users/ruben/Spatie/typescript-transformer log --oneline -5)"
     ],
     "deny": []
   }

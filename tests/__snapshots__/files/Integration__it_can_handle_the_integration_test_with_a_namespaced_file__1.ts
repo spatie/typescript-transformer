@@ -1,4 +1,8 @@
-declare namespace Spatie.TypeScriptTransformer.Tests.Fakes.Integration{
+declare namespace Spatie {
+namespace TypeScriptTransformer {
+namespace Tests {
+namespace Fakes {
+namespace Integration {
 export type Enum = "yes" | "no";
 export type IntegrationClass = {
 string: string
@@ -8,7 +12,7 @@ int: number
 boolean: boolean
 float: number
 object: object
-array: []
+array: Array<any>
 mixed: any
 none: unknown
 var_annotated: string
@@ -35,9 +39,13 @@ constructor_inline_annotated_array: Array<Spatie.TypeScriptTransformer.Tests.Fak
 export type IntegrationItem = {
 name: string
 };
-}
-declare namespace Spatie.TypeScriptTransformer.Tests.Fakes.Integration.Level{
+namespace Level {
 export type LevelUpClass = {
 name: string
 };
+}
+}
+}
+}
+}
 }
