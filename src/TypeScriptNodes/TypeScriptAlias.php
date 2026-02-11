@@ -7,12 +7,17 @@ use Spatie\TypeScriptTransformer\Data\WritingContext;
 
 class TypeScriptAlias implements TypeScriptForwardingNamedNode, TypeScriptNode
 {
+    #[NodeVisitable]
+    public TypeScriptIdentifier|TypeScriptGeneric $identifier;
+
     public function __construct(
-        #[NodeVisitable]
-        public TypeScriptIdentifier|TypeScriptGeneric $identifier,
+        TypeScriptIdentifier|TypeScriptGeneric|string $identifier,
         #[NodeVisitable]
         public TypeScriptNode $type,
     ) {
+        $this->identifier = is_string($identifier)
+            ? new TypeScriptIdentifier($identifier)
+            : $identifier;
     }
 
     public function write(WritingContext $context): string

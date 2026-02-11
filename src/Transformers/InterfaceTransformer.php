@@ -16,7 +16,7 @@ use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedNameAndType;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptInterface;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptInterfaceMethod;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptMethodSignature;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptParameter;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
@@ -58,7 +58,7 @@ abstract class InterfaceTransformer implements Transformer
 
     abstract protected function shouldTransform(PhpClassNode $phpClassNode): bool;
 
-    /** @return TypeScriptInterfaceMethod[] */
+    /** @return TypeScriptMethodSignature[] */
     protected function getMethods(
         PhpClassNode $phpClassNode,
         TransformationContext $context,
@@ -84,10 +84,10 @@ abstract class InterfaceTransformer implements Transformer
         PhpClassNode $phpClassNode,
         PhpMethodNode $phpMethodNode,
         TransformationContext $context,
-    ): TypeScriptInterfaceMethod {
+    ): TypeScriptMethodSignature {
         $annotation = $this->docTypeResolver->method($phpMethodNode);
 
-        return new TypeScriptInterfaceMethod(
+        return new TypeScriptMethodSignature(
             $phpMethodNode->getName(),
             array_map(fn (PhpParameterNode $parameterNode) => $this->resolveMethodParameterType(
                 $phpClassNode,

@@ -5,18 +5,22 @@ namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptInterfaceMethod implements TypeScriptNode
+class TypeScriptMethodSignature implements TypeScriptNode
 {
+    #[NodeVisitable]
+    public TypeScriptIdentifier $name;
+
     /**
      * @param  array<TypeScriptParameter>  $parameters
      */
     public function __construct(
-        public string $name,
+        TypeScriptIdentifier|string $name,
         #[NodeVisitable]
         public array $parameters,
         #[NodeVisitable]
         public TypeScriptNode $returnType,
     ) {
+        $this->name = is_string($name) ? new TypeScriptIdentifier($name) : $name;
     }
 
     public function write(WritingContext $context): string
@@ -26,6 +30,6 @@ class TypeScriptInterfaceMethod implements TypeScriptNode
             $this->parameters
         ));
 
-        return "{$this->name}({$parameters}): {$this->returnType->write($context)};";
+        return "{$this->name->write($context)}({$parameters}): {$this->returnType->write($context)};";
     }
 }

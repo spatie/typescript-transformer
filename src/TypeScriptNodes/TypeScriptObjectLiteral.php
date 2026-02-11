@@ -4,7 +4,7 @@ namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptJsonObject implements TypeScriptNode
+class TypeScriptObjectLiteral implements TypeScriptNode
 {
     public function __construct(
         public array $data,

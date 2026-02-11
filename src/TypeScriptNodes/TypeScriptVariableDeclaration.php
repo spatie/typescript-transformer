@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 
-class TypeScriptVariableDeclaration implements TypeScriptNode
+class TypeScriptVariableDeclaration implements TypeScriptForwardingNamedNode, TypeScriptNode
 {
     #[NodeVisitable]
     public TypeScriptIdentifier $name;
@@ -52,5 +52,10 @@ class TypeScriptVariableDeclaration implements TypeScriptNode
             : '';
 
         return "{$this->kind} {$this->name->write($context)}{$typeAnnotation} = {$this->initializer->write($context)}";
+    }
+
+    public function getForwardedNamedNode(): TypeScriptNamedNode|TypeScriptForwardingNamedNode
+    {
+        return $this->name;
     }
 }

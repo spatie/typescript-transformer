@@ -22,7 +22,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAny;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptFunction;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptCallable;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIntersection;
@@ -123,7 +123,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         }
 
         if ($node->name === 'callable') {
-            return new TypeScriptFunction();
+            return new TypeScriptCallable();
         }
 
         if ($node->name === 'null') {
