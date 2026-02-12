@@ -53,8 +53,14 @@ class GlobalNamespaceWriter implements Writer
 
         $writingContext = new WritingContext($resolvedReferenceMap);
 
+        $hasImports = count($imports->getTypeScriptNodes()) > 0;
+
         foreach ($imports->getTypeScriptNodes() as $import) {
             $output .= $import->write($writingContext).PHP_EOL;
+        }
+
+        if ($hasImports) {
+            $output .= 'declare global {'.PHP_EOL;
         }
 
         foreach ($root->transformed as $transformable) {
@@ -62,9 +68,13 @@ class GlobalNamespaceWriter implements Writer
         }
 
         foreach ($root->children as $child) {
-            $namespace = $this->buildNamespace($child, declare: true);
+            $namespace = $this->buildNamespace($child, declare: ! $hasImports);
 
             $output .= $namespace->write($writingContext).PHP_EOL;
+        }
+
+        if ($hasImports) {
+            $output .= '}'.PHP_EOL;
         }
 
         return [new WriteableFile($this->path, $output)];

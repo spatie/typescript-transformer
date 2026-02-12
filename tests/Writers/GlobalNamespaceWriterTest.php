@@ -335,10 +335,12 @@ it('can reference types from a module writer', function () {
             <<<TS
 import { ModuleType } from './models';
 import { FlatModuleType } from './flat-types';
+declare global {
 export type GlobalType = {
 module: ModuleType
 flatModule: FlatModuleType
 };
+}
 
 TS
         );
