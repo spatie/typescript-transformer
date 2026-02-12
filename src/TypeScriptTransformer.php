@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer;
 
+use Spatie\TypeScriptTransformer\Actions\CollectAdditionalImportsAction;
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\DiscoverTypesAction;
 use Spatie\TypeScriptTransformer\Actions\ExecuteConnectedClosuresAction;
@@ -26,6 +27,7 @@ class TypeScriptTransformer
         public readonly RunProvidersAction $runProvidersAction,
         public readonly ExecuteProvidedClosuresAction $executeProvidedClosuresAction,
         public readonly ConnectReferencesAction $connectReferencesAction,
+        public readonly CollectAdditionalImportsAction $collectAdditionalImportsAction,
         public readonly ExecuteConnectedClosuresAction $executeConnectedClosuresAction,
         public readonly ResolveFilesAction $resolveFilesAction,
         public readonly WriteFilesAction $writeFilesAction,
@@ -53,6 +55,7 @@ class TypeScriptTransformer
             new RunProvidersAction($config),
             new ExecuteProvidedClosuresAction($config),
             new ConnectReferencesAction($logger),
+            new CollectAdditionalImportsAction(),
             new ExecuteConnectedClosuresAction($config),
             new ResolveFilesAction($config),
             new WriteFilesAction($config),
@@ -93,6 +96,8 @@ class TypeScriptTransformer
         $this->executeProvidedClosuresAction->execute($transformedCollection);
 
         $this->connectReferencesAction->execute($transformedCollection);
+
+        $this->collectAdditionalImportsAction->execute($transformedCollection);
 
         $this->executeConnectedClosuresAction->execute($transformedCollection);
 

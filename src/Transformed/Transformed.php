@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Transformed;
 
 use RuntimeException;
+use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -30,6 +31,9 @@ class Transformed
 
     /** @var array<string, TypeReference[]> */
     public array $missingReferences = [];
+
+    /** @var array<AdditionalImport> */
+    public array $additionalImports = [];
 
     /**
      * @param array<string> $location Namespace/organizational segments (e.g., ['App', 'Models', 'Post'])

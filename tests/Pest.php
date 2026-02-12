@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Actions\CollectAdditionalImportsAction;
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
@@ -23,6 +24,8 @@ function classesToTypeScript(
     }
 
     (new ConnectReferencesAction(new NullLogger()))->execute($collection);
+
+    (new CollectAdditionalImportsAction())->execute($collection);
 
     $writer = new MemoryWriter();
 

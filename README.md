@@ -521,6 +521,29 @@ export type Types = {
 }
 ```
 
+When your literal type references types from other files, you can add additional imports:
+
+```php
+use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
+
+class Types
+{
+    #[LiteralTypeScriptType(
+        'Record<string, SomeComponent>',
+        additionalImports: [
+            new AdditionalImport(__DIR__.'/../types/components.ts', 'SomeComponent'),
+        ]
+    )]
+    public array $property;
+}
+```
+
+This generates the correct import statement and resolves the name, including aliasing when there are conflicts. You can import multiple names from the same file:
+
+```php
+new AdditionalImport(__DIR__.'/../types/components.ts', ['SomeComponent', 'OtherThing'])
+```
+
 It is also possible to type properties using php types within an attribute using the `#[TypeScriptType]` attribute:
 
 ```php

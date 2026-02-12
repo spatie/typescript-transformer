@@ -1,6 +1,7 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Actions\ResolveImportsAndResolvedReferenceMapAction;
+use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
@@ -404,4 +405,147 @@ it('will still resolve non-exported types from a global namespace writer', funct
         $nonExportedGlobalReference->reference->getKey() => 'App.Models.NonExportedGlobal',
     ]);
     expect($imports->getImports())->toBeEmpty();
+});
+
+it('will import an additional import from another path', function () {
+    $import = new AdditionalImport('types/components.ts', 'SomeComponent');
+
+    $transformed = TransformedFactory::alias(
+        name: 'LocalType',
+        typeScriptNode: new TypeScriptString(),
+        writer: $this->writer,
+        additionalImports: [$import],
+    )->build();
+
+    $transformedCollection = new TransformedCollection([$transformed]);
+
+    [$imports, $referenceMap] = $this->action->execute(
+        'index.ts',
+        [$transformed],
+        $transformedCollection
+    );
+
+    $referenceKey = $import->getReferenceKeys()['SomeComponent'];
+
+    expect($referenceMap)->toHaveKey($referenceKey);
+    expect($referenceMap[$referenceKey])->toBe('SomeComponent');
+
+    expect($imports->getImports())->toEqual([
+        './types/components' => [
+            'path' => './types/components',
+            'segments' => [
+                $referenceKey => [
+                    'name' => 'SomeComponent',
+                    'reference' => $referenceKey,
+                    'alias' => null,
+                ],
+            ],
+        ],
+    ]);
+});
+
+it('will add an additional import to the reference map when in the same file', function () {
+    $import = new AdditionalImport('index.ts', 'SomeComponent');
+
+    $transformed = TransformedFactory::alias(
+        name: 'LocalType',
+        typeScriptNode: new TypeScriptString(),
+        writer: $this->writer,
+        additionalImports: [$import],
+    )->build();
+
+    $transformedCollection = new TransformedCollection([$transformed]);
+
+    [$imports, $referenceMap] = $this->action->execute(
+        'index.ts',
+        [$transformed],
+        $transformedCollection
+    );
+
+    $referenceKey = $import->getReferenceKeys()['SomeComponent'];
+
+    expect($referenceMap)->toHaveKey($referenceKey);
+    expect($referenceMap[$referenceKey])->toBe('SomeComponent');
+    expect($imports->getImports())->toBeEmpty();
+});
+
+it('will alias an additional import if the name conflicts with a type in the module', function () {
+    $import = new AdditionalImport('types/components.ts', 'Foo');
+
+    $transformed = TransformedFactory::alias(
+        name: 'Foo',
+        typeScriptNode: new TypeScriptString(),
+        writer: $this->writer,
+        additionalImports: [$import],
+    )->build();
+
+    $transformedCollection = new TransformedCollection([$transformed]);
+
+    [$imports, $referenceMap] = $this->action->execute(
+        'index.ts',
+        [$transformed],
+        $transformedCollection
+    );
+
+    $referenceKey = $import->getReferenceKeys()['Foo'];
+
+    expect($referenceMap)->toHaveKey($referenceKey);
+    expect($referenceMap[$referenceKey])->toBe('FooImport');
+
+    expect($imports->getImports())->toEqual([
+        './types/components' => [
+            'path' => './types/components',
+            'segments' => [
+                $referenceKey => [
+                    'name' => 'Foo',
+                    'reference' => $referenceKey,
+                    'alias' => 'FooImport',
+                ],
+            ],
+        ],
+    ]);
+});
+
+it('will not duplicate an additional import', function () {
+    $import = new AdditionalImport('types/components.ts', 'SomeComponent');
+
+    $transformedA = TransformedFactory::alias(
+        name: 'TypeA',
+        typeScriptNode: new TypeScriptString(),
+        writer: $this->writer,
+        additionalImports: [$import],
+    )->build();
+
+    $transformedB = TransformedFactory::alias(
+        name: 'TypeB',
+        typeScriptNode: new TypeScriptString(),
+        writer: $this->writer,
+        additionalImports: [$import],
+    )->build();
+
+    $transformedCollection = new TransformedCollection([$transformedA, $transformedB]);
+
+    [$imports, $referenceMap] = $this->action->execute(
+        'index.ts',
+        [$transformedA, $transformedB],
+        $transformedCollection
+    );
+
+    $referenceKey = $import->getReferenceKeys()['SomeComponent'];
+
+    expect($referenceMap)->toHaveKey($referenceKey);
+    expect($referenceMap[$referenceKey])->toBe('SomeComponent');
+
+    expect($imports->getImports())->toEqual([
+        './types/components' => [
+            'path' => './types/components',
+            'segments' => [
+                $referenceKey => [
+                    'name' => 'SomeComponent',
+                    'reference' => $referenceKey,
+                    'alias' => null,
+                ],
+            ],
+        ],
+    ]);
 });

@@ -40,6 +40,8 @@ class ResolveImportsAndResolvedReferenceMapAction
             $transformed
         );
 
+        $additionalImports = [];
+
         foreach ($transformed as $transformedItem) {
             foreach ($transformedItem->references as $referenceKey => $typeReferences) {
                 if (array_key_exists($referenceKey, $referenceMap)) {
@@ -82,6 +84,33 @@ class ResolveImportsAndResolvedReferenceMapAction
                 );
 
                 $importsCollection->add($relativePath, $resolvedReference->name, $referenced->reference);
+            }
+
+            array_push($additionalImports, ...$transformedItem->additionalImports);
+        }
+
+        foreach ($additionalImports as $import) {
+            foreach ($import->getReferenceKeys() as $name => $referenceKey) {
+                if (array_key_exists($referenceKey, $referenceMap)) {
+                    continue;
+                }
+
+                if ($importsCollection->hasReferenceImported($referenceKey)) {
+                    continue;
+                }
+
+                $relativePath = $this->resolveRelativePathAction->execute(
+                    $currentPath,
+                    $import->path
+                );
+
+                if ($relativePath === null) {
+                    $referenceMap[$referenceKey] = $name;
+
+                    continue;
+                }
+
+                $importsCollection->add($relativePath, $name, $referenceKey);
             }
         }
 

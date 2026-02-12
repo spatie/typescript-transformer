@@ -14,21 +14,28 @@ class LiteralTypeScriptType implements TypeScriptTypeAttributeContract
 {
     private string|array $typeScript;
 
-    public function __construct(string|array $typeScript)
-    {
+    /** @var array<AdditionalImport> */
+    private array $additionalImports;
+
+    /** @param array<AdditionalImport> $additionalImports */
+    public function __construct(
+        string|array $typeScript,
+        array $additionalImports = [],
+    ) {
         $this->typeScript = $typeScript;
+        $this->additionalImports = $additionalImports;
     }
 
     public function getType(PhpClassNode $class): TypeScriptNode
     {
         if (is_string($this->typeScript)) {
-            return new TypeScriptRaw($this->typeScript);
+            return new TypeScriptRaw($this->typeScript, $this->additionalImports);
         }
 
         $properties = collect($this->typeScript)
             ->map(fn (string $type, string $name) => new TypeScriptProperty(
                 $name,
-                new TypeScriptRaw($type)
+                new TypeScriptRaw($type, $this->additionalImports)
             ))
             ->all();
 

@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Tests\Factories;
 
 use Illuminate\Support\Str;
+use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
 use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
@@ -16,6 +17,7 @@ class TransformedFactory
     /**
      * @param array<Transformed> $references
      * @param array<Transformed> $referencedBy
+     * @param array<AdditionalImport> $additionalImports
      */
     public function __construct(
         public TypeScriptNode $typeScriptNode,
@@ -25,6 +27,7 @@ class TransformedFactory
         public ?array $references = null,
         public ?array $referencedBy = null,
         public ?Writer $writer = null,
+        public array $additionalImports = [],
     ) {
     }
 
@@ -37,6 +40,7 @@ class TransformedFactory
         ?array $references = null,
         ?array $referencedBy = null,
         ?Writer $writer = null,
+        array $additionalImports = [],
     ): TransformedFactory {
         $reference = $reference ?? new CustomReference(
             'factory_alias',
@@ -50,7 +54,8 @@ class TransformedFactory
             export: $export,
             references: $references,
             referencedBy: $referencedBy,
-            writer: $writer
+            writer: $writer,
+            additionalImports: $additionalImports,
         );
     }
 
@@ -74,6 +79,8 @@ class TransformedFactory
         foreach ($this->referencedBy ?? [] as $reference) {
             $transformed->referencedBy[] = $reference->reference->getKey();
         }
+
+        $transformed->additionalImports = $this->additionalImports;
 
         if ($this->writer !== null) {
             $transformed->setWriter($this->writer);
