@@ -31,7 +31,11 @@ class TypeScriptArray implements TypeScriptNode
             $this->types
         ));
 
-        if (count($this->types) > 1) {
+        $needsParentheses = count($this->types) > 1
+            || $this->types[0] instanceof TypeScriptUnion
+            || $this->types[0] instanceof TypeScriptIntersection;
+
+        if ($needsParentheses) {
             $types = "($types)";
         }
 
