@@ -12,11 +12,20 @@ use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\Transformers\Transformer;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 function classesToTypeScript(
     array $classes,
-    ?Transformer $transformer = null
+    ?Transformer $transformer = null,
+    ?TypeScriptTransformerConfig $config = null,
 ): string {
+    $config ??= new TypeScriptTransformerConfig(
+        outputDirectory: sys_get_temp_dir(),
+        transformedProviders: [],
+        typesWriter: new MemoryWriter(),
+        formatter: null,
+    );
+
     $collection = new TransformedCollection();
 
     foreach ($classes as $class) {
@@ -25,7 +34,7 @@ function classesToTypeScript(
 
     (new ConnectReferencesAction(new NullLogger()))->execute($collection);
 
-    (new CollectAdditionalImportsAction())->execute($collection);
+    (new CollectAdditionalImportsAction($config))->execute($collection);
 
     $writer = new MemoryWriter();
 

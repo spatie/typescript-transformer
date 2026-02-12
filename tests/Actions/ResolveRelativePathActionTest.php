@@ -73,5 +73,32 @@ it('will return the correct path', function (string $current, string $requested,
             implode(DIRECTORY_SEPARATOR, ['a', 'c.ts']),
             './c',
         ],
+        // Directory as from
+        [
+            implode(DIRECTORY_SEPARATOR, ['a', 'b']),
+            implode(DIRECTORY_SEPARATOR, ['a', 'c', 'd.ts']),
+            '../c/d',
+        ],
+        [
+            implode(DIRECTORY_SEPARATOR, ['a', 'b']),
+            implode(DIRECTORY_SEPARATOR, ['a', 'b', 'c.ts']),
+            './c',
+        ],
+        [
+            implode(DIRECTORY_SEPARATOR, ['a', 'b']),
+            implode(DIRECTORY_SEPARATOR, ['c', 'd.ts']),
+            '../../c/d',
+        ],
+        // Directory as both from and to
+        [
+            implode(DIRECTORY_SEPARATOR, ['a', 'b']),
+            implode(DIRECTORY_SEPARATOR, ['a', 'c']),
+            '../c',
+        ],
+        [
+            implode(DIRECTORY_SEPARATOR, ['a', 'b']),
+            implode(DIRECTORY_SEPARATOR, ['a', 'b']),
+            null,
+        ],
     ]
 );

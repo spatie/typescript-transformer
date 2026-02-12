@@ -55,7 +55,7 @@ class TypeScriptTransformer
             new RunProvidersAction($config),
             new ExecuteProvidedClosuresAction($config),
             new ConnectReferencesAction($logger),
-            new CollectAdditionalImportsAction(),
+            new CollectAdditionalImportsAction($config),
             new ExecuteConnectedClosuresAction($config),
             new ResolveFilesAction($config),
             new WriteFilesAction($config),
