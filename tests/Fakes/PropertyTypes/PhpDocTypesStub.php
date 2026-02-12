@@ -13,6 +13,8 @@ class PhpDocTypesStub extends stdClass
         'type' => 1,
     ];
 
+    public const SOME_KEY = 'delete';
+
     /** @var string */
     public $string;
 
@@ -231,4 +233,7 @@ class PhpDocTypesStub extends stdClass
 
     /** @var value-of<StringBackedEnum> */
     public $valueOfEnum;
+
+    /** @var array{PhpDocTypesStub::SOME_KEY: bool} */
+    public $arrayShapeWithConstKey;
 }

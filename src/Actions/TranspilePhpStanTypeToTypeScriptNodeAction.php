@@ -200,6 +200,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
                 IdentifierTypeNode::class => $item->keyName->name,
                 ConstExprStringNode::class => $item->keyName->value,
                 ConstExprIntegerNode::class => (string) $item->keyName->value,
+                ConstFetchNode::class => $this->resolveConstFetchNodeValue($item->keyName, $phpClassNode),
                 default => null,
             };
 
@@ -215,6 +216,19 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         }
 
         return new TypeScriptObject($properties);
+    }
+
+    protected function resolveConstFetchNodeValue(ConstFetchNode $node, ?PhpClassNode $phpClassNode): ?string
+    {
+        $class = $this->resolveClass($node->className, $phpClassNode);
+
+        if ($class === null) {
+            return null;
+        }
+
+        $value = constant("{$class}::{$node->name}");
+
+        return (string) $value;
     }
 
     protected function nullableNode(

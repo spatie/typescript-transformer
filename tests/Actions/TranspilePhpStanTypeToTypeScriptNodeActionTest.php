@@ -488,4 +488,11 @@ it('can transpile PHPStan doc types', function (
             new TypeScriptLiteral('ringo'),
         ]),
     ];
+
+    yield [
+        'arrayShapeWithConstKey',
+        new TypeScriptObject([
+            new TypeScriptProperty('delete', new TypeScriptBoolean()),
+        ]),
+    ];
 });
