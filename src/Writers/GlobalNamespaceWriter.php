@@ -25,6 +25,10 @@ class GlobalNamespaceWriter implements Writer
 
     protected function ensureDeclarationFileExtension(string $path): string
     {
+        if (str_ends_with($path, '.d.ts')) {
+            return $path;
+        }
+
         $directory = pathinfo($path, PATHINFO_DIRNAME);
         $filename = pathinfo($path, PATHINFO_FILENAME);
 
