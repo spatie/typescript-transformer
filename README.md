@@ -1,7 +1,8 @@
 # Transform PHP to TypeScript
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/typescript-transformer.svg?style=flat-square  )](https://packagist.org/packages/spatie/typescript-transformer)
 [![Tests](https://img.shields.io/github/actions/workflow/status/spatie/typescript-transformer/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/spatie/typescript-transformer/actions/workflows/run-tests.yml)
+[![PHPStan](https://img.shields.io/github/actions/workflow/status/spatie/typescript-transformer/phpstan.yml?branch=main&label=phpstan&style=flat-square)](https://github.com/spatie/typescript-transformer/actions/workflows/phpstan.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/typescript-transformer.svg?style=flat-square)](https://packagist.org/packages/spatie/typescript-transformer)
 
 **These docs are for the (currently in beta) v3 release of the package, you'll find the v2 docs [here](https://spatie.be/docs/typescript-transformer/v2/introduction).** 
