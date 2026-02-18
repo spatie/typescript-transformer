@@ -906,7 +906,6 @@ A `TransformedProvider` implements the `TransformedProvider` interface:
 ```php
 namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
-use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 interface TransformedProvider
@@ -1124,6 +1123,40 @@ new Transformed(
     location: ['App', 'Models'],
 );
 ```
+
+
+#### Additional actions
+
+When building custom transformed providers you may need access to actions like transpiling PHP types to TypeScript, discovering certain types and more.
+
+```php
+use Spatie\TypeScriptTransformer\TransformedProviders\ActionAwareTransformedProvider;
+use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProviderActions;
+use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
+
+class CustomProvider implements TransformedProvider, ActionAwareTransformedProvider
+{
+    private TransformedProviderActions $actions;
+
+    public function setActions(TransformedProviderActions $actions): void
+    {
+        $this->actions = $actions;
+    }
+
+    public function provide(TypeScriptTransformerConfig $config): array
+    {
+        $classNode = $this->actions->parseUserDefinedTypeAction->execute('Record<string, int>');
+    }
+}
+```
+
+The `TransformedProviderActions` object provides:
+
+- `loadPhpClassNodeAction` - Load a `PhpClassNode` from a file path
+- `discoverTypesAction` - Discover PHP classes in directories
+- `transpilePhpStanTypeToTypeScriptNodeAction` - Transpile PHPStan doc types to TypeScript nodes
+- `transpilePhpTypeNodeToTypeScriptNodeAction` - Transpile native PHP types to TypeScript nodes
+- `parseUserDefinedTypeAction` - Parse a user-defined type string into a TypeScript node
 
 ## Formatting TypeScript
 
@@ -1692,7 +1725,7 @@ class CustomWatchableProvider implements WatchingTransformedProvider, Transforme
         if(! $watchEvent instanceof SummarizedWatchEvent){
             return null;
         }
-        
+
         // Handle changes to the TransformedCollection
     }
 }
@@ -1767,6 +1800,65 @@ While we try to cache the output of transformed objects as much as possible, onl
 objects that reference changed objects, sometimes a complete rewrite is necessary. You can request such a complete
 rewrite
 by calling this method.
+
+### PHP Nodes
+
+TypeScript transformer can keep track of PHP classes, wether it is for transforming a class to TypeScript or for other purposes like inspecting the class for references to other classes.
+
+Within the package we collect all these classes into the `PhpNodeCollection` which is a persistent registry of `PhpClassNode` objects, keyed by their fully qualified class name (FQCN). This collection keeps PHP reflection data available throughout the transformer's lifecycle, including watch mode.
+
+When a class changes during watch mode, the `PhpNodeCollection` automatically updates the corresponding `PhpClassNode` with the new reflection data. 
+
+The collection can be injected into a `TransformedProvider` as such:
+
+```php
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
+use Spatie\TypeScriptTransformer\TransformedProviders\PhpNodesAwareTransformedProvider;
+
+class ControllerScanningProvider implements TransformedProvider, PhpNodesAwareTransformedProvider
+{
+    private PhpNodeCollection $phpNodeCollection;
+
+    public function setPhpNodeCollection(PhpNodeCollection $phpNodeCollection): void
+    {
+        $this->phpNodeCollection = $phpNodeCollection;
+    }
+
+    public function provide(TypeScriptTransformerConfig $config): array
+    {
+        // You now can use $this->phpNodeCollection to access the PHP class nodes
+    }
+}
+````
+
+The collection will not store all PHP classes it encounters, it will keep track of:
+
+- PHP classes/interfaces/enums which were transformed by a transformer
+- Manually added PHP classes/interfaces/enums by providers
+
+That's why on the initial run of the provider, the collection will be empty when the transformers haven't run yet.
+
+In order to add new nodes to the collection you'll need to load them, the package provides a `LoadPhpClassNodeAction` for this purpose, you'll can inject this action into your provider by implementing the `ActionAwareTransformedProvider` interface (see above).
+
+Please note in order to be able to load a PHP class node from a file, the file should contain exactly one class, interface or enum. When the file contains zero or multiple classes, the action will return null since it doesn't know which class to load.
+
+It is possible to add nodes to the collection like this:
+
+```php
+$this->phpNodeCollection->add($phpClassNode);
+```
+
+You can check if a node exists in the collection by its FQCN:
+
+```php
+$this->phpNodeCollection->has($fqcn);
+```
+
+And het a node as such:
+
+```php
+$node = $this->phpNodeCollection->get($fqcn);
+```
 
 ### Loggers
 

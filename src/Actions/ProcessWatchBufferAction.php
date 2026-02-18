@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Actions;
 
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\EventHandlers\ConfigUpdatedWatchEventHandler;
@@ -27,6 +28,7 @@ class ProcessWatchBufferAction
     public function __construct(
         protected TypeScriptTransformer $typeScriptTransformer,
         protected TransformedCollection $transformedCollection,
+        protected PhpNodeCollection $phpNodeCollection,
     ) {
         $this->initializeHandlers();
     }
@@ -86,12 +88,13 @@ class ProcessWatchBufferAction
         $fileUpdatedOrCreatedHandler = new FileUpdatedOrCreatedWatchEventHandler(
             $this->typeScriptTransformer,
             $this->transformedCollection,
+            $this->phpNodeCollection,
         );
 
         $watchingTransformedProviders = array_values(array_map(
             fn (WatchingTransformedProvider $provider) => new WatchingTransformedProvidersHandler(
                 $provider,
-                $this->transformedCollection
+                $this->transformedCollection,
             ),
             array_filter(
                 $this->typeScriptTransformer->config->transformedProviders,
@@ -114,6 +117,7 @@ class ProcessWatchBufferAction
             new FileDeletedWatchEventHandler(
                 $this->typeScriptTransformer,
                 $this->transformedCollection,
+                $this->phpNodeCollection,
             ),
             ...$watchingTransformedProviders,
         ];
@@ -122,6 +126,7 @@ class ProcessWatchBufferAction
             new DirectoryDeletedWatchEventHandler(
                 $this->typeScriptTransformer,
                 $this->transformedCollection,
+                $this->phpNodeCollection,
             ),
             ...$watchingTransformedProviders,
         ];

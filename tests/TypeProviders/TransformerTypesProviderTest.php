@@ -32,7 +32,7 @@ function getTestProvidedTypes(
     );
 
     $transformed = $provider->provide(
-        TypeScriptTransformerConfigFactory::create()->get()
+        TypeScriptTransformerConfigFactory::create()->get(),
     );
 
     return new TransformedCollection($transformed);

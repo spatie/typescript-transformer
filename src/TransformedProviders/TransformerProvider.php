@@ -20,7 +20,7 @@ class TransformerProvider implements TransformedProvider
     }
 
     public function provide(
-        TypeScriptTransformerConfig $config
+        TypeScriptTransformerConfig $config,
     ): array {
         $transformTypesAction = new TransformTypesAction();
         $discoverTypesAction = new DiscoverTypesAction();

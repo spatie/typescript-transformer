@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\EventHandlers\FileUpdatedOrCreatedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Events\FileCreatedWatchEvent;
@@ -32,7 +33,7 @@ class User {
             ->get()
     );
 
-    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection);
+    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $handler->handle(new FileCreatedWatchEvent($path));
 
@@ -63,7 +64,7 @@ class User {
             ->get()
     );
 
-    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection);
+    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $handler->handle(new FileUpdatedWatchEvent($factory->path('Models/User.php')));
 
@@ -93,7 +94,7 @@ class User {
             ->get()
     );
 
-    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection);
+    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     // First create
     $handler->handle(new FileCreatedWatchEvent($path));
@@ -129,7 +130,7 @@ class User {
             ->get()
     );
 
-    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection);
+    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $handler->handle(new FileUpdatedWatchEvent($factory->path('Models/User.php')));
 
@@ -156,7 +157,7 @@ class Post {
             ->get()
     );
 
-    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection);
+    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $handler->handle(new FileCreatedWatchEvent($path));
 
@@ -185,7 +186,7 @@ class Post {
             ->get()
     );
 
-    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection);
+    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $handler->handle(new FileCreatedWatchEvent($path));
 
@@ -211,7 +212,7 @@ class User {
             ->get()
     );
 
-    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection);
+    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $handler->handle(new FileCreatedWatchEvent($path));
 
@@ -237,7 +238,7 @@ class User {
             ->get()
     );
 
-    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection);
+    $handler = new FileUpdatedOrCreatedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $handler->handle(new FileCreatedWatchEvent($path));
 

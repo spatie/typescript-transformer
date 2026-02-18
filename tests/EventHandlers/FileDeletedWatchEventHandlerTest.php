@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\EventHandlers\FileDeletedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Events\FileDeletedWatchEvent;
@@ -29,7 +30,7 @@ it('removes the transformed item when its file is deleted', function () {
         TypeScriptTransformerConfigFactory::create()->get()
     );
 
-    $handler = new FileDeletedWatchEventHandler($transformer, $collection);
+    $handler = new FileDeletedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $result = $handler->handle(new FileDeletedWatchEvent($factory->path('Models/User.php')));
 
@@ -52,7 +53,7 @@ it('does nothing when the deleted file has no transformed item', function () {
         TypeScriptTransformerConfigFactory::create()->get()
     );
 
-    $handler = new FileDeletedWatchEventHandler($transformer, $collection);
+    $handler = new FileDeletedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $result = $handler->handle(new FileDeletedWatchEvent($factory->path('Models/UnknownFile.php')));
 

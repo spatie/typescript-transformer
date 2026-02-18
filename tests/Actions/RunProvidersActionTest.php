@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
 use Spatie\TypeScriptTransformer\Actions\RunProvidersAction;
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
@@ -10,6 +11,7 @@ use Spatie\TypeScriptTransformer\Tests\Support\ArrayLogger;
 use Spatie\TypeScriptTransformer\Tests\Support\InlineTransformedProvider;
 use Spatie\TypeScriptTransformer\TransformedProviders\LoggingTransformedProvider;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
+use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProviderActions;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
@@ -33,7 +35,7 @@ it('can provide types based upon the config', function () {
         )
         ->get();
 
-    $types = (new RunProvidersAction($config))->execute(new NullLogger());
+    $types = (new RunProvidersAction($config))->execute(new NullLogger(), new PhpNodeCollection(), new TransformedProviderActions());
 
     expect($types)->toHaveCount(2);
 
@@ -66,7 +68,7 @@ it('provides logger to LoggingTransformedProvider implementations', function () 
 
     $logger = new ArrayLogger([]);
 
-    (new RunProvidersAction($config))->execute($logger);
+    (new RunProvidersAction($config))->execute($logger, new PhpNodeCollection(), new TransformedProviderActions());
 
     expect($logger->logs)->toHaveCount(1);
     expect($logger->logs[0]['level'])->toBe('info');

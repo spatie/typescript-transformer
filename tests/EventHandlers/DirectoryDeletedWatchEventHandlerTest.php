@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\EventHandlers\DirectoryDeletedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Events\DirectoryDeletedWatchEvent;
@@ -34,7 +35,7 @@ it('removes transformed items from the deleted directory and its subdirectories'
         TypeScriptTransformerConfigFactory::create()->get()
     );
 
-    $handler = new DirectoryDeletedWatchEventHandler($transformer, $collection);
+    $handler = new DirectoryDeletedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
 
     $result = $handler->handle(new DirectoryDeletedWatchEvent($factory->path('Models')));
 

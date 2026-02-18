@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer;
 
 use Exception;
 use Spatie\TypeScriptTransformer\Actions\ProcessWatchBufferAction;
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Events\DirectoryDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\FileCreatedWatchEvent;
@@ -25,10 +26,12 @@ class FileSystemWatcher
     public function __construct(
         protected TypeScriptTransformer $typeScriptTransformer,
         protected TransformedCollection $transformedCollection,
+        protected PhpNodeCollection $phpNodeCollection,
     ) {
         $this->processWatchBufferAction = new ProcessWatchBufferAction(
             $this->typeScriptTransformer,
             $this->transformedCollection,
+            $this->phpNodeCollection,
         );
     }
 

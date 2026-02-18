@@ -13,10 +13,13 @@ use Spatie\TypeScriptTransformer\Actions\ResolveFilesAction;
 use Spatie\TypeScriptTransformer\Actions\RunProvidersAction;
 use Spatie\TypeScriptTransformer\Actions\TransformTypesAction;
 use Spatie\TypeScriptTransformer\Actions\WriteFilesAction;
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\References\PhpClassReference;
 use Spatie\TypeScriptTransformer\Runners\Runner;
 use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
+use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProviderActions;
 
 class TypeScriptTransformer
 {
@@ -34,9 +37,9 @@ class TypeScriptTransformer
         public readonly FormatFilesAction $formatFilesAction,
         public readonly TransformTypesAction $transformTypesAction,
         public readonly LoadPhpClassNodeAction $loadPhpClassNodeAction,
+        public readonly TransformedProviderActions $transformedProviderActions,
         public readonly bool $watch = false,
     ) {
-
     }
 
     public static function create(
@@ -48,10 +51,13 @@ class TypeScriptTransformer
 
         $logger ??= new NullLogger();
 
+        $transformTypesAction = new TransformTypesAction();
+        $loadPhpClassNodeAction = new LoadPhpClassNodeAction();
+
         return new self(
             $config,
             $logger,
-            new DiscoverTypesAction(),
+            $discoverTypesAction = new DiscoverTypesAction(),
             new RunProvidersAction($config),
             new ExecuteProvidedClosuresAction($config),
             new ConnectReferencesAction($logger),
@@ -60,15 +66,19 @@ class TypeScriptTransformer
             new ResolveFilesAction($config),
             new WriteFilesAction($config),
             new FormatFilesAction($config),
-            new TransformTypesAction(),
-            new LoadPhpClassNodeAction(),
+            $transformTypesAction,
+            $loadPhpClassNodeAction,
+            new TransformedProviderActions(
+                loadPhpClassNodeAction: $loadPhpClassNodeAction,
+                discoverTypesAction: $discoverTypesAction,
+            ),
             $watch
         );
     }
 
     public function execute(): void
     {
-        $transformedCollection = $this->resolveState();
+        [$transformedCollection, $phpNodeCollection] = $this->resolveState();
 
         $this->outputTransformed($transformedCollection);
 
@@ -78,6 +88,7 @@ class TypeScriptTransformer
             $watcher = new FileSystemWatcher(
                 $this,
                 $transformedCollection,
+                $phpNodeCollection,
             );
 
             $watcher->run();
@@ -89,9 +100,20 @@ class TypeScriptTransformer
         $this->logger->info(Runner::WORKER_READY_SIGNAL);
     }
 
-    public function resolveState(): TransformedCollection
+    /**
+     * @return array{TransformedCollection, PhpNodeCollection}
+     */
+    public function resolveState(): array
     {
-        $transformedCollection = $this->runProvidersAction->execute($this->logger);
+        $phpNodeCollection = new PhpNodeCollection();
+
+        $transformedCollection = $this->runProvidersAction->execute($this->logger, $phpNodeCollection, $this->transformedProviderActions);
+
+        foreach ($transformedCollection as $transformed) {
+            if ($transformed->reference instanceof PhpClassReference) {
+                $phpNodeCollection->add($transformed->reference->phpClassNode);
+            }
+        }
 
         $this->executeProvidedClosuresAction->execute($transformedCollection);
 
@@ -101,7 +123,7 @@ class TypeScriptTransformer
 
         $this->executeConnectedClosuresAction->execute($transformedCollection);
 
-        return $transformedCollection;
+        return [$transformedCollection, $phpNodeCollection];
     }
 
     public function outputTransformed(TransformedCollection $transformedCollection): void

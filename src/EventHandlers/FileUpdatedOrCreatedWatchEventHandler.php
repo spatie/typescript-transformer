@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\EventHandlers;
 
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\Events\FileCreatedWatchEvent;
@@ -18,6 +19,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
     public function __construct(
         protected TypeScriptTransformer $typeScriptTransformer,
         protected TransformedCollection $transformedCollection,
+        protected PhpNodeCollection $phpNodeCollection,
     ) {
     }
 
@@ -40,6 +42,10 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
                  */
 
                 return null;
+            }
+
+            if ($this->phpNodeCollection->has($classNode->getName())) {
+                $this->phpNodeCollection->add($classNode);
             }
 
             $newlyTransformed = $this->typeScriptTransformer->transformTypesAction->transformClassNode(
@@ -76,6 +82,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
 
         if ($newlyTransformed) {
             $this->transformedCollection->add($newlyTransformed);
+            $this->phpNodeCollection->add($classNode);
         }
 
         return null;

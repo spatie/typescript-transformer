@@ -11,6 +11,6 @@ interface TransformedProvider
      * @return array<Transformed>
      */
     public function provide(
-        TypeScriptTransformerConfig $config
+        TypeScriptTransformerConfig $config,
     ): array;
 }

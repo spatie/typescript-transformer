@@ -4,6 +4,7 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\ProcessWatchBufferAction;
+use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\Events\DirectoryDeletedWatchEvent;
@@ -35,7 +36,7 @@ it('returns continue when there are no events', function () {
         TypeScriptTransformerConfigFactory::create()->writer($writer)->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection);
+    $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
 
     $result = $action->execute([]);
 
@@ -64,7 +65,7 @@ class User {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection);
+    $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
 
     $result = $action->execute([
         new FileCreatedWatchEvent($factory->path('Models/User.php')),
@@ -109,7 +110,7 @@ class User {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection);
+    $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
 
     $action->execute([
         new FileCreatedWatchEvent($factory->path('Models/User.php')),
@@ -173,7 +174,7 @@ it('processes file deleted events and removes transformed items', function () {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection);
+    $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
 
     $result = $action->execute([
         new FileDeletedWatchEvent($factory->path('Models/User.php')),
@@ -219,7 +220,7 @@ it('processes directory deleted events and removes all transformed items in dire
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection);
+    $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
 
     $result = $action->execute([
         new DirectoryDeletedWatchEvent($factory->path('Models')),
@@ -245,7 +246,7 @@ it('returns complete refresh when config file is updated', function () {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection);
+    $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
 
     $result = $action->execute([
         new FileUpdatedWatchEvent($configPath),
@@ -278,7 +279,7 @@ class User {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection);
+    $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
 
     $result = $action->execute([
         new FileUpdatedWatchEvent($configPath),
@@ -317,7 +318,7 @@ class User {
             ->get()
     );
 
-    $action = new ProcessWatchBufferAction($transformer, $collection);
+    $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
 
     $result = $action->execute([
         new FileCreatedWatchEvent($factory->path('Models/User.php')),
@@ -359,7 +360,7 @@ it('can delete and create a referenced transformed and it will reconnect referen
     );
 
     $collection = new TransformedCollection();
-    $action = new ProcessWatchBufferAction($transformer, $collection);
+    $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
 
     $action->execute([
         new FileCreatedWatchEvent($circularAPath),
