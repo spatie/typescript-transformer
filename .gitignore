@@ -11,5 +11,6 @@ phpunit.xml
 psalm.xml
 vendor
 .php-cs-fixer.cache
+.claude/settings.local.json
 
 .phpunit.cache
