@@ -11,6 +11,7 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\OptionalAttributedCl
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleAttribute;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleExtendsClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleInterface;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptAttributedClass;
@@ -37,6 +38,7 @@ it('can discover types', function () {
         new PhpClassNode(new ReflectionClass(ReadonlyClass::class)),
         new PhpClassNode(new ReflectionClass(SimpleAttribute::class)),
         new PhpClassNode(new ReflectionClass(SimpleClass::class)),
+        new PhpClassNode(new ReflectionClass(SimpleExtendsClass::class)),
         new PhpClassNode(new ReflectionClass(SimpleInterface::class)),
         new PhpEnumNode(new ReflectionEnum(StringBackedEnum::class)),
         new PhpClassNode(new ReflectionClass(TypeScriptAttributedClass::class)),

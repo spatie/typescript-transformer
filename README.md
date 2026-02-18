@@ -555,6 +555,41 @@ This generates the correct import statement and resolves the name, including ali
 new AdditionalImport(__DIR__.'/../types/components.ts', ['SomeComponent', 'OtherThing'])
 ```
 
+#### Referencing other transformed types
+
+When your literal type needs to reference other PHP types that are also being transformed, use the `references` parameter with `%placeholder%` syntax:
+
+```php
+use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
+
+class Types
+{
+    #[LiteralTypeScriptType(
+        'Record<string, %User%> | %Post%[]',
+        references: [
+            'User' => UserData::class,
+            'Post' => PostData::class,
+        ]
+    )]
+    public array $property;
+}
+```
+
+Each placeholder `%Name%` in the TypeScript string will be replaced with the resolved type name. This integrates into the full reference graph — imports are generated in module mode, aliases are resolved when there are naming conflicts, and missing references are tracked.
+
+You can also pass custom `Reference` objects:
+
+```php
+use Spatie\TypeScriptTransformer\References\CustomReference;
+
+#[LiteralTypeScriptType(
+    '%Custom% | null',
+    references: [
+        'Custom' => new CustomReference('group', 'name'),
+    ]
+)]
+```
+
 It is also possible to type properties using php types within an attribute using the `#[TypeScriptType]` attribute:
 
 ```php
@@ -2171,9 +2206,10 @@ new TypeScriptLiteral('hello')
 new TypeScriptParameter('name', new TypeScriptString(), isOptional: true)
 ```
 
-**TypeScriptRaw** — pass-through raw TypeScript
+**TypeScriptRaw** — pass-through raw TypeScript, supports `references` for `%placeholder%` substitution and `additionalImports` for external TS file imports
 ```php
 new TypeScriptRaw('Record<string, never>')
+new TypeScriptRaw('%User% | null', references: ['User' => UserData::class])
 ```
 
 ## Testing

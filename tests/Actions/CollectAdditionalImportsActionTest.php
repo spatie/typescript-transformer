@@ -3,8 +3,8 @@
 use Spatie\TypeScriptTransformer\Actions\CollectAdditionalImportsAction;
 use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\MemoryWriter;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 

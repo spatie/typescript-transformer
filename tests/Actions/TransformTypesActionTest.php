@@ -5,7 +5,7 @@ use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\HiddenAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
-use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 

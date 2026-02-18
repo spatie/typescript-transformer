@@ -1,10 +1,11 @@
 <?php
 
-use Carbon\Carbon;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\Tests\Support\InlineTransformedProvider;
-use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleExtendsClass;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\InlineTransformedProvider;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\MemoryWriter;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
@@ -74,17 +75,32 @@ it('can replace types', function (
             ])),
         ]),
     ];
+});
 
-    yield 'using a closure' => [
-        'replacement' => fn (TypeScriptNode $node) => new TypeScriptObject([
+it('can replace types using a closure', function () {
+    $config = TypeScriptTransformerConfigFactory::create()
+        ->provider(new InlineTransformedProvider(TransformedFactory::alias(
+            'date',
+            new TypeScriptObject([
+                new TypeScriptProperty('datetime', new TypeScriptReference(new ClassStringReference(DateTime::class))),
+            ])
+        )))
+        ->writer($writer = new MemoryWriter())
+        ->replaceType(DateTime::class, fn (TypeScriptNode $node) => new TypeScriptObject([
             new TypeScriptProperty('date', new TypeScriptString()),
-        ]),
-        'expected' => new TypeScriptObject([
+        ]))
+        ->get();
+
+    TypeScriptTransformer::create($config)->execute();
+
+    expect($writer->getTransformedNodeByName('date'))->toEqual(new TypeScriptAlias(
+        new TypeScriptIdentifier('date'),
+        new TypeScriptObject([
             new TypeScriptProperty('datetime', new TypeScriptObject([
                 new TypeScriptProperty('date', new TypeScriptString()),
             ])),
-        ]),
-    ];
+        ])
+    ));
 });
 
 it('will replace inherited types', function () {
@@ -92,11 +108,11 @@ it('will replace inherited types', function () {
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
-                new TypeScriptProperty('datetime', new TypeScriptReference(new ClassStringReference(Carbon::class))),
+                new TypeScriptProperty('datetime', new TypeScriptReference(new ClassStringReference(SimpleExtendsClass::class))),
             ])
         )))
         ->writer($writer = new MemoryWriter())
-        ->replaceType(DateTime::class, 'string')
+        ->replaceType(SimpleClass::class, 'string')
         ->get();
 
     TypeScriptTransformer::create($config)->execute();
@@ -114,7 +130,7 @@ it('will replace implemented types', function () {
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
-                new TypeScriptProperty('datetime', new TypeScriptReference(new ClassStringReference(Carbon::class))),
+                new TypeScriptProperty('datetime', new TypeScriptReference(new ClassStringReference(DateTimeImmutable::class))),
             ])
         )))
         ->writer($writer = new MemoryWriter())

@@ -1,8 +1,7 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Support;
+namespace Spatie\TypeScriptTransformer\Tests\TestSupport;
 
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
 

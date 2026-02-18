@@ -10,7 +10,7 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptLocationAttributedClass;
-use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformerProvider;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
@@ -38,7 +38,7 @@ function getTestProvidedTypes(
 it('will find types and takes attributes into account', function () {
     $collection = getTestProvidedTypes();
 
-    expect($collection)->toHaveCount(8);
+    expect($collection)->toHaveCount(9);
 
     $typesToCheck = array_filter(
         iterator_to_array($collection),

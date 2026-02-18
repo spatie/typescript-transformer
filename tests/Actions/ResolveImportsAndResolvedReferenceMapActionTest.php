@@ -3,7 +3,7 @@
 use Spatie\TypeScriptTransformer\Actions\ResolveImportsAndResolvedReferenceMapAction;
 use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\Writers\GlobalNamespaceWriter;

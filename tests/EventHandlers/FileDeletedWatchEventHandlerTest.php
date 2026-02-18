@@ -5,7 +5,7 @@ use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\EventHandlers\FileDeletedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Events\FileDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
-use Spatie\TypeScriptTransformer\Tests\Support\FakeFileStructureFactory;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\FakeFileStructureFactory;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 

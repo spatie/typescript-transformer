@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\Events\FileCreatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\FileDeletedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\FileUpdatedWatchEvent;
 use Spatie\TypeScriptTransformer\Events\SummarizedWatchEvent;
-use Spatie\TypeScriptTransformer\Tests\Support\FakeWatchingTransformedProvider;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\FakeWatchingTransformedProvider;
 
 it('only passes events to provider when path matches watched directory', function ($matchingEvent, $nonMatchingEvent) {
     $provider = new FakeWatchingTransformedProvider(

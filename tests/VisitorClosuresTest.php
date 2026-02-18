@@ -1,9 +1,9 @@
 <?php
 
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\Tests\Support\InlineTransformedProvider;
-use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\InlineTransformedProvider;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\MemoryWriter;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
@@ -28,7 +28,7 @@ it('can run visitor closures when types are provided', function () {
 
     TypeScriptTransformer::create($config)->execute();
 
-    expect($writer->getOutput())->toEqual('type someObject = string;');
+    expect($writer->getOutput())->toEqual("export type someObject = string;\n");
 });
 
 it('can run visitor closures when types are connected', function () {
@@ -47,5 +47,5 @@ it('can run visitor closures when types are connected', function () {
 
     TypeScriptTransformer::create($config)->execute();
 
-    expect($writer->getOutput())->toEqual('type someObject = string;');
+    expect($writer->getOutput())->toEqual("export type someObject = string;\n");
 });

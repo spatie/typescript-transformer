@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Support;
+namespace Spatie\TypeScriptTransformer\Tests\TestSupport;
 
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 

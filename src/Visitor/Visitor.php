@@ -86,7 +86,9 @@ class Visitor
                 $value[$key] = $this->execute($subNode, $metadata);
             }
 
-            $node->$propertyName = array_values(array_filter($value));
+            $filtered = array_filter($value);
+
+            $node->$propertyName = array_is_list($filtered) ? array_values($filtered) : $filtered;
         }
 
         foreach ($this->closures as $closure) {

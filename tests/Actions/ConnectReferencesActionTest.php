@@ -2,13 +2,16 @@
 
 use Spatie\TypeScriptTransformer\Actions\ConnectReferencesAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
+use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Support\Loggers\ArrayLogger;
 use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularA;
 use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularB;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
-use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\AllClassTransformer;
+use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 
 it('can connect references', function () {
@@ -91,4 +94,34 @@ it('will write to the log when a reference cannot be found', function () {
         ->referenced->toBeNull();
 
     expect($console->messages)->not()->toBeEmpty();
+});
+
+it('can connect references within a TypeScriptRaw node', function () {
+    $transformedEnum = transformSingle(StringBackedEnum::class, new EnumTransformer());
+
+    $rawNode = new TypeScriptRaw('Record<string, %Enum%>', references: [
+        'Enum' => StringBackedEnum::class,
+    ]);
+
+    $transformedRaw = new Transformed(
+        $rawNode,
+        new ClassStringReference('SomeClass'),
+        [],
+    );
+
+    $collection = new TransformedCollection([
+        $transformedEnum,
+        $transformedRaw,
+    ]);
+
+    $action = new ConnectReferencesAction(new NullLogger());
+
+    $action->execute($collection);
+
+    expect($rawNode->references['Enum'])
+        ->toBeInstanceOf(TypeScriptReference::class)
+        ->referenced->toBe($transformedEnum);
+
+    expect($transformedRaw->references)->toHaveKey($transformedEnum->reference->getKey());
+    expect($transformedEnum->referencedBy)->toContain($transformedRaw->reference->getKey());
 });

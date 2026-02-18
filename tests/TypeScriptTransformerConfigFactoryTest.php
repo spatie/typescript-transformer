@@ -1,8 +1,8 @@
 <?php
 
-use Spatie\TypeScriptTransformer\Tests\Support\FakeExtension;
-use Spatie\TypeScriptTransformer\Tests\Support\FakeWatchingTransformedProvider;
-use Spatie\TypeScriptTransformer\Tests\Support\UntransformableTransformer;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\FakeExtension;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\FakeWatchingTransformedProvider;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\UntransformableTransformer;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformerProvider;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;

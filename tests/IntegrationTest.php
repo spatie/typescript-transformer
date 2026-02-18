@@ -3,7 +3,7 @@
 use function Spatie\Snapshots\assertMatchesFileSnapshot;
 
 use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;

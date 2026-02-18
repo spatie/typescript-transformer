@@ -24,12 +24,16 @@ class ExecuteConnectedClosuresAction
     public function execute(
         TransformedCollection|Traversable $nodes,
     ): void {
-        if (empty($this->config->providedVisitorClosures)) {
+        if (empty($this->config->connectedVisitorClosures)) {
             return;
         }
 
         foreach ($nodes as $node) {
-            $this->visitor->execute($node->typeScriptNode);
+            $result = $this->visitor->execute($node->typeScriptNode);
+
+            if ($result !== null) {
+                $node->typeScriptNode = $result;
+            }
         }
     }
 }

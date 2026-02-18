@@ -3,7 +3,7 @@
 use Spatie\TypeScriptTransformer\Actions\SplitTransformedPerLocationAction;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\Location;
-use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\TransformedFactory;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 
 it('can split per location into a tree', function () {

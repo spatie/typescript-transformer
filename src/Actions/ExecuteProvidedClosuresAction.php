@@ -29,7 +29,11 @@ class ExecuteProvidedClosuresAction
         }
 
         foreach ($nodes as $node) {
-            $this->visitor->execute($node->typeScriptNode);
+            $result = $this->visitor->execute($node->typeScriptNode);
+
+            if ($result !== null) {
+                $node->typeScriptNode = $result;
+            }
         }
     }
 }

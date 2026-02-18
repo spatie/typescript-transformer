@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\TypeScriptTransformer\Tests\Factories;
+namespace Spatie\TypeScriptTransformer\Tests\TestSupport;
 
 use Illuminate\Support\Str;
 use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
