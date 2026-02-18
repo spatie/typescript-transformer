@@ -194,7 +194,7 @@ Transformers work on PHP classes, we need to tell TypeScript transformer where t
 done by adding a directory to the configuration:
 
 ```php
-$config->watchDirectories(app_path());
+$config->transformDirectories(app_path());
 ```
 
 We're almost done! The last thing we need to do is tell TypeScript transformer how to write types, this can be done by
@@ -474,6 +474,16 @@ Transforming this class will result in the following object:
 ```ts
 export type Types = {
     property?: string;
+}
+```
+
+Want to make all properties optional? You can do that by adding the `#[Optional]` attribute to the class:
+
+```php
+#[Optional]
+class Types 
+{
+    public string $property;
 }
 ```
 
@@ -858,6 +868,32 @@ class RemoveAllStrings implements ClassPropertyProcessor
 }
 ```
 
+#### Fixing array like structures
+
+The package ships with `FixArrayLikeStructuresClassPropertyProcessor`, a built-in processor that converts generic array-like types into idiomatic TypeScript:
+
+- `Array<int, string>` becomes `string[]`
+- `Array<string, User>` becomes `Record<string, User>`
+- `Collection<int, User>` becomes `User[]` (when registered)
+
+You can register extra classes which behave like arrays as such
+
+```php
+use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
+
+protected function classPropertyProcessors(): array
+{
+    return [
+        new FixArrayLikeStructuresClassPropertyProcessor()
+            ->replaceArrayLikeClass(
+                Illuminate\Support\Collection::class,
+            ),
+    ];
+}
+```
+
+By default, it replaces `Array<K, V>` generics. This can be disabled by passing `replaceArrays: false` to the constructor.
+
 ## Creating a TransformedProvider
 
 Until now we've only taken a look at transforming PHP classes to TypeScript, but what if you want to transform something
@@ -1185,39 +1221,29 @@ class TypeScriptAlias implements TypeScriptForwardingNamedNode, TypeScriptNode
 }
 ```
 
-Lastly, the package also provides some tooling to visit a tree of all TypeScript nodes, when your custom node is
-encapsulating other TypeScript nodes you should implement the `TypeScriptVisitableNode` interface which requires you to
-implement the visitorProfile method.
-
-The `visitorProfile` method should return a `VisitorProfile` object which contains information about the properties
-of your TypeScript node PHP class that can be visited. We extinguish two types of properties: single nodes properties
-containing a single node and iterable properties containing a set of properties.
-
-The `TypeScriptGeneric` node is an excellent example:
+Lastly, the package also provides some tooling to visit a tree of all TypeScript nodes. When your custom node
+encapsulates other TypeScript nodes, you should mark those properties with the `#[NodeVisitable]` attribute so the
+visitor knows to traverse them. This works for both single node properties and arrays of nodes:
 
 ```php
-class TypeScriptGeneric implements TypeScriptForwardingNamedNode, TypeScriptNode, TypeScriptVisitableNode
+use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
+
+class TypeScriptGeneric implements TypeScriptForwardingNamedNode, TypeScriptNode
 {
     /**
      * @param  array<TypeScriptNode>  $genericTypes
      */
     public function __construct(
-        public TypeScriptIdentifier|TypeReference $type,
+        #[NodeVisitable]
+        public TypeScriptIdentifier|TypeScriptReference $type,
+        #[NodeVisitable]
         public array $genericTypes,
     ) {
-    }
-
-    public function visitorProfile(): VisitorProfile
-    {
-        return VisitorProfile::create()->single('type')->iterable('genericTypes');
     }
 
     // ....
 }
 ```
-
-It contains a single node property `type` and an iterable property `genericTypes`. From now on the package will visit
-the nodes within these properties.
 
 ### Visiting TypeScript nodes
 
@@ -1643,11 +1669,10 @@ In the end TypeScript transformer will pick up these changes, but it might take 
 
 ### Letting a provider hook into watch events
 
-The package will now watch for file changes in the `watchDirectories` you've configured earlier. But what about
-providers
-which provide additional transformed objects outside of the package transformation flow?
+The package will now watch for file changes in the `transformDirectories` you've configured earlier. But what about
+providers which provide additional transformed objects outside of the package transformation flow?
 
-These providers can implement the `WatchableTransformedProvider` interface:
+These providers can implement the `WatchingTransformedProvider` interface:
 
 ```php
 use Spatie\TypeScriptTransformer\TransformedProviders\WatchingTransformedProvider;
@@ -1775,6 +1800,49 @@ interface Logger
 
     public function error(mixed $item, ?string $title = null): void;
 }
+```
+
+### Extensions
+
+Extensions allow packages to enrich the TypeScript transformer configuration. An extension implements the `TypeScriptTransformerExtension` interface:
+
+```php
+use Spatie\TypeScriptTransformer\Support\Extensions\TypeScriptTransformerExtension;
+use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
+
+class MyExtension implements TypeScriptTransformerExtension
+{
+    public function enrich(TypeScriptTransformerConfigFactory $factory): void
+    {
+        $factory->transformer(new MyCustomTransformer());
+        $factory->provider(new MyCustomProvider());
+    }
+}
+```
+
+Register an extension in the configuration:
+
+```php
+$config->extension(new MyExtension());
+```
+
+### Managing transformers
+
+Besides the `transformer()` method which appends transformers to the end of the list, the configuration provides two additional methods for more control:
+
+**Prepending transformers** — adds transformers to the beginning of the list, useful when your transformer should take priority over others:
+
+```php
+$config->prependTransformer(new HighPriorityTransformer());
+```
+
+**Replacing transformers** — swaps an existing transformer for a different one, useful within extensions to override a default transformer:
+
+```php
+$config->replaceTransformer(
+    AttributedClassTransformer::class,
+    new MyCustomClassTransformer()
+);
 ```
 
 ## Node Reference
