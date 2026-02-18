@@ -105,7 +105,7 @@ class TypeScriptTransformer
      */
     public function resolveState(): array
     {
-        $phpNodeCollection = new PhpNodeCollection();
+        $phpNodeCollection = new PhpNodeCollection($this->loadPhpClassNodeAction);
 
         $transformedCollection = $this->runProvidersAction->execute($this->logger, $phpNodeCollection, $this->transformedProviderActions);
 

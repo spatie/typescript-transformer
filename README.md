@@ -1869,11 +1869,15 @@ The collection will not store all PHP classes it encounters, it will keep track 
 
 That's why on the initial run of the provider, the collection will be empty when the transformers haven't run yet.
 
-In order to add new nodes to the collection you'll need to load them, the package provides a `LoadPhpClassNodeAction` for this purpose, you'll can inject this action into your provider by implementing the `ActionAwareTransformedProvider` interface (see above).
+You can add nodes to the collection from a file path using `addByFile()`:
 
-Please note in order to be able to load a PHP class node from a file, the file should contain exactly one class, interface or enum. When the file contains zero or multiple classes, the action will return null since it doesn't know which class to load.
+```php
+$this->phpNodeCollection->addByFile($filePath);
+```
 
-It is possible to add nodes to the collection like this:
+Please note in order to be able to load a PHP class node from a file, the file should contain exactly one class, interface or enum. When the file contains zero or multiple classes, the method will return null since it doesn't know which class to load.
+
+It is also possible to add an already loaded node directly:
 
 ```php
 $this->phpNodeCollection->add($phpClassNode);
@@ -1885,7 +1889,7 @@ You can check if a node exists in the collection by its FQCN:
 $this->phpNodeCollection->has($fqcn);
 ```
 
-And het a node as such:
+And get a node as such:
 
 ```php
 $node = $this->phpNodeCollection->get($fqcn);

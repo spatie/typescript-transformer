@@ -6,6 +6,7 @@ use ArrayIterator;
 use Countable;
 use Generator;
 use IteratorAggregate;
+use Spatie\TypeScriptTransformer\Actions\LoadPhpClassNodeAction;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Traversable;
 
@@ -20,6 +21,11 @@ class PhpNodeCollection implements IteratorAggregate, Countable
     /** @var array<string, PhpClassNode> */
     protected array $fileMapping = [];
 
+    public function __construct(
+        protected LoadPhpClassNodeAction $loadPhpClassNodeAction = new LoadPhpClassNodeAction(),
+    ) {
+    }
+
     public function add(PhpClassNode $node): void
     {
         $fqcn = $node->getName();
@@ -28,6 +34,19 @@ class PhpNodeCollection implements IteratorAggregate, Countable
 
         $this->items[$fqcn] = $node;
         $this->fileMapping[$this->cleanupFilePath($node->getFileName())] = $node;
+    }
+
+    public function addByFile(string $file): ?PhpClassNode
+    {
+        $node = $this->loadPhpClassNodeAction->execute($file);
+
+        if ($node === null) {
+            return null;
+        }
+
+        $this->add($node);
+
+        return $node;
     }
 
     public function get(string $fqcn): ?PhpClassNode
