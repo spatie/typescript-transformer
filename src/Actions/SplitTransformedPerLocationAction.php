@@ -10,6 +10,7 @@ class SplitTransformedPerLocationAction
     /** @param array<Transformed> $transformed */
     public function execute(array $transformed): Location
     {
+        /** @var array{transformed: array<Transformed>, children: array<string, array>} $pointer */
         $pointer = ['transformed' => [], 'children' => []];
 
         foreach ($transformed as $item) {
