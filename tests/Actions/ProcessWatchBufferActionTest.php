@@ -159,6 +159,7 @@ class User {
 
 it('processes file deleted events and removes transformed items', function () {
     $factory = new FakeFileStructureFactory();
+    $temporaryDirectory = TemporaryDirectory::make();
 
     $deletedFileTransformed = transformSingle(
         SimpleClass::class,
@@ -170,6 +171,7 @@ it('processes file deleted events and removes transformed items', function () {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($temporaryDirectory->path())
             ->writer($writer)
             ->get()
     );
