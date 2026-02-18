@@ -618,9 +618,9 @@ $config->replaceType(DateTimeInterface::class, new TypeScriptString());
 Or use a closure to define the replacement:
 
 ```php
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 
-$config->replaceType(DateTimeInterface::class, function (TypeReference $reference) {
+$config->replaceType(DateTimeInterface::class, function (TypeScriptReference $reference) {
     return new TypeScriptString();
 });
 ```

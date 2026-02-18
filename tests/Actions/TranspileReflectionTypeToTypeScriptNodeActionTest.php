@@ -8,7 +8,6 @@ use Spatie\TypeScriptTransformer\PhpNodes\PhpMethodNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes\PhpTypesStub;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAny;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
@@ -17,6 +16,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNull;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
@@ -95,8 +95,8 @@ it('can transpile php types', function (
     yield [
         'intersection',
         new TypeScriptIntersection([
-            new TypeReference(new ClassStringReference(Collection::class)),
-            new TypeReference(new ClassStringReference(Arrayable::class)),
+            new TypeScriptReference(new ClassStringReference(Collection::class)),
+            new TypeScriptReference(new ClassStringReference(Arrayable::class)),
         ]),
     ];
 
@@ -104,8 +104,8 @@ it('can transpile php types', function (
         'bnf',
         new TypeScriptUnion([
             new TypeScriptIntersection([
-                new TypeReference(new ClassStringReference(Collection::class)),
-                new TypeReference(new ClassStringReference(Arrayable::class)),
+                new TypeScriptReference(new ClassStringReference(Collection::class)),
+                new TypeScriptReference(new ClassStringReference(Arrayable::class)),
             ]),
             new TypeScriptNull(),
         ]),
@@ -113,7 +113,7 @@ it('can transpile php types', function (
 
     yield [
         'self',
-        new TypeReference(new ClassStringReference(PhpTypesStub::class)),
+        new TypeScriptReference(new ClassStringReference(PhpTypesStub::class)),
     ];
 
     // @todo figure out this one
@@ -127,7 +127,7 @@ it('can transpile php types', function (
     yield [
         'parent',
         version_compare(PHP_VERSION, '8.5.0', '>=')
-            ? new TypeReference(new ClassStringReference(\stdClass::class))
+            ? new TypeScriptReference(new ClassStringReference(\stdClass::class))
             : new TypeScriptUnknown(),
     ];
 
@@ -143,7 +143,7 @@ it('can transpile php types', function (
 
     yield [
         'reference',
-        new TypeReference(new ClassStringReference(Collection::class)),
+        new TypeScriptReference(new ClassStringReference(Collection::class)),
     ];
 });
 

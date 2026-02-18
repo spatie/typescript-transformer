@@ -8,7 +8,6 @@ use Spatie\TypeScriptTransformer\PhpNodes\PhpNamedTypeNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpTypeNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpUnionTypeNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAny;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
@@ -17,6 +16,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNull;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUndefined;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
@@ -92,7 +92,7 @@ class TranspilePhpTypeNodeToTypeScriptNodeAction
         }
 
         if ($type->getName() === 'self' || $type->getName() === 'static') {
-            return new TypeReference(new ClassStringReference($phpClassNode->getName()));
+            return new TypeScriptReference(new ClassStringReference($phpClassNode->getName()));
         }
 
         if ($type->getName() === 'object') {
@@ -104,7 +104,7 @@ class TranspilePhpTypeNodeToTypeScriptNodeAction
         }
 
         if (class_exists($type->getName()) || interface_exists($type->getName())) {
-            return new TypeReference(new ClassStringReference($type->getName()));
+            return new TypeScriptReference(new ClassStringReference($type->getName()));
         }
 
         return new TypeScriptUnknown();

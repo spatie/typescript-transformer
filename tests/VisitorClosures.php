@@ -4,9 +4,9 @@ use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Tests\Support\InlineTransformedProvider;
 use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
@@ -17,7 +17,7 @@ it('can run visitor closures when types are provided', function () {
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'someObject',
             new TypeScriptObject([
-                new TypeScriptProperty('name', new TypeReference(new ClassStringReference(DateTime::class))),
+                new TypeScriptProperty('name', new TypeScriptReference(new ClassStringReference(DateTime::class))),
             ])
         )))
         ->writer($writer = new MemoryWriter())
@@ -36,7 +36,7 @@ it('can run visitor closures when types are connected', function () {
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'someObject',
             new TypeScriptObject([
-                new TypeScriptProperty('name', new TypeReference(new ClassStringReference(DateTime::class))),
+                new TypeScriptProperty('name', new TypeScriptReference(new ClassStringReference(DateTime::class))),
             ])
         )))
         ->writer($writer = new MemoryWriter())

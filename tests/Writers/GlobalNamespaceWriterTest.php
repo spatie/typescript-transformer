@@ -6,9 +6,9 @@ use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
 use Spatie\TypeScriptTransformer\Writers\GlobalNamespaceWriter;
@@ -80,8 +80,8 @@ it('will reference correctly between namespaces', function () {
         TransformedFactory::alias(
             name: 'C',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('a', new TypeReference($referenceA)),
-                new TypeScriptProperty('b', new TypeReference($referenceB)),
+                new TypeScriptProperty('a', new TypeScriptReference($referenceA)),
+                new TypeScriptProperty('b', new TypeScriptReference($referenceB)),
             ]),
             writer: $writer
         )->build(),
@@ -134,7 +134,7 @@ it('can reference types from another global namespace writer', function () {
         $localType = TransformedFactory::alias(
             name: 'LocalType',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('referenced', new TypeReference($referencedType->reference)),
+                new TypeScriptProperty('referenced', new TypeScriptReference($referencedType->reference)),
             ]),
             references: [$referencedType],
             writer: $writerB
@@ -200,7 +200,7 @@ it('avoids shadowed namespace names in references', function () {
         TransformedFactory::alias(
             name: 'ShowViewModel',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('error', new TypeReference($errorDataRef)),
+                new TypeScriptProperty('error', new TypeScriptReference($errorDataRef)),
             ]),
             location: ['App', 'Http', 'App', 'ViewModels'],
             writer: $writer,
@@ -253,7 +253,7 @@ it('avoids deeply shadowed namespace names in references', function () {
         TransformedFactory::alias(
             name: 'TestType',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('value', new TypeReference($someTypeRef)),
+                new TypeScriptProperty('value', new TypeScriptReference($someTypeRef)),
             ]),
             location: ['App', 'Scope', 'Controllers', 'Scope'],
             writer: $writer,
@@ -310,8 +310,8 @@ it('can reference types from a module writer', function () {
         $globalType = TransformedFactory::alias(
             name: 'GlobalType',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('module', new TypeReference($moduleType->reference)),
-                new TypeScriptProperty('flatModule', new TypeReference($flatModuleType->reference)),
+                new TypeScriptProperty('module', new TypeScriptReference($moduleType->reference)),
+                new TypeScriptProperty('flatModule', new TypeScriptReference($flatModuleType->reference)),
             ]),
             references: [$moduleType, $flatModuleType],
             writer: $globalWriter

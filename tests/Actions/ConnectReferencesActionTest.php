@@ -9,7 +9,7 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularB;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 
 it('can connect references', function () {
     $class = new class () {
@@ -34,7 +34,7 @@ it('can connect references', function () {
     expect($transformedClass->referencedBy)->toHaveCount(0);
 
     expect($transformedClass->typeScriptNode->type->properties[0]->type)
-        ->toBeInstanceOf(TypeReference::class)
+        ->toBeInstanceOf(TypeScriptReference::class)
         ->referenced->toBe($transformedEnum);
 });
 
@@ -59,11 +59,11 @@ it('can connect two objects referencing each other', function () {
     expect($circularB->referencedBy)->toContain($circularA->reference->getKey());
 
     expect($circularA->typeScriptNode->type->properties[0]->type)
-        ->toBeInstanceOf(TypeReference::class)
+        ->toBeInstanceOf(TypeScriptReference::class)
         ->referenced->toBe($circularB);
 
     expect($circularB->typeScriptNode->type->properties[0]->type)
-        ->toBeInstanceOf(TypeReference::class)
+        ->toBeInstanceOf(TypeScriptReference::class)
         ->referenced->toBe($circularA);
 });
 
@@ -87,7 +87,7 @@ it('will write to the log when a reference cannot be found', function () {
     expect($transformedClass->referencedBy)->toHaveCount(0);
 
     expect($transformedClass->typeScriptNode->type->properties[0]->type)
-        ->toBeInstanceOf(TypeReference::class)
+        ->toBeInstanceOf(TypeScriptReference::class)
         ->referenced->toBeNull();
 
     expect($console->messages)->not()->toBeEmpty();

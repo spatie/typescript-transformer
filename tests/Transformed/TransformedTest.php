@@ -7,11 +7,11 @@ use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptForwardingNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 
 it('can get the name of a transformed when having a named node', function () {
     $transformed = transformSingle(
@@ -49,8 +49,8 @@ it('can add a missing reference', function () {
 
     $transformed = new Transformed(
         new TypeScriptObject([
-            new TypeScriptProperty('first_name', $typeReferenceA = new TypeReference($missing->reference)),
-            new TypeScriptProperty('last_name', $typeReferenceB = new TypeReference($missing->reference)),
+            new TypeScriptProperty('first_name', $typeReferenceA = new TypeScriptReference($missing->reference)),
+            new TypeScriptProperty('last_name', $typeReferenceB = new TypeScriptReference($missing->reference)),
         ]),
         new CustomReference('vendor', 'package'),
         [],
@@ -80,8 +80,8 @@ it('can mark a missing reference as found', function () {
 
     $transformed = new Transformed(
         new TypeScriptObject([
-            new TypeScriptProperty('first_name', $typeReferenceA = new TypeReference($missing->reference)),
-            new TypeScriptProperty('last_name', $typeReferenceB = new TypeReference($missing->reference)),
+            new TypeScriptProperty('first_name', $typeReferenceA = new TypeScriptReference($missing->reference)),
+            new TypeScriptProperty('last_name', $typeReferenceB = new TypeScriptReference($missing->reference)),
         ]),
         new CustomReference('vendor', 'package'),
         [],
@@ -122,8 +122,8 @@ it('can mark a reference as missing', function () {
 
     $transformed = new Transformed(
         new TypeScriptObject([
-            new TypeScriptProperty('first_name', $typeReferenceA = new TypeReference($found->reference)),
-            new TypeScriptProperty('last_name', $typeReferenceB = new TypeReference($found->reference)),
+            new TypeScriptProperty('first_name', $typeReferenceA = new TypeScriptReference($found->reference)),
+            new TypeScriptProperty('last_name', $typeReferenceB = new TypeScriptReference($found->reference)),
         ]),
         new CustomReference('vendor', 'package'),
         [],
@@ -209,10 +209,10 @@ it('equals compares references arrays correctly', function () {
     expect($transformed1->equals($transformed2))->toBeTrue();
 
     // Add same references
-    $typeRef1A = new TypeReference($ref1);
-    $typeRef1B = new TypeReference($ref2);
-    $typeRef2A = new TypeReference($ref1);
-    $typeRef2B = new TypeReference($ref2);
+    $typeRef1A = new TypeScriptReference($ref1);
+    $typeRef1B = new TypeScriptReference($ref2);
+    $typeRef2A = new TypeScriptReference($ref1);
+    $typeRef2B = new TypeScriptReference($ref2);
 
     $transformed1->references = [
         'key1' => [$typeRef1A],
@@ -240,7 +240,7 @@ it('equals compares references arrays correctly', function () {
     expect($transformed1->equals($transformed2))->toBeFalse();
 
     // Different reference types for same key
-    $typeRef3 = new TypeReference(new CustomReference('different', 'ref'));
+    $typeRef3 = new TypeScriptReference(new CustomReference('different', 'ref'));
     $transformed2->references = [
         'key1' => [$typeRef3],
         'key2' => [$typeRef2B],
@@ -268,10 +268,10 @@ it('equals compares missingReferences arrays correctly', function () {
     expect($transformed1->equals($transformed2))->toBeTrue();
 
     // Add same missing references
-    $typeRef1A = new TypeReference($ref1);
-    $typeRef1B = new TypeReference($ref2);
-    $typeRef2A = new TypeReference($ref1);
-    $typeRef2B = new TypeReference($ref2);
+    $typeRef1A = new TypeScriptReference($ref1);
+    $typeRef1B = new TypeScriptReference($ref2);
+    $typeRef2A = new TypeScriptReference($ref1);
+    $typeRef2B = new TypeScriptReference($ref2);
 
     $transformed1->missingReferences = [
         'missing1' => [$typeRef1A],
@@ -319,10 +319,10 @@ it('equals handles complex scenario with all arrays populated', function () {
     $transformed1->referencedBy = ['ref1', 'ref2'];
     $transformed2->referencedBy = ['ref2', 'ref1']; // Different order, should still be equal
 
-    $typeRef1A = new TypeReference($ref1);
-    $typeRef1B = new TypeReference($ref2);
-    $typeRef2A = new TypeReference($ref1);
-    $typeRef2B = new TypeReference($ref2);
+    $typeRef1A = new TypeScriptReference($ref1);
+    $typeRef1B = new TypeScriptReference($ref2);
+    $typeRef2A = new TypeScriptReference($ref1);
+    $typeRef2B = new TypeScriptReference($ref2);
 
     $transformed1->references = ['key1' => [$typeRef1A]];
     $transformed1->missingReferences = ['missing1' => [$typeRef1B]];
@@ -333,7 +333,7 @@ it('equals handles complex scenario with all arrays populated', function () {
     expect($transformed1->equals($transformed2))->toBeTrue();
 
     // Change one reference and verify it fails
-    $typeRef3 = new TypeReference(new CustomReference('different', 'ref'));
+    $typeRef3 = new TypeScriptReference(new CustomReference('different', 'ref'));
     $transformed2->references = ['key1' => [$typeRef3]];
 
     expect($transformed1->equals($transformed2))->toBeFalse();

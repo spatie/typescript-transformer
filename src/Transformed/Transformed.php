@@ -6,11 +6,11 @@ use RuntimeException;
 use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptForwardingNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
 class Transformed
@@ -23,13 +23,13 @@ class Transformed
 
     public bool $changed = true;
 
-    /** @var array<string, TypeReference[]> */
+    /** @var array<string, TypeScriptReference[]> */
     public array $references = [];
 
     /** @var array<string> */
     public array $referencedBy = [];
 
-    /** @var array<string, TypeReference[]> */
+    /** @var array<string, TypeScriptReference[]> */
     public array $missingReferences = [];
 
     /** @var array<AdditionalImport> */
@@ -120,7 +120,7 @@ class Transformed
 
     public function addMissingReference(
         string|Reference $key,
-        TypeReference $typeReference
+        TypeScriptReference $typeReference
     ): void {
         if ($key instanceof Reference) {
             $key = $key->getKey();
@@ -215,8 +215,8 @@ class Transformed
     }
 
     /**
-     * @param array<string, TypeReference[]> $one
-     * @param array<string, TypeReference[]> $two
+     * @param array<string, TypeScriptReference[]> $one
+     * @param array<string, TypeScriptReference[]> $two
      */
     private function compareTypeReferenceArrays(array $one, array $two): bool
     {
@@ -232,12 +232,12 @@ class Transformed
             }
 
             $referenceKeysOne = array_map(
-                fn (TypeReference $typeReference) => $typeReference->reference->getKey(),
+                fn (TypeScriptReference $typeReference) => $typeReference->reference->getKey(),
                 $referencesOne
             );
 
             $referenceKeysTwo = array_map(
-                fn (TypeReference $typeReference) => $typeReference->reference->getKey(),
+                fn (TypeScriptReference $typeReference) => $typeReference->reference->getKey(),
                 $referencesTwo
             );
 

@@ -4,7 +4,7 @@ use Spatie\TypeScriptTransformer\Actions\ResolveImportsAndResolvedReferenceMapAc
 use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\Writers\GlobalNamespaceWriter;
 use Spatie\TypeScriptTransformer\Writers\ModuleWriter;
@@ -23,7 +23,7 @@ it('wont resolve imports when types are in the same module', function () {
         )->build(),
         TransformedFactory::alias(
             name: 'B',
-            typeScriptNode: new TypeReference($reference->reference),
+            typeScriptNode: new TypeScriptReference($reference->reference),
             references: [
                 $reference,
             ]

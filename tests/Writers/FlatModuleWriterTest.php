@@ -6,9 +6,9 @@ use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
 use Spatie\TypeScriptTransformer\Writers\GlobalNamespaceWriter;
@@ -93,8 +93,8 @@ it('can reference to other types in a flat file', function () {
         TransformedFactory::alias(
             name: 'C',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('a', new TypeReference($referenceA)),
-                new TypeScriptProperty('b', new TypeReference($referenceB)),
+                new TypeScriptProperty('a', new TypeScriptReference($referenceA)),
+                new TypeScriptProperty('b', new TypeScriptReference($referenceB)),
             ]),
             writer: $this->writer
         )->build(),
@@ -134,7 +134,7 @@ it('can reference types from another flat module writer', function () {
         $localType = TransformedFactory::alias(
             name: 'LocalType',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('referenced', new TypeReference($referencedType->reference)),
+                new TypeScriptProperty('referenced', new TypeScriptReference($referencedType->reference)),
             ]),
             references: [$referencedType],
             writer: $writerB
@@ -204,8 +204,8 @@ it('can reference types from a global namespace writer and module writer', funct
         $flatType = TransformedFactory::alias(
             name: 'FlatType',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('module', new TypeReference($moduleType->reference)),
-                new TypeScriptProperty('global', new TypeReference($globalType->reference)),
+                new TypeScriptProperty('module', new TypeScriptReference($moduleType->reference)),
+                new TypeScriptProperty('global', new TypeScriptReference($globalType->reference)),
             ]),
             references: [$moduleType, $globalType],
             writer: $flatWriter

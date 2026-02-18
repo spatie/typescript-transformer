@@ -6,11 +6,11 @@ use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\Visitor\Visitor;
@@ -29,7 +29,7 @@ class FixArrayLikeStructuresClassPropertyProcessor implements ClassPropertyProce
         protected array $arrayLikeClassesToReplace = [],
     ) {
         $this->visitor = Visitor::create()->before(function (TypeScriptGeneric $generic) {
-            $isCollection = $generic->type instanceof TypeReference
+            $isCollection = $generic->type instanceof TypeScriptReference
                 && $generic->type->reference instanceof ClassStringReference
                 && in_array($generic->type->reference->classString, $this->arrayLikeClassesToReplace);
 

@@ -5,7 +5,7 @@ namespace Spatie\TypeScriptTransformer\Actions;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\Visitor\Visitor;
 
 class ConnectReferencesAction
@@ -35,7 +35,7 @@ class ConnectReferencesAction
 
     protected function resolveVisitor(): Visitor
     {
-        return Visitor::create()->before(function (TypeReference $typeReference, array &$metadata) {
+        return Visitor::create()->before(function (TypeScriptReference $typeReference, array &$metadata) {
             /** @var Transformed $currentTransformed */
             $currentTransformed = $metadata['transformed'];
 
@@ -64,6 +64,6 @@ class ConnectReferencesAction
             if (array_key_exists($foundTransformed->reference->getKey(), $currentTransformed->missingReferences)) {
                 unset($currentTransformed->missingReferences[$foundTransformed->reference->getKey()]);
             }
-        }, [TypeReference::class]);
+        }, [TypeScriptReference::class]);
     }
 }

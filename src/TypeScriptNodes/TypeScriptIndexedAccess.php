@@ -12,7 +12,7 @@ class TypeScriptIndexedAccess implements TypeScriptNode
      */
     public function __construct(
         #[NodeVisitable]
-        public TypeScriptIdentifier|TypeReference $node,
+        public TypeScriptIdentifier|TypeScriptReference $node,
         #[NodeVisitable]
         public array $segments,
     ) {

@@ -4,7 +4,6 @@ use Illuminate\Support\Collection;
 use Spatie\TypeScriptTransformer\ClassPropertyProcessors\FixArrayLikeStructuresClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
@@ -12,6 +11,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 
@@ -235,13 +235,13 @@ it('replaces array like classes', function (
 
     yield 'missing types collection' => [
         'missing_types_collection',
-        new TypeReference(new ClassStringReference(Collection::class)),
+        new TypeScriptReference(new ClassStringReference(Collection::class)),
     ];
 
     yield 'too much types collection' => [
         'too_much_types_collection',
         new TypeScriptGeneric(
-            new TypeReference(new ClassStringReference(Collection::class)),
+            new TypeScriptReference(new ClassStringReference(Collection::class)),
             [
                 new TypeScriptString(),
                 new TypeScriptNumber(),
@@ -252,6 +252,6 @@ it('replaces array like classes', function (
 
     yield 'no annotation collection' => [
         'no_annotation_collection',
-        new TypeReference(new ClassStringReference(Collection::class)),
+        new TypeScriptReference(new ClassStringReference(Collection::class)),
     ];
 });

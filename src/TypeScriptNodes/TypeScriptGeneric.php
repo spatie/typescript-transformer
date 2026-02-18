@@ -12,7 +12,7 @@ class TypeScriptGeneric implements TypeScriptForwardingNamedNode, TypeScriptNode
      */
     public function __construct(
         #[NodeVisitable]
-        public TypeScriptIdentifier|TypeReference $type,
+        public TypeScriptIdentifier|TypeScriptReference $type,
         #[NodeVisitable]
         public array $genericTypes,
     ) {

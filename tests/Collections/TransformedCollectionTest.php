@@ -9,7 +9,7 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Support\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
@@ -168,6 +168,6 @@ it('can remove a transformed item by reference and update references', function 
     expect($transformedB->missingReferences[$referenceA->getKey()])
         ->toBeArray()
         ->each()
-        ->toBeInstanceOf(TypeReference::class);
+        ->toBeInstanceOf(TypeScriptReference::class);
     expect($transformedB->referencedBy)->not->toContain($referenceA->getKey());
 });

@@ -6,9 +6,9 @@ use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\References\CustomReference;
 use Spatie\TypeScriptTransformer\Support\Loggers\NullLogger;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
 use Spatie\TypeScriptTransformer\Writers\GlobalNamespaceWriter;
@@ -107,7 +107,7 @@ it('can reference other types within the module', function () {
         )->build(),
         TransformedFactory::alias(
             name: 'B',
-            typeScriptNode: new TypeReference($reference),
+            typeScriptNode: new TypeScriptReference($reference),
             writer: $this->writer
         )->build(),
     ]);
@@ -150,8 +150,8 @@ it('can reference other types within a nested module', function () {
         TransformedFactory::alias(
             name: 'C',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('a', new TypeReference($referenceA)),
-                new TypeScriptProperty('b', new TypeReference($referenceB)),
+                new TypeScriptProperty('a', new TypeScriptReference($referenceA)),
+                new TypeScriptProperty('b', new TypeScriptReference($referenceB)),
             ]),
             writer: $this->writer
         )->build(),
@@ -213,8 +213,8 @@ it('can combine imports from nested modules', function () {
         TransformedFactory::alias(
             name: 'C',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('a', new TypeReference($referenceA)),
-                new TypeScriptProperty('b', new TypeReference($referenceB)),
+                new TypeScriptProperty('a', new TypeScriptReference($referenceA)),
+                new TypeScriptProperty('b', new TypeScriptReference($referenceB)),
             ]),
             writer: $this->writer
         )->build(),
@@ -261,7 +261,7 @@ it('can import from root into a nested module', function () {
         )->build(),
         TransformedFactory::alias(
             name: 'B',
-            typeScriptNode: new TypeReference($reference),
+            typeScriptNode: new TypeScriptReference($reference),
             location: ['nested'],
             writer: $this->writer
         )->build(),
@@ -303,7 +303,7 @@ it('can automatically alias imported types', function () {
         )->build(),
         TransformedFactory::alias(
             name: 'A',
-            typeScriptNode: new TypeReference($reference),
+            typeScriptNode: new TypeScriptReference($reference),
             location: ['nested'],
             writer: $this->writer
         )->build(),
@@ -347,7 +347,7 @@ it('can reference types from another module writer', function () {
         $localType = TransformedFactory::alias(
             name: 'LocalType',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('referenced', new TypeReference($referencedType->reference)),
+                new TypeScriptProperty('referenced', new TypeScriptReference($referencedType->reference)),
             ]),
             references: [$referencedType],
             location: ['services'],
@@ -417,8 +417,8 @@ it('can reference types from a flat module writer and global namespace writer', 
         $moduleType = TransformedFactory::alias(
             name: 'ModuleType',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('flat', new TypeReference($flatType->reference)),
-                new TypeScriptProperty('global', new TypeReference($globalType->reference)),
+                new TypeScriptProperty('flat', new TypeScriptReference($flatType->reference)),
+                new TypeScriptProperty('global', new TypeScriptReference($globalType->reference)),
             ]),
             references: [$flatType, $globalType],
             location: ['services'],

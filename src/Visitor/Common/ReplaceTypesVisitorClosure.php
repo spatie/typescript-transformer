@@ -5,8 +5,8 @@ namespace Spatie\TypeScriptTransformer\Visitor\Common;
 use Closure;
 use phpDocumentor\Reflection\Types\ClassString;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\Visitor\VisitorClosure;
 use Spatie\TypeScriptTransformer\Visitor\VisitorClosureType;
 use Spatie\TypeScriptTransformer\Visitor\VisitorOperation;
@@ -27,7 +27,7 @@ class ReplaceTypesVisitorClosure extends VisitorClosure
     ) {
         parent::__construct(
             $this->resolveClosure(),
-            allowedNodes: [TypeReference::class],
+            allowedNodes: [TypeScriptReference::class],
             type: VisitorClosureType::Before
         );
 
@@ -36,7 +36,7 @@ class ReplaceTypesVisitorClosure extends VisitorClosure
 
     protected function resolveClosure(): Closure
     {
-        return function (TypeReference $node) {
+        return function (TypeScriptReference $node) {
             if (! $node->reference instanceof ClassStringReference) {
                 return $node;
             }
@@ -64,7 +64,7 @@ class ReplaceTypesVisitorClosure extends VisitorClosure
     }
 
     protected function replaceNode(
-        TypeReference $node,
+        TypeScriptReference $node,
         Closure|TypeScriptNode $replacement,
     ): VisitorOperation {
         if ($replacement instanceof Closure) {

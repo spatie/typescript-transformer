@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\References\Reference;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
-class TypeReference implements TypeScriptNamedNode, TypeScriptNode
+class TypeScriptReference implements TypeScriptNamedNode, TypeScriptNode
 {
     public static function referencingPhpClass(string $class): self
     {

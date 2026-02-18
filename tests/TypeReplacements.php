@@ -5,7 +5,6 @@ use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Tests\Support\InlineTransformedProvider;
 use Spatie\TypeScriptTransformer\Tests\Support\MemoryWriter;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
@@ -13,6 +12,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
@@ -25,7 +25,7 @@ it('can replace types', function (
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
-                new TypeScriptProperty('datetime', new TypeReference(new ClassStringReference(DateTime::class))),
+                new TypeScriptProperty('datetime', new TypeScriptReference(new ClassStringReference(DateTime::class))),
             ])
         )))
         ->writer($writer = new MemoryWriter())
@@ -92,7 +92,7 @@ it('will replace inherited types', function () {
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
-                new TypeScriptProperty('datetime', new TypeReference(new ClassStringReference(Carbon::class))),
+                new TypeScriptProperty('datetime', new TypeScriptReference(new ClassStringReference(Carbon::class))),
             ])
         )))
         ->writer($writer = new MemoryWriter())
@@ -114,7 +114,7 @@ it('will replace implemented types', function () {
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
-                new TypeScriptProperty('datetime', new TypeReference(new ClassStringReference(Carbon::class))),
+                new TypeScriptProperty('datetime', new TypeScriptReference(new ClassStringReference(Carbon::class))),
             ])
         )))
         ->writer($writer = new MemoryWriter())

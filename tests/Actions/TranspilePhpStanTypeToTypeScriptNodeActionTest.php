@@ -7,7 +7,6 @@ use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes\PhpDocTypesStub;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAny;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
@@ -21,6 +20,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNull;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
@@ -204,12 +204,12 @@ it('can transpile PHPStan doc types', function (
 
     yield [
         'self',
-        new TypeReference(new ClassStringReference(PhpDocTypesStub::class)),
+        new TypeScriptReference(new ClassStringReference(PhpDocTypesStub::class)),
     ];
 
     yield [
         'static',
-        new TypeReference(new ClassStringReference(PhpDocTypesStub::class)),
+        new TypeScriptReference(new ClassStringReference(PhpDocTypesStub::class)),
     ];
 
     yield [
@@ -434,18 +434,18 @@ it('can transpile PHPStan doc types', function (
 
     yield [
         'reference',
-        new TypeReference(new ClassStringReference(Collection::class)),
+        new TypeScriptReference(new ClassStringReference(Collection::class)),
     ];
 
     yield [
         'referenceWithImport',
-        new TypeReference(new ClassStringReference(Collection::class)),
+        new TypeScriptReference(new ClassStringReference(Collection::class)),
     ];
 
     yield [
         'generic',
         new TypeScriptGeneric(
-            new TypeReference(new ClassStringReference(Collection::class)),
+            new TypeScriptReference(new ClassStringReference(Collection::class)),
             [
                 new TypeScriptNumber(),
                 new TypeScriptString(),

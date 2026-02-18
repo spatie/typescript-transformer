@@ -20,7 +20,6 @@ use ReflectionEnum;
 use ReflectionEnumBackedCase;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAny;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptBoolean;
@@ -34,6 +33,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNull;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
@@ -146,7 +146,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         $className = $this->resolveClass($node->name, $phpClassNode);
 
         if ($className) {
-            return new TypeReference(new ClassStringReference($className));
+            return new TypeScriptReference(new ClassStringReference($className));
         }
 
         return new TypeScriptUnknown();
@@ -399,7 +399,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             return $type; // class-string<something> case
         }
 
-        if (! ($type instanceof TypeReference || $type instanceof TypeScriptIdentifier)) {
+        if (! ($type instanceof TypeScriptReference || $type instanceof TypeScriptIdentifier)) {
             return new TypeScriptUnknown();
         }
 
