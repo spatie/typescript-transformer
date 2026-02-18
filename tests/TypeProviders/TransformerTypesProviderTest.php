@@ -19,7 +19,6 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 
 function getTestProvidedTypes(
     array $transformers = [new AllClassTransformer()],
@@ -31,9 +30,7 @@ function getTestProvidedTypes(
         ]
     );
 
-    $transformed = $provider->provide(
-        TypeScriptTransformerConfigFactory::create()->get(),
-    );
+    $transformed = $provider->provide();
 
     return new TransformedCollection($transformed);
 }

@@ -5,7 +5,6 @@ namespace Spatie\TypeScriptTransformer\Tests\Support;
 use Spatie\TypeScriptTransformer\Tests\Factories\TransformedFactory;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class InlineTransformedProvider implements TransformedProvider
 {
@@ -24,7 +23,7 @@ class InlineTransformedProvider implements TransformedProvider
         }
     }
 
-    public function provide(TypeScriptTransformerConfig $config): array
+    public function provide(): array
     {
         return $this->transformed;
     }

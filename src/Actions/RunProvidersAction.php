@@ -6,6 +6,7 @@ use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
 use Spatie\TypeScriptTransformer\TransformedProviders\ActionAwareTransformedProvider;
+use Spatie\TypeScriptTransformer\TransformedProviders\ConfigAwareTransformedProvider;
 use Spatie\TypeScriptTransformer\TransformedProviders\LoggingTransformedProvider;
 use Spatie\TypeScriptTransformer\TransformedProviders\PhpNodesAwareTransformedProvider;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProviderActions;
@@ -34,11 +35,15 @@ class RunProvidersAction
                 $transformedProvider->setPhpNodeCollection($phpNodeCollection);
             }
 
+            if ($transformedProvider instanceof ConfigAwareTransformedProvider) {
+                $transformedProvider->setConfig($this->config);
+            }
+
             if ($transformedProvider instanceof ActionAwareTransformedProvider) {
                 $transformedProvider->setActions($actions);
             }
 
-            $transformedCollection->add(...$transformedProvider->provide($this->config));
+            $transformedCollection->add(...$transformedProvider->provide());
         }
 
         return $transformedCollection;

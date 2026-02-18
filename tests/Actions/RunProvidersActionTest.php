@@ -13,12 +13,11 @@ use Spatie\TypeScriptTransformer\TransformedProviders\LoggingTransformedProvider
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProviderActions;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 
 it('can provide types based upon the config', function () {
     $stringProvider = new class () implements TransformedProvider {
-        public function provide(TypeScriptTransformerConfig $config): array
+        public function provide(): array
         {
             return [
                 TransformedFactory::alias('Foo', new TypeScriptString())->build(),
@@ -54,7 +53,7 @@ it('provides logger to LoggingTransformedProvider implementations', function () 
             $this->logger = $logger;
         }
 
-        public function provide(TypeScriptTransformerConfig $config): array
+        public function provide(): array
         {
             $this->logger->info('Logger was provided to LoggingTransformedProvider');
 

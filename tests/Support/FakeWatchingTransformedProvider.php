@@ -7,7 +7,6 @@ use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\Events\WatchEvent;
 use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProvider;
 use Spatie\TypeScriptTransformer\TransformedProviders\WatchingTransformedProvider;
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
 
 class FakeWatchingTransformedProvider implements TransformedProvider, WatchingTransformedProvider
 {
@@ -24,7 +23,7 @@ class FakeWatchingTransformedProvider implements TransformedProvider, WatchingTr
     ) {
     }
 
-    public function provide(TypeScriptTransformerConfig $config): array
+    public function provide(): array
     {
         return $this->transformed;
     }

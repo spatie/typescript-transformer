@@ -906,16 +906,12 @@ A `TransformedProvider` implements the `TransformedProvider` interface:
 ```php
 namespace Spatie\TypeScriptTransformer\TransformedProviders;
 
-use Spatie\TypeScriptTransformer\TypeScriptTransformerConfig;
-
 interface TransformedProvider
 {
     /**
      * @return array<Transformed>
      */
-    public function provide(
-        TypeScriptTransformerConfig $config,
-    ): array;
+    public function provide(): array;
 }
 ```
 
@@ -926,9 +922,8 @@ We could for example add a generic type which transforms Laravel collections:
 ```php
 class AddLaravelCollectionProvider implements TransformedProvider
 {
-    public function provide(
-        TypeScriptTransformerConfig $config,
-    ): array {
+    public function provide(): array
+    {
         $type = new Transformed(
             typeScriptNode: new TypeScriptAlias(
                 new TypeScriptGeneric(
@@ -1125,6 +1120,7 @@ new Transformed(
 ```
 
 
+
 #### Additional actions
 
 When building custom transformed providers you may need access to actions like transpiling PHP types to TypeScript, discovering certain types and more.
@@ -1143,7 +1139,7 @@ class CustomProvider implements TransformedProvider, ActionAwareTransformedProvi
         $this->actions = $actions;
     }
 
-    public function provide(TypeScriptTransformerConfig $config): array
+    public function provide(): array
     {
         $classNode = $this->actions->parseUserDefinedTypeAction->execute('Record<string, int>');
     }
@@ -1824,7 +1820,7 @@ class ControllerScanningProvider implements TransformedProvider, PhpNodesAwareTr
         $this->phpNodeCollection = $phpNodeCollection;
     }
 
-    public function provide(TypeScriptTransformerConfig $config): array
+    public function provide(): array
     {
         // You now can use $this->phpNodeCollection to access the PHP class nodes
     }
