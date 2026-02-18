@@ -258,7 +258,7 @@ class TypeScriptTransformerConfigFactory
         }
 
         return new TypeScriptTransformerConfig(
-            realpath(rtrim($this->outputDirectory, DIRECTORY_SEPARATOR)),
+            realpath(rtrim($this->outputDirectory, DIRECTORY_SEPARATOR)) ?: rtrim($this->outputDirectory, DIRECTORY_SEPARATOR),
             $transformedProviders,
             $writer,
             $formatter,

@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\InlineTransformedProvider;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\MemoryWriter;
@@ -12,8 +13,13 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 use Spatie\TypeScriptTransformer\Visitor\VisitorOperation;
 
+beforeEach(function () {
+    $this->temporaryDirectory = TemporaryDirectory::make();
+});
+
 it('can run visitor closures when types are provided', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'someObject',
             new TypeScriptObject([
@@ -33,6 +39,7 @@ it('can run visitor closures when types are provided', function () {
 
 it('can run visitor closures when types are connected', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'someObject',
             new TypeScriptObject([

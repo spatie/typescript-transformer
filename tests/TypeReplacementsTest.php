@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleExtendsClass;
@@ -18,11 +19,16 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 
+beforeEach(function () {
+    $this->temporaryDirectory = TemporaryDirectory::make();
+});
+
 it('can replace types', function (
     mixed $replacement,
     TypeScriptNode $expected,
 ) {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
@@ -79,6 +85,7 @@ it('can replace types', function (
 
 it('can replace types using a closure', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
@@ -105,6 +112,7 @@ it('can replace types using a closure', function () {
 
 it('will replace inherited types', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
@@ -127,6 +135,7 @@ it('will replace inherited types', function () {
 
 it('will replace implemented types', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->provider(new InlineTransformedProvider(TransformedFactory::alias(
             'date',
             new TypeScriptObject([
