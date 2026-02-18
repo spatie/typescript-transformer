@@ -198,7 +198,7 @@ $config->transformDirectories(app_path());
 ```
 
 We're almost done! The last thing we need to do is tell TypeScript transformer how to write types, this can be done by
-using the `NamespaceWriter` which writes all types to a single TypeScript file with namespaces:
+using the `GlobalNamespaceWriter` which writes all types to a single TypeScript file with namespaces:
 
 ```ts
 declare namespace App.Data {
@@ -219,7 +219,7 @@ declare namespace App.Enums {
 You can configure this writer as such:
 
 ```php
-$config->writer(new NamespaceWriter()); 
+$config->writer(new GlobalNamespaceWriter());
 ```
 
 The directory where the types should be written to needs to be configured as well:
@@ -248,7 +248,7 @@ export type PostType = 'news' | 'blog';
 You can configure it like this:
 
 ```php
-$config->writeTypes(new ModuleWriter()); 
+$config->writer(new ModuleWriter());
 ```
 
 That's it! You're now ready to transform your PHP classes to TypeScript types. If you've configured
@@ -291,7 +291,7 @@ export type UserWithoutEmail = {
 ```
 
 Each type will be located somewhere either being a file when using the `ModuleWriter` or in a single file when using
-the `NamespaceWriter`. The location of the type can be changed by using the `#[TypeScript]` attribute:
+the `GlobalNamespaceWriter`. The location of the type can be changed by using the `#[TypeScript]` attribute:
 
 ```php
 #[TypeScript(location: ['Data', 'Users'])]
@@ -439,7 +439,7 @@ Typing objects works like magic:
 ```php
 class Types 
 {
-    // App.Enums.PostType (when using the NamespaceWriter)
+    // App.Enums.PostType (when using the GlobalNamespaceWriter)
     // Import { PostType } from '../enums' + PostType (when using the ModuleWriter)
     public PostType $property;    
 }
