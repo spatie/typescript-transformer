@@ -9,6 +9,7 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\HiddenAttributedClas
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\IntBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\OptionalAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\Response;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleAttribute;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleExtendsClass;
@@ -36,6 +37,7 @@ it('can discover types', function () {
         new PhpEnumNode(new ReflectionEnum(IntBackedEnum::class)),
         new PhpClassNode(new ReflectionClass(OptionalAttributedClass::class)),
         new PhpClassNode(new ReflectionClass(ReadonlyClass::class)),
+        new PhpClassNode(new ReflectionClass(Response::class)),
         new PhpClassNode(new ReflectionClass(SimpleAttribute::class)),
         new PhpClassNode(new ReflectionClass(SimpleClass::class)),
         new PhpClassNode(new ReflectionClass(SimpleExtendsClass::class)),

@@ -38,7 +38,7 @@ function getTestProvidedTypes(
 it('will find types and takes attributes into account', function () {
     $collection = getTestProvidedTypes();
 
-    expect($collection)->toHaveCount(9);
+    expect($collection)->toHaveCount(10);
 
     $typesToCheck = array_filter(
         iterator_to_array($collection),
