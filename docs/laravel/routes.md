@@ -119,7 +119,7 @@ $config->provider(new LaravelRouteTransformedProvider(
 ```
 
 When running in the watch mode of the package, the generated `route.ts` file will automatically be updated when you
-change your routes in Laravel. By default the watcher will monitor the following directories for changes:
+change your routes in Laravel. By default, the watcher will monitor the following directories for changes:
 
 - `routes`
 - `bootstrap`

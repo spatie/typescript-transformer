@@ -42,6 +42,16 @@ class TypeScriptTransformer
     ) {
     }
 
+    // TODO
+    // - Fix the LaravelControllerTransformedProvider so that it generates types correctly
+    // - Make sure that the genarted support for LaravelControllerTransformedProvider is correctly transformed
+    // - Add docs for all new laravel stuff
+    // - Test all the latest changes which are quite a lot
+    // - Clean up the Laravel package readme
+    // - Make sure the spatie website will render the docs
+    // - Check on how we're doing laravel data with v2
+    //
+
     public static function create(
         TypeScriptTransformerConfig|TypeScriptTransformerConfigFactory $config,
         ?Logger $logger = null,
@@ -83,6 +93,8 @@ class TypeScriptTransformer
         $this->outputTransformed($transformedCollection);
 
         if ($this->watch) {
+            $phpNodeCollection->setInitialRunComplete();
+
             $this->signalWorkerReady();
 
             $watcher = new FileSystemWatcher(

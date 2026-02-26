@@ -23,17 +23,29 @@ class PhpNodeCollection implements IteratorAggregate, Countable
 
     public function __construct(
         protected LoadPhpClassNodeAction $loadPhpClassNodeAction = new LoadPhpClassNodeAction(),
+        protected bool $initialRun = true,
     ) {
     }
 
-    public function add(PhpClassNode $node): void
+    public function isInitialRun(): bool
+    {
+        return $this->initialRun;
+    }
+
+    public function setInitialRunComplete(): void
+    {
+        $this->initialRun = false;
+    }
+
+    public function add(PhpClassNode $node): PhpClassNode
     {
         $fqcn = $node->getName();
 
         $this->remove($fqcn);
 
         $this->items[$fqcn] = $node;
-        $this->fileMapping[$this->cleanupFilePath($node->getFileName())] = $node;
+
+        return $this->fileMapping[$this->cleanupFilePath($node->getFileName())] = $node;
     }
 
     public function addByFile(string $file): ?PhpClassNode
