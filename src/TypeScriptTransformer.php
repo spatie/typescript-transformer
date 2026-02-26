@@ -49,7 +49,7 @@ class TypeScriptTransformer
     // - Test all the latest changes which are quite a lot
     // - Clean up the Laravel package readme
     // - Make sure the spatie website will render the docs
-    // - Check on how we're doing laravel data with v2
+    // - Check on how we're doing laravel data with v2 -> ok
     //
 
     public static function create(
