@@ -23,7 +23,8 @@ class WriteFilesAction
         foreach ($writeableFiles as $index => $writeableFile) {
             $hasChanged = $oldManifest === null
                 || ! array_key_exists($writeableFile->path, $oldManifest)
-                || $oldManifest[$writeableFile->path] !== $writeableFile->hash;
+                || $oldManifest[$writeableFile->path] !== $writeableFile->hash
+                || ! file_exists($this->config->outputDirectory.DIRECTORY_SEPARATOR.$writeableFile->path);
 
             if (! $hasChanged) {
                 continue;

@@ -58,7 +58,7 @@ it('will store a manifest file', function () {
         ->toHaveKeys(['fileA.ts', 'fileB.ts']);
 });
 
-it('will not write files that have not changed', function () {
+it('will re-write files that were deleted from disk', function () {
     $fileA = new WriteableFile('fileA.ts', 'fileA contents');
     $fileB = new WriteableFile('fileB.ts', 'fileB contents');
 
@@ -75,7 +75,8 @@ it('will not write files that have not changed', function () {
     $files2 = [$fileA, $fileB];
     (new WriteFilesAction($config))->execute($files2);
 
-    expect(file_exists($pathA))->toBeFalse();
+    expect(file_exists($pathA))->toBeTrue();
+    expect(file_get_contents($pathA))->toBe('fileA contents');
 });
 
 it('will delete older files not present anymore in the manifest', function () {
