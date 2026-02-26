@@ -6,6 +6,7 @@ use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes\PhpDocTypesStub;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\Response;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAny;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
@@ -495,4 +496,28 @@ it('can transpile PHPStan doc types', function (
             new TypeScriptProperty('delete', new TypeScriptBoolean()),
         ]),
     ];
+
+    yield [
+        'referenceWithRootNamespaceConflict',
+        new TypeScriptReference(new ClassStringReference(Response::class)),
+    ];
+});
+
+it('resolves imported class names over root namespace classes like Laravel facade aliases', function () {
+    // Simulate Laravel's facade alias by defining Response in the root namespace
+    if (! class_exists('Response', false)) {
+        eval('class Response {}');
+    }
+
+    $docTypeResolver = new DocTypeResolver();
+    $transpiler = new TranspilePhpStanTypeToTypeScriptNodeAction();
+
+    $typeScriptNode = $transpiler->execute(
+        $docTypeResolver->property(new PhpPropertyNode(new ReflectionProperty(PhpDocTypesStub::class, 'referenceWithRootNamespaceConflict')))->type,
+        new PhpClassNode(new ReflectionClass(PhpDocTypesStub::class))
+    );
+
+    expect($typeScriptNode)->toEqual(
+        new TypeScriptReference(new ClassStringReference(Response::class))
+    );
 });

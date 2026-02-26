@@ -3,6 +3,7 @@
 namespace Spatie\TypeScriptTransformer\Tests\Fakes\PropertyTypes;
 
 use Illuminate\Support\Collection;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\Response;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\StringBackedEnum;
 use stdClass;
 
@@ -236,4 +237,7 @@ class PhpDocTypesStub extends stdClass
 
     /** @var array{PhpDocTypesStub::SOME_KEY: bool} */
     public $arrayShapeWithConstKey;
+
+    /** @var Response */
+    public $referenceWithRootNamespaceConflict;
 }

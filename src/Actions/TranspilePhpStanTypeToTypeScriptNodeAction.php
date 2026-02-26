@@ -160,7 +160,9 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             return $phpClassNode?->getName();
         }
 
-        if (class_exists($className) || interface_exists($className)) {
+        $classesToFurtherCheck = ['Response', 'Request'];
+
+        if ((class_exists($className) || interface_exists($className)) && ! in_array($className, $classesToFurtherCheck)) {
             return $className;
         }
 
