@@ -17,8 +17,6 @@ class Transformed
 {
     protected ?string $name;
 
-    protected Writer $writer;
-
     protected ?string $cached = null;
 
     public bool $changed = true;
@@ -43,6 +41,7 @@ class Transformed
         public Reference $reference,
         public array $location,
         public bool $export = true,
+        protected ?Writer $writer = null,
     ) {
     }
 
@@ -78,12 +77,12 @@ class Transformed
 
     public function hasWriter(): bool
     {
-        return isset($this->writer);
+        return $this->writer !== null;
     }
 
     public function setWriter(Writer $writer): self
     {
-        if (isset($this->writer)) {
+        if ($this->writer !== null) {
             throw new RuntimeException('Writer can only be set once');
         }
 
@@ -94,7 +93,7 @@ class Transformed
 
     public function getWriter(): Writer
     {
-        if (! isset($this->writer)) {
+        if ($this->writer === null) {
             throw new RuntimeException('Writer not set yet');
         }
 
