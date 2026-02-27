@@ -18,15 +18,12 @@ class TypeScriptNamespace implements TypeScriptNode, TypeScriptNamedNode
         public array $types,
         #[NodeVisitable]
         public array $children = [],
-        public bool $declare = true,
     ) {
     }
 
     public function write(WritingContext $context): string
     {
-        $prefix = $this->declare ? 'declare namespace' : 'namespace';
-
-        $output = "{$prefix} {$this->name} {".PHP_EOL;
+        $output = "namespace {$this->name} {".PHP_EOL;
 
         $context->pushNamespace($this->name);
 

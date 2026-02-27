@@ -6,10 +6,10 @@ use RuntimeException;
 use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\References\Reference;
-use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptExport;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptForwardingNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamedNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptOperator;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\Writers\Writer;
 
@@ -111,7 +111,7 @@ class Transformed
         $node = $this->typeScriptNode;
 
         if ($this->export === true && ($node instanceof TypeScriptNamedNode || $node instanceof TypeScriptForwardingNamedNode)) {
-            $node = new TypeScriptExport($node);
+            $node = TypeScriptOperator::export($node);
         }
 
         return $this->cached = $node->write($writingContext);

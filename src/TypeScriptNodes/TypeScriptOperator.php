@@ -62,6 +62,16 @@ class TypeScriptOperator implements TypeScriptNode
         return new self('as', $type, $expression);
     }
 
+    public static function export(TypeScriptNode $node): self
+    {
+        return new self('export', $node);
+    }
+
+    public static function declare(TypeScriptNode $node): self
+    {
+        return new self('declare', $node);
+    }
+
     public function write(WritingContext $context): string
     {
         if ($this->left === null) {

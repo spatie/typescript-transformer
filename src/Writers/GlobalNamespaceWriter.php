@@ -12,6 +12,7 @@ use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamespace;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptOperator;
 
 class GlobalNamespaceWriter implements Writer
 {
@@ -72,9 +73,10 @@ class GlobalNamespaceWriter implements Writer
         }
 
         foreach ($root->children as $child) {
-            $namespace = $this->buildNamespace($child, declare: ! $hasImports);
+            $namespace = $this->buildNamespace($child);
+            $node = $hasImports ? $namespace : TypeScriptOperator::declare($namespace);
 
-            $output .= $namespace->write($writingContext).PHP_EOL;
+            $output .= $node->write($writingContext).PHP_EOL;
         }
 
         if ($hasImports) {
@@ -84,19 +86,18 @@ class GlobalNamespaceWriter implements Writer
         return [new WriteableFile($this->path, $output)];
     }
 
-    protected function buildNamespace(Location $location, bool $declare): TypeScriptNamespace
+    protected function buildNamespace(Location $location): TypeScriptNamespace
     {
         $children = [];
 
         foreach ($location->children as $child) {
-            $children[] = $this->buildNamespace($child, declare: false);
+            $children[] = $this->buildNamespace($child);
         }
 
         return new TypeScriptNamespace(
             $location->name,
             $location->transformed,
             $children,
-            declare: $declare,
         );
     }
 

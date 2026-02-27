@@ -178,9 +178,9 @@ new TypeScriptFunctionDeclaration('greet', [new TypeScriptParameter('name', new 
 TypeScriptVariableDeclaration::const('name', new TypeScriptLiteral('world'))
 ```
 
-**TypeScriptExport** — `export type Name = string;`
+**TypeScriptOperator::export()** — `export type Name = string;`
 ```php
-new TypeScriptExport(new TypeScriptAlias('Name', new TypeScriptString()))
+TypeScriptOperator::export(new TypeScriptAlias('Name', new TypeScriptString()))
 ```
 
 **TypeScriptImport** — `import { User as AppUser } from './types';`

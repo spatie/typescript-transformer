@@ -3,30 +3,15 @@
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNamespace;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptOperator;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\Visitor\Visitor;
 
-it('can write a declare namespace', function () {
+it('can write a namespace', function () {
     $node = new TypeScriptNamespace(
         'App',
         [new TypeScriptRaw('type User = { name: string };')],
-    );
-
-    $expected = <<<'TS'
-declare namespace App {
-type User = { name: string };
-}
-TS;
-
-    expect($node->write(new WritingContext([])))->toBe($expected);
-});
-
-it('can write a non-declare namespace', function () {
-    $node = new TypeScriptNamespace(
-        'App',
-        [new TypeScriptRaw('type User = { name: string };')],
-        declare: false,
     );
 
     $expected = <<<'TS'
@@ -38,17 +23,35 @@ TS;
     expect($node->write(new WritingContext([])))->toBe($expected);
 });
 
+it('can write a declare namespace using operator', function () {
+    $node = TypeScriptOperator::declare(
+        new TypeScriptNamespace(
+            'App',
+            [new TypeScriptRaw('type User = { name: string };')],
+        ),
+    );
+
+    $expected = <<<'TS'
+declare namespace App {
+type User = { name: string };
+}
+TS;
+
+    expect($node->write(new WritingContext([])))->toBe($expected);
+});
+
 it('can write nested namespaces', function () {
-    $node = new TypeScriptNamespace(
-        'level1',
-        [new TypeScriptRaw('export type Level1Type = string;')],
-        children: [
-            new TypeScriptNamespace(
-                'level2',
-                [new TypeScriptRaw('export type Level2Type = string;')],
-                declare: false,
-            ),
-        ],
+    $node = TypeScriptOperator::declare(
+        new TypeScriptNamespace(
+            'level1',
+            [new TypeScriptRaw('export type Level1Type = string;')],
+            children: [
+                new TypeScriptNamespace(
+                    'level2',
+                    [new TypeScriptRaw('export type Level2Type = string;')],
+                ),
+            ],
+        ),
     );
 
     $expected = <<<'TS'
@@ -84,7 +87,6 @@ it('visitor traverses namespace children', function () {
     $childNamespace = new TypeScriptNamespace(
         'Models',
         [new TypeScriptString()],
-        declare: false,
     );
 
     $node = new TypeScriptNamespace(

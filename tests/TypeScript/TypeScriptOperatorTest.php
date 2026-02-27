@@ -1,8 +1,10 @@
 <?php
 
 use Spatie\TypeScriptTransformer\Data\WritingContext;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptOperator;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 
 it('can write keyof', function () {
     $node = TypeScriptOperator::keyof(new TypeScriptIdentifier('User'));
@@ -41,4 +43,21 @@ it('can write in', function () {
     );
 
     expect($node->write(new WritingContext([])))->toBe('K in T');
+});
+
+it('can write export', function () {
+    $node = TypeScriptOperator::export(
+        new TypeScriptAlias(
+            new TypeScriptIdentifier('Name'),
+            new TypeScriptString(),
+        ),
+    );
+
+    expect($node->write(new WritingContext([])))->toBe('export type Name = string;');
+});
+
+it('can write declare', function () {
+    $node = TypeScriptOperator::declare(new TypeScriptIdentifier('module'));
+
+    expect($node->write(new WritingContext([])))->toBe('declare module');
 });
