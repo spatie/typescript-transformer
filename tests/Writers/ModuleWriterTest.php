@@ -175,8 +175,8 @@ it('can reference other types within a nested module', function () {
 import { A } from './nested';
 import { B } from './nested/subNested';
 export type C = {
-a: A
-b: B
+a: A,
+b: B,
 };
 
 TypeScript
@@ -237,8 +237,8 @@ it('can combine imports from nested modules', function () {
             <<<'TypeScript'
 import { A, B } from './nested';
 export type C = {
-a: A
-b: B
+a: A,
+b: B,
 };
 
 TypeScript
@@ -390,7 +390,7 @@ TS
             <<<TS
 import { ReferencedType } from '../../models';
 export type LocalType = {
-referenced: ReferencedType
+referenced: ReferencedType,
 };
 
 TS
@@ -443,8 +443,8 @@ it('can reference types from a flat module writer and global namespace writer', 
             <<<TS
 import { FlatType } from '../flat-types';
 export type ModuleType = {
-flat: FlatType
-global: App.Models.GlobalType
+flat: FlatType,
+global: App.Models.GlobalType,
 };
 
 TS

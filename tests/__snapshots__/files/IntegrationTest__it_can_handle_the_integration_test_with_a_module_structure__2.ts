@@ -1,3 +1,3 @@
 export type LevelUpClass = {
-name: string
+name: string,
 };

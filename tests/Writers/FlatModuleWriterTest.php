@@ -114,8 +114,8 @@ it('can reference to other types in a flat file', function () {
 export type A = string;
 export type B = string;
 export type C = {
-a: A
-b: B
+a: A,
+b: B,
 };
 
 TS);
@@ -176,7 +176,7 @@ TS
             <<<TS
 import { ReferencedType } from './types-a';
 export type LocalType = {
-referenced: ReferencedType
+referenced: ReferencedType,
 };
 
 TS
@@ -229,8 +229,8 @@ it('can reference types from a global namespace writer and module writer', funct
             <<<TS
 import { ModuleType } from './models';
 export type FlatType = {
-module: ModuleType
-global: App.Models.GlobalType
+module: ModuleType,
+global: App.Models.GlobalType,
 };
 
 TS

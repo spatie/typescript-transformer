@@ -105,8 +105,8 @@ it('will reference correctly between namespaces', function () {
         ->contents->toEqual(
             <<<TS
 export type C = {
-a: nested.A
-b: nested.subNested.B
+a: nested.A,
+b: nested.subNested.B,
 };
 declare namespace nested {
 export type A = string;
@@ -179,7 +179,7 @@ TS
         ->contents->toEqual(
             <<<TS
 export type LocalType = {
-referenced: App.Models.ReferencedType
+referenced: App.Models.ReferencedType,
 };
 
 TS
@@ -228,7 +228,7 @@ namespace Http {
 namespace App {
 namespace ViewModels {
 export type ShowViewModel = {
-error: Domain.Data.ErrorData
+error: Domain.Data.ErrorData,
 };
 }
 }
@@ -276,7 +276,7 @@ namespace Scope {
 namespace Controllers {
 namespace Scope {
 export type TestType = {
-value: App.Scope.Data.SomeType
+value: App.Scope.Data.SomeType,
 };
 }
 }
@@ -337,8 +337,8 @@ import { ModuleType } from './models';
 import { FlatModuleType } from './flat-types';
 declare global {
 export type GlobalType = {
-module: ModuleType
-flatModule: FlatModuleType
+module: ModuleType,
+flatModule: FlatModuleType,
 };
 }
 

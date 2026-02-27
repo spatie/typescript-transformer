@@ -18,7 +18,7 @@ it('can write an object with properties', function () {
 
     $expected = <<<'TS'
 {
-name: string
+name: string,
 }
 TS;
 

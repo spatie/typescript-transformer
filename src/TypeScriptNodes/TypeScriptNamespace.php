@@ -6,7 +6,7 @@ use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 
-class TypeScriptNamespace implements TypeScriptNode
+class TypeScriptNamespace implements TypeScriptNode, TypeScriptNamedNode
 {
     /**
      * @param array<TypeScriptNode|Transformed> $types
@@ -43,5 +43,10 @@ class TypeScriptNamespace implements TypeScriptNode
         $output .= '}';
 
         return $output;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

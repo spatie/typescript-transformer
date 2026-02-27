@@ -25,7 +25,7 @@ class TypeScriptObject implements TypeScriptNode
         $output = '{'.PHP_EOL;
 
         foreach ($this->properties as $property) {
-            $output .= $property->write($context).PHP_EOL;
+            $output .= $property->write($context).','.PHP_EOL;
         }
 
         return $output.'}';
