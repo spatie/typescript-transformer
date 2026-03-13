@@ -1,7 +1,5 @@
 <?php
 
-use function Spatie\Snapshots\assertMatchesSnapshot;
-
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\Data\WriteableFile;
 
@@ -12,10 +10,10 @@ it('can output a single type', closure: function () {
         public array $property;
     }
 
-    assertMatchesSnapshot(classesToTypeScript([
+    expect(classesToTypeScript([
         WriteableFile::class,
         TestSingleTypeScriptTypeAttribute::class,
-    ]));
+    ]))->toMatchSnapshot();
 });
 
 it('can output an object type', function () {
@@ -28,8 +26,8 @@ it('can output an object type', function () {
         public array $property;
     }
 
-    assertMatchesSnapshot(classesToTypeScript([
+    expect(classesToTypeScript([
         WriteableFile::class,
         TestObjectTypeScriptTypeAttribute::class,
-    ]));
+    ]))->toMatchSnapshot();
 });

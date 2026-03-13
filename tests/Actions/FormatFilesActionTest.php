@@ -1,7 +1,5 @@
 <?php
 
-use function Spatie\Snapshots\assertMatchesSnapshot;
-
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\FormatFilesAction;
 use Spatie\TypeScriptTransformer\Data\WriteableFile;
@@ -35,8 +33,8 @@ it('can format an generated file with prettier', function () {
 
     $action->execute($writeableFiles);
 
-    assertMatchesSnapshot(file_get_contents($this->temporaryDirectory->path('testA.ts')));
-    assertMatchesSnapshot(file_get_contents($this->temporaryDirectory->path('testB.ts')));
+    expect(file_get_contents($this->temporaryDirectory->path('testA.ts')))->toMatchSnapshot();
+    expect(file_get_contents($this->temporaryDirectory->path('testB.ts')))->toMatchSnapshot();
 });
 
 it('can disable formatting', function () {
@@ -59,8 +57,8 @@ it('can disable formatting', function () {
 
     $action->execute($writeableFiles);
 
-    assertMatchesSnapshot(file_get_contents($this->temporaryDirectory->path('testA.ts')));
-    assertMatchesSnapshot(file_get_contents($this->temporaryDirectory->path('testB.ts')));
+    expect(file_get_contents($this->temporaryDirectory->path('testA.ts')))->toMatchSnapshot();
+    expect(file_get_contents($this->temporaryDirectory->path('testB.ts')))->toMatchSnapshot();
 });
 
 it('only formats changed files', function () {

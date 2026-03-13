@@ -1,7 +1,5 @@
 <?php
 
-use function Spatie\Snapshots\assertMatchesSnapshot;
-
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\ProcessWatchBufferAction;
 use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
@@ -383,7 +381,7 @@ it('can delete and create a referenced transformed and it will reconnect referen
     expect($circularBTransformed->getReferences())->toHaveKey($circularAKey);
     expect($circularBTransformed->getReferencedBy())->toContain($circularAKey);
 
-    assertMatchesSnapshot(file_get_contents($temporaryDirectory->path('types.ts')));
+    expect(file_get_contents($temporaryDirectory->path('types.ts')))->toMatchSnapshot();
 
     $action->execute([
         new FileDeletedWatchEvent($circularAPath),
@@ -397,7 +395,7 @@ it('can delete and create a referenced transformed and it will reconnect referen
     expect($circularBTransformed->getReferencedBy())->not->toContain($circularAKey);
     expect($circularBTransformed->getMissingReferences())->toHaveKey($circularAKey);
 
-    assertMatchesSnapshot(file_get_contents($temporaryDirectory->path('types.ts')));
+    expect(file_get_contents($temporaryDirectory->path('types.ts')))->toMatchSnapshot();
 
     $action->execute([
         new FileCreatedWatchEvent($circularAPath),
@@ -414,5 +412,5 @@ it('can delete and create a referenced transformed and it will reconnect referen
     expect($recreatedCircularATransformed->getReferencedBy())->toContain($circularBKey);
     expect($updatedCircularBTransformed->getReferencedBy())->toContain($circularAKey);
 
-    assertMatchesSnapshot(file_get_contents($temporaryDirectory->path('types.ts')));
+    expect(file_get_contents($temporaryDirectory->path('types.ts')))->toMatchSnapshot();
 });

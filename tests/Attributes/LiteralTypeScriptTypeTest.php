@@ -1,7 +1,5 @@
 <?php
 
-use function Spatie\Snapshots\assertMatchesSnapshot;
-
 use Spatie\TypeScriptTransformer\Attributes\AdditionalImport;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 
@@ -12,7 +10,7 @@ it('can output a single type', function () {
         public array $property;
     }
 
-    assertMatchesSnapshot(classesToTypeScript([TestSingleLiteralTypeScriptTypeAttribute::class]));
+    expect(classesToTypeScript([TestSingleLiteralTypeScriptTypeAttribute::class]))->toMatchSnapshot();
 });
 
 it('can output an object type', function () {
@@ -25,7 +23,7 @@ it('can output an object type', function () {
         public array $property;
     }
 
-    assertMatchesSnapshot(classesToTypeScript([TestObjectLiteralTypeScriptTypeAttribute::class]));
+    expect(classesToTypeScript([TestObjectLiteralTypeScriptTypeAttribute::class]))->toMatchSnapshot();
 });
 
 it('can output a type with additional imports', function () {

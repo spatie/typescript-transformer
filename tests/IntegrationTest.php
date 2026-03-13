@@ -1,7 +1,5 @@
 <?php
 
-use function Spatie\Snapshots\assertMatchesFileSnapshot;
-
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformers\EnumTransformer;
@@ -26,7 +24,7 @@ it('can handle the integration test with a flat file', function () {
 
     TypeScriptTransformer::create($config)->execute();
 
-    assertMatchesFileSnapshot($this->temporaryDirectory->path('flat.d.ts'));
+    expect(file_get_contents($this->temporaryDirectory->path('flat.d.ts')))->toMatchSnapshot();
 });
 
 it('can handle the integration test with a namespaced file', function () {
@@ -40,7 +38,7 @@ it('can handle the integration test with a namespaced file', function () {
 
     TypeScriptTransformer::create($config)->execute();
 
-    assertMatchesFileSnapshot($this->temporaryDirectory->path('flat.d.ts'));
+    expect(file_get_contents($this->temporaryDirectory->path('flat.d.ts')))->toMatchSnapshot();
 });
 
 it('can handle the integration test with a module structure', function () {
@@ -54,6 +52,6 @@ it('can handle the integration test with a module structure', function () {
 
     TypeScriptTransformer::create($config)->execute();
 
-    assertMatchesFileSnapshot($this->temporaryDirectory->path('Spatie/TypeScriptTransformer/Tests/Fakes/Integration/index.ts'));
-    assertMatchesFileSnapshot($this->temporaryDirectory->path('Spatie/TypeScriptTransformer/Tests/Fakes/Integration/Level/index.ts'));
+    expect(file_get_contents($this->temporaryDirectory->path('Spatie/TypeScriptTransformer/Tests/Fakes/Integration/index.ts')))->toMatchSnapshot();
+    expect(file_get_contents($this->temporaryDirectory->path('Spatie/TypeScriptTransformer/Tests/Fakes/Integration/Level/index.ts')))->toMatchSnapshot();
 });
