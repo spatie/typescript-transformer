@@ -46,3 +46,28 @@ explain how to configure the package which is by modifying the `$config` object 
 
 After you're done reading the framework-agnostic docs, you can return here to read about Laravel-specific features this
 package provides.
+
+## What the Laravel package provides
+
+Out of the box, the Laravel package automatically configures a few things for you:
+
+- `CarbonInterface` (and `Carbon`) types are replaced with `string` in TypeScript
+- The `AttributedClassTransformer` is replaced with `LaravelAttributedClassTransformer` which adds proper handling for
+  Laravel's `Collection` and `EloquentCollection` as array-like structures
+- TypeScript types are generated for Laravel's pagination classes: `LengthAwarePaginator` and `CursorPaginator`. These
+  types include the full pagination structure with `data`, `links` and`meta` properties, so you can use them in your
+  frontend code without defining them yourself.
+
+These are all configured through the `LaravelTypeScriptTransformerExtension` which is loaded automatically when using
+the [Laravel Data](/docs/typescript-transformer/v3/laravel/laravel-data)
+or [controllers](/docs/typescript-transformer/v3/laravel/controllers) extensions. If you're not using either of those
+but still want the base Laravel types, you can add the extension manually:
+
+```php
+use Spatie\LaravelTypeScriptTransformer\LaravelTypeScriptTransformerExtension;
+
+protected function configure(TypeScriptTransformerConfigFactory $config): void
+{
+    $config->extension(new LaravelTypeScriptTransformerExtension());
+}
+```

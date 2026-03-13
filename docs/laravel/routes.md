@@ -1,6 +1,6 @@
 ---
 title: Routes
-weight: 3
+weight: 4
 ---
 
 Laravel provides a great way to define routes and then generate URLs to those routes in PHP using the `route()` helper.
@@ -37,53 +37,7 @@ const userUrl = route('users.show', {user: 1});
 
 TypeScript will be smart enough to provide you autocompletion on these controllers and their parameters.
 
-Sometimes you might want to exclude certain routes from being included in the generated TypeScript. You can do this by
-adding a route filter. The package provides three types of route filters:
-
-**NamedRouteFilter**
-
-Allows you to remove routes by their name. It is possible to use wildcards.
-
-```php
-use Spatie\LaravelTypeScriptTransformer\RouteFilters\NamedRouteFilter;
-
-$config->provider(new LaravelRouteTransformedProvider(
-    routeFilters: [
-        new NamedRouteFilter('debugbar.*', 'hidden'),
-    ],
-));
-```
-
-**ControllerRouteFilter**
-
-Allows you to remove routes by their controller class or namespace using wildcards.
-
-```php
-use Spatie\LaravelTypeScriptTransformer\RouteFilters\ControllerRouteFilter;
-
-$config->provider(new LaravelRouteTransformedProvider(
-    routeFilters: [
-        new ControllerRouteFilter(['App\Http\Controllers\Admin\*', 'HiddenController']),
-    ],
-));
-```
-
-**ClosureRouteFilter**
-
-Allows you to provide a closure that will be called for each route. If the closure returns `true`, the route will be
-excluded.
-
-```php
-use Spatie\LaravelTypeScriptTransformer\RouteFilters\ClosureRouteFilter;
-
-$config->provider(new LaravelRouteTransformedProvider(
-    routeFilters: [
-        new ClosureRouteFilter(function (Route $route) {
-            return str_starts_with($route->uri(), 'internal/');
-        }),
-    ],
-));
-```
+You can exclude certain routes from being included in the generated TypeScript using [route filters](/docs/typescript-transformer/v3/laravel/route-filters).
 
 By default, the helper will generate absolute URLs meaning it includes the app URL. This URL will be fetched from the
 window object in JavaScript. If you want to generate relative URLs instead, you can pass `false` as the third parameter,
