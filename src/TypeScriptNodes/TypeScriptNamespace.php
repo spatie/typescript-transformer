@@ -10,7 +10,7 @@ class TypeScriptNamespace implements TypeScriptNode, TypeScriptNamedNode
 {
     /**
      * @param array<TypeScriptNode|Transformed> $types
-     * @param array<TypeScriptNamespace> $children
+     * @param array<TypeScriptNamespace|TypeScriptOperator> $children
      */
     public function __construct(
         public string $name,

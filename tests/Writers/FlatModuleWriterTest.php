@@ -62,11 +62,11 @@ it('can write everything in one flat file', function () {
         ->toBeInstanceOf(WriteableFile::class)
         ->path->toBe($this->filename)
         ->contents->toBe(<<<TS
-export type RootType = string;
-export type RootType2 = string;
 export type Level1Type = string;
 export type Level1Type2 = string;
 export type Level2Type = string;
+export type RootType = string;
+export type RootType2 = string;
 
 TS);
 });
