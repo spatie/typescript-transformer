@@ -22,10 +22,10 @@ class TypeScriptObject implements TypeScriptNode
             return 'object';
         }
 
-        $output = '{'.PHP_EOL;
+        $output = '{'."\n";
 
         foreach ($this->properties as $property) {
-            $output .= $property->write($context).','.PHP_EOL;
+            $output .= $property->write($context).','."\n";
         }
 
         return $output.'}';

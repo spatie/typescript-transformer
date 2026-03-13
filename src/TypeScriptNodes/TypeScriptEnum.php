@@ -18,7 +18,7 @@ class TypeScriptEnum implements TypeScriptNamedNode, TypeScriptNode
 
     public function write(WritingContext $context): string
     {
-        $output = 'enum '.$this->name.' {'.PHP_EOL;
+        $output = 'enum '.$this->name.' {'."\n";
 
         foreach ($this->cases as $case) {
             $output .= '    ';
@@ -29,7 +29,7 @@ class TypeScriptEnum implements TypeScriptNamedNode, TypeScriptNode
                 default => "{$case['name']},",
             };
 
-            $output .= PHP_EOL;
+            $output .= "\n";
         }
 
         $output .= '}';

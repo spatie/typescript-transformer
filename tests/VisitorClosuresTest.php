@@ -34,7 +34,7 @@ it('can run visitor closures when types are provided', function () {
 
     TypeScriptTransformer::create($config)->execute();
 
-    expect($writer->getOutput())->toEqual("export type someObject = string;".PHP_EOL);
+    expect($writer->getOutput())->toEqual("export type someObject = string;"."\n");
 });
 
 it('can run visitor closures when types are connected', function () {
@@ -54,5 +54,5 @@ it('can run visitor closures when types are connected', function () {
 
     TypeScriptTransformer::create($config)->execute();
 
-    expect($writer->getOutput())->toEqual("export type someObject = string;".PHP_EOL);
+    expect($writer->getOutput())->toEqual("export type someObject = string;"."\n");
 });

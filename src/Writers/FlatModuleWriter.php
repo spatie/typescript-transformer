@@ -35,12 +35,12 @@ class FlatModuleWriter implements Writer
         $writingContext = new WritingContext($resolvedReferenceMap);
 
         foreach ($imports->getTypeScriptNodes() as $import) {
-            $output .= $import->write($writingContext).PHP_EOL;
+            $output .= $import->write($writingContext)."\n";
         }
         usort($transformed, fn (Transformed $a, Transformed $b) => $a->getName() <=> $b->getName());
 
         foreach ($transformed as $item) {
-            $output .= $item->write($writingContext).PHP_EOL;
+            $output .= $item->write($writingContext)."\n";
         }
 
         return [new WriteableFile($this->path, $output)];

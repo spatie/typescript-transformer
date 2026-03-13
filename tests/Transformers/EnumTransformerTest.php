@@ -34,7 +34,7 @@ TS);
 
 it('can transform an int backed enum into a union enum', function () {
     expect(classesToTypeScript([IntBackedEnum::class], new EnumTransformer()))
-        ->toBe('export type IntBackedEnum = 1 | 2 | 3 | 4;'.PHP_EOL);
+        ->toBe('export type IntBackedEnum = 1 | 2 | 3 | 4;'."\n");
 });
 
 it('can transform an int backed enum into a native enum', function () {
@@ -52,7 +52,7 @@ TS);
 
 it('can transform a string backed enum into a union enum', function () {
     expect(classesToTypeScript([StringBackedEnum::class], new EnumTransformer()))
-        ->toBe('export type StringBackedEnum = "john" | "paul" | "george" | "ringo";' . PHP_EOL);
+        ->toBe('export type StringBackedEnum = "john" | "paul" | "george" | "ringo";' . "\n");
 });
 
 it('can transform a string backed enum into a native enum', function () {

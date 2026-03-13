@@ -23,16 +23,16 @@ class TypeScriptNamespace implements TypeScriptNode, TypeScriptNamedNode
 
     public function write(WritingContext $context): string
     {
-        $output = "namespace {$this->name} {".PHP_EOL;
+        $output = "namespace {$this->name} {"."\n";
 
         $context->pushNamespace($this->name);
 
         foreach ($this->types as $type) {
-            $output .= $type->write($context).PHP_EOL;
+            $output .= $type->write($context)."\n";
         }
 
         foreach ($this->children as $child) {
-            $output .= $child->write($context).PHP_EOL;
+            $output .= $child->write($context)."\n";
         }
 
         $context->popNamespace();

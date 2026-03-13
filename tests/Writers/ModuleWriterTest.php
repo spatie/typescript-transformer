@@ -61,15 +61,15 @@ it('can write modules', function () {
 
     expect($files[0])
         ->path->toBe('index.ts')
-        ->contents->toBe('export type RootType = string;'.PHP_EOL.'export type RootType2 = string;'.PHP_EOL);
+        ->contents->toBe('export type RootType = string;'."\n".'export type RootType2 = string;'."\n");
 
     expect($files[1])
         ->path->toBe(implode(DIRECTORY_SEPARATOR, ['level1', 'index.ts']))
-        ->contents->toBe('export type Level1Type = string;'.PHP_EOL.'export type Level1Type2 = string;'.PHP_EOL);
+        ->contents->toBe('export type Level1Type = string;'."\n".'export type Level1Type2 = string;'."\n");
 
     expect($files[2])
         ->path->toBe(implode(DIRECTORY_SEPARATOR, ['level1', 'level2', 'index.ts']))
-        ->contents->toBe('export type Level2Type = string;'.PHP_EOL);
+        ->contents->toBe('export type Level2Type = string;'."\n");
 });
 
 it('can customize the module filename', function () {
@@ -125,7 +125,7 @@ it('can reference other types within the module', function () {
 
     expect($files[0])
         ->path->toBe('index.ts')
-        ->contents->toBe('export type A = string;'.PHP_EOL.'export type B = A;'.PHP_EOL);
+        ->contents->toBe('export type A = string;'."\n".'export type B = A;'."\n");
 });
 
 it('can reference other types within a nested module', function () {
@@ -184,11 +184,11 @@ TypeScript
 
     expect($files[1])
         ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'index.ts']))
-        ->contents->toBe('export type A = string;'.PHP_EOL);
+        ->contents->toBe('export type A = string;'."\n");
 
     expect($files[2])
         ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'subNested', 'index.ts']))
-        ->contents->toBe('export type B = string;'.PHP_EOL);
+        ->contents->toBe('export type B = string;'."\n");
 });
 
 it('can combine imports from nested modules', function () {
@@ -246,7 +246,7 @@ TypeScript
 
     expect($files[1])
         ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'index.ts']))
-        ->contents->toBe('export type A = string;'.PHP_EOL.'export type B = string;'.PHP_EOL);
+        ->contents->toBe('export type A = string;'."\n".'export type B = string;'."\n");
 });
 
 it('can import from root into a nested module', function () {
@@ -280,7 +280,7 @@ it('can import from root into a nested module', function () {
 
     expect($files[0])
         ->path->toBe('index.ts')
-        ->contents->toBe('export type A = string;'.PHP_EOL);
+        ->contents->toBe('export type A = string;'."\n");
 
     expect($files[1])
         ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'index.ts']))
@@ -322,7 +322,7 @@ it('can automatically alias imported types', function () {
 
     expect($files[0])
         ->path->toBe('index.ts')
-        ->contents->toBe('export type A = string;'.PHP_EOL);
+        ->contents->toBe('export type A = string;'."\n");
 
     expect($files[1])
         ->path->toBe(implode(DIRECTORY_SEPARATOR, ['nested', 'index.ts']))

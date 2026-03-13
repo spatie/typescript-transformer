@@ -32,8 +32,8 @@ class TypeScriptInterface implements TypeScriptForwardingNamedNode, TypeScriptNo
 
         $items = array_reduce(
             $combined,
-            fn (string $carry, TypeScriptProperty|TypeScriptMethodSignature $item) => $carry.$item->write($context).PHP_EOL,
-            empty($combined) ? '' : PHP_EOL
+            fn (string $carry, TypeScriptProperty|TypeScriptMethodSignature $item) => $carry.$item->write($context)."\n",
+            empty($combined) ? '' : "\n"
         );
 
         return "interface {$this->name->write($context)} {{$items}}";

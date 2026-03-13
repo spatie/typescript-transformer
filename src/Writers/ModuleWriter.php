@@ -69,11 +69,11 @@ class ModuleWriter implements Writer
         $writingContext = new WritingContext($resolvedReferenceMap);
 
         foreach ($imports->getTypeScriptNodes() as $import) {
-            $output .= $import->write($writingContext).PHP_EOL;
+            $output .= $import->write($writingContext)."\n";
         }
 
         foreach ($location->transformed as $transformedItem) {
-            $output .= $transformedItem->write($writingContext).PHP_EOL;
+            $output .= $transformedItem->write($writingContext)."\n";
         }
 
         return new WriteableFile($filePath, $output);

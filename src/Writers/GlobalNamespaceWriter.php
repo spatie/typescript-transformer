@@ -61,26 +61,26 @@ class GlobalNamespaceWriter implements Writer
         $hasImports = count($imports->getTypeScriptNodes()) > 0;
 
         foreach ($imports->getTypeScriptNodes() as $import) {
-            $output .= $import->write($writingContext).PHP_EOL;
+            $output .= $import->write($writingContext)."\n";
         }
 
         if ($hasImports) {
-            $output .= 'declare global {'.PHP_EOL;
+            $output .= 'declare global {'."\n";
         }
 
         foreach ($root->transformed as $transformable) {
-            $output .= $transformable->write($writingContext).PHP_EOL;
+            $output .= $transformable->write($writingContext)."\n";
         }
 
         foreach ($root->children as $child) {
             $namespace = $this->buildNamespace($child);
             $node = $hasImports ? $namespace : TypeScriptOperator::declare($namespace);
 
-            $output .= $node->write($writingContext).PHP_EOL;
+            $output .= $node->write($writingContext)."\n";
         }
 
         if ($hasImports) {
-            $output .= '}'.PHP_EOL;
+            $output .= '}'."\n";
         }
 
         return [new WriteableFile($this->path, $output)];
