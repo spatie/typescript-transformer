@@ -139,7 +139,7 @@ class ProcessWatchBufferAction
     protected function tryToConnectMissingReferencesWithNewTransformed(): void
     {
         foreach ($this->transformedCollection as $currentTransformed) {
-            foreach ($currentTransformed->missingReferences as $missingReference => $typeReferences) {
+            foreach ($currentTransformed->getMissingReferences() as $missingReference => $typeReferences) {
                 $foundTransformed = $this->transformedCollection->get($missingReference);
 
                 if ($foundTransformed === null) {

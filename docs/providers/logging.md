@@ -39,8 +39,8 @@ class CustomTransformedProvider implements LoggingTransformedProvider, Transform
 A log always exists of an item which can be any type which is JSON encodable and an optional title for context:
 
 ```php
-$this->logger->debug($transfomed->reference, 'Transformed reference details');
-$this->logger->info($transfomed->typeScriptNode, 'TypeScript node details');
+$this->logger->debug($transfomed->getReference(), 'Transformed reference details');
+$this->logger->info($transfomed->getNode(), 'TypeScript node details');
 $this->logger->warning($transfomed->getName(), 'Potential issue with transformed item');
-$this->logger->error($transfomed->changed, 'Error encountered during transformation');
+$this->logger->error($transfomed->isChanged(), 'Error encountered during transformation');
 ```

@@ -44,7 +44,7 @@ it('replaces array like structures', function (
         public array $no_annotation_array;
     };
 
-    $object = transformSingle($class)->typeScriptNode->type;
+    $object = transformSingle($class)->getNode()->type;
 
     [$propertyNode] = array_values(array_filter(
         $object->properties,
@@ -161,7 +161,7 @@ it('replaces array like classes', function (
         public Collection $no_annotation_collection;
     };
 
-    $object = transformSingle($class)->typeScriptNode->type;
+    $object = transformSingle($class)->getNode()->type;
 
     [$propertyNode] = array_values(array_filter(
         $object->properties,

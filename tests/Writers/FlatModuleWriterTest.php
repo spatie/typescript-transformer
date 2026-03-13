@@ -134,7 +134,7 @@ it('can reference types from another flat module writer', function () {
         $localType = TransformedFactory::alias(
             name: 'LocalType',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('referenced', new TypeScriptReference($referencedType->reference)),
+                new TypeScriptProperty('referenced', new TypeScriptReference($referencedType->getReference())),
             ]),
             references: [$referencedType],
             writer: $writerB
@@ -204,8 +204,8 @@ it('can reference types from a global namespace writer and module writer', funct
         $flatType = TransformedFactory::alias(
             name: 'FlatType',
             typeScriptNode: new TypeScriptObject([
-                new TypeScriptProperty('module', new TypeScriptReference($moduleType->reference)),
-                new TypeScriptProperty('global', new TypeScriptReference($globalType->reference)),
+                new TypeScriptProperty('module', new TypeScriptReference($moduleType->getReference())),
+                new TypeScriptProperty('global', new TypeScriptReference($globalType->getReference())),
             ]),
             references: [$moduleType, $globalType],
             writer: $flatWriter

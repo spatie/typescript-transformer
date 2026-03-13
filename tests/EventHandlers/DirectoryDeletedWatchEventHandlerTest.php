@@ -40,7 +40,7 @@ it('removes transformed items from the deleted directory and its subdirectories'
     $result = $handler->handle(new DirectoryDeletedWatchEvent($factory->path('Models')));
 
     expect($result)->toBeNull();
-    expect($collection->has($parentDirTransformed->reference))->toBeFalse();
-    expect($collection->has($subDirTransformed->reference))->toBeFalse();
-    expect($collection->has($otherDirTransformed->reference))->toBeTrue();
+    expect($collection->has($parentDirTransformed->getReference()))->toBeFalse();
+    expect($collection->has($subDirTransformed->getReference()))->toBeFalse();
+    expect($collection->has($otherDirTransformed->getReference()))->toBeTrue();
 });

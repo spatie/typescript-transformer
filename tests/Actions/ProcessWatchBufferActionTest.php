@@ -78,7 +78,7 @@ class User {
     $transformed = $collection->get((new ClassStringReference('App\Models\User'))->getKey());
 
     expect($transformed->getName())->toBe('User');
-    expect($transformed->typeScriptNode)->toEqual(
+    expect($transformed->getNode())->toEqual(
         new TypeScriptAlias(
             new TypeScriptIdentifier('User'),
             new TypeScriptObject([
@@ -121,7 +121,7 @@ class User {
     $transformed = $collection->get((new ClassStringReference('App\Models\User'))->getKey());
 
     expect($transformed->getName())->toBe('User');
-    expect($transformed->typeScriptNode)->toEqual(
+    expect($transformed->getNode())->toEqual(
         new TypeScriptAlias(
             new TypeScriptIdentifier('User'),
             new TypeScriptObject([
@@ -146,7 +146,7 @@ class User {
     $transformed = $collection->get((new ClassStringReference('App\Models\User'))->getKey());
 
     expect($transformed->getName())->toBe('User');
-    expect($transformed->typeScriptNode)->toEqual(
+    expect($transformed->getNode())->toEqual(
         new TypeScriptAlias(
             new TypeScriptIdentifier('User'),
             new TypeScriptObject([
@@ -229,9 +229,9 @@ it('processes directory deleted events and removes all transformed items in dire
     ]);
 
     expect($result)->toBeNull();
-    expect($collection->has($parentDirTransformed->reference))->toBeFalse();
-    expect($collection->has($subDirTransformed->reference))->toBeFalse();
-    expect($collection->has($otherDirTransformed->reference))->toBeTrue();
+    expect($collection->has($parentDirTransformed->getReference()))->toBeFalse();
+    expect($collection->has($subDirTransformed->getReference()))->toBeFalse();
+    expect($collection->has($otherDirTransformed->getReference()))->toBeTrue();
 });
 
 it('returns complete refresh when config file is updated', function () {
@@ -377,11 +377,11 @@ it('can delete and create a referenced transformed and it will reconnect referen
     $circularATransformed = $collection->get($circularAKey);
     $circularBTransformed = $collection->get($circularBKey);
 
-    expect($circularATransformed->references)->toHaveKey($circularBKey);
-    expect($circularATransformed->referencedBy)->toContain($circularBKey);
+    expect($circularATransformed->getReferences())->toHaveKey($circularBKey);
+    expect($circularATransformed->getReferencedBy())->toContain($circularBKey);
 
-    expect($circularBTransformed->references)->toHaveKey($circularAKey);
-    expect($circularBTransformed->referencedBy)->toContain($circularAKey);
+    expect($circularBTransformed->getReferences())->toHaveKey($circularAKey);
+    expect($circularBTransformed->getReferencedBy())->toContain($circularAKey);
 
     assertMatchesSnapshot(file_get_contents($temporaryDirectory->path('types.ts')));
 
@@ -394,8 +394,8 @@ it('can delete and create a referenced transformed and it will reconnect referen
 
     $circularBTransformed = $collection->get($circularBKey);
 
-    expect($circularBTransformed->referencedBy)->not->toContain($circularAKey);
-    expect($circularBTransformed->missingReferences)->toHaveKey($circularAKey);
+    expect($circularBTransformed->getReferencedBy())->not->toContain($circularAKey);
+    expect($circularBTransformed->getMissingReferences())->toHaveKey($circularAKey);
 
     assertMatchesSnapshot(file_get_contents($temporaryDirectory->path('types.ts')));
 
@@ -408,11 +408,11 @@ it('can delete and create a referenced transformed and it will reconnect referen
     $recreatedCircularATransformed = $collection->get($circularAKey);
     $updatedCircularBTransformed = $collection->get($circularBKey);
 
-    expect($recreatedCircularATransformed->references)->toHaveKey($circularBKey);
-    expect($updatedCircularBTransformed->references)->toHaveKey($circularAKey);
+    expect($recreatedCircularATransformed->getReferences())->toHaveKey($circularBKey);
+    expect($updatedCircularBTransformed->getReferences())->toHaveKey($circularAKey);
 
-    expect($recreatedCircularATransformed->referencedBy)->toContain($circularBKey);
-    expect($updatedCircularBTransformed->referencedBy)->toContain($circularAKey);
+    expect($recreatedCircularATransformed->getReferencedBy())->toContain($circularBKey);
+    expect($updatedCircularBTransformed->getReferencedBy())->toContain($circularAKey);
 
     assertMatchesSnapshot(file_get_contents($temporaryDirectory->path('types.ts')));
 });

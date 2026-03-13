@@ -42,7 +42,7 @@ it('will find types and takes attributes into account', function () {
 
     $typesToCheck = array_filter(
         iterator_to_array($collection),
-        fn (Transformed $transformed) => in_array($transformed->reference->classString, [
+        fn (Transformed $transformed) => in_array($transformed->getReference()->classString, [
             TypeScriptAttributedClass::class,
             TypeScriptLocationAttributedClass::class,
             OptionalAttributedClass::class,
@@ -51,76 +51,76 @@ it('will find types and takes attributes into account', function () {
         ])
     );
 
-    usort($typesToCheck, fn (Transformed $a, Transformed $b) => $a->reference->classString <=> $b->reference->classString);
+    usort($typesToCheck, fn (Transformed $a, Transformed $b) => $a->getReference()->classString <=> $b->getReference()->classString);
 
     expect($typesToCheck)->sequence(
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)
             ->getName()->toBe('OptionalAttributedClass')
-            ->typeScriptNode->toEqual(new TypeScriptAlias(
+            ->getNode()->toEqual(new TypeScriptAlias(
                 new TypeScriptIdentifier('OptionalAttributedClass'),
                 new TypeScriptObject([
                     new TypeScriptProperty('property', new TypeScriptString(), isOptional: true),
                 ])
             ))
-            ->reference->toBeInstanceOf(PhpClassReference::class)
-            ->reference->classString->toBe(OptionalAttributedClass::class)
-            ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
+            ->getReference()->toBeInstanceOf(PhpClassReference::class)
+            ->getReference()->classString->toBe(OptionalAttributedClass::class)
+            ->getLocation()->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)
             ->getName()->toBe('ReadonlyClass')
-            ->typeScriptNode->toEqual(new TypeScriptAlias(
+            ->getNode()->toEqual(new TypeScriptAlias(
                 new TypeScriptIdentifier('ReadonlyClass'),
                 new TypeScriptObject([
                     new TypeScriptProperty('property', new TypeScriptString(), isReadonly: true),
                 ])
             ))
-            ->reference->toBeInstanceOf(PhpClassReference::class)
-            ->reference->classString->toBe(ReadonlyClass::class)
-            ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
+            ->getReference()->toBeInstanceOf(PhpClassReference::class)
+            ->getReference()->classString->toBe(ReadonlyClass::class)
+            ->getLocation()->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)
             ->getName()->toBe('SimpleClass')
-            ->typeScriptNode->toEqual(new TypeScriptAlias(
+            ->getNode()->toEqual(new TypeScriptAlias(
                 new TypeScriptIdentifier('SimpleClass'),
                 new TypeScriptObject([
                     new TypeScriptProperty('stringProperty', new TypeScriptString()),
                     new TypeScriptProperty('constructorPromotedStringProperty', new TypeScriptString()),
                 ])
             ))
-            ->reference->toBeInstanceOf(PhpClassReference::class)
-            ->reference->classString->toBe(SimpleClass::class)
-            ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
+            ->getReference()->toBeInstanceOf(PhpClassReference::class)
+            ->getReference()->classString->toBe(SimpleClass::class)
+            ->getLocation()->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)
             ->getName()->toBe('JustAnotherName')
-            ->typeScriptNode->toEqual(new TypeScriptAlias(
+            ->getNode()->toEqual(new TypeScriptAlias(
                 new TypeScriptIdentifier('JustAnotherName'),
                 new TypeScriptObject([
                     new TypeScriptProperty('property', new TypeScriptString()),
                 ])
             ))
-            ->reference->toBeInstanceOf(PhpClassReference::class)
-            ->reference->classString->toBe(TypeScriptAttributedClass::class)
-            ->location->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
+            ->getReference()->toBeInstanceOf(PhpClassReference::class)
+            ->getReference()->classString->toBe(TypeScriptAttributedClass::class)
+            ->getLocation()->toBe(['Spatie', 'TypeScriptTransformer', 'Tests', 'Fakes', 'TypesToProvide']),
         fn (Expectation $transformed) => $transformed
             ->toBeInstanceOf(Transformed::class)
             ->getName()->toBe('TypeScriptLocationAttributedClass')
-            ->typeScriptNode->toEqual(new TypeScriptAlias(
+            ->getNode()->toEqual(new TypeScriptAlias(
                 new TypeScriptIdentifier('TypeScriptLocationAttributedClass'),
                 new TypeScriptObject([
                     new TypeScriptProperty('property', new TypeScriptString()),
                 ])
             ))
-            ->reference->toBeInstanceOf(PhpClassReference::class)
-            ->reference->classString->toBe(TypeScriptLocationAttributedClass::class)
-            ->location->toBe(['App', 'Here']),
+            ->getReference()->toBeInstanceOf(PhpClassReference::class)
+            ->getReference()->classString->toBe(TypeScriptLocationAttributedClass::class)
+            ->getLocation()->toBe(['App', 'Here']),
     );
 });
 
 it('will not find hidden classes', function () {
     $typeNames = array_map(
-        fn (Transformed $transformed) => $transformed->reference->classString,
+        fn (Transformed $transformed) => $transformed->getReference()->classString,
         iterator_to_array(getTestProvidedTypes())
     );
 
@@ -131,7 +131,7 @@ it('will not find hidden classes', function () {
 
 it('will only transform types it can transform', function () {
     $classTypes = array_map(
-        fn (Transformed $transformed) => $transformed->reference->classString,
+        fn (Transformed $transformed) => $transformed->getReference()->classString,
         iterator_to_array(getTestProvidedTypes([new AllClassTransformer()]))
     );
 
@@ -140,7 +140,7 @@ it('will only transform types it can transform', function () {
         ->toContain(SimpleClass::class);
 
     $enumTypes = array_map(
-        fn (Transformed $transformed) => $transformed->reference->classString,
+        fn (Transformed $transformed) => $transformed->getReference()->classString,
         iterator_to_array(getTestProvidedTypes([new EnumTransformer()]))
     );
 
@@ -149,7 +149,7 @@ it('will only transform types it can transform', function () {
         ->not->toContain(SimpleClass::class);
 
     $allTypes = array_map(
-        fn (Transformed $transformed) => $transformed->reference->classString,
+        fn (Transformed $transformed) => $transformed->getReference()->classString,
         iterator_to_array(getTestProvidedTypes([new EnumTransformer(), new AllClassTransformer()]))
     );
 

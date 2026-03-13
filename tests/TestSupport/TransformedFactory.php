@@ -73,14 +73,16 @@ class TransformedFactory
         );
 
         foreach ($this->references ?? [] as $reference) {
-            $transformed->references[$reference->reference->getKey()] = [];
+            $transformed->references($reference->getReference()->getKey(), new \Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference($reference->getReference()));
         }
 
         foreach ($this->referencedBy ?? [] as $reference) {
-            $transformed->referencedBy[] = $reference->reference->getKey();
+            $transformed->referencedBy($reference->getReference()->getKey());
         }
 
-        $transformed->additionalImports = $this->additionalImports;
+        foreach ($this->additionalImports as $import) {
+            $transformed->addAdditionalImport($import);
+        }
 
         if ($this->writer !== null) {
             $transformed->setWriter($this->writer);

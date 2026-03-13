@@ -72,7 +72,7 @@ class User {
 
     expect($collection)->toHaveCount(1);
     expect($transformed->getName())->toBe('User');
-    expect($collection->has($originalTransformed->reference))->toBeFalse();
+    expect($collection->has($originalTransformed->getReference()))->toBeFalse();
 });
 
 it('does nothing when the file is updated but the transformed is unchanged', function () {
@@ -100,13 +100,13 @@ class User {
     $handler->handle(new FileCreatedWatchEvent($path));
 
     $transformed = $collection->get((new ClassStringReference('App\Models\User'))->getKey());
-    $transformed->changed = false;
+    $transformed->write(new \Spatie\TypeScriptTransformer\Data\WritingContext([]));
 
     // Update with same content
     $handler->handle(new FileUpdatedWatchEvent($path));
 
     expect($collection)->toHaveCount(1);
-    expect($transformed->changed)->toBeFalse();
+    expect($transformed->isChanged())->toBeFalse();
 });
 
 it('removes the original and requires complete rewrite when class is no longer transformable', function () {

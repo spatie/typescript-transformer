@@ -19,30 +19,132 @@ class Transformed
 
     protected ?string $cached = null;
 
-    public bool $changed = true;
+    protected bool $changed = true;
 
     /** @var array<string, TypeScriptReference[]> */
-    public array $references = [];
+    protected array $references = [];
 
     /** @var array<string> */
-    public array $referencedBy = [];
+    protected array $referencedBy = [];
 
     /** @var array<string, TypeScriptReference[]> */
-    public array $missingReferences = [];
+    protected array $missingReferences = [];
 
     /** @var array<AdditionalImport> */
-    public array $additionalImports = [];
+    protected array $additionalImports = [];
 
     /**
      * @param array<string> $location Namespace/organizational segments (e.g., ['App', 'Models', 'Post'])
      */
     public function __construct(
-        public TypeScriptNode $typeScriptNode,
-        public Reference $reference,
-        public array $location,
-        public bool $export = true,
+        protected TypeScriptNode $typeScriptNode,
+        protected Reference $reference,
+        protected array $location,
+        protected bool $export = true,
         protected ?Writer $writer = null,
     ) {
+    }
+
+    public function getNode(): TypeScriptNode
+    {
+        return $this->typeScriptNode;
+    }
+
+    public function setNode(TypeScriptNode $typeScriptNode): void
+    {
+        $this->typeScriptNode = $typeScriptNode;
+    }
+
+    public function getReference(): Reference
+    {
+        return $this->reference;
+    }
+
+    /** @return array<string> */
+    public function getLocation(): array
+    {
+        return $this->location;
+    }
+
+    /** @param array<string> $location */
+    public function setLocation(array $location): void
+    {
+        $this->location = $location;
+    }
+
+    public function isExported(): bool
+    {
+        return $this->export;
+    }
+
+    public function export(bool $export): void
+    {
+        $this->export = $export;
+    }
+
+    public function isChanged(): bool
+    {
+        return $this->changed;
+    }
+
+    /** @return array<string, TypeScriptReference[]> */
+    public function getReferences(): array
+    {
+        return $this->references;
+    }
+
+    /** @return array<string> */
+    public function getReferencedBy(): array
+    {
+        return $this->referencedBy;
+    }
+
+    /** @return array<string, TypeScriptReference[]> */
+    public function getMissingReferences(): array
+    {
+        return $this->missingReferences;
+    }
+
+    /** @return array<AdditionalImport> */
+    public function getAdditionalImports(): array
+    {
+        return $this->additionalImports;
+    }
+
+    public function references(string|Reference $key, TypeScriptReference $typeReference): void
+    {
+        if ($key instanceof Reference) {
+            $key = $key->getKey();
+        }
+
+        if (! array_key_exists($key, $this->references)) {
+            $this->references[$key] = [];
+        }
+
+        $this->references[$key][] = $typeReference;
+    }
+
+    public function referencedBy(string|Reference $key): void
+    {
+        if ($key instanceof Reference) {
+            $key = $key->getKey();
+        }
+
+        $this->referencedBy[] = $key;
+    }
+
+    public function addAdditionalImport(AdditionalImport $import): void
+    {
+        $this->additionalImports[] = $import;
+    }
+
+    public function removeMissingReference(string|Reference $key): void
+    {
+        if ($key instanceof Reference) {
+            $key = $key->getKey();
+        }
+
+        unset($this->missingReferences[$key]);
     }
 
     public function getName(): ?string

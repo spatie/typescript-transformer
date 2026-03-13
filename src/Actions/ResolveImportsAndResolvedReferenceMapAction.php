@@ -43,7 +43,7 @@ class ResolveImportsAndResolvedReferenceMapAction
         $additionalImports = [];
 
         foreach ($transformed as $transformedItem) {
-            foreach ($transformedItem->references as $referenceKey => $typeReferences) {
+            foreach ($transformedItem->getReferences() as $referenceKey => $typeReferences) {
                 if (array_key_exists($referenceKey, $referenceMap)) {
                     continue;
                 }
@@ -64,7 +64,7 @@ class ResolveImportsAndResolvedReferenceMapAction
                     continue;
                 }
 
-                if ($importsCollection->hasReferenceImported($referenced->reference)) {
+                if ($importsCollection->hasReferenceImported($referenced->getReference())) {
                     continue;
                 }
 
@@ -74,7 +74,7 @@ class ResolveImportsAndResolvedReferenceMapAction
                     continue;
                 }
 
-                if ($referenced->export === false) {
+                if ($referenced->isExported() === false) {
                     continue;
                 }
 
@@ -83,10 +83,10 @@ class ResolveImportsAndResolvedReferenceMapAction
                     $resolvedReference->path
                 );
 
-                $importsCollection->add($relativePath, $resolvedReference->name, $referenced->reference);
+                $importsCollection->add($relativePath, $resolvedReference->name, $referenced->getReference());
             }
 
-            array_push($additionalImports, ...$transformedItem->additionalImports);
+            array_push($additionalImports, ...$transformedItem->getAdditionalImports());
         }
 
         foreach ($additionalImports as $import) {

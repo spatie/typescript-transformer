@@ -31,9 +31,9 @@ it('collects additional imports from TypeScriptRaw nodes', function () {
     $action = new CollectAdditionalImportsAction(createConfig(sys_get_temp_dir()));
     $action->execute($collection);
 
-    expect($transformed->additionalImports)->toHaveCount(1);
-    expect($transformed->additionalImports[0]->path)->toBe('types/components.ts');
-    expect($transformed->additionalImports[0]->names)->toBe(['SomeComponent']);
+    expect($transformed->getAdditionalImports())->toHaveCount(1);
+    expect($transformed->getAdditionalImports()[0]->path)->toBe('types/components.ts');
+    expect($transformed->getAdditionalImports()[0]->names)->toBe(['SomeComponent']);
 });
 
 it('keeps relative import paths unchanged', function () {
@@ -49,7 +49,7 @@ it('keeps relative import paths unchanged', function () {
     $action = new CollectAdditionalImportsAction(createConfig(sys_get_temp_dir()));
     $action->execute($collection);
 
-    expect($transformed->additionalImports[0]->path)->toBe('types/components.ts');
+    expect($transformed->getAdditionalImports()[0]->path)->toBe('types/components.ts');
 });
 
 it('normalizes absolute import paths relative to the output directory', function () {
@@ -68,5 +68,5 @@ it('normalizes absolute import paths relative to the output directory', function
     $action = new CollectAdditionalImportsAction(createConfig($outputDir));
     $action->execute($collection);
 
-    expect($transformed->additionalImports[0]->path)->toBe('../resources/types/components');
+    expect($transformed->getAdditionalImports()[0]->path)->toBe('../resources/types/components');
 });

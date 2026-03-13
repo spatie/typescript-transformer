@@ -97,7 +97,7 @@ class ModuleWriter implements Writer
     {
         return new ModuleImportResolvedReference(
             $transformed->getName(),
-            $this->resolveRelativePath($transformed->location)
+            $this->resolveRelativePath($transformed->getLocation())
         );
     }
 }

@@ -65,7 +65,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
         );
 
         if ($originalTransformed && $newlyTransformed === null) {
-            $this->transformedCollection->remove($originalTransformed->reference);
+            $this->transformedCollection->remove($originalTransformed->getReference());
 
             $this->transformedCollection->requireCompleteRewrite();
 
@@ -77,7 +77,7 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
         }
 
         if ($originalTransformed !== null) {
-            $this->transformedCollection->remove($originalTransformed->reference);
+            $this->transformedCollection->remove($originalTransformed->getReference());
         }
 
         if ($newlyTransformed) {

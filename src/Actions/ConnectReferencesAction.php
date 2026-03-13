@@ -29,7 +29,7 @@ class ConnectReferencesAction
                 'collection' => $collection,
             ];
 
-            $this->visitor->execute($transformed->typeScriptNode, $metadata);
+            $this->visitor->execute($transformed->getNode(), $metadata);
         }
     }
 
@@ -47,23 +47,17 @@ class ConnectReferencesAction
             if ($foundTransformed === null) {
                 $currentTransformed->addMissingReference($typeReference->reference, $typeReference);
 
-                $this->log->warning("Tried replacing reference to `{$typeReference->reference->humanFriendlyName()}` in `{$currentTransformed->reference->humanFriendlyName()}` but it was not found in the transformed types");
+                $this->log->warning("Tried replacing reference to `{$typeReference->reference->humanFriendlyName()}` in `{$currentTransformed->getReference()->humanFriendlyName()}` but it was not found in the transformed types");
 
                 return;
             }
 
-            if (! array_key_exists($foundTransformed->reference->getKey(), $currentTransformed->references)) {
-                $currentTransformed->references[$foundTransformed->reference->getKey()] = [];
-            }
-
-            $currentTransformed->references[$foundTransformed->reference->getKey()][] = $typeReference;
-            $foundTransformed->referencedBy[] = $currentTransformed->reference->getKey();
+            $currentTransformed->references($foundTransformed->getReference()->getKey(), $typeReference);
+            $foundTransformed->referencedBy($currentTransformed->getReference()->getKey());
 
             $typeReference->connect($foundTransformed);
 
-            if (array_key_exists($foundTransformed->reference->getKey(), $currentTransformed->missingReferences)) {
-                unset($currentTransformed->missingReferences[$foundTransformed->reference->getKey()]);
-            }
+            $currentTransformed->removeMissingReference($foundTransformed->getReference()->getKey());
         }, [TypeScriptReference::class]);
     }
 }

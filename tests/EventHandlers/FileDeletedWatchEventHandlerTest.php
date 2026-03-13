@@ -35,8 +35,8 @@ it('removes the transformed item when its file is deleted', function () {
     $result = $handler->handle(new FileDeletedWatchEvent($factory->path('Models/User.php')));
 
     expect($result)->toBeNull();
-    expect($collection->has($deletedFileTransformed->reference))->toBeFalse();
-    expect($collection->has($otherFileTransformed->reference))->toBeTrue();
+    expect($collection->has($deletedFileTransformed->getReference()))->toBeFalse();
+    expect($collection->has($otherFileTransformed->getReference()))->toBeTrue();
 });
 
 it('does nothing when the deleted file has no transformed item', function () {
@@ -58,5 +58,5 @@ it('does nothing when the deleted file has no transformed item', function () {
     $result = $handler->handle(new FileDeletedWatchEvent($factory->path('Models/UnknownFile.php')));
 
     expect($result)->toBeNull();
-    expect($collection->has($existingTransformed->reference))->toBeTrue();
+    expect($collection->has($existingTransformed->getReference()))->toBeTrue();
 });

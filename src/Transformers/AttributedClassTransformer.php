@@ -31,7 +31,7 @@ class AttributedClassTransformer extends ClassTransformer
         }
 
         if (($attribute['location'] ?? null) !== null) {
-            $transformed->location = $attribute['location'];
+            $transformed->setLocation($attribute['location']);
         }
 
         return $transformed;

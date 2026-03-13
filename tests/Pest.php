@@ -64,7 +64,12 @@ function transformSingle(
     $result = $results[0] ?? Untransformable::create();
 
     if ($reference !== null && $result instanceof Transformed) {
-        $result->reference = $reference;
+        $result = new Transformed(
+            $result->getNode(),
+            $reference,
+            $result->getLocation(),
+            $result->isExported(),
+        );
     }
 
     return $result;

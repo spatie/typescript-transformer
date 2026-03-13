@@ -29,7 +29,7 @@ class DirectoryDeletedWatchEventHandler implements WatchEventHandler
         $transformedItems = $this->transformedCollection->findTransformedByDirectory($event->path);
 
         foreach ($transformedItems as $transformed) {
-            $this->transformedCollection->remove($transformed->reference);
+            $this->transformedCollection->remove($transformed->getReference());
         }
 
         return null;

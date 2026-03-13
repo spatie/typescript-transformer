@@ -29,7 +29,7 @@ class MemoryWriter implements Writer
     {
         foreach (static::$transformed as $transformedItem) {
             if ($transformedItem->getName() === $name) {
-                return $transformedItem->typeScriptNode;
+                return $transformedItem->getNode();
             }
         }
     }

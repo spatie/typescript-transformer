@@ -27,7 +27,7 @@ class CollectAdditionalImportsAction
                 'transformed' => $transformed,
             ];
 
-            $this->visitor->execute($transformed->typeScriptNode, $metadata);
+            $this->visitor->execute($transformed->getNode(), $metadata);
         }
     }
 
@@ -42,7 +42,7 @@ class CollectAdditionalImportsAction
             $transformed = $metadata['transformed'];
 
             foreach ($raw->additionalImports as $import) {
-                $transformed->additionalImports[] = $this->normalizeImport($import);
+                $transformed->addAdditionalImport($this->normalizeImport($import));
             }
         }, [TypeScriptRaw::class]);
     }

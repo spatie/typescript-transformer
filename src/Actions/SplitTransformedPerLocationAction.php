@@ -16,7 +16,7 @@ class SplitTransformedPerLocationAction
         foreach ($transformed as $item) {
             $current = &$pointer;
 
-            foreach ($item->location as $segment) {
+            foreach ($item->getLocation() as $segment) {
                 if (! array_key_exists($segment, $current['children'])) {
                     $current['children'][$segment] = ['transformed' => [], 'children' => []];
                 }

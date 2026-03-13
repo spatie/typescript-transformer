@@ -23,7 +23,7 @@ it('wont resolve imports when types are in the same module', function () {
         )->build(),
         TransformedFactory::alias(
             name: 'B',
-            typeScriptNode: new TypeScriptReference($reference->reference),
+            typeScriptNode: new TypeScriptReference($reference->getReference()),
             references: [
                 $reference,
             ]
@@ -36,7 +36,7 @@ it('wont resolve imports when types are in the same module', function () {
         $transformedCollection
     );
 
-    $referenceKey = $reference->reference->getKey();
+    $referenceKey = $reference->getReference()->getKey();
 
     expect($imports->getTypeScriptNodes())->toBeEmpty();
     expect($referenceMap)->toHaveKey($referenceKey);
@@ -90,19 +90,19 @@ it('will import a type from another module', function () {
     );
 
     expect($referenceMap)->toEqual([
-        $nestedReference->reference->getKey() => 'Nested',
-        $parentReference->reference->getKey() => 'Parent',
-        $deeperParent->reference->getKey() => 'DeeperParent',
-        $rootReference->reference->getKey() => 'Root',
+        $nestedReference->getReference()->getKey() => 'Nested',
+        $parentReference->getReference()->getKey() => 'Parent',
+        $deeperParent->getReference()->getKey() => 'DeeperParent',
+        $rootReference->getReference()->getKey() => 'Root',
     ]);
 
     expect($imports->getImports())->toEqual([
         './nested' => [
             'path' => './nested',
             'segments' => [
-                $nestedReference->reference->getKey() => [
+                $nestedReference->getReference()->getKey() => [
                     'name' => 'Nested',
-                    'reference' => $nestedReference->reference->getKey(),
+                    'reference' => $nestedReference->getReference()->getKey(),
                     'alias' => null,
                 ],
             ],
@@ -110,9 +110,9 @@ it('will import a type from another module', function () {
         '../' => [
             'path' => '../',
             'segments' => [
-                $parentReference->reference->getKey() => [
+                $parentReference->getReference()->getKey() => [
                     'name' => 'Parent',
-                    'reference' => $parentReference->reference->getKey(),
+                    'reference' => $parentReference->getReference()->getKey(),
                     'alias' => null,
                 ],
             ],
@@ -120,9 +120,9 @@ it('will import a type from another module', function () {
         '../deeper' => [
             'path' => '../deeper',
             'segments' => [
-                $deeperParent->reference->getKey() => [
+                $deeperParent->getReference()->getKey() => [
                     'name' => 'DeeperParent',
-                    'reference' => $deeperParent->reference->getKey(),
+                    'reference' => $deeperParent->getReference()->getKey(),
                     'alias' => null,
                 ],
             ],
@@ -130,9 +130,9 @@ it('will import a type from another module', function () {
         '../../' => [
             'path' => '../../',
             'segments' => [
-                $rootReference->reference->getKey() => [
+                $rootReference->getReference()->getKey() => [
                     'name' => 'Root',
-                    'reference' => $rootReference->reference->getKey(),
+                    'reference' => $rootReference->getReference()->getKey(),
                     'alias' => null,
                 ],
             ],
@@ -170,16 +170,16 @@ it('wont import the same type twice', function () {
     );
 
     expect($referenceMap)->toEqual([
-        $nestedReference->reference->getKey() => 'Nested',
+        $nestedReference->getReference()->getKey() => 'Nested',
     ]);
 
     expect($imports->getImports())->toEqual([
         './nested' => [
             'path' => './nested',
             'segments' => [
-                $nestedReference->reference->getKey() => [
+                $nestedReference->getReference()->getKey() => [
                     'name' => 'Nested',
-                    'reference' => $nestedReference->reference->getKey(),
+                    'reference' => $nestedReference->getReference()->getKey(),
                     'alias' => null,
                 ],
             ],
@@ -211,16 +211,16 @@ it('will alias a reference if it is already in the module', function () {
     );
 
     expect($referenceMap)->toEqual([
-        $nestedCollection->reference->getKey() => 'CollectionImport',
+        $nestedCollection->getReference()->getKey() => 'CollectionImport',
     ]);
 
     expect($imports->getImports())->toEqual([
         './nested' => [
             'path' => './nested',
             'segments' => [
-                $nestedCollection->reference->getKey() => [
+                $nestedCollection->getReference()->getKey() => [
                     'name' => 'Collection',
-                    'reference' => $nestedCollection->reference->getKey(),
+                    'reference' => $nestedCollection->getReference()->getKey(),
                     'alias' => 'CollectionImport',
                 ],
             ],
@@ -258,17 +258,17 @@ it('will alias a reference if it is already in the module and already aliased by
     );
 
     expect($referenceMap)->toEqual([
-        $nestedCollection->reference->getKey() => 'CollectionImport',
-        $otherNestedCollection->reference->getKey() => 'CollectionImport2',
+        $nestedCollection->getReference()->getKey() => 'CollectionImport',
+        $otherNestedCollection->getReference()->getKey() => 'CollectionImport2',
     ]);
 
     expect($imports->getImports())->toEqual([
         './nested' => [
             'path' => './nested',
             'segments' => [
-                $nestedCollection->reference->getKey() => [
+                $nestedCollection->getReference()->getKey() => [
                     'name' => 'Collection',
-                    'reference' => $nestedCollection->reference->getKey(),
+                    'reference' => $nestedCollection->getReference()->getKey(),
                     'alias' => 'CollectionImport',
                 ],
             ],
@@ -276,9 +276,9 @@ it('will alias a reference if it is already in the module and already aliased by
         './otherNested' => [
             'path' => './otherNested',
             'segments' => [
-                $otherNestedCollection->reference->getKey() => [
+                $otherNestedCollection->getReference()->getKey() => [
                     'name' => 'Collection',
-                    'reference' => $otherNestedCollection->reference->getKey(),
+                    'reference' => $otherNestedCollection->getReference()->getKey(),
                     'alias' => 'CollectionImport2',
                 ],
             ],
@@ -312,7 +312,7 @@ it('will add global namespace references to the reference map but not import the
     );
 
     expect($referenceMap)->toEqual([
-        $globalReference->reference->getKey() => 'App.Models.GlobalType',
+        $globalReference->getReference()->getKey() => 'App.Models.GlobalType',
     ]);
 
     expect($imports->getImports())->toBeEmpty();
@@ -369,7 +369,7 @@ it('will still resolve non-exported types within the same module', function () {
     );
 
     expect($referenceMap)->toEqual([
-        $nonExportedReference->reference->getKey() => 'NonExported',
+        $nonExportedReference->getReference()->getKey() => 'NonExported',
     ]);
     expect($imports->getImports())->toBeEmpty();
 });
@@ -402,7 +402,7 @@ it('will still resolve non-exported types from a global namespace writer', funct
 
     // Global namespace types are always accessible (ambient declarations)
     expect($referenceMap)->toEqual([
-        $nonExportedGlobalReference->reference->getKey() => 'App.Models.NonExportedGlobal',
+        $nonExportedGlobalReference->getReference()->getKey() => 'App.Models.NonExportedGlobal',
     ]);
     expect($imports->getImports())->toBeEmpty();
 });

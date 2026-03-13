@@ -28,15 +28,15 @@ it('can connect references', function () {
 
     $action->execute($collection);
 
-    expect($transformedEnum->references)->toHaveCount(0);
-    expect($transformedEnum->referencedBy)->toHaveCount(1);
-    expect($transformedEnum->referencedBy)->toContain($transformedClass->reference->getKey());
+    expect($transformedEnum->getReferences())->toHaveCount(0);
+    expect($transformedEnum->getReferencedBy())->toHaveCount(1);
+    expect($transformedEnum->getReferencedBy())->toContain($transformedClass->getReference()->getKey());
 
-    expect($transformedClass->references)->toHaveCount(1);
-    expect($transformedClass->references)->toHaveKey($transformedEnum->reference->getKey());
-    expect($transformedClass->referencedBy)->toHaveCount(0);
+    expect($transformedClass->getReferences())->toHaveCount(1);
+    expect($transformedClass->getReferences())->toHaveKey($transformedEnum->getReference()->getKey());
+    expect($transformedClass->getReferencedBy())->toHaveCount(0);
 
-    expect($transformedClass->typeScriptNode->type->properties[0]->type)
+    expect($transformedClass->getNode()->type->properties[0]->type)
         ->toBeInstanceOf(TypeScriptReference::class)
         ->referenced->toBe($transformedEnum);
 });
@@ -51,21 +51,21 @@ it('can connect two objects referencing each other', function () {
 
     $action->execute($collection);
 
-    expect($circularA->references)->toHaveCount(1);
-    expect($circularA->references)->toHaveKey($circularB->reference->getKey());
-    expect($circularA->referencedBy)->toHaveCount(1);
-    expect($circularA->referencedBy)->toContain($circularB->reference->getKey());
+    expect($circularA->getReferences())->toHaveCount(1);
+    expect($circularA->getReferences())->toHaveKey($circularB->getReference()->getKey());
+    expect($circularA->getReferencedBy())->toHaveCount(1);
+    expect($circularA->getReferencedBy())->toContain($circularB->getReference()->getKey());
 
-    expect($circularB->references)->toHaveCount(1);
-    expect($circularB->references)->toHaveKey($circularA->reference->getKey());
-    expect($circularB->referencedBy)->toHaveCount(1);
-    expect($circularB->referencedBy)->toContain($circularA->reference->getKey());
+    expect($circularB->getReferences())->toHaveCount(1);
+    expect($circularB->getReferences())->toHaveKey($circularA->getReference()->getKey());
+    expect($circularB->getReferencedBy())->toHaveCount(1);
+    expect($circularB->getReferencedBy())->toContain($circularA->getReference()->getKey());
 
-    expect($circularA->typeScriptNode->type->properties[0]->type)
+    expect($circularA->getNode()->type->properties[0]->type)
         ->toBeInstanceOf(TypeScriptReference::class)
         ->referenced->toBe($circularB);
 
-    expect($circularB->typeScriptNode->type->properties[0]->type)
+    expect($circularB->getNode()->type->properties[0]->type)
         ->toBeInstanceOf(TypeScriptReference::class)
         ->referenced->toBe($circularA);
 });
@@ -86,10 +86,10 @@ it('will write to the log when a reference cannot be found', function () {
 
     $action->execute($collection);
 
-    expect($transformedClass->references)->toHaveCount(0);
-    expect($transformedClass->referencedBy)->toHaveCount(0);
+    expect($transformedClass->getReferences())->toHaveCount(0);
+    expect($transformedClass->getReferencedBy())->toHaveCount(0);
 
-    expect($transformedClass->typeScriptNode->type->properties[0]->type)
+    expect($transformedClass->getNode()->type->properties[0]->type)
         ->toBeInstanceOf(TypeScriptReference::class)
         ->referenced->toBeNull();
 
@@ -122,6 +122,6 @@ it('can connect references within a TypeScriptRaw node', function () {
         ->toBeInstanceOf(TypeScriptReference::class)
         ->referenced->toBe($transformedEnum);
 
-    expect($transformedRaw->references)->toHaveKey($transformedEnum->reference->getKey());
-    expect($transformedEnum->referencedBy)->toContain($transformedRaw->reference->getKey());
+    expect($transformedRaw->getReferences())->toHaveKey($transformedEnum->getReference()->getKey());
+    expect($transformedEnum->getReferencedBy())->toContain($transformedRaw->getReference()->getKey());
 });

@@ -103,7 +103,7 @@ class GlobalNamespaceWriter implements Writer
 
     public function resolveReference(Transformed $transformed): ModuleImportResolvedReference|GlobalNamespaceResolvedReference
     {
-        $parts = [...$transformed->location, $transformed->getName()];
+        $parts = [...$transformed->getLocation(), $transformed->getName()];
 
         return new GlobalNamespaceResolvedReference(implode('.', $parts));
     }

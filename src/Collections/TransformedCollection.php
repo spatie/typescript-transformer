@@ -35,7 +35,7 @@ class TransformedCollection implements IteratorAggregate, Countable
     public function add(Transformed ...$transformed): self
     {
         foreach ($transformed as $item) {
-            $reference = $item->reference->getKey();
+            $reference = $item->getReference()->getKey();
 
             $alreadyHasReference = $this->has($reference);
 
@@ -47,10 +47,10 @@ class TransformedCollection implements IteratorAggregate, Countable
                 $this->remove($reference);
             }
 
-            $this->items[$item->reference->getKey()] = $item;
+            $this->items[$item->getReference()->getKey()] = $item;
 
-            if ($item->reference instanceof FilesystemReference) {
-                $this->fileMapping[$this->cleanupFilePath($item->reference->getFilesystemOriginPath())] = $item;
+            if ($item->getReference() instanceof FilesystemReference) {
+                $this->fileMapping[$this->cleanupFilePath($item->getReference()->getFilesystemOriginPath())] = $item;
             }
         }
 
@@ -75,17 +75,17 @@ class TransformedCollection implements IteratorAggregate, Countable
             return;
         }
 
-        foreach (array_unique($transformed->referencedBy) as $referencedBy) {
+        foreach (array_unique($transformed->getReferencedBy()) as $referencedBy) {
             $referencedBy = $this->get($referencedBy);
 
             $referencedBy->markReferenceMissing($transformed);
             $referencedBy->markAsChanged();
         }
 
-        unset($this->items[$transformed->reference->getKey()]);
+        unset($this->items[$transformed->getReference()->getKey()]);
 
-        if ($transformed->reference instanceof FilesystemReference) {
-            $path = $this->cleanupFilePath($transformed->reference->getFilesystemOriginPath());
+        if ($transformed->getReference() instanceof FilesystemReference) {
+            $path = $this->cleanupFilePath($transformed->getReference()->getFilesystemOriginPath());
 
             unset($this->fileMapping[$path]);
         }
@@ -149,7 +149,7 @@ class TransformedCollection implements IteratorAggregate, Countable
     public function onlyChanged(): Generator
     {
         foreach ($this->items as $item) {
-            if ($item->changed) {
+            if ($item->isChanged()) {
                 yield $item;
             }
         }
@@ -180,7 +180,7 @@ class TransformedCollection implements IteratorAggregate, Countable
         }
 
         foreach ($this->items as $item) {
-            if ($item->changed) {
+            if ($item->isChanged()) {
                 return true;
             }
         }

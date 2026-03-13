@@ -32,7 +32,7 @@ class FileDeletedWatchEventHandler implements WatchEventHandler
             return null;
         }
 
-        $this->transformedCollection->remove($transformed->reference);
+        $this->transformedCollection->remove($transformed->getReference());
 
         return null;
     }

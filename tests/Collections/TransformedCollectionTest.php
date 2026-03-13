@@ -69,8 +69,8 @@ it('can loop over only changed items in the collection', function () {
         $b = transformSingle(TypeScriptAttributedClass::class),
     ]);
 
-    $a->changed = true;
-    $b->changed = false;
+    $a->markAsChanged();
+    $b->write(new \Spatie\TypeScriptTransformer\Data\WritingContext([]));
 
     $found = [];
 
@@ -87,8 +87,8 @@ it('all items added to the collection are marked as changed', function () {
         $b = transformSingle(TypeScriptAttributedClass::class),
     ]);
 
-    expect($a->changed)->toBeTrue();
-    expect($b->changed)->toBeTrue();
+    expect($a->isChanged())->toBeTrue();
+    expect($b->isChanged())->toBeTrue();
 });
 
 it('can find transformed items by file path', function () {
@@ -125,12 +125,12 @@ it('can check if any items in the collection have changed', function () {
         $b = transformSingle(TypeScriptAttributedClass::class),
     ]);
 
-    $a->changed = false;
-    $b->changed = false;
+    $a->write(new \Spatie\TypeScriptTransformer\Data\WritingContext([]));
+    $b->write(new \Spatie\TypeScriptTransformer\Data\WritingContext([]));
 
     expect($collection->hasChanges())->toBeFalse();
 
-    $a->changed = true;
+    $a->markAsChanged();
 
     expect($collection->hasChanges())->toBeTrue();
 });
@@ -153,7 +153,7 @@ it('can remove a transformed item by reference and update references', function 
     )->resolveState();
 
     foreach ($collection as $transformed) {
-        $transformed->changed = false;
+        $transformed->write(new \Spatie\TypeScriptTransformer\Data\WritingContext([]));
     }
 
     $collection->remove($referenceA = new ClassStringReference(CircularA::class));
@@ -162,12 +162,12 @@ it('can remove a transformed item by reference and update references', function 
 
     $transformedB = $collection->get($referenceB = new ClassStringReference(CircularB::class));
 
-    expect($transformedB->changed)->toBeTrue();
-    expect($transformedB->missingReferences)->toHaveCount(1);
-    expect($transformedB->missingReferences)->toHaveKey($referenceA->getKey());
-    expect($transformedB->missingReferences[$referenceA->getKey()])
+    expect($transformedB->isChanged())->toBeTrue();
+    expect($transformedB->getMissingReferences())->toHaveCount(1);
+    expect($transformedB->getMissingReferences())->toHaveKey($referenceA->getKey());
+    expect($transformedB->getMissingReferences()[$referenceA->getKey()])
         ->toBeArray()
         ->each()
         ->toBeInstanceOf(TypeScriptReference::class);
-    expect($transformedB->referencedBy)->not->toContain($referenceA->getKey());
+    expect($transformedB->getReferencedBy())->not->toContain($referenceA->getKey());
 });

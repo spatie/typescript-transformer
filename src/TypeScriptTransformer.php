@@ -51,6 +51,8 @@ class TypeScriptTransformer
     // - Make sure the spatie website will render the docs
     // - Check on how we're doing laravel data with v2 -> ok
     // - Check problems with Data transformer
+    // - There's a problem with the roue helper provder
+    // - Better transformed caching, atm replacing transformed in the TransformedCollection is not efficient
 
     public static function create(
         TypeScriptTransformerConfig|TypeScriptTransformerConfigFactory $config,
@@ -122,8 +124,8 @@ class TypeScriptTransformer
         $transformedCollection = $this->runProvidersAction->execute($this->logger, $phpNodeCollection, $this->transformedProviderActions);
 
         foreach ($transformedCollection as $transformed) {
-            if ($transformed->reference instanceof PhpClassReference) {
-                $phpNodeCollection->add($transformed->reference->phpClassNode);
+            if ($transformed->getReference() instanceof PhpClassReference) {
+                $phpNodeCollection->add($transformed->getReference()->phpClassNode);
             }
         }
 
