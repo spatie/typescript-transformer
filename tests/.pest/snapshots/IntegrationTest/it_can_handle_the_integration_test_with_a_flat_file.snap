@@ -1,3 +1,4 @@
+export type Enum = "yes" | "no";
 export type IntegrationClass = {
 string: string,
 nullable: string | null,
@@ -30,7 +31,6 @@ optional?: string,
 constructor_annotated_array: number[],
 constructor_inline_annotated_array: LevelUpClass[],
 };
-export type Enum = "yes" | "no";
 export type IntegrationItem = {
 name: string,
 };

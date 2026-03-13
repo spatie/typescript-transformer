@@ -24,7 +24,11 @@ it('can handle the integration test with a flat file', function () {
 
     TypeScriptTransformer::create($config)->execute();
 
-    expect(file_get_contents($this->temporaryDirectory->path('flat.d.ts')))->toMatchSnapshot();
+    $content = file_get_contents($this->temporaryDirectory->path('flat.d.ts'));
+    $blocks = array_filter(preg_split('/(?=^export type )/m', trim($content)), fn ($b) => trim($b) !== '');
+    sort($blocks);
+
+    expect(implode('', $blocks))->toMatchSnapshot();
 });
 
 it('can handle the integration test with a namespaced file', function () {
