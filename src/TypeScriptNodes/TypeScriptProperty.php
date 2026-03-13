@@ -27,9 +27,4 @@ class TypeScriptProperty implements TypeScriptNode
 
         return "{$readonly}{$this->name->write($context)}{$optional}: {$this->type->write($context)}";
     }
-
-    public function children(): array
-    {
-        return [$this->name, $this->type];
-    }
 }

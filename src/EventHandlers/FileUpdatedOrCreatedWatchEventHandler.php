@@ -76,6 +76,12 @@ class FileUpdatedOrCreatedWatchEventHandler implements WatchEventHandler
             return null;
         }
 
+        // TODO: we could make this a lot more performant by making Transformed cacheable
+        // a simple boolean would indicate wether a cached version exists and can be used.
+        // If a new version is added we can start comparing the nodes, name, ...
+        // And smartly replace everything
+        // Future ...
+
         if ($originalTransformed !== null) {
             $this->transformedCollection->remove($originalTransformed->getReference());
         }
