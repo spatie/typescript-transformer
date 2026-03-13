@@ -37,6 +37,7 @@ class FlatModuleWriter implements Writer
         foreach ($imports->getTypeScriptNodes() as $import) {
             $output .= $import->write($writingContext).PHP_EOL;
         }
+        usort($transformed, fn (Transformed $a, Transformed $b) => $a->getName() <=> $b->getName());
 
         foreach ($transformed as $item) {
             $output .= $item->write($writingContext).PHP_EOL;
