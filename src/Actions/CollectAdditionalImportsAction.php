@@ -49,7 +49,7 @@ class CollectAdditionalImportsAction
 
     protected function normalizeImport(AdditionalImport $import): AdditionalImport
     {
-        if (! str_starts_with($import->path, DIRECTORY_SEPARATOR)) {
+        if (! $this->isAbsolutePath($import->path)) {
             return $import;
         }
 
@@ -61,5 +61,12 @@ class CollectAdditionalImportsAction
         );
 
         return new AdditionalImport($relativePath, $import->names);
+    }
+
+    protected function isAbsolutePath(string $path): bool
+    {
+        return str_starts_with($path, '/')
+            || str_starts_with($path, DIRECTORY_SEPARATOR)
+            || preg_match('/^[A-Za-z]:[\\\\\\/]/', $path);
     }
 }

@@ -64,7 +64,7 @@ class ResolveRelativePathAction
     /** @return array<int, string> */
     protected function toSegments(string $path, bool $isFile = true): array
     {
-        $segments = explode(DIRECTORY_SEPARATOR, $path);
+        $segments = preg_split('/[\/\\\\]/', $path);
 
         if ($isFile) {
             $lastIndex = array_key_last($segments);
