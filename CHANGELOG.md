@@ -2,6 +2,112 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 3.0.0 - 2026-03-13
+
+Version 3 is a ground-up rewrite. It introduces a TypeScript AST, a visitor pattern, watch mode, a new extension system, and much more.
+
+### TypeScript AST
+
+The package now builds a proper TypeScript Abstract Syntax Tree before writing output. Instead of generating strings directly, transformers create node objects that can be traversed and manipulated before being written to disk:
+
+```php
+new TypeScriptAlias('User', new TypeScriptObject([
+    new TypeScriptProperty('name', new TypeScriptString()),
+    new TypeScriptProperty('age', new TypeScriptNumber()),
+]));
+// Output: type User = { name: string; age: number }
+
+```
+There are a lot of node types available and you can easily add your own!
+
+### Visitor Pattern
+
+A `Visitor` allows users to traverse the AST, allowing them to replace or completely remove nodes:
+
+```php
+Visitor::create()
+    ->after(function (TypeScriptUnion $node) {
+        if (count($node->types) === 1) {
+            return VisitorOperation::replace(array_values($node->types)[0]);
+        }
+    })
+    ->execute($rootNode);
+
+```
+### Watch Mode
+
+A file system watcher monitors your PHP files and automatically re-transforms on changes. Your TypeScript definitions stay in sync as you develop - no manual re-running required.
+
+This feature is in beta at the moment.
+
+### References & Cross-File Linking
+
+`TypeScriptReference` nodes connect generated types to the PHP classes they represent. The system automatically resolves references to the correct import paths based on your writer configuration.
+
+### TransformedProvider
+
+A new provider interface lets you inject custom transformed types from any source - not just PHP classes:
+
+```php
+class AddLaravelCollectionProvider implements TransformedProvider
+{
+    public function provide(): array
+    {
+        return [new Transformed(
+            typeScriptNode: new TypeScriptAlias(
+                new TypeScriptGeneric(new TypeScriptIdentifier('Collection'), [new TypeScriptIdentifier('T')]),
+                new TypeScriptGeneric(new TypeScriptIdentifier('Array'), [new TypeScriptIdentifier('T')]),
+            ),
+            reference: new ClassStringReference(Collection::class),
+            location: ['Illuminate', 'Support'],
+        )];
+    }
+}
+// Output: type Collection<T> = Array<T>
+
+```
+### Rewritten Transformer System
+
+Collectors have been removed. Transformers now decide both *whether* they can handle a type and *how* to transform it:
+
+```php
+class MyTransformer extends ClassTransformer
+{
+    protected function shouldTransform(PhpClassNode $phpClassNode): bool
+    {
+        return $phpClassNode->implementsInterface(Data::class);
+    }
+}
+
+```
+### Rewritten Enum Support
+
+The `EnumTransformer` now supports union output, native TypeScript enums, and a pluggable `EnumProvider` interface for custom enum detection.
+
+### PHPStan Type Inference
+
+PHPDocumentor has been replaced by PHPStan's type parser. This provides more robust handling of generics, array shapes, `key-of`, `value-of`, and complex union/intersection types.
+
+### Dual Writer System
+
+`ModuleWriter` generates TypeScript modules in a directory structure mirroring your PHP namespaces. `GlobalNamespaceWriter` outputs a single `.d.ts` declaration file with namespaced types in global scope.
+
+### PhpNode Abstraction
+
+Transformers now work with `PhpClassNode`, `PhpPropertyNode`, `PhpMethodNode` instead of raw PHP Reflection objects, providing a unified interface allowing updates to the files to be handled in the same process.
+
+### Breaking Changes
+
+- Requires PHP 8.2+
+- Collectors removed in favor of Transformers
+- `DtoTransformer` removed - use `ClassTransformer` with custom property processors
+- `TypeProcessors` replaced by `ClassPropertyProcessor`
+- TypeReflectors removed
+- Inline type support removed
+- `RecordTypeScriptType` and `TypeScriptTransformer` attributes removed
+
+Since this is a complete rewrite, there isn't an upgrade guide available. We recommend you to first read [full documentation](https://spatie.be/docs/typescript-transformer/v3/introduction) and then upgrade your projects accordingly.
+
 ## 2.5.0 - 2025-04-25
 
 ### What's Changed
