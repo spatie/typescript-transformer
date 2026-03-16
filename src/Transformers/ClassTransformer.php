@@ -16,8 +16,11 @@ use Spatie\TypeScriptTransformer\References\PhpClassReference;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
+use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedClass;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGenericTypeParameter;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
@@ -46,10 +49,26 @@ abstract class ClassTransformer implements Transformer
             return Untransformable::create();
         }
 
+        $parsedClass = $this->docTypeResolver->class($phpClassNode);
+
+        $identifier = new TypeScriptIdentifier($context->name);
+
+        $templates = $parsedClass->templates ?? [];
+
+        if (! empty($templates)) {
+            $identifier = new TypeScriptGeneric(
+                $identifier,
+                array_map(
+                    fn (string $name) => new TypeScriptGenericTypeParameter(new TypeScriptIdentifier($name)),
+                    $templates
+                )
+            );
+        }
+
         return new Transformed(
             new TypeScriptAlias(
-                new TypeScriptIdentifier($context->name),
-                $this->getTypeScriptNode($phpClassNode, $context)
+                $identifier,
+                $this->getTypeScriptNode($phpClassNode, $context, $parsedClass)
             ),
             new PhpClassReference($phpClassNode),
             $context->nameSpaceSegments,
@@ -70,12 +89,13 @@ abstract class ClassTransformer implements Transformer
     protected function getTypeScriptNode(
         PhpClassNode $phpClassNode,
         TransformationContext $context,
+        ?ParsedClass $parsedClass = null,
     ): TypeScriptNode {
         if ($resolvedAttributeType = $this->resolveTypeByAttribute($phpClassNode)) {
             return $resolvedAttributeType;
         }
 
-        $classAnnotations = $this->docTypeResolver->class($phpClassNode)->properties ?? [];
+        $classAnnotations = $parsedClass->properties ?? [];
 
         $constructorAnnotations = $phpClassNode->hasMethod('__construct')
             ? $this->docTypeResolver->method($phpClassNode->getMethod('__construct'))->parameters ?? []
@@ -93,7 +113,8 @@ abstract class ClassTransformer implements Transformer
                 $phpClassNode,
                 $phpPropertyNode,
                 $annotation?->type,
-                $context
+                $context,
+                $parsedClass
             );
 
             if ($property === null) {
@@ -146,11 +167,13 @@ abstract class ClassTransformer implements Transformer
         PhpPropertyNode $phpPropertyNode,
         ?TypeNode $annotation,
         TransformationContext $context,
+        ?ParsedClass $parsedClass = null,
     ): ?TypeScriptProperty {
         $type = $this->resolveTypeForProperty(
             $phpClassNode,
             $phpPropertyNode,
-            $annotation
+            $annotation,
+            $parsedClass
         );
 
         $property = new TypeScriptProperty(
@@ -180,6 +203,7 @@ abstract class ClassTransformer implements Transformer
         PhpClassNode $phpClassNode,
         PhpPropertyNode $phpPropertyNode,
         ?TypeNode $annotation,
+        ?ParsedClass $parsedClass = null,
     ): TypeScriptNode {
         if ($resolvedAttributeType = $this->resolveTypeByAttribute($phpClassNode, $phpPropertyNode)) {
             return $resolvedAttributeType;
@@ -189,6 +213,7 @@ abstract class ClassTransformer implements Transformer
             return $this->transpilePhpStanTypeToTypeScriptTypeAction->execute(
                 $annotation,
                 $phpClassNode,
+                $parsedClass->templates ?? [],
             );
         }
 

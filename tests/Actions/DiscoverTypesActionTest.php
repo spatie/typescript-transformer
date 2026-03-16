@@ -5,6 +5,7 @@ use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpEnumNode;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ComplexAttribute;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\EmptyEnum;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\GenericClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\HiddenAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\IntBackedEnum;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\OptionalAttributedClass;
@@ -33,6 +34,7 @@ it('can discover types', function () {
     $expected = [
         new PhpClassNode(new ReflectionClass(ComplexAttribute::class)),
         new PhpEnumNode(new ReflectionEnum(EmptyEnum::class)),
+        new PhpClassNode(new ReflectionClass(GenericClass::class)),
         new PhpClassNode(new ReflectionClass(HiddenAttributedClass::class)),
         new PhpEnumNode(new ReflectionEnum(IntBackedEnum::class)),
         new PhpClassNode(new ReflectionClass(OptionalAttributedClass::class)),

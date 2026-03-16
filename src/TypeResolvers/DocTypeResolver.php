@@ -52,11 +52,17 @@ class DocTypeResolver
             $properties[$name] = new ParsedNameAndType($name, $propertyTag->type);
         }
 
-        if (empty($properties)) {
+        $templates = [];
+
+        foreach ($parsed->getTemplateTagValues() as $templateTag) {
+            $templates[] = $templateTag->name;
+        }
+
+        if (empty($properties) && empty($templates)) {
             return null;
         }
 
-        return new ParsedClass($properties);
+        return new ParsedClass($properties, templates: $templates);
     }
 
     public function method(PhpMethodNode $phpMethodNode): ?ParsedMethod

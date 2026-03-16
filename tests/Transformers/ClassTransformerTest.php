@@ -10,12 +10,16 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\PhpClassReference;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\GenericClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\AllClassTransformer;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\Transformers\ClassTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptArray;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGenericTypeParameter;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptIdentifier;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
@@ -338,5 +342,28 @@ it('can use a class property processor to remove a property', function () {
 
     expect($object)->toEqual(
         new TypeScriptObject([])
+    );
+});
+
+it('can transform a class with template generics', function () {
+    $transformed = transformSingle(GenericClass::class);
+
+    expect($transformed->getNode())->toEqual(
+        new TypeScriptAlias(
+            new TypeScriptGeneric(
+                new TypeScriptIdentifier('GenericClass'),
+                [new TypeScriptGenericTypeParameter(new TypeScriptIdentifier('T'))]
+            ),
+            new TypeScriptObject([
+                new TypeScriptProperty(
+                    new TypeScriptIdentifier('page'),
+                    new TypeScriptNumber()
+                ),
+                new TypeScriptProperty(
+                    new TypeScriptIdentifier('data'),
+                    new TypeScriptArray([new TypeScriptIdentifier('T')])
+                ),
+            ])
+        )
     );
 });

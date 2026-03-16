@@ -41,12 +41,28 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptVoid;
 
 class TranspilePhpStanTypeToTypeScriptNodeAction
 {
+    /** @var array<string> */
+    protected array $templates = [];
+
     public function __construct(
         protected FindClassNameFqcnAction $findClassNameFqcnAction = new FindClassNameFqcnAction()
     ) {
     }
 
+    /**
+     * @param  array<string>  $templates
+     */
     public function execute(
+        TypeNode $type,
+        ?PhpClassNode $phpClassNode,
+        array $templates = [],
+    ): TypeScriptNode {
+        $this->templates = $templates;
+
+        return $this->resolve($type, $phpClassNode);
+    }
+
+    protected function resolve(
         TypeNode $type,
         ?PhpClassNode $phpClassNode,
     ): TypeScriptNode {
@@ -66,6 +82,10 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         IdentifierTypeNode $node,
         ?PhpClassNode $phpClassNode
     ): TypeScriptNode {
+        if (in_array($node->name, $this->templates)) {
+            return new TypeScriptIdentifier($node->name);
+        }
+
         if ($node->name === 'mixed') {
             return new TypeScriptAny();
         }
@@ -187,7 +207,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         ?PhpClassNode $phpClassNode
     ): TypeScriptNode {
         return new TypeScriptArray(
-            [$this->execute($node->type, $phpClassNode)]
+            [$this->resolve($node->type, $phpClassNode)]
         );
     }
 
@@ -212,7 +232,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
 
             $properties[] = new TypeScriptProperty(
                 $name,
-                $this->execute($item->valueType, $phpClassNode),
+                $this->resolve($item->valueType, $phpClassNode),
                 isOptional: $item->optional
             );
         }
@@ -237,7 +257,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         NullableTypeNode $node,
         ?PhpClassNode $phpClassNode
     ): TypeScriptNode {
-        $type = $this->execute($node->type, $phpClassNode);
+        $type = $this->resolve($node->type, $phpClassNode);
 
         if (! $type instanceof TypeScriptUnion) {
             return new TypeScriptUnion([$type, new TypeScriptNull()]);
@@ -255,7 +275,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         ?PhpClassNode $phpClassNode
     ): TypeScriptUnion {
         return new TypeScriptUnion(array_map(
-            fn (TypeNode $type) => $this->execute($type, $phpClassNode),
+            fn (TypeNode $type) => $this->resolve($type, $phpClassNode),
             $node->types
         ));
     }
@@ -265,7 +285,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         ?PhpClassNode $phpClassNode
     ): TypeScriptIntersection {
         return new TypeScriptIntersection(array_map(
-            fn (TypeNode $type) => $this->execute($type, $phpClassNode),
+            fn (TypeNode $type) => $this->resolve($type, $phpClassNode),
             $node->types
         ));
     }
@@ -306,21 +326,21 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
             && $node->genericTypes[0] instanceof UnionTypeNode
         ) {
             return new TypeScriptArray(array_map(
-                fn (TypeNode $type) => $this->execute($type, $phpClassNode),
+                fn (TypeNode $type) => $this->resolve($type, $phpClassNode),
                 $node->genericTypes[0]->types
             ));
         }
 
         if ($genericTypes === 1) {
-            return new TypeScriptArray([$this->execute($node->genericTypes[0], $phpClassNode)]);
+            return new TypeScriptArray([$this->resolve($node->genericTypes[0], $phpClassNode)]);
         }
 
         if ($genericTypes > 2) {
             throw new Exception('Invalid number of generic types for array');
         }
 
-        $key = $this->execute($node->genericTypes[0], $phpClassNode);
-        $value = $this->execute($node->genericTypes[1], $phpClassNode);
+        $key = $this->resolve($node->genericTypes[0], $phpClassNode);
+        $value = $this->resolve($node->genericTypes[1], $phpClassNode);
 
         if ($key instanceof TypeScriptNumber) {
             return new TypeScriptArray([$value]);
@@ -395,7 +415,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
 
     protected function defaultGenericNode(GenericTypeNode $node, ?PhpClassNode $phpClassNode): TypeScriptNode
     {
-        $type = $this->execute($node->type, $phpClassNode);
+        $type = $this->resolve($node->type, $phpClassNode);
 
         if ($type instanceof TypeScriptString) {
             return $type; // class-string<something> case
@@ -408,7 +428,7 @@ class TranspilePhpStanTypeToTypeScriptNodeAction
         return new TypeScriptGeneric(
             $type,
             array_map(
-                fn (TypeNode $type) => $this->execute($type, $phpClassNode),
+                fn (TypeNode $type) => $this->resolve($type, $phpClassNode),
                 $node->genericTypes
             )
         );
