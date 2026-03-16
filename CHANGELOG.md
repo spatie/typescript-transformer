@@ -2,6 +2,40 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 3.1.0 - 2026-03-16
+
+### What's Changed
+
+- Support class-level `@template` generics in TypeScript output (#133)
+- Remove unused service provider stub
+
+Classes with `@template` docblocks now produce generic type aliases:
+
+```php
+/**
+ * @template T
+ */
+class PaginatedResponse
+{
+    /** @param array<T> $data */
+    public function __construct(
+        public int $page = 1,
+        public array $data = [],
+    ) {}
+}
+
+```
+Now correctly generates:
+
+```ts
+type PaginatedResponse<T> = {
+    page: number;
+    data: T[];
+};
+
+```
+Instead of the previous incorrect output where `T` was resolved as `unknown`.
+
 ## 3.0.0 - 2026-03-13
 
 Version 3 is a ground-up rewrite. It introduces a TypeScript AST, a visitor pattern, watch mode, a new extension system, and much more.
@@ -16,6 +50,7 @@ new TypeScriptAlias('User', new TypeScriptObject([
     new TypeScriptProperty('age', new TypeScriptNumber()),
 ]));
 // Output: type User = { name: string; age: number }
+
 
 ```
 There are a lot of node types available and you can easily add your own!
@@ -32,6 +67,7 @@ Visitor::create()
         }
     })
     ->execute($rootNode);
+
 
 ```
 ### Watch Mode
@@ -65,6 +101,7 @@ class AddLaravelCollectionProvider implements TransformedProvider
 }
 // Output: type Collection<T> = Array<T>
 
+
 ```
 ### Rewritten Transformer System
 
@@ -78,6 +115,7 @@ class MyTransformer extends ClassTransformer
         return $phpClassNode->implementsInterface(Data::class);
     }
 }
+
 
 ```
 ### Rewritten Enum Support
