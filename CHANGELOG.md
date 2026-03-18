@@ -2,6 +2,12 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 3.1.1 - 2026-03-18
+
+### What's Changed
+
+- Throw exception when output directory does not exist instead of silently resolving to an empty path (#134)
+
 ## 3.1.0 - 2026-03-16
 
 ### What's Changed
