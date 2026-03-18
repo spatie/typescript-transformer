@@ -27,6 +27,7 @@ class User {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())
             ->writer(new FlatModuleWriter())
@@ -58,6 +59,7 @@ class User {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())
             ->writer(new FlatModuleWriter())
@@ -88,6 +90,7 @@ class User {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())
             ->writer(new FlatModuleWriter())
@@ -124,6 +127,7 @@ class User {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->transformer(new UntransformableTransformer())
             ->transformDirectories($factory->path())
             ->writer(new FlatModuleWriter())
@@ -151,6 +155,7 @@ class Post {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())
             ->writer(new FlatModuleWriter())
@@ -180,6 +185,7 @@ class Post {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())
             ->writer(new FlatModuleWriter())
@@ -206,6 +212,7 @@ class User {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->transformer(new UntransformableTransformer())
             ->transformDirectories($factory->path())
             ->writer(new FlatModuleWriter())
@@ -232,6 +239,7 @@ class User {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())
             ->writer(new FlatModuleWriter())

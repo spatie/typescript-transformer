@@ -29,9 +29,10 @@ use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
 it('returns continue when there are no events', function () {
     $collection = new TransformedCollection();
     $writer = new FlatModuleWriter();
+    $temporaryDirectory = TemporaryDirectory::make();
 
     $transformer = TypeScriptTransformer::create(
-        TypeScriptTransformerConfigFactory::create()->writer($writer)->get()
+        TypeScriptTransformerConfigFactory::create()->outputDirectory($temporaryDirectory->path())->writer($writer)->get()
     );
 
     $action = new ProcessWatchBufferAction($transformer, $collection, new PhpNodeCollection());
@@ -241,6 +242,7 @@ it('returns complete refresh when config file is updated', function () {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->configPath($configPath)
             ->writer($writer)
             ->get()
@@ -272,6 +274,7 @@ class User {
 
     $transformer = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($factory->path())
             ->configPath($configPath)
             ->transformer(new AllClassTransformer())
             ->transformDirectories($factory->path())

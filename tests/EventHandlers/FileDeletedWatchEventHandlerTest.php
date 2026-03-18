@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\EventHandlers\FileDeletedWatchEventHandler;
@@ -8,6 +9,10 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\FakeFileStructureFactory;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
+
+beforeEach(function () {
+    $this->temporaryDirectory = TemporaryDirectory::make();
+});
 
 it('removes the transformed item when its file is deleted', function () {
     $factory = new FakeFileStructureFactory();
@@ -27,7 +32,7 @@ it('removes the transformed item when its file is deleted', function () {
     ]);
 
     $transformer = TypeScriptTransformer::create(
-        TypeScriptTransformerConfigFactory::create()->get()
+        TypeScriptTransformerConfigFactory::create()->outputDirectory($this->temporaryDirectory->path())->get()
     );
 
     $handler = new FileDeletedWatchEventHandler($transformer, $collection, new PhpNodeCollection());
@@ -50,7 +55,7 @@ it('does nothing when the deleted file has no transformed item', function () {
     $collection = new TransformedCollection([$existingTransformed]);
 
     $transformer = TypeScriptTransformer::create(
-        TypeScriptTransformerConfigFactory::create()->get()
+        TypeScriptTransformerConfigFactory::create()->outputDirectory($this->temporaryDirectory->path())->get()
     );
 
     $handler = new FileDeletedWatchEventHandler($transformer, $collection, new PhpNodeCollection());

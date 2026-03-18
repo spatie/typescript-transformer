@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\FakeExtension;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\FakeWatchingTransformedProvider;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\UntransformableTransformer;
@@ -11,21 +12,12 @@ use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 use Spatie\TypeScriptTransformer\Visitor\Common\ReplaceTypesVisitorClosure;
 
 beforeEach(function () {
-    $defaultOutputDirectory = implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'src', 'generated']);
-
-    if (! is_dir($defaultOutputDirectory)) {
-        mkdir($defaultOutputDirectory, recursive: true);
-    }
-});
-
-afterEach(function () {
-    $defaultOutputDirectory = implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'src', 'generated']);
-
-    rmdir($defaultOutputDirectory);
+    $this->temporaryDirectory = TemporaryDirectory::make();
 });
 
 it('can add transformers as string and object', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->transformDirectories(__DIR__)
         ->transformer(UntransformableTransformer::class)
         ->transformer(new UntransformableTransformer())
@@ -38,6 +30,7 @@ it('can add transformers as string and object', function () {
 
 it('can prepend transformers before others', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->transformDirectories(__DIR__)
         ->transformer(EnumTransformer::class)
         ->prependTransformer(UntransformableTransformer::class)
@@ -52,6 +45,7 @@ it('can prepend transformers before others', function () {
 
 it('can replace a string transformer with another', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->transformDirectories(__DIR__)
         ->transformer(EnumTransformer::class)
         ->replaceTransformer(EnumTransformer::class, UntransformableTransformer::class)
@@ -63,6 +57,7 @@ it('can replace a string transformer with another', function () {
 
 it('can replace an object transformer with another', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->transformDirectories(__DIR__)
         ->transformer(new EnumTransformer())
         ->replaceTransformer(EnumTransformer::class, new UntransformableTransformer())
@@ -76,6 +71,7 @@ it('can add a type replacement with a TypeScriptNode', function () {
     $replacement = new TypeScriptString();
 
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->replaceType('SomeClass', $replacement)
         ->get();
 
@@ -90,6 +86,7 @@ it('can add a type replacement with a TypeScriptNode', function () {
 
 it('can add a type replacement with a string that parses as PHP type', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->replaceType('SomeClass', 'string')
         ->get();
 
@@ -104,6 +101,7 @@ it('can add a type replacement with a string that parses as PHP type', function 
 
 it('can add a type replacement with a string that falls back to raw TypeScript', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->replaceType('SomeClass', 'Record<string, unknown>')
         ->get();
 
@@ -120,6 +118,7 @@ it('can add an extension', function () {
     $extension = new FakeExtension();
 
     TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->extension($extension)
         ->get();
 
@@ -143,6 +142,7 @@ it('watches directories from transform directories, config paths, and WatchingTr
     );
 
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->transformDirectories('/transform/dir')
         ->configPath('/config/dir')
         ->provider($watchingProvider)
@@ -153,24 +153,16 @@ it('watches directories from transform directories, config paths, and WatchingTr
     expect($config->directoriesToWatch)->toContain('/watched/dir');
 });
 
-it('throws an error when output directory does not exist', function () {
+it('throws when the output directory does not exist', function () {
     TypeScriptTransformerConfigFactory::create()
         ->outputDirectory('/does/not/exist')
         ->get();
-})->throws(Exception::class, 'Output directory "/does/not/exist" does not exist. Please create it before running the transformer.');
+})->throws(Exception::class, 'Output directory "/does/not/exist" does not exist.');
 
 it('can set a custom output directory', function () {
-    $customOutputDirectory = __DIR__.'/custom-output-dir';
-
-    if (! is_dir($customOutputDirectory)) {
-        mkdir($customOutputDirectory, recursive: true);
-    }
-
     $config = TypeScriptTransformerConfigFactory::create()
-        ->outputDirectory($customOutputDirectory)
+        ->outputDirectory($this->temporaryDirectory->path())
         ->get();
 
-    expect($config->outputDirectory)->toBe($customOutputDirectory);
-
-    rmdir($customOutputDirectory);
+    expect($config->outputDirectory)->toBe(realpath($this->temporaryDirectory->path()));
 });

@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\References\CustomReference;
@@ -13,6 +14,10 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
+
+beforeEach(function () {
+    $this->temporaryDirectory = TemporaryDirectory::make();
+});
 
 it('can create a transformed collection', function () {
     $collection = new TransformedCollection([
@@ -148,6 +153,7 @@ it('can remove a transformed item by reference', function () {
 it('can remove a transformed item by reference and update references', function () {
     [$collection] = TypeScriptTransformer::create(
         TypeScriptTransformerConfigFactory::create()
+            ->outputDirectory($this->temporaryDirectory->path())
             ->transformer(new AllClassTransformer())
             ->transformDirectories(__DIR__.'/../Fakes/Circular')
     )->resolveState();
