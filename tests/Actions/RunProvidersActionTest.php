@@ -2,6 +2,7 @@
 
 namespace Spatie\TypeScriptTransformer\Tests\Actions;
 
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\RunProvidersAction;
 use Spatie\TypeScriptTransformer\Collections\PhpNodeCollection;
 use Spatie\TypeScriptTransformer\Support\Loggers\Logger;
@@ -15,6 +16,10 @@ use Spatie\TypeScriptTransformer\TransformedProviders\TransformedProviderActions
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 
+beforeEach(function () {
+    $this->temporaryDirectory = TemporaryDirectory::make();
+});
+
 it('can provide types based upon the config', function () {
     $stringProvider = new class () implements TransformedProvider {
         public function provide(): array
@@ -26,6 +31,7 @@ it('can provide types based upon the config', function () {
     };
 
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->provider(
             new InlineTransformedProvider([
                 TransformedFactory::alias('Bar', new TypeScriptString()),
@@ -62,6 +68,7 @@ it('provides logger to LoggingTransformedProvider implementations', function () 
     };
 
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->provider($loggingProvider)
         ->get();
 

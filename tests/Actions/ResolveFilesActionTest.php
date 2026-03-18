@@ -1,11 +1,16 @@
 <?php
 
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Actions\ResolveFilesAction;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 use Spatie\TypeScriptTransformer\Collections\TransformedCollection;
 use Spatie\TypeScriptTransformer\Data\WriteableFile;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 use Spatie\TypeScriptTransformer\Writers\FlatModuleWriter;
+
+beforeEach(function () {
+    $this->temporaryDirectory = TemporaryDirectory::make();
+});
 
 it('correctly divides transformed objects between writers', function () {
     $collection = new TransformedCollection();
@@ -43,7 +48,7 @@ it('correctly divides transformed objects between writers', function () {
     $collection->add($transformedA1, $transformedB, $transformedA2, $transformedC, $transformedD);
 
     $writeableFiles = (new ResolveFilesAction(
-        TypeScriptTransformerConfigFactory::create()->writer($defaultWriter)->get()
+        TypeScriptTransformerConfigFactory::create()->outputDirectory($this->temporaryDirectory->path())->writer($defaultWriter)->get()
     ))->execute($collection);
 
     expect($writeableFiles)

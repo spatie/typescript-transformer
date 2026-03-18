@@ -258,7 +258,7 @@ class TypeScriptTransformerConfigFactory
         }
 
         return new TypeScriptTransformerConfig(
-            realpath($this->normalizeOutputDirectory()),
+            $this->outputDirectory,
             $transformedProviders,
             $writer,
             $formatter,
@@ -276,18 +276,15 @@ class TypeScriptTransformerConfigFactory
             throw new \Exception('When using transformers, you must specify which directories to watch');
         }
 
-        $normalizedOutputDirectory = $this->normalizeOutputDirectory();
+        $this->outputDirectory = rtrim($this->outputDirectory, DIRECTORY_SEPARATOR);
 
-        if (realpath($normalizedOutputDirectory) === false) {
-            throw new \InvalidArgumentException(sprintf(
+        if (realpath($this->outputDirectory) === false) {
+            throw new \Exception(sprintf(
                 'Output directory "%s" does not exist. Please create it before running the transformer.',
-                $normalizedOutputDirectory
+                $this->outputDirectory
             ));
         }
-    }
 
-    protected function normalizeOutputDirectory(): string
-    {
-        return rtrim($this->outputDirectory, DIRECTORY_SEPARATOR);
+        $this->outputDirectory = realpath($this->outputDirectory);
     }
 }

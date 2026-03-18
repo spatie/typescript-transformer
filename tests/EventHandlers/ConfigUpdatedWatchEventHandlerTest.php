@@ -1,13 +1,19 @@
 <?php
 
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\TypeScriptTransformer\Data\WatchEventResult;
 use Spatie\TypeScriptTransformer\EventHandlers\ConfigUpdatedWatchEventHandler;
 use Spatie\TypeScriptTransformer\Events\FileUpdatedWatchEvent;
 use Spatie\TypeScriptTransformer\TypeScriptTransformer;
 use Spatie\TypeScriptTransformer\TypeScriptTransformerConfigFactory;
 
+beforeEach(function () {
+    $this->temporaryDirectory = TemporaryDirectory::make();
+});
+
 it('returns null when the event path is not a config path', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->configPath('/path/to/config.php')
         ->get();
 
@@ -21,6 +27,7 @@ it('returns null when the event path is not a config path', function () {
 
 it('returns a complete refresh when the event path is a config path', function () {
     $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
         ->configPath('/path/to/config.php')
         ->get();
 
