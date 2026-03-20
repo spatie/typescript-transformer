@@ -11,7 +11,7 @@ application. However, we can provide you with a general idea of how to do it.
 Ideally, TypeScript transformer is a CLI command within your application, that can be quickly called when you need to
 generate TypeScript types.
 
-Within Symphony, for example, you can create a command like this:
+Within Symfony, for example, you can create a command like this:
 
 ```php
 use Spatie\TypeScriptTransformer\Enums\RunnerMode;
