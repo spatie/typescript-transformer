@@ -8,6 +8,6 @@ namespace Spatie\TypeScriptTransformer\Tests\Fakes\InheritedProperties;
  * @template TKey
  * @template TValue
  */
-class SomeGenericClass
+class SimpleGenericClass
 {
 }

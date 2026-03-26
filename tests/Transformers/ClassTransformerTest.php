@@ -9,7 +9,12 @@ use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
+use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\References\PhpClassReference;
+use Spatie\TypeScriptTransformer\Tests\Fakes\InheritedProperties\Children\ChildSpecificClass;
+use Spatie\TypeScriptTransformer\Tests\Fakes\InheritedProperties\Children\ChildWithInheritedAnnotation;
+use Spatie\TypeScriptTransformer\Tests\Fakes\InheritedProperties\Children\ChildWithOwnPropertyAnnotation;
+use Spatie\TypeScriptTransformer\Tests\Fakes\InheritedProperties\SimpleGenericClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\GenericClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
@@ -25,7 +30,9 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
 
 it('can transform a class', function () {
@@ -167,6 +174,41 @@ it('can type a property using a class property annotation', function () {
             ),
         ])
     );
+});
+
+it('can type an inherited property using the parent class property annotation', function () {
+    $transformed = transformSingle(ChildWithInheritedAnnotation::class);
+
+    $object = $transformed->getNode()->type;
+    expect($object)->toBeInstanceOf(TypeScriptObject::class);
+
+    $itemsProperty = collect($object->properties)->first(
+        fn (TypeScriptProperty $p) => $p->name instanceof TypeScriptIdentifier && $p->name->name === 'items'
+    );
+
+    expect($itemsProperty)->not->toBeNull();
+    expect($itemsProperty->type)->toBeInstanceOf(TypeScriptUnion::class);
+    expect($itemsProperty->type->types[0])->toBeInstanceOf(TypeScriptArray::class);
+    expect($itemsProperty->type->types[1])->toBeInstanceOf(TypeScriptGeneric::class);
+    expect($itemsProperty->type->types[1]->type)->toBeInstanceOf(TypeScriptReference::class);
+    expect($itemsProperty->type->types[1]->type->reference)->toBeInstanceOf(ClassStringReference::class);
+    expect($itemsProperty->type->types[1]->type->reference->classString)->toBe(SimpleGenericClass::class);
+});
+
+it('can type an inherited property using the child class property annotation', function () {
+    $transformed = transformSingle(ChildWithOwnPropertyAnnotation::class);
+
+    $object = $transformed->getNode()->type;
+    expect($object)->toBeInstanceOf(TypeScriptObject::class);
+
+    $itemsProperty = collect($object->properties)->first(
+        fn (TypeScriptProperty $p) => $p->name instanceof TypeScriptIdentifier && $p->name->name === 'items'
+    );
+
+    expect($itemsProperty)->not->toBeNull();
+    expect($itemsProperty->type)->toBeInstanceOf(TypeScriptReference::class);
+    expect($itemsProperty->type->reference)->toBeInstanceOf(ClassStringReference::class);
+    expect($itemsProperty->type->reference->classString)->toBe(ChildSpecificClass::class);
 });
 
 it('can type a property using a TypeScriptTypeAttributeContract attribute type', function () {

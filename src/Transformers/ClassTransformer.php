@@ -106,11 +106,24 @@ abstract class ClassTransformer implements Transformer
         foreach ($this->getProperties($phpClassNode) as $phpPropertyNode) {
             $annotation = $classAnnotations[$phpPropertyNode->getName()]
                 ?? $constructorAnnotations[$phpPropertyNode->getName()]
-                ?? $this->docTypeResolver->property($phpPropertyNode)
                 ?? null;
 
+            $annotationClassNode = $phpClassNode;
+
+            // If the current class doesn't annotate this property, the property's
+            // own @var docblock may come from a parent class. In that case, resolve
+            // types using the declaring class's namespace context so that class
+            // references in the docblock are resolved correctly.
+            if ($annotation === null) {
+                $annotation = $this->docTypeResolver->property($phpPropertyNode);
+
+                if ($annotation !== null) {
+                    $annotationClassNode = $phpPropertyNode->getDeclaringClass();
+                }
+            }
+
             $property = $this->createProperty(
-                $phpClassNode,
+                $annotationClassNode,
                 $phpPropertyNode,
                 $annotation?->type,
                 $context,
