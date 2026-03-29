@@ -67,4 +67,30 @@ enum Enum {
 TS
     ,
     ];
+
+    yield 'string enum with backslashes' => [
+        'cases' => [
+            ['name' => 'User', 'value' => 'App\\Models\\User'],
+            ['name' => 'Post', 'value' => 'App\\Models\\Post'],
+        ],
+        'expected' => <<<TS
+enum Enum {
+    User = 'App\\\\Models\\\\User',
+    Post = 'App\\\\Models\\\\Post',
+}
+TS
+    ,
+    ];
+
+    yield 'string enum with single quotes' => [
+        'cases' => [
+            ['name' => 'Greeting', 'value' => "it's"],
+        ],
+        'expected' => <<<TS
+enum Enum {
+    Greeting = 'it\\'s',
+}
+TS
+    ,
+    ];
 });

@@ -25,7 +25,7 @@ class TypeScriptEnum implements TypeScriptNamedNode, TypeScriptNode
 
             $output .= match (true) {
                 is_int($case['value']) => "{$case['name']} = {$case['value']},",
-                is_string($case['value']) => "{$case['name']} = '{$case['value']}',",
+                is_string($case['value']) => "{$case['name']} = '" . addcslashes($case['value'], "\\'") . "',",
                 default => "{$case['name']},",
             };
 
