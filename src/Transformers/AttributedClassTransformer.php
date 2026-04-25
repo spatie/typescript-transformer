@@ -10,9 +10,14 @@ use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 
 class AttributedClassTransformer extends ClassTransformer
 {
+    protected function attributeClass(): string
+    {
+        return TypeScript::class;
+    }
+
     protected function shouldTransform(PhpClassNode $phpClassNode): bool
     {
-        return count($phpClassNode->getAttributes(TypeScript::class)) > 0;
+        return count($phpClassNode->getAttributes($this->attributeClass())) > 0;
     }
 
     public function transform(PhpClassNode $phpClassNode, TransformationContext $context): Transformed|Untransformable
@@ -23,8 +28,7 @@ class AttributedClassTransformer extends ClassTransformer
             return $transformed;
         }
 
-        /** @var TypeScript $attribute */
-        $attribute = $phpClassNode->getAttributes(TypeScript::class)[0]->getRawArguments();
+        $attribute = $phpClassNode->getAttributes($this->attributeClass())[0]->getRawArguments();
 
         if (($attribute['name'] ?? null) !== null) {
             $transformed->nameAs($attribute['name']);
