@@ -12,6 +12,6 @@ class TypeScriptLiteral implements TypeScriptNode
 
     public function write(WritingContext $context): string
     {
-        return json_encode($this->value);
+        return json_encode($this->value, JSON_UNESCAPED_SLASHES);
     }
 }
