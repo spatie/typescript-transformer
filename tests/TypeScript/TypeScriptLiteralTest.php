@@ -12,4 +12,5 @@ it('can write literal values', function (int|string|bool $value, string $expecte
     yield 'int' => [42, '42'];
     yield 'true' => [true, 'true'];
     yield 'false' => [false, 'false'];
+    yield 'no escaped slashes' => ['image/png', '"image/png"'];
 });
