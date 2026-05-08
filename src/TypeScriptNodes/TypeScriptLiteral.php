@@ -3,15 +3,18 @@
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
 use Spatie\TypeScriptTransformer\Data\WritingContext;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\OutputsTypeScriptLiteral;
 
 class TypeScriptLiteral implements TypeScriptNode
 {
-    public function __construct(public int|string|bool $value)
+    use OutputsTypeScriptLiteral;
+
+    public function __construct(public int|string|float|bool|null $value)
     {
     }
 
     public function write(WritingContext $context): string
     {
-        return json_encode($this->value);
+        return $this->outputLiteral($this->value);
     }
 }

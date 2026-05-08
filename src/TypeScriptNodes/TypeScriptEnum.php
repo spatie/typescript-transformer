@@ -3,9 +3,12 @@
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
 use Spatie\TypeScriptTransformer\Data\WritingContext;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\OutputsTypeScriptLiteral;
 
 class TypeScriptEnum implements TypeScriptNamedNode, TypeScriptNode
 {
+    use OutputsTypeScriptLiteral;
+
     /**
      * @param string $name
      * @param array<int, array{name: string, value: string|int|null}> $cases
@@ -25,7 +28,7 @@ class TypeScriptEnum implements TypeScriptNamedNode, TypeScriptNode
 
             $output .= match (true) {
                 is_int($case['value']) => "{$case['name']} = {$case['value']},",
-                is_string($case['value']) => "{$case['name']} = '{$case['value']}',",
+                is_string($case['value']) => "{$case['name']} = {$this->outputLiteral($case['value'])},",
                 default => "{$case['name']},",
             };
 

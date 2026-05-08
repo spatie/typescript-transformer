@@ -31,5 +31,5 @@ it('can write a parameter with default value', function () {
         defaultValue: new TypeScriptLiteral('world'),
     );
 
-    expect($node->write(new WritingContext([])))->toBe('name: string = "world"');
+    expect($node->write(new WritingContext([])))->toBe("name: string = 'world'");
 });

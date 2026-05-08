@@ -11,7 +11,7 @@ it('can write an indexed access with a single segment', function () {
         [new TypeScriptLiteral('name')],
     );
 
-    expect($node->write(new WritingContext([])))->toBe('User["name"]');
+    expect($node->write(new WritingContext([])))->toBe("User['name']");
 });
 
 it('can write an indexed access with multiple segments', function () {
@@ -20,5 +20,5 @@ it('can write an indexed access with multiple segments', function () {
         [new TypeScriptLiteral('address'), new TypeScriptLiteral('city')],
     );
 
-    expect($node->write(new WritingContext([])))->toBe('User["address"]["city"]');
+    expect($node->write(new WritingContext([])))->toBe("User['address']['city']");
 });

@@ -4,9 +4,12 @@ namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
 use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\OutputsTypeScriptLiteral;
 
 class TypeScriptParameter implements TypeScriptNode
 {
+    use OutputsTypeScriptLiteral;
+
     public function __construct(
         public string $name,
         #[NodeVisitable]
@@ -21,7 +24,7 @@ class TypeScriptParameter implements TypeScriptNode
     public function write(WritingContext $context): string
     {
         $name = ! preg_match('/^[$_a-zA-Z][$_a-zA-Z0-9]*$/', $this->name)
-            ? "'{$this->name}'"
+            ? $this->outputLiteral($this->name)
             : $this->name;
 
         $spread = $this->isSpread ? '...' : '';

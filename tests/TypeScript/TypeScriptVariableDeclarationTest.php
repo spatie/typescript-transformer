@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptVariableDeclaration;
 it('can write a const declaration', function () {
     $node = TypeScriptVariableDeclaration::const('name', new TypeScriptLiteral('world'));
 
-    expect($node->write(new WritingContext([])))->toBe('const name = "world"');
+    expect($node->write(new WritingContext([])))->toBe("const name = 'world'");
 });
 
 it('can write a let declaration', function () {
@@ -30,5 +30,5 @@ it('can write a declaration with type annotation', function () {
         type: new TypeScriptString(),
     );
 
-    expect($node->write(new WritingContext([])))->toBe('const name: string = "world"');
+    expect($node->write(new WritingContext([])))->toBe("const name: string = 'world'");
 });

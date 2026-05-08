@@ -3,9 +3,12 @@
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
 use Spatie\TypeScriptTransformer\Data\WritingContext;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\OutputsTypeScriptLiteral;
 
 class TypeScriptImport implements TypeScriptNode
 {
+    use OutputsTypeScriptLiteral;
+
     /**
      * @param  array<array{name: string, alias?: ?string}>  $segments
      */
@@ -28,6 +31,6 @@ class TypeScriptImport implements TypeScriptNode
             $this->segments,
         ));
 
-        return "import { {$segments} } from '{$this->path}';";
+        return "import { {$segments} } from {$this->outputLiteral($this->path)};";
     }
 }
