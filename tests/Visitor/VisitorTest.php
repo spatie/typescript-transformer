@@ -88,6 +88,23 @@ it('can replace a single node in an iterateable', function () {
     expect($unionNode->types)->toEqual([$stringNode, new TypeScriptBoolean()]);
 });
 
+it('deduplicates nested nodes after visiting a deduplicable node', function () {
+    $unionNode = new TypeScriptUnion([
+        new TypeScriptString(),
+        new TypeScriptNumber(),
+    ]);
+
+    Visitor::create()
+        ->before(function (TypeScriptNode $node) {
+            if ($node instanceof TypeScriptNumber) {
+                return VisitorOperation::replace(new TypeScriptString());
+            }
+        })
+        ->execute($unionNode);
+
+    expect($unionNode->types)->toEqual([new TypeScriptString()]);
+});
+
 it('will execute a before and after closure correctly', function () {
     $rootNode = new TypeScriptUnion([
         new TypeScriptString(),

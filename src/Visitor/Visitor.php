@@ -4,6 +4,7 @@ namespace Spatie\TypeScriptTransformer\Visitor;
 
 use Closure;
 use Spatie\TypeScriptTransformer\TypeScriptNodeRegistry;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptDeduplicableNode;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNode;
 
 class Visitor
@@ -91,6 +92,10 @@ class Visitor
             $filtered = array_filter($value);
 
             $node->$propertyName = $isList ? array_values($filtered) : $filtered;
+        }
+
+        if ($node instanceof TypeScriptDeduplicableNode) {
+            $node->deduplicateNodes();
         }
 
         foreach ($this->closures as $closure) {

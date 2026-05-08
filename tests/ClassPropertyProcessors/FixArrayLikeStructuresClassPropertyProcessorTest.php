@@ -159,6 +159,9 @@ it('replaces array like classes', function (
         public Collection $too_much_types_collection;
 
         public Collection $no_annotation_collection;
+
+        /** @var Collection<int, string>|string[] */
+        public array $duplicated_array_in_union;
     };
 
     $object = transformSingle($class)->getNode()->type;
@@ -253,5 +256,12 @@ it('replaces array like classes', function (
     yield 'no annotation collection' => [
         'no_annotation_collection',
         new TypeScriptReference(new ClassStringReference(Collection::class)),
+    ];
+
+    yield 'duplicated array in union' => [
+        'duplicated_array_in_union',
+        new TypeScriptUnion([
+            new TypeScriptArray([new TypeScriptString()]),
+        ]),
     ];
 });
