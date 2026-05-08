@@ -55,9 +55,9 @@ class DocTypeResolver
         $templates = [];
 
         $templateTags = [
-            ...$parsed->getTemplateTagValues("@template"),
-            ...$parsed->getTemplateTagValues("@template-covariant"),
-            ...$parsed->getTemplateTagValues("@template-contravariant"),
+            ...$parsed->getTemplateTagValues('@template'),
+            ...$parsed->getTemplateTagValues('@template-covariant'),
+            ...$parsed->getTemplateTagValues('@template-contravariant'),
         ];
 
         foreach ($templateTags as $templateTag) {
