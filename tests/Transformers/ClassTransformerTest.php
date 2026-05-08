@@ -13,6 +13,8 @@ use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\References\PhpClassReference;
 use Spatie\TypeScriptTransformer\Tests\Fakes\ChildWithPropertyAnnotations;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\GenericClass;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\GenericContravariantClass;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\GenericCovariantClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\AllClassTransformer;
@@ -382,6 +384,52 @@ it('can transform a class with template generics', function () {
         new TypeScriptAlias(
             new TypeScriptGeneric(
                 new TypeScriptIdentifier('GenericClass'),
+                [new TypeScriptGenericTypeParameter(new TypeScriptIdentifier('T'))]
+            ),
+            new TypeScriptObject([
+                new TypeScriptProperty(
+                    new TypeScriptIdentifier('page'),
+                    new TypeScriptNumber()
+                ),
+                new TypeScriptProperty(
+                    new TypeScriptIdentifier('data'),
+                    new TypeScriptArray([new TypeScriptIdentifier('T')])
+                ),
+            ])
+        )
+    );
+});
+
+it('can transform a class with template-covariant generics', function () {
+    $transformed = transformSingle(GenericCovariantClass::class);
+
+    expect($transformed->getNode())->toEqual(
+        new TypeScriptAlias(
+            new TypeScriptGeneric(
+                new TypeScriptIdentifier('GenericCovariantClass'),
+                [new TypeScriptGenericTypeParameter(new TypeScriptIdentifier('T'))]
+            ),
+            new TypeScriptObject([
+                new TypeScriptProperty(
+                    new TypeScriptIdentifier('page'),
+                    new TypeScriptNumber()
+                ),
+                new TypeScriptProperty(
+                    new TypeScriptIdentifier('data'),
+                    new TypeScriptArray([new TypeScriptIdentifier('T')])
+                ),
+            ])
+        )
+    );
+});
+
+it('can transform a class with template-contravariant generics', function () {
+    $transformed = transformSingle(GenericContravariantClass::class);
+
+    expect($transformed->getNode())->toEqual(
+        new TypeScriptAlias(
+            new TypeScriptGeneric(
+                new TypeScriptIdentifier('GenericContravariantClass'),
                 [new TypeScriptGenericTypeParameter(new TypeScriptIdentifier('T'))]
             ),
             new TypeScriptObject([
