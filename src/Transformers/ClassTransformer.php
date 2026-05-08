@@ -17,6 +17,7 @@ use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\Transformed\Untransformable;
 use Spatie\TypeScriptTransformer\Transformers\ClassPropertyProcessors\ClassPropertyProcessor;
 use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedClass;
+use Spatie\TypeScriptTransformer\TypeResolvers\Data\ParsedNameAndType;
 use Spatie\TypeScriptTransformer\TypeResolvers\DocTypeResolver;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptAlias;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptGeneric;
@@ -95,32 +96,14 @@ abstract class ClassTransformer implements Transformer
             return $resolvedAttributeType;
         }
 
-        $classAnnotations = $parsedClass->properties ?? [];
-
-        $constructorAnnotations = $phpClassNode->hasMethod('__construct')
-            ? $this->docTypeResolver->method($phpClassNode->getMethod('__construct'))->parameters ?? []
-            : [];
-
         $properties = [];
 
         foreach ($this->getProperties($phpClassNode) as $phpPropertyNode) {
-            $annotation = $classAnnotations[$phpPropertyNode->getName()]
-                ?? $constructorAnnotations[$phpPropertyNode->getName()]
-                ?? null;
-
-            $annotationClassNode = $phpClassNode;
-
-            // If the current class doesn't annotate this property, the property's
-            // own @var docblock may come from a parent class. In that case, resolve
-            // types using the declaring class's namespace context so that class
-            // references in the docblock are resolved correctly.
-            if ($annotation === null) {
-                $annotation = $this->docTypeResolver->property($phpPropertyNode);
-
-                if ($annotation !== null) {
-                    $annotationClassNode = $phpPropertyNode->getDeclaringClass();
-                }
-            }
+            [$annotation, $annotationClassNode] = $this->resolvePropertyAnnotation(
+                $phpPropertyNode,
+                $phpClassNode,
+                $parsedClass,
+            );
 
             $property = $this->createProperty(
                 $annotationClassNode,
@@ -146,6 +129,63 @@ abstract class ClassTransformer implements Transformer
         }
 
         return new TypeScriptObject($properties);
+    }
+
+    /**
+     * @return array{0: ?ParsedNameAndType, 1: PhpClassNode}
+     */
+    protected function resolvePropertyAnnotation(
+        PhpPropertyNode $phpPropertyNode,
+        PhpClassNode $phpClassNode,
+        ?ParsedClass $parsedClass,
+    ): array {
+        $name = $phpPropertyNode->getName();
+
+        $classAnnotations = $parsedClass->properties ?? [];
+
+        if (array_key_exists($name, $classAnnotations)) {
+            return [$classAnnotations[$name], $phpClassNode];
+        }
+
+        $constructorAnnotations = $this->getConstructorAnnotations($phpClassNode);
+
+        if (array_key_exists($name, $constructorAnnotations)) {
+            return [$constructorAnnotations[$name], $phpClassNode];
+        }
+
+        $declaringClass = $phpPropertyNode->getDeclaringClass();
+
+        if ($propertyAnnotation = $this->docTypeResolver->property($phpPropertyNode)) {
+            return [$propertyAnnotation, $declaringClass];
+        }
+
+        if ($declaringClass->reflection->getName() === $phpClassNode->reflection->getName()) {
+            return [null, $phpClassNode];
+        }
+
+        $declaringClassAnnotations = $this->docTypeResolver->class($declaringClass)->properties ?? [];
+
+        if (array_key_exists($name, $declaringClassAnnotations)) {
+            return [$declaringClassAnnotations[$name], $declaringClass];
+        }
+
+        $declaringConstructorAnnotations = $this->getConstructorAnnotations($declaringClass);
+
+        if (array_key_exists($name, $declaringConstructorAnnotations)) {
+            return [$declaringConstructorAnnotations[$name], $declaringClass];
+        }
+
+        return [null, $declaringClass];
+    }
+
+    /**
+     * @return array<string, ParsedNameAndType>
+     */
+    protected function getConstructorAnnotations(PhpClassNode $phpClassNode): array
+    {
+        return $phpClassNode->hasMethod('__construct')
+            ? $this->docTypeResolver->method($phpClassNode->getMethod('__construct'))->parameters ?? []
+            : [];
     }
 
     protected function resolveTypeByAttribute(

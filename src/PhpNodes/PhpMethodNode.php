@@ -24,6 +24,11 @@ class PhpMethodNode
         return $this->reflection->getName();
     }
 
+    public function getDeclaringClass(): PhpClassNode
+    {
+        return new PhpClassNode($this->reflection->getDeclaringClass());
+    }
+
     public function getReturnType(): ?PhpTypeNode
     {
         $type = $this->reflection->getReturnType();
