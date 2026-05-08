@@ -9,7 +9,9 @@ use Spatie\TypeScriptTransformer\Attributes\Optional;
 use Spatie\TypeScriptTransformer\Attributes\TypeScriptType;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
+use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\References\PhpClassReference;
+use Spatie\TypeScriptTransformer\Tests\Fakes\ChildWithPropertyAnnotations;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\GenericClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ReadonlyClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
@@ -25,7 +27,9 @@ use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptNumber;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptObject;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptProperty;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptRaw;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnion;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptUnknown;
 
 it('can transform a class', function () {
@@ -165,6 +169,32 @@ it('can type a property using a class property annotation', function () {
                 new TypeScriptIdentifier('name'),
                 new TypeScriptString()
             ),
+        ])
+    );
+});
+
+it('resolves property annotations against the declaring class namespace', function () {
+    $childUnion = new TypeScriptUnion([
+        new TypeScriptArray([new TypeScriptString()]),
+        new TypeScriptReference(new ClassStringReference(SimpleClass::class)),
+    ]);
+
+    $parentUnion = new TypeScriptUnion([
+        new TypeScriptArray([new TypeScriptString()]),
+        new TypeScriptGeneric(
+            new TypeScriptReference(new ClassStringReference(GenericClass::class)),
+            [new TypeScriptNumber()],
+        ),
+    ]);
+
+    expect(transformSingle(ChildWithPropertyAnnotations::class)->getNode()->type)->toEqual(
+        new TypeScriptObject([
+            new TypeScriptProperty(new TypeScriptIdentifier('childItems'), $childUnion),
+            new TypeScriptProperty(new TypeScriptIdentifier('childItemsFromClass'), $childUnion),
+            new TypeScriptProperty(new TypeScriptIdentifier('childItemsFromConstructor'), $childUnion),
+            new TypeScriptProperty(new TypeScriptIdentifier('items'), $parentUnion),
+            new TypeScriptProperty(new TypeScriptIdentifier('itemsFromClass'), $parentUnion),
+            new TypeScriptProperty(new TypeScriptIdentifier('itemsFromConstructor'), $parentUnion),
         ])
     );
 });
