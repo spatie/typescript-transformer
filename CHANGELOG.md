@@ -2,6 +2,90 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 3.2.0 - 2026-05-08
+
+A round of bug fixes and a couple of small extensibility improvements, plus broader generic and inherited type support.
+
+### Resolve inherited PHPDoc types against the declaring class (#136)
+
+A child class inheriting a `@var` annotation from a parent in another namespace would lose the type information. With a parent like:
+
+```php
+// namespace App\Models
+class ParentModel
+{
+    /** @var string[]|SimpleGenericClass<int, string> */
+    public array $items;
+}
+
+```
+A `Child extends ParentModel` in `App\Models\Children` (no `use` of `SimpleGenericClass`) used to transform `$items` as `unknown`. The transformer now resolves the annotation against the declaring class's namespace, so inherited `@var` types keep working across namespaces. Class level `@property` and constructor `@param` annotations still resolve against the current class, since they belong to that class. Thanks @ragulka.
+
+### Make `AttributedClassTransformer` extensible (#142)
+
+`AttributedClassTransformer` had `TypeScript::class` hardcoded in two places, so swapping in a custom attribute meant duplicating the entire transformer. There is now a single `attributeClass()` hook:
+
+```php
+class FrontEndAttributedClassTransformer extends AttributedClassTransformer
+{
+    protected function attributeClass(): string
+    {
+        return FrontEnd::class;
+    }
+}
+
+```
+Thanks @CheshireC4t.
+
+### Escape the PHP binary path in the watcher worker (#143)
+
+On macOS via Laravel Herd, `PhpExecutableFinder::find()` returns `/Users/<me>/Library/Application Support/Herd/bin/php84`. The space broke `Process::fromShellCommandline("$phpBinary $command")`:
+
+```
+sh: /Users/<me>/Library/Application: No such file or directory
+
+```
+The watcher then looped on `Worker failed to start. Waiting for application to be fixed...`. Wrapping the binary in `escapeshellarg()` fixes it without changing the `workerCommand` contract. Thanks @mdpoulter.
+
+### Recognize `@template-covariant` and `@template-contravariant` (#144)
+
+`getTemplateTagValues()` defaults to the `@template` name, so generic classes annotated with the variance variants were silently losing their type parameter:
+
+```php
+/** @template-covariant T */
+class Paginated { /* T was dropped */ }
+
+```
+Both variant tag names are now collected alongside `@template`. Thanks @jakewtaylor.
+
+### Re-deduplicate nested nodes after visitor mutations (#149)
+
+When `FixArrayLikeStructuresClassPropertyProcessor` rewrote a `Collection<int, string>` next to an existing `string[]` in a union, the output ended up as `string[] | string[]`. The constructor time dedup on `TypeScriptUnion` runs once and cannot catch duplicates introduced by later mutations. A new `TypeScriptDeduplicableNode` interface (implemented by `TypeScriptUnion`, `TypeScriptIntersection`, and `TypeScriptArray`) is now invoked by the visitor after children are visited, so any Replace or Remove that introduces duplicates is cleaned up automatically:
+
+```php
+interface TypeScriptDeduplicableNode
+{
+    public function deduplicateNodes(): void;
+}
+
+```
+Fixes #137. Thanks @rubenvanassche.
+
+### Centralize TypeScript literal output and fix escape bugs (#150)
+
+A new `OutputsTypeScriptLiteral` trait centralizes how scalar values are written as TypeScript literals (`string`, `int`, `float`, `bool`, `null`). Strings are now escaped with a hand-rolled map (`\`, `'`, `\n`, `\r`, `\t`) and wrapped in single quotes, fixing invalid output for values like `App\Models\User` or `it's`. The trait replaces inline interpolation in `TypeScriptLiteral`, `TypeScriptEnum`, `TypeScriptIdentifier`, `TypeScriptParameter`, and `TypeScriptImport`, removing four duplicated quoting sites that all had the same hazard. Side effects: `TypeScriptLiteral` now emits single quoted strings (previously double quoted via `json_encode`), so the slash escaping problem from `json_encode` (e.g. `image\/png`) is gone, and `float` / `null` are now accepted by the constructor. Supersedes #138 by @pataar and #148 by @bram-pkg, both of which surfaced facets of the same bug. Thanks @rubenvanassche.
+
+### What's Changed
+
+* Fix inherited PHPDoc / annotation type resolution by @ragulka in https://github.com/spatie/typescript-transformer/pull/136
+* feat: make AttributedClassTransformer extensible via attributeClass() by @CheshireC4t in https://github.com/spatie/typescript-transformer/pull/142
+* fix: escape PHP binary path when starting watcher worker by @mdpoulter in https://github.com/spatie/typescript-transformer/pull/143
+* Allow generic types to work with co/contravariant templates by @jakewtaylor in https://github.com/spatie/typescript-transformer/pull/144
+* Re-deduplicate nested nodes after visitor mutations by @rubenvanassche in https://github.com/spatie/typescript-transformer/pull/149
+* Centralize TS literal output and fix escape bugs by @rubenvanassche in https://github.com/spatie/typescript-transformer/pull/150
+
+**Full Changelog**: https://github.com/spatie/typescript-transformer/compare/3.1.1...3.2.0
+
 ## 3.1.1 - 2026-03-18
 
 ### What's Changed
@@ -30,6 +114,7 @@ class PaginatedResponse
     ) {}
 }
 
+
 ```
 Now correctly generates:
 
@@ -38,6 +123,7 @@ type PaginatedResponse<T> = {
     page: number;
     data: T[];
 };
+
 
 ```
 Instead of the previous incorrect output where `T` was resolved as `unknown`.
@@ -58,6 +144,7 @@ new TypeScriptAlias('User', new TypeScriptObject([
 // Output: type User = { name: string; age: number }
 
 
+
 ```
 There are a lot of node types available and you can easily add your own!
 
@@ -73,6 +160,7 @@ Visitor::create()
         }
     })
     ->execute($rootNode);
+
 
 
 ```
@@ -108,6 +196,7 @@ class AddLaravelCollectionProvider implements TransformedProvider
 // Output: type Collection<T> = Array<T>
 
 
+
 ```
 ### Rewritten Transformer System
 
@@ -121,6 +210,7 @@ class MyTransformer extends ClassTransformer
         return $phpClassNode->implementsInterface(Data::class);
     }
 }
+
 
 
 ```
