@@ -20,4 +20,5 @@ trait UniqueTypeScriptNodes
 
         return $unique;
     }
+
 }

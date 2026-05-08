@@ -6,7 +6,7 @@ use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\UniqueTypeScriptNodes;
 
-class TypeScriptArray implements TypeScriptNode
+class TypeScriptArray implements TypeScriptNode, TypeScriptDeduplicableNode
 {
     use UniqueTypeScriptNodes;
 
@@ -17,6 +17,11 @@ class TypeScriptArray implements TypeScriptNode
         #[NodeVisitable]
         public array $types
     ) {
+        $this->deduplicateNodes();
+    }
+
+    public function deduplicateNodes(): void
+    {
         $this->types = $this->uniqueNodes($this->types);
     }
 

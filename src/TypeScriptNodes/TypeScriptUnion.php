@@ -7,7 +7,7 @@ use Spatie\TypeScriptTransformer\Attributes\NodeVisitable;
 use Spatie\TypeScriptTransformer\Data\WritingContext;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\UniqueTypeScriptNodes;
 
-class TypeScriptUnion implements TypeScriptNode
+class TypeScriptUnion implements TypeScriptNode, TypeScriptDeduplicableNode
 {
     use UniqueTypeScriptNodes;
 
@@ -18,6 +18,11 @@ class TypeScriptUnion implements TypeScriptNode
         #[NodeVisitable]
         public array $types,
     ) {
+        $this->deduplicateNodes();
+    }
+
+    public function deduplicateNodes(): void
+    {
         $this->types = $this->uniqueNodes($this->types);
     }
 
