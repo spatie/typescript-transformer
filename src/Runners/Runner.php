@@ -153,7 +153,7 @@ class Runner
         $phpBinary = (new PhpExecutableFinder())->find();
         $command = ($this->workerCommand)(true);
 
-        $process = Process::fromShellCommandline("$phpBinary $command");
+        $process = Process::fromShellCommandline(escapeshellarg($phpBinary)." $command");
         $process->start();
 
         return $process;
