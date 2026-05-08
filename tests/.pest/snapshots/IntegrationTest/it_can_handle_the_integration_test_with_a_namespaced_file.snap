@@ -3,7 +3,7 @@ namespace TypeScriptTransformer {
 namespace Tests {
 namespace Fakes {
 namespace Integration {
-export type Enum = "yes" | "no";
+export type Enum = 'yes' | 'no';
 export type IntegrationClass = {
 string: string,
 nullable: string | null,

@@ -1,5 +1,5 @@
 import { LevelUpClass } from './Level';
-export type Enum = "yes" | "no";
+export type Enum = 'yes' | 'no';
 export type IntegrationClass = {
 string: string,
 nullable: string | null,

@@ -11,7 +11,7 @@ it('can write a call expression without generics', function () {
         [new TypeScriptLiteral('index')],
     );
 
-    expect($node->write(new WritingContext([])))->toBe('createAction("index")');
+    expect($node->write(new WritingContext([])))->toBe("createAction('index')");
 });
 
 it('can write a call expression with generics', function () {
@@ -21,7 +21,7 @@ it('can write a call expression with generics', function () {
         genericTypes: [new TypeScriptIdentifier('UserParams')],
     );
 
-    expect($node->write(new WritingContext([])))->toBe('createAction<UserParams>("index")');
+    expect($node->write(new WritingContext([])))->toBe("createAction<UserParams>('index')");
 });
 
 it('can write a call expression with no arguments', function () {

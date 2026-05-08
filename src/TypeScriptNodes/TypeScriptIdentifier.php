@@ -3,9 +3,12 @@
 namespace Spatie\TypeScriptTransformer\TypeScriptNodes;
 
 use Spatie\TypeScriptTransformer\Data\WritingContext;
+use Spatie\TypeScriptTransformer\TypeScriptNodes\Concerns\OutputsTypeScriptLiteral;
 
 class TypeScriptIdentifier implements TypeScriptNamedNode, TypeScriptNode
 {
+    use OutputsTypeScriptLiteral;
+
     public function __construct(
         public string $name,
     ) {
@@ -13,7 +16,9 @@ class TypeScriptIdentifier implements TypeScriptNamedNode, TypeScriptNode
 
     public function write(WritingContext $context): string
     {
-        return $this->isValidIdentifier($this->name) ? $this->name : "'$this->name'";
+        return $this->isValidIdentifier($this->name)
+            ? $this->name
+            : $this->outputLiteral($this->name);
     }
 
     private function isValidIdentifier(string $name): bool

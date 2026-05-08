@@ -52,7 +52,7 @@ TS);
 
 it('can transform a string backed enum into a union enum', function () {
     expect(classesToTypeScript([StringBackedEnum::class], new EnumTransformer()))
-        ->toBe('export type StringBackedEnum = "john" | "paul" | "george" | "ringo";' . "\n");
+        ->toBe("export type StringBackedEnum = 'john' | 'paul' | 'george' | 'ringo';" . "\n");
 });
 
 it('can transform a string backed enum into a native enum', function () {
