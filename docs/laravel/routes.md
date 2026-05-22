@@ -37,6 +37,33 @@ const userUrl = route('users.show', {user: 1});
 
 TypeScript will be smart enough to provide you autocompletion on these controllers and their parameters.
 
+## Handling unknown routes
+
+The generated `route()` helper throws an error when called with a name that does not exist in the manifest. This mirrors Laravel's server-side `route()` behavior (which throws a `RouteNotFoundException`) and surfaces typos at the call site rather than silently producing broken URLs.
+
+```ts
+route('does-not-exist');
+// throws: Route "does-not-exist" not found.
+```
+
+In well-typed TypeScript code this is impossible to hit. The signature constrains `name` to keys of the generated `RouteParameters` type, so the type checker will reject unknown names before the call is ever made.
+
+When you do work with dynamic names (locale-aware routing wrappers, runtime-composed keys), use the `routeExists` predicate to guard the call:
+
+```ts
+import {route, routeExists} from './helpers/route';
+
+function safeRoute(name: string) {
+    if (routeExists(name)) {
+        return route(name);
+    }
+
+    return null;
+}
+```
+
+`routeExists` is a type predicate, so inside the guarded branch TypeScript narrows `name` to `keyof RouteParameters`. That means the subsequent `route(name)` call type-checks even when `name` started as a plain `string`.
+
 You can exclude certain routes from being included in the generated TypeScript using [route filters](/docs/typescript-transformer/v3/laravel/route-filters).
 
 By default, the helper will generate absolute URLs meaning it includes the app URL. This URL will be fetched from the
