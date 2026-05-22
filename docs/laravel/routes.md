@@ -48,13 +48,13 @@ route('does-not-exist');
 
 In well-typed TypeScript code this is impossible to hit. The signature constrains `name` to keys of the generated `RouteParameters` type, so the type checker will reject unknown names before the call is ever made.
 
-When you do work with dynamic names (locale-aware routing wrappers, runtime-composed keys), use the `routeExists` predicate to guard the call:
+When you do work with dynamic names (locale-aware routing wrappers, runtime-composed keys), use the `hasRoute` predicate to guard the call:
 
 ```ts
-import {route, routeExists} from './helpers/route';
+import {route, hasRoute} from './helpers/route';
 
 function safeRoute(name: string) {
-    if (routeExists(name)) {
+    if (hasRoute(name)) {
         return route(name);
     }
 
@@ -62,7 +62,7 @@ function safeRoute(name: string) {
 }
 ```
 
-`routeExists` is a type predicate, so inside the guarded branch TypeScript narrows `name` to `keyof RouteParameters`. That means the subsequent `route(name)` call type-checks even when `name` started as a plain `string`.
+`hasRoute` is a type predicate, so inside the guarded branch TypeScript narrows `name` to `keyof RouteParameters`. That means the subsequent `route(name)` call type-checks even when `name` started as a plain `string`.
 
 You can exclude certain routes from being included in the generated TypeScript using [route filters](/docs/typescript-transformer/v3/laravel/route-filters).
 
