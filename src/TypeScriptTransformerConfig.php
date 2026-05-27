@@ -28,6 +28,7 @@ class TypeScriptTransformerConfig
         public readonly array $connectedVisitorClosures = [],
         public readonly array $transformers = [],
         public readonly array $configPaths = [],
+        public readonly bool $generateManifest = true,
     ) {
     }
 }

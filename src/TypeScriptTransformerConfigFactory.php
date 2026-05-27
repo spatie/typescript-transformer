@@ -45,6 +45,7 @@ class TypeScriptTransformerConfigFactory
         protected array $providedVisitorClosures = [],
         protected array $connectedVisitorClosures = [],
         protected array $configPaths = [],
+        protected bool $generateManifest = true,
     ) {
     }
 
@@ -216,6 +217,13 @@ class TypeScriptTransformerConfigFactory
         return $this;
     }
 
+    public function withoutManifest(): self
+    {
+        $this->generateManifest = false;
+
+        return $this;
+    }
+
     public function get(): TypeScriptTransformerConfig
     {
         $this->ensureConfigIsValid();
@@ -266,7 +274,8 @@ class TypeScriptTransformerConfigFactory
             $this->providedVisitorClosures,
             $this->connectedVisitorClosures,
             $transformers,
-            $this->configPaths
+            $this->configPaths,
+            $this->generateManifest,
         );
     }
 
