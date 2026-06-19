@@ -18,20 +18,6 @@ class WriteFilesAction
      */
     public function execute(array &$writeableFiles): void
     {
-        if (! $this->config->generateManifest) {
-            foreach ($writeableFiles as $index => $writeableFile) {
-                $this->writeFile($writeableFile);
-
-                $writeableFiles[$index] = new WriteableFile(
-                    $writeableFile->path,
-                    $writeableFile->contents,
-                    changed: true
-                );
-            }
-
-            return;
-        }
-
         $oldManifest = $this->fetchManifest();
 
         foreach ($writeableFiles as $index => $writeableFile) {
@@ -78,6 +64,10 @@ class WriteFilesAction
     /** @return array<string, string>|null */
     protected function fetchManifest(): ?array
     {
+        if (! $this->config->generateManifest) {
+            return null;
+        }
+
         $manifestPath = $this->getManifestPath();
 
         if (! file_exists($manifestPath)) {
@@ -142,6 +132,10 @@ class WriteFilesAction
 
     protected function storeManifest(array $manifest): void
     {
+        if (! $this->config->generateManifest) {
+            return;
+        }
+
         file_put_contents(
             $this->getManifestPath(),
             json_encode($manifest, JSON_PRETTY_PRINT)

@@ -136,6 +136,63 @@ it('will always create a manifest file', function () {
     expect(file_exists($this->temporaryDirectory->path('typescript-transformer-manifest.json')))->toBeTrue();
 });
 
+it('will not create a manifest file when manifest generation is disabled', function () {
+    $fileA = new WriteableFile('fileA.ts', 'fileA contents');
+    $fileB = new WriteableFile('fileB.ts', 'fileB contents');
+
+    $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
+        ->withoutManifest()
+        ->get();
+
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
+
+    expect(file_get_contents($this->temporaryDirectory->path('fileA.ts')))->toBe('fileA contents');
+    expect(file_get_contents($this->temporaryDirectory->path('fileB.ts')))->toBe('fileB contents');
+    expect(file_exists($this->temporaryDirectory->path('typescript-transformer-manifest.json')))->toBeFalse();
+});
+
+it('marks every file as changed when manifest generation is disabled', function () {
+    $fileA = new WriteableFile('fileA.ts', 'fileA contents');
+    $fileB = new WriteableFile('fileB.ts', 'fileB contents');
+
+    $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
+        ->withoutManifest()
+        ->get();
+
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
+
+    expect($files[0]->changed)->toBeTrue();
+    expect($files[1]->changed)->toBeTrue();
+
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
+
+    expect($files[0]->changed)->toBeTrue();
+    expect($files[1]->changed)->toBeTrue();
+});
+
+it('will not delete stale files when manifest generation is disabled', function () {
+    $fileA = new WriteableFile('fileA.ts', 'fileA contents');
+    $fileB = new WriteableFile('fileB.ts', 'fileB contents');
+
+    $config = TypeScriptTransformerConfigFactory::create()
+        ->outputDirectory($this->temporaryDirectory->path())
+        ->withoutManifest()
+        ->get();
+
+    $files = [$fileA, $fileB];
+    (new WriteFilesAction($config))->execute($files);
+
+    $files = [$fileB];
+    (new WriteFilesAction($config))->execute($files);
+
+    expect(file_exists($this->temporaryDirectory->path('fileA.ts')))->toBeTrue();
+});
+
 it('marks only changed files in the array', function () {
     $fileA = new WriteableFile('fileA.ts', 'fileA contents');
     $fileB = new WriteableFile('fileB.ts', 'fileB contents');
