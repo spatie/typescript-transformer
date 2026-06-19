@@ -1,0 +1,6 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+[scripts]
+setup = "composer install"
+run = "composer test"
+run_mode = "concurrent"
