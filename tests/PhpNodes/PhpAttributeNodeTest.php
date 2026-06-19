@@ -1,8 +1,13 @@
 <?php
 
+use Roave\BetterReflection\BetterReflection;
+use Roave\BetterReflection\Reflector\DefaultReflector;
+use Roave\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpAttributeNode;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\ComplexAttribute;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleAttribute;
+use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\VariadicAttribute;
 
 it('can check and get named arguments from a simple attribute', function () {
@@ -112,6 +117,20 @@ it('can use variadic parameters', function () {
     expect($attributeNode->hasArgument('variadic'))->toBeTrue();
     expect($attributeNode->getArgument('variadic'))->toBe([2, 3, 4]);
 });
+
+it('can instantiate an attribute with constructor arguments reflected through BetterReflection', function () {
+    $astLocator = (new BetterReflection())->astLocator();
+
+    $attribute = (new DefaultReflector(new AutoloadSourceLocator($astLocator)))
+        ->reflectClass(TypeScriptAttributedClass::class)
+        ->getAttributesByName(TypeScript::class)[0];
+
+    $instance = (new PhpAttributeNode($attribute))->newInstance();
+
+    expect($instance)->toBeInstanceOf(TypeScript::class);
+    expect($instance->name)->toBe('JustAnotherName');
+});
+
 function createAttributeNode(string $className, string $attributeClass): PhpAttributeNode
 {
     $reflection = new ReflectionClass($className);

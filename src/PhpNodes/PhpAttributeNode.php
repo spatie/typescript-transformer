@@ -51,9 +51,7 @@ class PhpAttributeNode
 
         $className = $this->reflection->getName();
 
-        $this->initializeNamedArguments();
-
-        return (new $className())(...$this->namedArguments);
+        return new $className(...$this->getRawArguments());
     }
 
     /** @return array<string, mixed> */
