@@ -2,6 +2,42 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 3.3.0 - 2026-06-19
+
+A new option to skip manifest generation, a watch mode fix, and expanded route helper docs.
+
+### Add `withoutManifest()` option to skip manifest file generation (#153)
+
+By default the transformer writes a `typescript-transformer-manifest.json` file to power its caching, only rewriting output files whose contents actually changed. That manifest is unwelcome in some setups: when the output directory is a committed git submodule it surfaces as an unexpected tracked file, and when you want a clean diff or run in CI the caching simply is not needed.
+
+`TypeScriptTransformerConfigFactory` now exposes a `withoutManifest()` method that turns off manifest generation entirely. When disabled, `WriteFilesAction` skips the manifest read and write and writes every file directly.
+
+```php
+$config
+    ->outputDirectory(resource_path('frontend/types'))
+    ->writer(new GlobalNamespaceWriter('generated.d.ts'))
+    ->withoutManifest();
+
+```
+Thanks @pawell67.
+
+### Fix BetterReflection attribute instantiation in watch mode (#154)
+
+In watch mode attributes are reflected through Roave BetterReflection. `PhpAttributeNode::newInstance()` constructed each attribute with no arguments before invoking the result, which threw an `ArgumentCountError` for any attribute with required constructor arguments such as `#[LiteralTypeScriptType('string[]')]`.
+
+The arguments are now spread straight into the constructor, letting PHP bind positional, named, default, and variadic values itself. A regression test covers a constructor-argument attribute reflected through BetterReflection, the path that was previously untested.
+
+Thanks @rubenvanassche.
+
+### What's Changed
+
+* Document `route()` throw behavior and `hasRoute` predicate by @rubenvanassche in https://github.com/spatie/typescript-transformer/pull/152
+* Add withoutManifest() option to skip manifest file generation by @pawell67 in https://github.com/spatie/typescript-transformer/pull/153
+* Add Conductor repository settings by @rubenvanassche in https://github.com/spatie/typescript-transformer/pull/155
+* Fix BetterReflection attribute instantiation in watch mode by @rubenvanassche in https://github.com/spatie/typescript-transformer/pull/156
+
+**Full Changelog**: https://github.com/spatie/typescript-transformer/compare/3.2.0...3.3.0
+
 ## 3.2.0 - 2026-05-08
 
 A round of bug fixes and a couple of small extensibility improvements, plus broader generic and inherited type support.
@@ -17,6 +53,7 @@ class ParentModel
     /** @var string[]|SimpleGenericClass<int, string> */
     public array $items;
 }
+
 
 ```
 A `Child extends ParentModel` in `App\Models\Children` (no `use` of `SimpleGenericClass`) used to transform `$items` as `unknown`. The transformer now resolves the annotation against the declaring class's namespace, so inherited `@var` types keep working across namespaces. Class level `@property` and constructor `@param` annotations still resolve against the current class, since they belong to that class. Thanks @ragulka.
@@ -34,6 +71,7 @@ class FrontEndAttributedClassTransformer extends AttributedClassTransformer
     }
 }
 
+
 ```
 Thanks @CheshireC4t.
 
@@ -43,6 +81,7 @@ On macOS via Laravel Herd, `PhpExecutableFinder::find()` returns `/Users/<me>/Li
 
 ```
 sh: /Users/<me>/Library/Application: No such file or directory
+
 
 ```
 The watcher then looped on `Worker failed to start. Waiting for application to be fixed...`. Wrapping the binary in `escapeshellarg()` fixes it without changing the `workerCommand` contract. Thanks @mdpoulter.
@@ -54,6 +93,7 @@ The watcher then looped on `Worker failed to start. Waiting for application to b
 ```php
 /** @template-covariant T */
 class Paginated { /* T was dropped */ }
+
 
 ```
 Both variant tag names are now collected alongside `@template`. Thanks @jakewtaylor.
@@ -67,6 +107,7 @@ interface TypeScriptDeduplicableNode
 {
     public function deduplicateNodes(): void;
 }
+
 
 ```
 Fixes #137. Thanks @rubenvanassche.
@@ -115,6 +156,7 @@ class PaginatedResponse
 }
 
 
+
 ```
 Now correctly generates:
 
@@ -123,6 +165,7 @@ type PaginatedResponse<T> = {
     page: number;
     data: T[];
 };
+
 
 
 ```
@@ -145,6 +188,7 @@ new TypeScriptAlias('User', new TypeScriptObject([
 
 
 
+
 ```
 There are a lot of node types available and you can easily add your own!
 
@@ -160,6 +204,7 @@ Visitor::create()
         }
     })
     ->execute($rootNode);
+
 
 
 
@@ -197,6 +242,7 @@ class AddLaravelCollectionProvider implements TransformedProvider
 
 
 
+
 ```
 ### Rewritten Transformer System
 
@@ -210,6 +256,7 @@ class MyTransformer extends ClassTransformer
         return $phpClassNode->implementsInterface(Data::class);
     }
 }
+
 
 
 
