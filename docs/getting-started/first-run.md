@@ -49,7 +49,7 @@ $config->transformer(AttributedClassTransformer::class);
 Since transformers are just PHP classes, you can also pass them arguments when initializing them:
 
 ```php
-$config->transformer(new EnumTransformer(useNativeEnums: true)); // transformers enums as TypeScript native enums and not as a union of strings
+$config->transformer(new EnumTransformer(useUnionEnums: false)); // transformers enums as TypeScript native enums and not as a union of strings
 ```
 
 Quick note: transformers are executed in the order they are registered in the configuration, when a transformer cannot
