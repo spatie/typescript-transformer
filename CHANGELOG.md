@@ -2,6 +2,40 @@
 
 All notable changes to `typescript-transformer` will be documented in this file
 
+## 3.3.1 - 2026-08-28
+
+### Resolve inherited constructor docblocks against the declaring class (#161)
+
+A child class that does not declare its own constructor came out with `unknown` for every promoted property typed through a docblock (#160). The parent transformed correctly, the child did not.
+
+```php
+abstract class DashboardViewModel extends Data
+{
+    /** @param array<SpanAggregationType> $aggregation_types */
+    public function __construct(
+        public array $aggregation_types,
+    ) {}
+}
+
+class JsDashboardViewModel extends DashboardViewModel {}
+
+```
+```ts
+// JsDashboardViewModel
+aggregation_types: unknown[];              // before
+aggregation_types: SpanAggregationType[];  // after
+
+```
+Reflection returns the inherited parent constructor, so `ClassTransformer::resolvePropertyAnnotation()` found the `@param` annotation but paired it with the child as the resolution context. Short class names were then looked up in the child file's `use` statements, which do not import them, and the type fell back to `unknown`. The annotation is now paired with the constructor's declaring class instead.
+
+Classes that declare their own constructor are unaffected, since there the declaring class is that same class. Thanks @rubenvanassche.
+
+### What's Changed
+
+* Resolve inherited constructor docblocks against the declaring class by @rubenvanassche in https://github.com/spatie/typescript-transformer/pull/161
+
+**Full Changelog**: https://github.com/spatie/typescript-transformer/compare/3.3.0...3.3.1
+
 ## 3.3.0 - 2026-06-19
 
 A new option to skip manifest generation, a watch mode fix, and expanded route helper docs.
@@ -17,6 +51,7 @@ $config
     ->outputDirectory(resource_path('frontend/types'))
     ->writer(new GlobalNamespaceWriter('generated.d.ts'))
     ->withoutManifest();
+
 
 ```
 Thanks @pawell67.
@@ -55,6 +90,7 @@ class ParentModel
 }
 
 
+
 ```
 A `Child extends ParentModel` in `App\Models\Children` (no `use` of `SimpleGenericClass`) used to transform `$items` as `unknown`. The transformer now resolves the annotation against the declaring class's namespace, so inherited `@var` types keep working across namespaces. Class level `@property` and constructor `@param` annotations still resolve against the current class, since they belong to that class. Thanks @ragulka.
 
@@ -72,6 +108,7 @@ class FrontEndAttributedClassTransformer extends AttributedClassTransformer
 }
 
 
+
 ```
 Thanks @CheshireC4t.
 
@@ -81,6 +118,7 @@ On macOS via Laravel Herd, `PhpExecutableFinder::find()` returns `/Users/<me>/Li
 
 ```
 sh: /Users/<me>/Library/Application: No such file or directory
+
 
 
 ```
@@ -95,6 +133,7 @@ The watcher then looped on `Worker failed to start. Waiting for application to b
 class Paginated { /* T was dropped */ }
 
 
+
 ```
 Both variant tag names are now collected alongside `@template`. Thanks @jakewtaylor.
 
@@ -107,6 +146,7 @@ interface TypeScriptDeduplicableNode
 {
     public function deduplicateNodes(): void;
 }
+
 
 
 ```
@@ -157,6 +197,7 @@ class PaginatedResponse
 
 
 
+
 ```
 Now correctly generates:
 
@@ -165,6 +206,7 @@ type PaginatedResponse<T> = {
     page: number;
     data: T[];
 };
+
 
 
 
@@ -189,6 +231,7 @@ new TypeScriptAlias('User', new TypeScriptObject([
 
 
 
+
 ```
 There are a lot of node types available and you can easily add your own!
 
@@ -204,6 +247,7 @@ Visitor::create()
         }
     })
     ->execute($rootNode);
+
 
 
 
@@ -243,6 +287,7 @@ class AddLaravelCollectionProvider implements TransformedProvider
 
 
 
+
 ```
 ### Rewritten Transformer System
 
@@ -256,6 +301,7 @@ class MyTransformer extends ClassTransformer
         return $phpClassNode->implementsInterface(Data::class);
     }
 }
+
 
 
 
