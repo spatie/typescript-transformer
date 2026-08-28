@@ -202,7 +202,6 @@ it('resolves property annotations against the declaring class namespace', functi
     );
 });
 
-/// ChildWithInheritedConstructor needs its own file, an inline class would resolve against this file's imports and pass even with the bug present
 it('resolves inherited constructor annotations against the declaring class namespace', function () {
     $parentUnion = new TypeScriptUnion([
         new TypeScriptArray([new TypeScriptString()]),
@@ -212,6 +211,7 @@ it('resolves inherited constructor annotations against the declaring class names
         ),
     ]);
 
+    /// ChildWithInheritedConstructor needs its own file, an inline class would resolve against this file's imports and pass even with the bug present
     expect(transformSingle(ChildWithInheritedConstructor::class)->getNode()->type)->toEqual(
         new TypeScriptObject([
             new TypeScriptProperty(new TypeScriptIdentifier('items'), $parentUnion),
