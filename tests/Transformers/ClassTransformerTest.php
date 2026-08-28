@@ -11,6 +11,7 @@ use Spatie\TypeScriptTransformer\PhpNodes\PhpClassNode;
 use Spatie\TypeScriptTransformer\PhpNodes\PhpPropertyNode;
 use Spatie\TypeScriptTransformer\References\ClassStringReference;
 use Spatie\TypeScriptTransformer\References\PhpClassReference;
+use Spatie\TypeScriptTransformer\Tests\Fakes\ChildWithInheritedConstructor;
 use Spatie\TypeScriptTransformer\Tests\Fakes\ChildWithPropertyAnnotations;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\GenericClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\GenericContravariantClass;
@@ -194,6 +195,25 @@ it('resolves property annotations against the declaring class namespace', functi
             new TypeScriptProperty(new TypeScriptIdentifier('childItems'), $childUnion),
             new TypeScriptProperty(new TypeScriptIdentifier('childItemsFromClass'), $childUnion),
             new TypeScriptProperty(new TypeScriptIdentifier('childItemsFromConstructor'), $childUnion),
+            new TypeScriptProperty(new TypeScriptIdentifier('items'), $parentUnion),
+            new TypeScriptProperty(new TypeScriptIdentifier('itemsFromClass'), $parentUnion),
+            new TypeScriptProperty(new TypeScriptIdentifier('itemsFromConstructor'), $parentUnion),
+        ])
+    );
+});
+
+/// ChildWithInheritedConstructor needs its own file, an inline class would resolve against this file's imports and pass even with the bug present
+it('resolves inherited constructor annotations against the declaring class namespace', function () {
+    $parentUnion = new TypeScriptUnion([
+        new TypeScriptArray([new TypeScriptString()]),
+        new TypeScriptGeneric(
+            new TypeScriptReference(new ClassStringReference(GenericClass::class)),
+            [new TypeScriptNumber()],
+        ),
+    ]);
+
+    expect(transformSingle(ChildWithInheritedConstructor::class)->getNode()->type)->toEqual(
+        new TypeScriptObject([
             new TypeScriptProperty(new TypeScriptIdentifier('items'), $parentUnion),
             new TypeScriptProperty(new TypeScriptIdentifier('itemsFromClass'), $parentUnion),
             new TypeScriptProperty(new TypeScriptIdentifier('itemsFromConstructor'), $parentUnion),

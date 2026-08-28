@@ -150,7 +150,10 @@ abstract class ClassTransformer implements Transformer
         $constructorAnnotations = $this->getConstructorAnnotations($phpClassNode);
 
         if (array_key_exists($name, $constructorAnnotations)) {
-            return [$constructorAnnotations[$name], $phpClassNode];
+            return [
+                $constructorAnnotations[$name],
+                $phpClassNode->getMethod('__construct')->getDeclaringClass(),
+            ];
         }
 
         $declaringClass = $phpPropertyNode->getDeclaringClass();
