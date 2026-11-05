@@ -9,6 +9,7 @@ use Spatie\TypeScriptTransformer\Tests\Fakes\Circular\CircularB;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\SimpleClass;
 use Spatie\TypeScriptTransformer\Tests\Fakes\TypesToProvide\TypeScriptAttributedClass;
 use Spatie\TypeScriptTransformer\Tests\TestSupport\AllClassTransformer;
+use Spatie\TypeScriptTransformer\Tests\TestSupport\MemoryWriter;
 use Spatie\TypeScriptTransformer\Transformed\Transformed;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptReference;
 use Spatie\TypeScriptTransformer\TypeScriptNodes\TypeScriptString;
@@ -35,6 +36,23 @@ it('can add transformed items to the collection', function () {
     );
 
     expect($collection)->toHaveCount(1);
+});
+
+it('deduplicates shared writers while preserving distinct writer instances', function () {
+    $sharedWriter = new MemoryWriter();
+    $distinctWriter = new MemoryWriter();
+
+    $first = transformSingle(SimpleClass::class);
+    $second = transformSingle(TypeScriptAttributedClass::class);
+    $third = transformSingle(CircularA::class);
+
+    $first->setWriter($sharedWriter);
+    $second->setWriter($distinctWriter);
+    $third->setWriter($sharedWriter);
+
+    $collection = new TransformedCollection([$first, $second, $third]);
+
+    expect($collection->getUniqueWriters())->toBe([$sharedWriter, $distinctWriter]);
 });
 
 it('can get a transformed item by reference', function () {

@@ -136,10 +136,10 @@ class TransformedCollection implements IteratorAggregate, Countable
 
         foreach ($this->items as $item) {
             $writer = $item->getWriter();
-            $hash = spl_object_hash($writer);
+            $id = spl_object_id($writer);
 
-            if (! array_key_exists($hash, $writers)) {
-                $writers[$hash] = $writer;
+            if (! array_key_exists($id, $writers)) {
+                $writers[$id] = $writer;
             }
         }
 
